@@ -7,6 +7,7 @@ import MyPage from './pages/MyPage'
 import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
 
@@ -17,7 +18,11 @@ function App() {
 
             <Route
                 path="/mypage"
-                element={<MyPage />}
+                element={
+                    <ProtectedRoute>
+                        <MyPage />
+                    </ProtectedRoute>
+                }
             />
           <Route
               path="/"

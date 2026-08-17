@@ -14,3 +14,8 @@ export const getKakaoLoginUrl = async () => {
     const response = await api.get('/auth/kakao')
     return response.data
 }
+
+export const getGoogleLoginUrl = async () => {
+    const response = await api.get('/auth/google/login-url')
+    return response.data
+}

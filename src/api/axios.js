@@ -19,3 +19,19 @@ api.interceptors.request.use((config) => {
 })
 
 export default api
+
+api.interceptors.response.use(
+    (response) => response,
+
+    (error) => {
+        if (error.response?.status === 401) {
+            sessionStorage.removeItem('accessToken')
+
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login'
+            }
+        }
+
+        return Promise.reject(error)
+    }
+)

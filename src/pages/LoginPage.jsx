@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login, getKakaoLoginUrl } from '../api/authApi'
+import { login, getKakaoLoginUrl, getGoogleLoginUrl } from '../api/authApi'
 function LoginPage() {
 
     const handleKakaoLogin = async () => {
@@ -10,6 +10,17 @@ function LoginPage() {
         } catch (error) {
             console.error(error)
             alert('카카오 로그인을 시작하지 못했어.')
+        }
+    }
+
+    const handleGoogleLogin = async () => {
+
+        try {
+            const url = await getGoogleLoginUrl()
+            window.location.href = url
+        } catch (error) {
+            console.error(error)
+            alert('구글 로그인을 시작하지 못했어.')
         }
     }
 
@@ -42,7 +53,7 @@ function LoginPage() {
 
             alert(`${result.name}님 로그인 성공!`)
 
-            navigate('/')
+            navigate('/mypage')
 
         } catch (error) {
 
@@ -100,7 +111,7 @@ function LoginPage() {
                 카카오로 로그인
             </button>
 
-            <button>
+            <button onClick={handleGoogleLogin}>
                 Google로 로그인
             </button>
 

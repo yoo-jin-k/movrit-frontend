@@ -40,10 +40,6 @@ function ProductManagePage() {
     const [variants, setVariants] = useState({})
     const [loading, setLoading] = useState(true)
 
-    /**
-     * 브랜드와 상품 조회를 분리한다.
-     * 상품 조회가 실패하더라도 이미 등록한 브랜드까지 선택할 수 없게 되는 문제를 막기 위해서다.
-     */
     const loadBrands = async () => {
         try {
             const brandList = await getMyBrands()
@@ -86,6 +82,18 @@ function ProductManagePage() {
         }
     }
 
+    /**
+     * 특정 상품의 SKU 목록만 다시 조회한다.
+     * 입고/안전재고 변경 직후 DB에 반영된 최신 값을 받아 화면에 바로 보여준다.
+     */
+    const refreshVariants = async (productId) => {
+        const updatedVariants = await getVariants(productId)
+        setVariants((current) => ({
+            ...current,
+            [productId]: updatedVariants,
+        }))
+    }
+
     const load = async () => {
         setLoading(true)
         await Promise.all([loadBrands(), loadProducts()])
@@ -97,23 +105,6 @@ function ProductManagePage() {
     }, [])
 
     const activeBrands = brands.filter((brand) => brand.status === 'ACTIVE')
-
-    /**
-     * 재고 변경 API의 응답에는 productId가 포함되어 있지 않다.
-     * 따라서 현재 렌더링 중인 상품 id를 함께 넘겨 해당 상품의 SKU 목록만 교체한다.
-     */
-    const replaceVariant = (productId, updatedVariant) => {
-        setVariants((current) => {
-            const currentVariants = current[productId] || []
-
-            return {
-                ...current,
-                [productId]: currentVariants.map((variant) =>
-                    variant.id === updatedVariant.id ? updatedVariant : variant
-                ),
-            }
-        })
-    }
 
     const submitProduct = async (e) => {
         e.preventDefault()
@@ -142,7 +133,7 @@ function ProductManagePage() {
     const submitVariant = async (productId) => {
         const form = variantForms[productId] || emptyVariant
         try {
-            const createdVariant = await createVariant(productId, {
+            await createVariant(productId, {
                 ...form,
                 additionalPrice: Number(form.additionalPrice),
                 initialStock: Number(form.initialStock),
@@ -150,10 +141,7 @@ function ProductManagePage() {
             })
 
             setVariantForms((current) => ({ ...current, [productId]: emptyVariant }))
-            setVariants((current) => ({
-                ...current,
-                [productId]: [...(current[productId] || []), createdVariant],
-            }))
+            await refreshVariants(productId)
         } catch (error) {
             console.error(error)
             alert(error.response?.data?.message || '옵션/SKU 등록에 실패했어.')
@@ -337,8 +325,8 @@ function ProductManagePage() {
                                     if (!value) return
 
                                     try {
-                                        const updatedVariant = await restockVariant(variant.id, Number(value))
-                                        replaceVariant(product.id, updatedVariant)
+                                        await restockVariant(variant.id, Number(value))
+                                        await refreshVariants(product.id)
                                     } catch (error) {
                                         console.error(error)
                                         alert(error.response?.data?.message || '입고 처리에 실패했어.')
@@ -355,8 +343,8 @@ function ProductManagePage() {
                                     if (value === null) return
 
                                     try {
-                                        const updatedVariant = await updateSafetyStock(variant.id, Number(value))
-                                        replaceVariant(product.id, updatedVariant)
+                                        await updateSafetyStock(variant.id, Number(value))
+                                        await refreshVariants(product.id)
                                     } catch (error) {
                                         console.error(error)
                                         alert(error.response?.data?.message || '안전재고 변경에 실패했어.')

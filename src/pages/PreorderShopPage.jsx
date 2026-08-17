@@ -25,7 +25,8 @@ function PreorderShopPage() {
 
     const loadVariants = async (preorder) => {
         if (variants[preorder.id]) return
-        const list = (await getVariants(preorder.productId)).filter((item) => item.active && item.availableQuantity > 0)
+        const allowed = new Set(preorder.variantIds || [])
+        const list = (await getVariants(preorder.productId)).filter((item) => allowed.has(item.id) && item.active && item.availableQuantity > 0)
         setVariants((current) => ({ ...current, [preorder.id]: list }))
         setForms((current) => ({ ...current, [preorder.id]: { ...emptyAddress, productVariantId: list[0]?.id || '', quantity: preorder.minOrderQuantity } }))
     }
@@ -58,12 +59,14 @@ function PreorderShopPage() {
             <p>주문 {item.orderedQuantity} / 목표 {item.targetQuantity}</p>
             <button onClick={() => loadVariants(item)}>옵션 선택 및 주문</button>
             {variants[item.id] && <div className="form-grid">
-                <label>옵션<select value={forms[item.id]?.productVariantId} onChange={(e) => change(item.id, 'productVariantId', e.target.value)}>
-                    {variants[item.id].map((v) => <option key={v.id} value={v.id}>{v.skuCode} · 재고 {v.availableQuantity}</option>)}
-                </select></label>
-                <label>수량<input type="number" min={item.minOrderQuantity} max={item.maxOrderQuantityPerMember || undefined} value={forms[item.id]?.quantity || ''} onChange={(e) => change(item.id, 'quantity', e.target.value)} /></label>
-                {Object.keys(emptyAddress).map((name) => <label key={name}>{({receiverName:'받는 분',receiverPhone:'연락처',postalCode:'우편번호',address1:'주소',address2:'상세 주소'})[name]}<input value={forms[item.id]?.[name] || ''} required={['receiverName','receiverPhone','address1'].includes(name)} onChange={(e) => change(item.id, name, e.target.value)} /></label>)}
-                <button onClick={() => order(item)}>주문 만들기</button>
+                {variants[item.id].length === 0 ? <p>현재 주문 가능한 옵션이 없어.</p> : <>
+                    <label>옵션<select value={forms[item.id]?.productVariantId} onChange={(e) => change(item.id, 'productVariantId', e.target.value)}>
+                        {variants[item.id].map((v) => <option key={v.id} value={v.id}>{v.skuCode} · 재고 {v.availableQuantity}</option>)}
+                    </select></label>
+                    <label>수량<input type="number" min={item.minOrderQuantity} max={item.maxOrderQuantityPerMember || undefined} value={forms[item.id]?.quantity || ''} onChange={(e) => change(item.id, 'quantity', e.target.value)} /></label>
+                    {Object.keys(emptyAddress).map((name) => <label key={name}>{({receiverName:'받는 분',receiverPhone:'연락처',postalCode:'우편번호',address1:'주소',address2:'상세 주소'})[name]}<input value={forms[item.id]?.[name] || ''} required={['receiverName','receiverPhone','address1'].includes(name)} onChange={(e) => change(item.id, name, e.target.value)} /></label>)}
+                    <button onClick={() => order(item)}>주문 만들기</button>
+                </>}
             </div>}
             <hr />
         </section>)}

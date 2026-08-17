@@ -19,3 +19,18 @@ export const getGoogleLoginUrl = async () => {
     const response = await api.get('/auth/google/login-url')
     return response.data
 }
+
+export const getSocialAccounts = async () => {
+    const response = await api.get('/auth/social/accounts')
+    return response.data
+}
+
+export const getKakaoLinkUrl = async () => {
+    const response = await api.get('/auth/social/kakao/link-url')
+    return response.data
+}
+
+export const getGoogleLinkUrl = async () => {
+    const response = await api.get('/auth/social/google/link-url')
+    return response.data
+}

@@ -1,0 +1,1 @@
+import api from './axios';export const getAdminDashboard=async()=>(await api.get('/admin/dashboard')).data;export const getMembers=async()=>(await api.get('/members/admin')).data;export const changeMemberStatus=async(id,status)=>(await api.patch(`/members/admin/${id}/status`,null,{params:{status}})).data

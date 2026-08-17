@@ -117,9 +117,9 @@ function MyPage() {
             )}
 
             {myInfo.role === 'ADMIN' && (
-                <button onClick={() => navigate('/admin/sellers')}>
+                <><button onClick={() => navigate('/admin/dashboard')}>관리자 운영 대시보드</button><button onClick={() => navigate('/admin/sellers')}>
                     판매자 신청 심사
-                </button>
+                </button></>
             )}
 
             <hr />

@@ -100,6 +100,24 @@ function ProductManagePage() {
 
     const activeBrands = brands.filter((brand) => brand.status === 'ACTIVE')
 
+    /**
+     * 입고/안전재고 변경 API가 반환한 최신 SKU 값을 현재 화면 상태에 바로 반영한다.
+     * 매번 전체 상품 목록을 다시 조회하지 않아도 숫자가 즉시 바뀌어 보이게 하기 위한 처리다.
+     */
+    const replaceVariant = (updatedVariant) => {
+        setVariants((current) => {
+            const productId = updatedVariant.productId
+            const currentVariants = current[productId] || []
+
+            return {
+                ...current,
+                [productId]: currentVariants.map((variant) =>
+                    variant.id === updatedVariant.id ? updatedVariant : variant
+                ),
+            }
+        })
+    }
+
     const submitProduct = async (e) => {
         e.preventDefault()
 
@@ -128,14 +146,18 @@ function ProductManagePage() {
     const submitVariant = async (productId) => {
         const form = variantForms[productId] || emptyVariant
         try {
-            await createVariant(productId, {
+            const createdVariant = await createVariant(productId, {
                 ...form,
                 additionalPrice: Number(form.additionalPrice),
                 initialStock: Number(form.initialStock),
                 safetyStock: Number(form.safetyStock),
             })
-            setVariantForms({ ...variantForms, [productId]: emptyVariant })
-            await loadProducts()
+
+            setVariantForms((current) => ({ ...current, [productId]: emptyVariant }))
+            setVariants((current) => ({
+                ...current,
+                [productId]: [...(current[productId] || []), createdVariant],
+            }))
         } catch (error) {
             console.error(error)
             alert(error.response?.data?.message || '옵션/SKU 등록에 실패했어.')
@@ -317,8 +339,14 @@ function ProductManagePage() {
                                 <button onClick={async () => {
                                     const value = prompt('추가 입고 수량을 입력해줘.')
                                     if (!value) return
-                                    await restockVariant(variant.id, Number(value))
-                                    await loadProducts()
+
+                                    try {
+                                        const updatedVariant = await restockVariant(variant.id, Number(value))
+                                        replaceVariant(updatedVariant)
+                                    } catch (error) {
+                                        console.error(error)
+                                        alert(error.response?.data?.message || '입고 처리에 실패했어.')
+                                    }
                                 }}>
                                     입고
                                 </button>
@@ -329,8 +357,14 @@ function ProductManagePage() {
                                         variant.safetyStockQuantity
                                     )
                                     if (value === null) return
-                                    await updateSafetyStock(variant.id, Number(value))
-                                    await loadProducts()
+
+                                    try {
+                                        const updatedVariant = await updateSafetyStock(variant.id, Number(value))
+                                        replaceVariant(updatedVariant)
+                                    } catch (error) {
+                                        console.error(error)
+                                        alert(error.response?.data?.message || '안전재고 변경에 실패했어.')
+                                    }
                                 }}>
                                     안전재고 변경
                                 </button>

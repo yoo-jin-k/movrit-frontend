@@ -11,15 +11,20 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import SellerApplyPage from './pages/SellerApplyPage'
 import AdminSellerPage from './pages/AdminSellerPage'
+import BrandManagePage from './pages/BrandManagePage'
+import ProductManagePage from './pages/ProductManagePage'
+import PreorderManagePage from './pages/PreorderManagePage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function RootRedirect() {
   const token = sessionStorage.getItem('accessToken')
-
-  // 루트 주소로 직접 들어와도 로그인 토큰이 있으면 로그인 화면을 다시 보여주지 않는다.
   return token
       ? <Navigate to="/mypage" replace />
       : <Navigate to="/login" replace />
+}
+
+function ProtectedPage({ children }) {
+  return <ProtectedRoute>{children}</ProtectedRoute>
 }
 
 function App() {
@@ -32,32 +37,12 @@ function App() {
           <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
           <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
 
-          <Route
-              path="/mypage"
-              element={
-                <ProtectedRoute>
-                  <MyPage />
-                </ProtectedRoute>
-              }
-          />
-
-          <Route
-              path="/seller/apply"
-              element={
-                <ProtectedRoute>
-                  <SellerApplyPage />
-                </ProtectedRoute>
-              }
-          />
-
-          <Route
-              path="/admin/sellers"
-              element={
-                <ProtectedRoute>
-                  <AdminSellerPage />
-                </ProtectedRoute>
-              }
-          />
+          <Route path="/mypage" element={<ProtectedPage><MyPage /></ProtectedPage>} />
+          <Route path="/seller/apply" element={<ProtectedPage><SellerApplyPage /></ProtectedPage>} />
+          <Route path="/seller/brands" element={<ProtectedPage><BrandManagePage /></ProtectedPage>} />
+          <Route path="/seller/products" element={<ProtectedPage><ProductManagePage /></ProtectedPage>} />
+          <Route path="/seller/preorders" element={<ProtectedPage><PreorderManagePage /></ProtectedPage>} />
+          <Route path="/admin/sellers" element={<ProtectedPage><AdminSellerPage /></ProtectedPage>} />
         </Routes>
       </BrowserRouter>
   )

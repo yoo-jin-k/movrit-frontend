@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import {
     createShipment, deliverShipment, getSellerOrders, getSettlements, getShipments,
-    prepareShipment, shipShipment, confirmSettlement, paySettlement, cancelSettlement, createSettlement,
+    prepareShipment, shipShipment,
 } from '../api/commerceApi'
-import { getMyPreorders } from '../api/preorderApi'
 
 const labels = { PAID:'결제 완료', PREPARING:'배송 준비', SHIPPED:'배송 중', DELIVERED:'배송 완료', READY:'배송 등록', PENDING:'정산 대기', CONFIRMED:'정산 확정' }
 
@@ -11,12 +10,10 @@ function SellerOperationsPage() {
     const [orders, setOrders] = useState([])
     const [shipments, setShipments] = useState([])
     const [settlements, setSettlements] = useState([])
-    const [preorders, setPreorders] = useState([])
-    const [settlementForm, setSettlementForm] = useState({ preorderId:'', grossAmount:'', refundAmount:'0', platformFeeAmount:'0' })
-    const load = async () => { const [o,s,t,p] = await Promise.all([getSellerOrders(),getShipments(),getSettlements(),getMyPreorders()]); setOrders(o);setShipments(s);setSettlements(t);setPreorders(p) }
+    const load = async () => { const [o,s,t] = await Promise.all([getSellerOrders(),getShipments(),getSettlements()]); setOrders(o);setShipments(s);setSettlements(t) }
     useEffect(() => {
-        Promise.all([getSellerOrders(), getShipments(), getSettlements(), getMyPreorders()])
-            .then(([o, s, t, p]) => { setOrders(o); setShipments(s); setSettlements(t); setPreorders(p) })
+        Promise.all([getSellerOrders(), getShipments(), getSettlements()])
+            .then(([o, s, t]) => { setOrders(o); setShipments(s); setSettlements(t) })
             .catch(() => alert('운영 정보를 불러오지 못했어.'))
     }, [])
     const shipmentFor = (orderId) => shipments.find((s) => s.orderId === orderId)
@@ -25,19 +22,6 @@ function SellerOperationsPage() {
         const courierCode = prompt('택배사 코드를 입력해줘.', shipment.courierCode || 'CJ')
         const trackingNumber = courierCode && prompt('운송장 번호를 입력해줘.')
         if (trackingNumber) action(() => shipShipment(shipment.id, { courierCode, trackingNumber }))
-    }
-    const submitSettlement = async (e) => {
-        e.preventDefault()
-        const gross = Number(settlementForm.grossAmount)
-        const refund = Number(settlementForm.refundAmount)
-        const fee = Number(settlementForm.platformFeeAmount)
-        await action(() => createSettlement({
-            preorderId: Number(settlementForm.preorderId),
-            settlementNumber: `ST-${Date.now()}`,
-            status: 'PENDING', grossAmount: gross, refundAmount: refund,
-            platformFeeAmount: fee, netAmount: gross - refund - fee, currency: 'KRW',
-        }))
-        setSettlementForm({ preorderId:'', grossAmount:'', refundAmount:'0', platformFeeAmount:'0' })
     }
     return <main>
         <h1>주문 · 배송 · 정산 운영</h1>
@@ -53,15 +37,11 @@ function SellerOperationsPage() {
             </section>
         })}
         <h2>정산</h2>
-        <form className="form-grid" onSubmit={submitSettlement}>
-            <label>성공 프리오더<select required value={settlementForm.preorderId} onChange={(e) => setSettlementForm({...settlementForm, preorderId:e.target.value})}><option value="">선택</option>{preorders.filter((p) => p.status === 'SUCCESS' && !settlements.some((s) => s.preorderId === p.id)).map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label>
-            {['grossAmount','refundAmount','platformFeeAmount'].map((name) => <label key={name}>{({grossAmount:'총 결제액',refundAmount:'환불액',platformFeeAmount:'플랫폼 수수료'})[name]}<input type="number" min="0" required value={settlementForm[name]} onChange={(e) => setSettlementForm({...settlementForm,[name]:e.target.value})} /></label>)}
-            <button type="submit">정산 생성</button>
-        </form>
+        <p>구매 확정이 끝나면 관리자가 결제·환불 내역으로 정산액을 계산해.</p>
         {settlements.length === 0 ? <p>생성된 정산이 없어.</p> : settlements.map((s) => <section key={s.id}>
-            <b>{s.settlementNumber}</b> · {labels[s.status] || s.status}<p>순정산액 {Number(s.netAmount).toLocaleString()} {s.currency}</p>
-            {s.status === 'PENDING' && <><button onClick={() => action(() => confirmSettlement(s.id))}>정산 확정</button><button onClick={() => action(() => cancelSettlement(s.id))}>취소</button></>}
-            {s.status === 'CONFIRMED' && <button onClick={() => action(() => paySettlement(s.id))}>지급 완료</button>}<hr />
+            <b>{s.settlementNumber}</b> · {labels[s.status] || s.status}
+            <p>총매출 {Number(s.grossAmount).toLocaleString()} · 환불 {Number(s.refundAmount).toLocaleString()} · 수수료 {Number(s.platformFeeAmount).toLocaleString()}</p>
+            <p>순정산액 <b>{Number(s.netAmount).toLocaleString()} {s.currency}</b></p><hr />
         </section>)}
     </main>
 }

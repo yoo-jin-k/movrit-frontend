@@ -1,6 +1,7 @@
 import api from './axios'
 
 export const getOpenPreorders = async () => (await api.get('/preorders/open')).data
+export const browsePreorders = async (params = {}) => (await api.get('/preorders/browse', { params })).data
 export const createOrder = async (data) => (await api.post('/orders', data)).data
 export const getMyOrders = async () => (await api.get('/orders/mine')).data
 export const getSellerOrders = async () => (await api.get('/orders/seller')).data

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getVariants } from '../api/productApi'
-import { createOrder, getOpenPreorders } from '../api/commerceApi'
+import { browsePreorders, createOrder, getOpenPreorders } from '../api/commerceApi'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { trackReferral } from '../api/collaborationApi'
 
@@ -13,6 +13,7 @@ function PreorderShopPage() {
     const [preorders, setPreorders] = useState([])
     const [variants, setVariants] = useState({})
     const [forms, setForms] = useState({})
+    const [filters, setFilters] = useState({ keyword:'', category:'', status:'OPEN' })
 
     useEffect(() => {
         getOpenPreorders().then((list) => setPreorders(preorderId ? list.filter((p) => String(p.id) === preorderId) : list)).catch(() => alert('판매 중인 프리오더를 불러오지 못했어.'))
@@ -22,6 +23,11 @@ function PreorderShopPage() {
             trackReferral(referralCode, { visitorKey:key, userAgent:navigator.userAgent }).catch(() => {})
         }
     }, [preorderId, referralCode])
+
+    const search = async (e) => {
+        e.preventDefault()
+        setPreorders(await browsePreorders(Object.fromEntries(Object.entries(filters).filter(([,v]) => v))))
+    }
 
     const loadVariants = async (preorder) => {
         if (variants[preorder.id]) return
@@ -52,12 +58,17 @@ function PreorderShopPage() {
     }
 
     return <main>
-        <h1>진행 중인 프리오더</h1>
+        <h1>프리오더 탐색</h1>
+        {!preorderId && <form className="form-grid" onSubmit={search}>
+            <label>검색어<input value={filters.keyword} onChange={(e) => setFilters({...filters,keyword:e.target.value})} placeholder="상품명 또는 브랜드명" /></label>
+            <label>카테고리<input value={filters.category} onChange={(e) => setFilters({...filters,category:e.target.value})} /></label>
+            <label>상태<select value={filters.status} onChange={(e) => setFilters({...filters,status:e.target.value})}><option value="">전체 공개상태</option><option value="SCHEDULED">예정</option><option value="OPEN">진행 중</option><option value="SUCCESS">성공</option><option value="FAILED">실패</option><option value="PRODUCTION">생산</option><option value="SHIPPING">배송</option><option value="COMPLETED">완료</option></select></label><button>검색</button>
+        </form>}
         {preorders.length === 0 ? <p>현재 판매 중인 프리오더가 없어.</p> : preorders.map((item) => <section key={item.id}>
             <h2>{item.title}</h2>
             <p>{item.productName} · {Number(item.preorderPrice).toLocaleString()}원</p>
-            <p>주문 {item.orderedQuantity} / 목표 {item.targetQuantity}</p>
-            <button onClick={() => loadVariants(item)}>옵션 선택 및 주문</button>
+            <p>{item.brandName} · {item.category || '카테고리 없음'}</p><p>주문 {item.orderedQuantity} / 목표 {item.targetQuantity} · 달성률 {item.achievementRate.toFixed(1)}%</p>
+            {item.status === 'OPEN' && <button onClick={() => loadVariants(item)}>옵션 선택 및 주문</button>}
             {variants[item.id] && <div className="form-grid">
                 {variants[item.id].length === 0 ? <p>현재 주문 가능한 옵션이 없어.</p> : <>
                     <label>옵션<select value={forms[item.id]?.productVariantId} onChange={(e) => change(item.id, 'productVariantId', e.target.value)}>

@@ -9,6 +9,9 @@ import {
     getMyPreorders,
     openPreorder,
     schedulePreorder,
+    startProduction,
+    startShipping,
+    completePreorder,
 } from '../api/preorderApi'
 
 const initialForm = {
@@ -19,7 +22,7 @@ const initialForm = {
 
 const statusLabel = {
     DRAFT: '초안', SCHEDULED: '판매 예정', OPEN: '판매중', CLOSED: '판매 마감',
-    SUCCESS: '공구 성공', FAILED: '공구 실패', CANCELLED: '취소',
+    SUCCESS: '공구 성공', FAILED: '공구 실패', PRODUCTION: '생산 중', SHIPPING: '배송 중', COMPLETED: '완료', CANCELLED: '취소',
 }
 
 const toNullableNumber = (value) => value === '' ? null : Number(value)
@@ -187,6 +190,9 @@ function PreorderManagePage() {
             {(preorder.status === 'DRAFT' || preorder.status === 'SCHEDULED') && <button onClick={() => changeStatus(preorder.id, () => openPreorder(preorder.id))}>판매 시작</button>}
             {preorder.status === 'OPEN' && <button onClick={() => changeStatus(preorder.id, () => closePreorder(preorder.id))}>판매 마감</button>}
             {preorder.status === 'CLOSED' && <button onClick={() => changeStatus(preorder.id, () => finalizePreorder(preorder.id))}>성공/실패 확정</button>}
+            {preorder.status === 'SUCCESS' && <button onClick={() => changeStatus(preorder.id, () => startProduction(preorder.id))}>생산 시작</button>}
+            {preorder.status === 'PRODUCTION' && <button onClick={() => changeStatus(preorder.id, () => startShipping(preorder.id))}>배송 단계 시작</button>}
+            {preorder.status === 'SHIPPING' && <button onClick={() => changeStatus(preorder.id, () => completePreorder(preorder.id))}>프로젝트 완료</button>}
             {!['SUCCESS', 'FAILED', 'CANCELLED'].includes(preorder.status) && <button onClick={() => { const reason = prompt('프리오더 취소 사유를 입력해줘.'); if (reason?.trim()) changeStatus(preorder.id, () => cancelPreorder(preorder.id, reason.trim())) }}>취소</button>}
             {preorder.status === 'DRAFT' && <button onClick={() => remove(preorder.id)}>초안 삭제</button>}<hr />
         </section>)}

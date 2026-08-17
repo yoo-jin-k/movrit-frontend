@@ -15,6 +15,9 @@ export const openPreorder = async (id) => (await api.patch(`/preorders/${id}/ope
 export const closePreorder = async (id) => (await api.patch(`/preorders/${id}/close`)).data
 export const finalizePreorder = async (id) => (await api.patch(`/preorders/${id}/finalize`)).data
 export const cancelPreorder = async (id, reason) => (await api.patch(`/preorders/${id}/cancel`, { reason })).data
+export const startProduction = async (id) => (await api.patch(`/preorders/${id}/production`)).data
+export const startShipping = async (id) => (await api.patch(`/preorders/${id}/shipping`)).data
+export const completePreorder = async (id) => (await api.patch(`/preorders/${id}/complete`)).data
 
 // 아직 판매를 시작하지 않은 초안은 삭제할 수 있다.
 export const deletePreorder = async (id) => api.delete(`/preorders/${id}`)

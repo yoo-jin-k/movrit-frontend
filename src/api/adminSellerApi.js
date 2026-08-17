@@ -1,5 +1,10 @@
 import api from './axios'
 
+export const getAllSellers = async () => {
+    const response = await api.get('/admin/sellers')
+    return response.data
+}
+
 export const getPendingSellers = async () => {
     const response = await api.get('/admin/sellers/pending')
     return response.data

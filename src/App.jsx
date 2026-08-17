@@ -5,6 +5,7 @@ import {
 } from 'react-router-dom'
 import MyPage from './pages/MyPage'
 import OAuthCallbackPage from './pages/OAuthCallbackPage'
+import SocialLinkCallbackPage from './pages/SocialLinkCallbackPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import SellerApplyPage from './pages/SellerApplyPage'
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+          <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
 
           <Route
               path="/mypage"

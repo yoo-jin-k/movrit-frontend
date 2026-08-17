@@ -66,6 +66,9 @@ function MyPage() {
         <div>
             <h1>마이페이지</h1>
 
+            <button onClick={() => navigate('/preorders')}>프리오더 둘러보기</button>
+            <button onClick={() => navigate('/orders')}>내 주문 · 결제</button>
+
             <p>{myInfo.name}님</p>
             <p>회원 ID: {myInfo.id}</p>
             <p>이메일: {myInfo.email || '등록된 이메일 없음'}</p>
@@ -103,6 +106,7 @@ function MyPage() {
                     <button onClick={() => navigate('/seller/brands')}>내 브랜드 관리</button>
                     <button onClick={() => navigate('/seller/products')}>상품 · 재고 관리</button>
                     <button onClick={() => navigate('/seller/preorders')}>프리오더 관리</button>
+                    <button onClick={() => navigate('/seller/operations')}>주문 · 배송 · 정산</button>
                 </>
             )}
 

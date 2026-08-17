@@ -7,6 +7,9 @@ export const getVariants = async (productId) => (await api.get(`/products/${prod
 export const createVariant = async (productId, data) => (await api.post(`/products/${productId}/variants`, data)).data
 export const restockVariant = async (variantId, quantity) => (await api.patch(`/products/variants/${variantId}/restock`, { quantity })).data
 export const updateSafetyStock = async (variantId, quantity) => (await api.patch(`/products/variants/${variantId}/safety-stock`, { quantity })).data
+export const updateVariant = async (variantId, data) => (await api.put(`/products/variants/${variantId}`, data)).data
+export const deactivateVariant = async (variantId) => (await api.delete(`/products/variants/${variantId}`)).data
+export const deleteProduct = async (productId) => api.delete(`/products/${productId}`)
 
 export const uploadProductThumbnail = async (productId, file) => {
     const formData = new FormData()

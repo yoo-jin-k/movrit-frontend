@@ -33,3 +33,5 @@ export const changeBrandStatus = async (brandId, status) => {
     const response = await api.patch(`/brands/${brandId}/status`, null, { params: { status } })
     return response.data
 }
+
+export const deleteBrand = async (brandId) => api.delete(`/brands/${brandId}`)

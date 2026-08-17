@@ -15,6 +15,9 @@ import BrandManagePage from './pages/BrandManagePage'
 import ProductManagePage from './pages/ProductManagePage'
 import PreorderManagePage from './pages/PreorderManagePage'
 import ProtectedRoute from './components/ProtectedRoute'
+import PreorderShopPage from './pages/PreorderShopPage'
+import MyOrdersPage from './pages/MyOrdersPage'
+import SellerOperationsPage from './pages/SellerOperationsPage'
 
 function RootRedirect() {
   const token = sessionStorage.getItem('accessToken')
@@ -36,12 +39,15 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
           <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
+          <Route path="/preorders" element={<PreorderShopPage />} />
 
           <Route path="/mypage" element={<ProtectedPage><MyPage /></ProtectedPage>} />
+          <Route path="/orders" element={<ProtectedPage><MyOrdersPage /></ProtectedPage>} />
           <Route path="/seller/apply" element={<ProtectedPage><SellerApplyPage /></ProtectedPage>} />
           <Route path="/seller/brands" element={<ProtectedPage><BrandManagePage /></ProtectedPage>} />
           <Route path="/seller/products" element={<ProtectedPage><ProductManagePage /></ProtectedPage>} />
           <Route path="/seller/preorders" element={<ProtectedPage><PreorderManagePage /></ProtectedPage>} />
+          <Route path="/seller/operations" element={<ProtectedPage><SellerOperationsPage /></ProtectedPage>} />
           <Route path="/admin/sellers" element={<ProtectedPage><AdminSellerPage /></ProtectedPage>} />
         </Routes>
       </BrowserRouter>

@@ -51,7 +51,6 @@ function ProductManagePage() {
 
             const activeBrands = brandList.filter((brand) => brand.status === 'ACTIVE')
 
-            // 활성 브랜드가 하나 이상이면 최초 진입 시 첫 브랜드를 기본 선택한다.
             setProductForm((current) => {
                 const selectedBrandExists = activeBrands.some(
                     (brand) => String(brand.id) === String(current.brandId)
@@ -82,7 +81,6 @@ function ProductManagePage() {
             setVariants(Object.fromEntries(pairs))
         } catch (error) {
             console.error(error)
-            // 상품이 아직 없거나 상품 쪽 조회에 문제가 생겨도 브랜드 등록 폼은 계속 사용할 수 있게 한다.
             setProducts([])
             setVariants({})
         }
@@ -101,12 +99,11 @@ function ProductManagePage() {
     const activeBrands = brands.filter((brand) => brand.status === 'ACTIVE')
 
     /**
-     * 입고/안전재고 변경 API가 반환한 최신 SKU 값을 현재 화면 상태에 바로 반영한다.
-     * 매번 전체 상품 목록을 다시 조회하지 않아도 숫자가 즉시 바뀌어 보이게 하기 위한 처리다.
+     * 재고 변경 API의 응답에는 productId가 포함되어 있지 않다.
+     * 따라서 현재 렌더링 중인 상품 id를 함께 넘겨 해당 상품의 SKU 목록만 교체한다.
      */
-    const replaceVariant = (updatedVariant) => {
+    const replaceVariant = (productId, updatedVariant) => {
         setVariants((current) => {
-            const productId = updatedVariant.productId
             const currentVariants = current[productId] || []
 
             return {
@@ -133,7 +130,6 @@ function ProductManagePage() {
                 normalPrice: Number(productForm.normalPrice),
             })
 
-            // 상품 등록 후에도 같은 브랜드가 기본 선택되도록 유지한다.
             const selectedBrandId = productForm.brandId
             setProductForm({ ...emptyProduct, brandId: selectedBrandId })
             await loadProducts()
@@ -342,7 +338,7 @@ function ProductManagePage() {
 
                                     try {
                                         const updatedVariant = await restockVariant(variant.id, Number(value))
-                                        replaceVariant(updatedVariant)
+                                        replaceVariant(product.id, updatedVariant)
                                     } catch (error) {
                                         console.error(error)
                                         alert(error.response?.data?.message || '입고 처리에 실패했어.')
@@ -360,7 +356,7 @@ function ProductManagePage() {
 
                                     try {
                                         const updatedVariant = await updateSafetyStock(variant.id, Number(value))
-                                        replaceVariant(updatedVariant)
+                                        replaceVariant(product.id, updatedVariant)
                                     } catch (error) {
                                         console.error(error)
                                         alert(error.response?.data?.message || '안전재고 변경에 실패했어.')

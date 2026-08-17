@@ -101,7 +101,11 @@ function ProductManagePage() {
     }
 
     useEffect(() => {
+        // 최초 진입 시 브랜드와 상품을 한 번에 불러온다.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         load()
+        // load는 화면 내 갱신에도 쓰이므로 최초 마운트에서만 실행한다.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const activeBrands = brands.filter((brand) => brand.status === 'ACTIVE')

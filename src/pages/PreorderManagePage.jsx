@@ -61,10 +61,15 @@ function PreorderManagePage() {
         }
     }
 
-    useEffect(() => { load() }, [])
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        load()
+    }, [])
 
     useEffect(() => {
         if (!form.productId) {
+            // 상품 선택을 지우면 이전 상품의 SKU가 남지 않게 즉시 초기화한다.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setProductVariants([])
             return
         }

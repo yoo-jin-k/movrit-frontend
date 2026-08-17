@@ -15,7 +15,11 @@ export default function AdminDashboardPage() {
         const [dashboard, memberList, settlementList] = await Promise.all([getAdminDashboard(), getMembers(), getAdminSettlements()])
         setData(dashboard); setMembers(memberList); setSettlements(settlementList)
     }
-    useEffect(() => { load().catch(() => alert('관리자 정보를 불러오지 못했어.')) }, [])
+    useEffect(() => {
+        Promise.all([getAdminDashboard(), getMembers(), getAdminSettlements()])
+            .then(([dashboard, memberList, settlementList]) => { setData(dashboard); setMembers(memberList); setSettlements(settlementList) })
+            .catch(() => alert('관리자 정보를 불러오지 못했어.'))
+    }, [])
     const run = async (job) => { try { await job(); await load() } catch (e) { alert(e.response?.data?.message || '처리에 실패했어.') } }
     if (!data) return <p>불러오는 중...</p>
 

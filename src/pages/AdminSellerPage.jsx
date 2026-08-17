@@ -25,6 +25,8 @@ function AdminSellerPage() {
     }
 
     useEffect(() => {
+        // 첫 화면에서만 서버 목록을 불러온다. 이후 재조회는 승인·반려 처리 함수가 담당한다.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         loadSellers()
     }, [])
 

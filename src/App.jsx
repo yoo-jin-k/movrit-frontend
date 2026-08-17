@@ -43,6 +43,7 @@ function App() {
           <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
           <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
           <Route path="/preorders" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
+          <Route path="/preorders/:preorderId" element={<PreorderShopPage />} />
 
           <Route path="/mypage" element={<ProtectedPage><MyPage /></ProtectedPage>} />
           <Route path="/orders" element={<ProtectedPage><MyOrdersPage /></ProtectedPage>} />

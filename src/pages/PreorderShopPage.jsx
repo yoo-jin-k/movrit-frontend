@@ -1,15 +1,27 @@
 import { useEffect, useState } from 'react'
 import { getVariants } from '../api/productApi'
 import { createOrder, getOpenPreorders } from '../api/commerceApi'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { trackReferral } from '../api/collaborationApi'
 
 const emptyAddress = { receiverName: '', receiverPhone: '', postalCode: '', address1: '', address2: '' }
 
 function PreorderShopPage() {
+    const { preorderId } = useParams()
+    const [searchParams] = useSearchParams()
+    const referralCode = searchParams.get('ref')
     const [preorders, setPreorders] = useState([])
     const [variants, setVariants] = useState({})
     const [forms, setForms] = useState({})
 
-    useEffect(() => { getOpenPreorders().then(setPreorders).catch(() => alert('판매 중인 프리오더를 불러오지 못했어.')) }, [])
+    useEffect(() => {
+        getOpenPreorders().then((list) => setPreorders(preorderId ? list.filter((p) => String(p.id) === preorderId) : list)).catch(() => alert('판매 중인 프리오더를 불러오지 못했어.'))
+        if (referralCode) {
+            const key = sessionStorage.getItem('movritVisitorKey') || crypto.randomUUID()
+            sessionStorage.setItem('movritVisitorKey', key)
+            trackReferral(referralCode, { visitorKey:key, userAgent:navigator.userAgent }).catch(() => {})
+        }
+    }, [preorderId, referralCode])
 
     const loadVariants = async (preorder) => {
         if (variants[preorder.id]) return
@@ -32,6 +44,7 @@ function PreorderShopPage() {
                 quantity: Number(form.quantity),
                 requestKey: crypto.randomUUID(),
                 acquisitionSource: 'WEB',
+                referralCode,
             })
             alert(`주문 ${created.orderNumber}이 생성됐어. 내 주문에서 결제를 진행해줘.`)
         } catch (error) { alert(error.response?.data?.message || '주문 생성에 실패했어.') }

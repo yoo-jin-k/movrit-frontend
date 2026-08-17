@@ -50,6 +50,7 @@ function LoginPage() {
                 'accessToken',
                 result.accessToken
             )
+            localStorage.setItem('refreshToken', result.refreshToken)
 
             alert(`${result.name}님 로그인 성공!`)
 

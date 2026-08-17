@@ -4,6 +4,7 @@ import {
     getKakaoLinkUrl,
     getMyInfo,
     getSocialAccounts,
+    logout,
 } from '../api/authApi'
 import { getMySellerProfile } from '../api/sellerApi'
 import { useNavigate } from 'react-router-dom'
@@ -41,8 +42,10 @@ function MyPage() {
         loadMyPage()
     }, [navigate])
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try { await logout() } catch (error) { console.error(error) }
         sessionStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
         navigate('/login')
     }
 

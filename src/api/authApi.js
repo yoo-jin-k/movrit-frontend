@@ -4,6 +4,10 @@ export const login = async (data) => {
     const response = await api.post('/auth/login', data)
     return response.data
 }
+export const logout = async () => {
+    const refreshToken = localStorage.getItem('refreshToken')
+    if (refreshToken) await api.post('/auth/logout', { refreshToken })
+}
 
 export const getMyInfo = async () => {
     const response = await api.get('/auth/me')

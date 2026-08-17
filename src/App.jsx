@@ -8,6 +8,7 @@ import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import SellerApplyPage from './pages/SellerApplyPage'
+import AdminSellerPage from './pages/AdminSellerPage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -33,6 +34,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SellerApplyPage />
+                </ProtectedRoute>
+              }
+          />
+
+          <Route
+              path="/admin/sellers"
+              element={
+                <ProtectedRoute>
+                  <AdminSellerPage />
                 </ProtectedRoute>
               }
           />

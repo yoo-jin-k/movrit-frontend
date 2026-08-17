@@ -18,6 +18,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import PreorderShopPage from './pages/PreorderShopPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import SellerOperationsPage from './pages/SellerOperationsPage'
+import CreatorPage from './pages/CreatorPage'
+import CreatorCollaborationPage from './pages/CreatorCollaborationPage'
+import SellerCollaborationPage from './pages/SellerCollaborationPage'
 
 function RootRedirect() {
   const token = sessionStorage.getItem('accessToken')
@@ -43,11 +46,14 @@ function App() {
 
           <Route path="/mypage" element={<ProtectedPage><MyPage /></ProtectedPage>} />
           <Route path="/orders" element={<ProtectedPage><MyOrdersPage /></ProtectedPage>} />
+          <Route path="/creator/profile" element={<ProtectedPage><CreatorPage /></ProtectedPage>} />
+          <Route path="/creator/collaborations" element={<ProtectedPage><CreatorCollaborationPage /></ProtectedPage>} />
           <Route path="/seller/apply" element={<ProtectedPage><SellerApplyPage /></ProtectedPage>} />
           <Route path="/seller/brands" element={<ProtectedPage><BrandManagePage /></ProtectedPage>} />
           <Route path="/seller/products" element={<ProtectedPage><ProductManagePage /></ProtectedPage>} />
           <Route path="/seller/preorders" element={<ProtectedPage><PreorderManagePage /></ProtectedPage>} />
           <Route path="/seller/operations" element={<ProtectedPage><SellerOperationsPage /></ProtectedPage>} />
+          <Route path="/seller/collaborations" element={<ProtectedPage><SellerCollaborationPage /></ProtectedPage>} />
           <Route path="/admin/sellers" element={<ProtectedPage><AdminSellerPage /></ProtectedPage>} />
         </Routes>
       </BrowserRouter>

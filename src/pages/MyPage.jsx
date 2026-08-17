@@ -68,6 +68,8 @@ function MyPage() {
 
             <button onClick={() => navigate('/preorders')}>프리오더 둘러보기</button>
             <button onClick={() => navigate('/orders')}>내 주문 · 결제</button>
+            <button onClick={() => navigate('/creator/profile')}>인플루언서 프로필</button>
+            <button onClick={() => navigate('/creator/collaborations')}>인플루언서 협업</button>
 
             <p>{myInfo.name}님</p>
             <p>회원 ID: {myInfo.id}</p>
@@ -107,6 +109,7 @@ function MyPage() {
                     <button onClick={() => navigate('/seller/products')}>상품 · 재고 관리</button>
                     <button onClick={() => navigate('/seller/preorders')}>프리오더 관리</button>
                     <button onClick={() => navigate('/seller/operations')}>주문 · 배송 · 정산</button>
+                    <button onClick={() => navigate('/seller/collaborations')}>인플루언서 협업 관리</button>
                 </>
             )}
 

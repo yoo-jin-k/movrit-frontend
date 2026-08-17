@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getMyProducts } from '../api/productApi'
 import {
     cancelPreorder,
     closePreorder,
     createPreorder,
+    deletePreorder,
     finalizePreorder,
     getMyPreorders,
     openPreorder,
@@ -11,168 +12,191 @@ import {
 } from '../api/preorderApi'
 
 const initialForm = {
-    productId: '',
-    title: '',
-    description: '',
-    preorderPrice: '',
-    currency: 'KRW',
-    targetQuantity: '1',
-    maxQuantity: '',
-    minOrderQuantity: '1',
-    maxOrderQuantityPerMember: '',
-    startAt: '',
-    endAt: '',
-    productionExpectedAt: '',
-    shippingExpectedAt: '',
+    productId: '', title: '', description: '', preorderPrice: '', currency: 'KRW',
+    targetQuantity: '1', maxQuantity: '', minOrderQuantity: '1', maxOrderQuantityPerMember: '',
+    startAt: '', endAt: '', productionExpectedAt: '', shippingExpectedAt: '',
+}
+
+const statusLabel = {
+    DRAFT: '초안', SCHEDULED: '판매 예정', OPEN: '판매중', CLOSED: '판매 마감',
+    SUCCESS: '공구 성공', FAILED: '공구 실패', CANCELLED: '취소',
 }
 
 const toNullableNumber = (value) => value === '' ? null : Number(value)
 const toNullableDate = (value) => value === '' ? null : value
+const formatDate = (value) => value ? new Date(value).toLocaleString('ko-KR') : '-'
 
 function PreorderManagePage() {
     const [products, setProducts] = useState([])
     const [preorders, setPreorders] = useState([])
     const [form, setForm] = useState(initialForm)
+    const [showForm, setShowForm] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [submitting, setSubmitting] = useState(false)
 
+    // 상품 조회가 실패하더라도 기존 프리오더 목록은 볼 수 있도록 각각 따로 조회한다.
     const load = async () => {
+        setLoading(true)
         try {
-            const [productList, preorderList] = await Promise.all([getMyProducts(), getMyPreorders()])
+            const productList = await getMyProducts()
             setProducts(productList)
-            setPreorders(preorderList)
+            setForm((current) => current.productId || productList.length === 0
+                ? current
+                : { ...current, productId: String(productList[0].id) })
         } catch (error) {
-            console.error(error)
-            alert('프리오더 정보를 불러오지 못했어.')
+            console.error('상품 조회 실패', error)
+            setProducts([])
+        }
+
+        try {
+            setPreorders(await getMyPreorders())
+        } catch (error) {
+            console.error('프리오더 조회 실패', error)
+            alert('프리오더 목록을 불러오지 못했어.')
+        } finally {
+            setLoading(false)
         }
     }
 
-    useEffect(() => {
-        load()
-    }, [])
+    useEffect(() => { load() }, [])
+
+    const selectedProduct = useMemo(
+        () => products.find((product) => String(product.id) === String(form.productId)),
+        [products, form.productId],
+    )
+
+    const change = (name, value) => setForm((current) => ({ ...current, [name]: value }))
 
     const submit = async (e) => {
         e.preventDefault()
+        if (new Date(form.startAt) >= new Date(form.endAt)) {
+            alert('판매 종료일시는 시작일시보다 뒤여야 해.')
+            return
+        }
+        if (form.maxQuantity && Number(form.maxQuantity) < Number(form.targetQuantity)) {
+            alert('최대 판매 수량은 목표 수량보다 작을 수 없어.')
+            return
+        }
+
+        setSubmitting(true)
         try {
-            await createPreorder({
-                productId: Number(form.productId),
-                title: form.title,
-                description: form.description,
-                preorderPrice: Number(form.preorderPrice),
-                currency: form.currency,
-                targetQuantity: Number(form.targetQuantity),
-                maxQuantity: toNullableNumber(form.maxQuantity),
+            const created = await createPreorder({
+                productId: Number(form.productId), title: form.title.trim(), description: form.description,
+                preorderPrice: Number(form.preorderPrice), currency: form.currency,
+                targetQuantity: Number(form.targetQuantity), maxQuantity: toNullableNumber(form.maxQuantity),
                 minOrderQuantity: Number(form.minOrderQuantity),
                 maxOrderQuantityPerMember: toNullableNumber(form.maxOrderQuantityPerMember),
-                startAt: form.startAt,
-                endAt: form.endAt,
+                startAt: form.startAt, endAt: form.endAt,
                 productionExpectedAt: toNullableDate(form.productionExpectedAt),
                 shippingExpectedAt: toNullableDate(form.shippingExpectedAt),
             })
-            setForm(initialForm)
-            await load()
+            // 생성 응답을 바로 목록에 넣어서 새로고침 없이 화면에 반영한다.
+            setPreorders((current) => [created, ...current])
+            setForm({ ...initialForm, productId: products.length ? String(products[0].id) : '' })
+            setShowForm(false)
         } catch (error) {
             console.error(error)
             alert(error.response?.data?.message || '프리오더 생성에 실패했어.')
+        } finally {
+            setSubmitting(false)
         }
     }
 
-    const run = async (action) => {
+    // 상태 변경 응답으로 해당 항목만 교체한다. 전체 화면을 다시 불러오지 않아도 된다.
+    const changeStatus = async (id, action) => {
         try {
-            await action()
-            await load()
+            const changed = await action()
+            setPreorders((current) => current.map((item) => item.id === id ? changed : item))
         } catch (error) {
             console.error(error)
             alert(error.response?.data?.message || '프리오더 상태 변경에 실패했어.')
         }
     }
 
+    const remove = async (id) => {
+        if (!window.confirm('이 프리오더 초안을 삭제할까?')) return
+        try {
+            await deletePreorder(id)
+            setPreorders((current) => current.filter((item) => item.id !== id))
+        } catch (error) {
+            console.error(error)
+            alert(error.response?.data?.message || '프리오더 삭제에 실패했어.')
+        }
+    }
+
     return (
-        <div>
-            <h1>프리오더 관리</h1>
-            <p>프리오더는 초안 → 예약 → 판매중 → 마감 → 성공/실패 순서로 상태가 바뀌어.</p>
+        <main>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                <div>
+                    <h1>프리오더 · 공동구매 관리</h1>
+                    <p>상품의 판매 기간과 목표 수량을 설정하고 공동구매 진행 상태를 관리해.</p>
+                </div>
+                <button onClick={() => setShowForm((value) => !value)} disabled={products.length === 0}>
+                    {showForm ? '등록 취소' : '+ 프리오더 등록'}
+                </button>
+            </div>
 
-            <form onSubmit={submit}>
-                <select value={form.productId} onChange={(e) => setForm({ ...form, productId: e.target.value })} required>
-                    <option value="">상품 선택</option>
-                    {products.map((product) => (
-                        <option key={product.id} value={product.id}>{product.brandName} / {product.name}</option>
-                    ))}
-                </select>
-                <input placeholder="프리오더 제목" value={form.title}
-                       onChange={(e) => setForm({ ...form, title: e.target.value })} required />
-                <textarea placeholder="프리오더 설명" value={form.description}
-                          onChange={(e) => setForm({ ...form, description: e.target.value })} />
-                <input type="number" min="0" placeholder="프리오더 판매가" value={form.preorderPrice}
-                       onChange={(e) => setForm({ ...form, preorderPrice: e.target.value })} required />
-                <input placeholder="통화 (KRW)" value={form.currency}
-                       onChange={(e) => setForm({ ...form, currency: e.target.value.toUpperCase() })} maxLength={3} required />
-                <input type="number" min="1" placeholder="목표 수량" value={form.targetQuantity}
-                       onChange={(e) => setForm({ ...form, targetQuantity: e.target.value })} required />
-                <input type="number" min="1" placeholder="전체 최대 판매 수량 (선택)" value={form.maxQuantity}
-                       onChange={(e) => setForm({ ...form, maxQuantity: e.target.value })} />
-                <input type="number" min="1" placeholder="1회 최소 주문 수량" value={form.minOrderQuantity}
-                       onChange={(e) => setForm({ ...form, minOrderQuantity: e.target.value })} required />
-                <input type="number" min="1" placeholder="회원별 최대 주문 수량 (선택)" value={form.maxOrderQuantityPerMember}
-                       onChange={(e) => setForm({ ...form, maxOrderQuantityPerMember: e.target.value })} />
+            {products.length === 0 && !loading && (
+                <p>등록된 상품이 없어. 먼저 상품 · 재고 관리에서 판매할 상품을 등록해줘.</p>
+            )}
 
-                <div>
-                    <label>판매 시작일시</label>
-                    <input type="datetime-local" value={form.startAt}
-                           onChange={(e) => setForm({ ...form, startAt: e.target.value })} required />
-                </div>
-                <div>
-                    <label>판매 종료일시</label>
-                    <input type="datetime-local" value={form.endAt}
-                           onChange={(e) => setForm({ ...form, endAt: e.target.value })} required />
-                </div>
-                <div>
-                    <label>생산 예정일시</label>
-                    <input type="datetime-local" value={form.productionExpectedAt}
-                           onChange={(e) => setForm({ ...form, productionExpectedAt: e.target.value })} />
-                </div>
-                <div>
-                    <label>배송 예정일시</label>
-                    <input type="datetime-local" value={form.shippingExpectedAt}
-                           onChange={(e) => setForm({ ...form, shippingExpectedAt: e.target.value })} />
-                </div>
-                <button type="submit">프리오더 초안 생성</button>
-            </form>
+            {showForm && (
+                <form onSubmit={submit} style={{ display: 'grid', gap: 10, margin: '24px 0' }}>
+                    <h2>프리오더 기본 정보</h2>
+                    <label>판매 상품
+                        <select value={form.productId} onChange={(e) => change('productId', e.target.value)} required>
+                            <option value="">상품 선택</option>
+                            {products.map((product) => <option key={product.id} value={product.id}>{product.brandName} / {product.name}</option>)}
+                        </select>
+                    </label>
+                    {selectedProduct && <small>선택 상품 정상가: {Number(selectedProduct.regularPrice || 0).toLocaleString()}원</small>}
+                    <label>공동구매 제목<input value={form.title} onChange={(e) => change('title', e.target.value)} required /></label>
+                    <label>공동구매 설명<textarea value={form.description} onChange={(e) => change('description', e.target.value)} /></label>
+                    <label>공동구매 판매가<input type="number" min="0" value={form.preorderPrice} onChange={(e) => change('preorderPrice', e.target.value)} required /></label>
+
+                    <h2>수량 정책</h2>
+                    <label>목표 수량<input type="number" min="1" value={form.targetQuantity} onChange={(e) => change('targetQuantity', e.target.value)} required /></label>
+                    <label>최대 판매 수량 (선택)<input type="number" min="1" value={form.maxQuantity} onChange={(e) => change('maxQuantity', e.target.value)} /></label>
+                    <label>1회 최소 주문 수량<input type="number" min="1" value={form.minOrderQuantity} onChange={(e) => change('minOrderQuantity', e.target.value)} required /></label>
+                    <label>회원별 최대 주문 수량 (선택)<input type="number" min="1" value={form.maxOrderQuantityPerMember} onChange={(e) => change('maxOrderQuantityPerMember', e.target.value)} /></label>
+
+                    <h2>일정</h2>
+                    <label>판매 시작일시<input type="datetime-local" value={form.startAt} onChange={(e) => change('startAt', e.target.value)} required /></label>
+                    <label>판매 종료일시<input type="datetime-local" value={form.endAt} onChange={(e) => change('endAt', e.target.value)} required /></label>
+                    <label>생산 예정일시 (선택)<input type="datetime-local" value={form.productionExpectedAt} onChange={(e) => change('productionExpectedAt', e.target.value)} /></label>
+                    <label>배송 예정일시 (선택)<input type="datetime-local" value={form.shippingExpectedAt} onChange={(e) => change('shippingExpectedAt', e.target.value)} /></label>
+                    <button type="submit" disabled={submitting}>{submitting ? '등록 중...' : '프리오더 초안 등록'}</button>
+                </form>
+            )}
 
             <hr />
-
-            {preorders.length === 0 ? <p>등록된 프리오더가 없어.</p> : preorders.map((preorder) => (
-                <section key={preorder.id}>
-                    <h2>{preorder.title}</h2>
+            <h2>등록된 프리오더</h2>
+            {loading ? <p>불러오는 중...</p> : preorders.length === 0 ? <p>등록된 프리오더가 없어.</p> : preorders.map((preorder) => (
+                <section key={preorder.id} style={{ marginBottom: 24 }}>
+                    <h3>{preorder.title}</h3>
                     <p>상품: {preorder.productName}</p>
-                    <p>상태: <b>{preorder.status}</b></p>
+                    <p>상태: <b>{statusLabel[preorder.status] || preorder.status}</b></p>
                     <p>판매가: {Number(preorder.preorderPrice).toLocaleString()} {preorder.currency}</p>
-                    <p>주문수량: {preorder.orderedQuantity} / 목표 {preorder.targetQuantity}
-                        {preorder.maxQuantity ? ` / 최대 ${preorder.maxQuantity}` : ''}</p>
-                    <p>회원별 최대 주문: {preorder.maxOrderQuantityPerMember || '제한 없음'}</p>
-                    <p>판매 기간: {preorder.startAt} ~ {preorder.endAt}</p>
+                    <p>주문수량: {preorder.orderedQuantity} / 목표 {preorder.targetQuantity}{preorder.maxQuantity ? ` / 최대 ${preorder.maxQuantity}` : ''}</p>
+                    <p>주문 제한: 최소 {preorder.minOrderQuantity}개 / 회원별 최대 {preorder.maxOrderQuantityPerMember || '제한 없음'}</p>
+                    <p>판매 기간: {formatDate(preorder.startAt)} ~ {formatDate(preorder.endAt)}</p>
+                    <p>생산 예정: {formatDate(preorder.productionExpectedAt)} / 배송 예정: {formatDate(preorder.shippingExpectedAt)}</p>
+                    {preorder.description && <p>{preorder.description}</p>}
                     {preorder.cancellationReason && <p>취소 사유: {preorder.cancellationReason}</p>}
 
-                    {preorder.status === 'DRAFT' && (
-                        <button onClick={() => run(() => schedulePreorder(preorder.id))}>판매 예약</button>
-                    )}
-                    {(preorder.status === 'DRAFT' || preorder.status === 'SCHEDULED') && (
-                        <button onClick={() => run(() => openPreorder(preorder.id))}>판매 시작</button>
-                    )}
-                    {preorder.status === 'OPEN' && (
-                        <button onClick={() => run(() => closePreorder(preorder.id))}>판매 마감</button>
-                    )}
-                    {preorder.status === 'CLOSED' && (
-                        <button onClick={() => run(() => finalizePreorder(preorder.id))}>성공/실패 확정</button>
-                    )}
-                    {!['SUCCESS', 'FAILED', 'CANCELLED'].includes(preorder.status) && (
-                        <button onClick={() => {
-                            const reason = prompt('프리오더 취소 사유를 입력해줘.')
-                            if (reason) run(() => cancelPreorder(preorder.id, reason))
-                        }}>취소</button>
-                    )}
+                    {preorder.status === 'DRAFT' && <button onClick={() => changeStatus(preorder.id, () => schedulePreorder(preorder.id))}>판매 예약</button>}
+                    {(preorder.status === 'DRAFT' || preorder.status === 'SCHEDULED') && <button onClick={() => changeStatus(preorder.id, () => openPreorder(preorder.id))}>판매 시작</button>}
+                    {preorder.status === 'OPEN' && <button onClick={() => changeStatus(preorder.id, () => closePreorder(preorder.id))}>판매 마감</button>}
+                    {preorder.status === 'CLOSED' && <button onClick={() => changeStatus(preorder.id, () => finalizePreorder(preorder.id))}>성공/실패 확정</button>}
+                    {!['SUCCESS', 'FAILED', 'CANCELLED'].includes(preorder.status) && <button onClick={() => {
+                        const reason = prompt('프리오더 취소 사유를 입력해줘.')
+                        if (reason?.trim()) changeStatus(preorder.id, () => cancelPreorder(preorder.id, reason.trim()))
+                    }}>취소</button>}
+                    {preorder.status === 'DRAFT' && <button onClick={() => remove(preorder.id)}>초안 삭제</button>}
                     <hr />
                 </section>
             ))}
-        </div>
+        </main>
     )
 }
 

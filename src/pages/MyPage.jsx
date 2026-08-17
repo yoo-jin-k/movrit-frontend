@@ -108,6 +108,7 @@ function MyPage() {
             {seller?.status === 'APPROVED' && (
                 <>
                     <p>판매자 승인 완료</p>
+                    <button onClick={() => navigate('/seller/dashboard')}>판매 현황 대시보드</button>
                     <button onClick={() => navigate('/seller/brands')}>내 브랜드 관리</button>
                     <button onClick={() => navigate('/seller/products')}>상품 · 재고 관리</button>
                     <button onClick={() => navigate('/seller/preorders')}>프리오더 관리</button>

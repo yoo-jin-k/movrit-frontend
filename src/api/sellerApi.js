@@ -12,3 +12,5 @@ export const getMySellerProfile = async () => {
     const response = await api.get('/sellers/me')
     return response.data
 }
+
+export const getSellerDashboard = async () => (await api.get('/sellers/dashboard')).data

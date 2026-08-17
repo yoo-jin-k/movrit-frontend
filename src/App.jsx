@@ -22,6 +22,7 @@ import CreatorPage from './pages/CreatorPage'
 import CreatorCollaborationPage from './pages/CreatorCollaborationPage'
 import SellerCollaborationPage from './pages/SellerCollaborationPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
+import SellerDashboardPage from './pages/SellerDashboardPage'
 
 function RootRedirect() {
   const token = sessionStorage.getItem('accessToken')
@@ -51,6 +52,7 @@ function App() {
           <Route path="/creator/profile" element={<ProtectedPage><CreatorPage /></ProtectedPage>} />
           <Route path="/creator/collaborations" element={<ProtectedPage><CreatorCollaborationPage /></ProtectedPage>} />
           <Route path="/seller/apply" element={<ProtectedPage><SellerApplyPage /></ProtectedPage>} />
+          <Route path="/seller/dashboard" element={<ProtectedPage><SellerDashboardPage /></ProtectedPage>} />
           <Route path="/seller/brands" element={<ProtectedPage><BrandManagePage /></ProtectedPage>} />
           <Route path="/seller/products" element={<ProtectedPage><ProductManagePage /></ProtectedPage>} />
           <Route path="/seller/preorders" element={<ProtectedPage><PreorderManagePage /></ProtectedPage>} />

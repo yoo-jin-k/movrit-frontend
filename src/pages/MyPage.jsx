@@ -5,12 +5,14 @@ import {
     getMyInfo,
     getSocialAccounts,
 } from '../api/authApi'
+import { getMySellerProfile } from '../api/sellerApi'
 import { useNavigate } from 'react-router-dom'
 
 function MyPage() {
     const navigate = useNavigate()
     const [myInfo, setMyInfo] = useState(null)
     const [socialAccounts, setSocialAccounts] = useState([])
+    const [seller, setSeller] = useState(null)
 
     useEffect(() => {
         const loadMyPage = async () => {
@@ -22,6 +24,12 @@ function MyPage() {
 
                 setMyInfo(member)
                 setSocialAccounts(accounts)
+
+                try {
+                    setSeller(await getMySellerProfile())
+                } catch (error) {
+                    if (error.response?.status !== 404) throw error
+                }
             } catch (error) {
                 console.error(error)
                 sessionStorage.removeItem('accessToken')
@@ -38,16 +46,13 @@ function MyPage() {
         navigate('/login')
     }
 
-    const isConnected = (provider) => {
-        return socialAccounts.some((account) => account.provider === provider)
-    }
+    const isConnected = (provider) => socialAccounts.some((account) => account.provider === provider)
 
     const handleSocialLink = async (provider) => {
         try {
             const url = provider === 'KAKAO'
                 ? await getKakaoLinkUrl()
                 : await getGoogleLinkUrl()
-
             window.location.href = url
         } catch (error) {
             console.error(error)
@@ -55,9 +60,7 @@ function MyPage() {
         }
     }
 
-    if (!myInfo) {
-        return <p>회원 정보를 불러오는 중...</p>
-    }
+    if (!myInfo) return <p>회원 정보를 불러오는 중...</p>
 
     return (
         <div>
@@ -71,33 +74,37 @@ function MyPage() {
             <hr />
 
             <h2>소셜 계정 연결</h2>
-            <p>
-                연결해두면 같은 MOVRIT 회원 계정으로 카카오와 구글 로그인을 모두 사용할 수 있어.
-            </p>
+            <p>연결해두면 같은 MOVRIT 회원 계정으로 카카오와 구글 로그인을 모두 사용할 수 있어.</p>
 
             <div>
                 <span>카카오: {isConnected('KAKAO') ? '연결됨' : '연결 안 됨'}</span>
                 {!isConnected('KAKAO') && (
-                    <button onClick={() => handleSocialLink('KAKAO')}>
-                        카카오 계정 연결
-                    </button>
+                    <button onClick={() => handleSocialLink('KAKAO')}>카카오 계정 연결</button>
                 )}
             </div>
 
             <div>
                 <span>구글: {isConnected('GOOGLE') ? '연결됨' : '연결 안 됨'}</span>
                 {!isConnected('GOOGLE') && (
-                    <button onClick={() => handleSocialLink('GOOGLE')}>
-                        구글 계정 연결
-                    </button>
+                    <button onClick={() => handleSocialLink('GOOGLE')}>구글 계정 연결</button>
                 )}
             </div>
 
             <hr />
 
+            <h2>판매자 기능</h2>
             <button onClick={() => navigate('/seller/apply')}>
                 판매자 등록 / 신청 상태
             </button>
+
+            {seller?.status === 'APPROVED' && (
+                <>
+                    <p>판매자 승인 완료</p>
+                    <button onClick={() => navigate('/seller/brands')}>내 브랜드 관리</button>
+                    <button onClick={() => navigate('/seller/products')}>상품 · 재고 관리</button>
+                    <button onClick={() => navigate('/seller/preorders')}>프리오더 관리</button>
+                </>
+            )}
 
             {myInfo.role === 'ADMIN' && (
                 <button onClick={() => navigate('/admin/sellers')}>
@@ -105,9 +112,8 @@ function MyPage() {
                 </button>
             )}
 
-            <button onClick={handleLogout}>
-                로그아웃
-            </button>
+            <hr />
+            <button onClick={handleLogout}>로그아웃</button>
         </div>
     )
 }

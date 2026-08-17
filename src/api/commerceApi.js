@@ -18,6 +18,7 @@ export const failPayment = async (id, data) => (await api.patch(`/payments/${id}
 export const refundPayment = async (id) => (await api.patch(`/payments/${id}/refund`)).data
 
 export const getShipments = async () => (await api.get('/shipments/mine')).data
+export const getBuyerShipments = async () => (await api.get('/shipments/buyer')).data
 export const createShipment = async (orderId) => (await api.post(`/shipments/orders/${orderId}`)).data
 export const prepareShipment = async (id) => (await api.patch(`/shipments/${id}/prepare`)).data
 export const shipShipment = async (id, data) => (await api.patch(`/shipments/${id}/ship`, data)).data

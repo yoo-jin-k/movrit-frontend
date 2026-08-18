@@ -4,6 +4,11 @@ import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import SocialLinkCallbackPage from './pages/SocialLinkCallbackPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
+import NotificationsPage from './pages/NotificationsPage'
+import InquiriesPage from './pages/InquiriesPage'
+import AdminInquiriesPage from './pages/AdminInquiriesPage'
 import SellerApplyPage from './pages/SellerApplyPage'
 import AdminSellerPage from './pages/AdminSellerPage'
 import BrandManagePage from './pages/BrandManagePage'
@@ -38,19 +43,21 @@ function App() {
         <Route path="/" element={<RootRedirect />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/password/forgot" element={<ForgotPasswordPage />} />
+        <Route path="/password/reset" element={<ResetPasswordPage />} />
         <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
         <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
         <Route path="/preorders" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
         <Route path="/preorders/:preorderId" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
         <Route path="/favorites" element={<ProtectedPage><FavoritePreordersPage /></ProtectedPage>} />
-
         <Route path="/mypage" element={<ProtectedPage><MyPage /></ProtectedPage>} />
         <Route path="/orders" element={<ProtectedPage><MyOrdersPage /></ProtectedPage>} />
+        <Route path="/notifications" element={<ProtectedPage><NotificationsPage /></ProtectedPage>} />
+        <Route path="/inquiries" element={<ProtectedPage><InquiriesPage /></ProtectedPage>} />
         <Route path="/creator/apply" element={<ProtectedPage><CreatorApplyPage /></ProtectedPage>} />
         <Route path="/creator/dashboard" element={<ProtectedPage><CreatorDashboardPage /></ProtectedPage>} />
         <Route path="/creator/profile" element={<ProtectedPage><CreatorPage /></ProtectedPage>} />
         <Route path="/creator/collaborations" element={<ProtectedPage><CreatorCollaborationPage /></ProtectedPage>} />
-
         <Route path="/seller/apply" element={<ProtectedPage><SellerApplyPage /></ProtectedPage>} />
         <Route path="/seller/dashboard" element={<ProtectedPage><SellerDashboardPage /></ProtectedPage>} />
         <Route path="/seller/brands" element={<ProtectedPage><BrandManagePage /></ProtectedPage>} />
@@ -58,9 +65,9 @@ function App() {
         <Route path="/seller/preorders" element={<ProtectedPage><PreorderManagePage /></ProtectedPage>} />
         <Route path="/seller/operations" element={<ProtectedPage><SellerOperationsPage /></ProtectedPage>} />
         <Route path="/seller/collaborations" element={<ProtectedPage><SellerCollaborationPage /></ProtectedPage>} />
-
         <Route path="/admin/sellers" element={<ProtectedPage><AdminSellerPage /></ProtectedPage>} />
         <Route path="/admin/dashboard" element={<ProtectedPage><AdminDashboardPage /></ProtectedPage>} />
+        <Route path="/admin/inquiries" element={<ProtectedPage><AdminInquiriesPage /></ProtectedPage>} />
       </Routes>
     </BrowserRouter>
   )

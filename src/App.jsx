@@ -10,6 +10,7 @@ import BrandManagePage from './pages/BrandManagePage'
 import ProductManagePage from './pages/ProductManagePage'
 import PreorderManagePage from './pages/PreorderManagePage'
 import PreorderShopPage from './pages/PreorderShopPage'
+import FavoritePreordersPage from './pages/FavoritePreordersPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import SellerOperationsPage from './pages/SellerOperationsPage'
 import CreatorPage from './pages/CreatorPage'
@@ -40,7 +41,8 @@ function App() {
         <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
         <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
         <Route path="/preorders" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
-        <Route path="/preorders/:preorderId" element={<PreorderShopPage />} />
+        <Route path="/preorders/:preorderId" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
+        <Route path="/favorites" element={<ProtectedPage><FavoritePreordersPage /></ProtectedPage>} />
 
         <Route path="/mypage" element={<ProtectedPage><MyPage /></ProtectedPage>} />
         <Route path="/orders" element={<ProtectedPage><MyOrdersPage /></ProtectedPage>} />

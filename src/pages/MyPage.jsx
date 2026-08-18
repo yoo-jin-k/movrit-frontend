@@ -6,6 +6,7 @@ import {
     getSocialAccounts,
     logout,
 } from '../api/authApi'
+import { getUnreadNotificationCount } from '../api/notificationApi'
 import { getMySellerProfile } from '../api/sellerApi'
 import { useNavigate } from 'react-router-dom'
 
@@ -14,17 +15,20 @@ function MyPage() {
     const [myInfo, setMyInfo] = useState(null)
     const [socialAccounts, setSocialAccounts] = useState([])
     const [seller, setSeller] = useState(null)
+    const [unreadCount, setUnreadCount] = useState(0)
 
     useEffect(() => {
         const loadMyPage = async () => {
             try {
-                const [member, accounts] = await Promise.all([
+                const [member, accounts, unread] = await Promise.all([
                     getMyInfo(),
                     getSocialAccounts(),
+                    getUnreadNotificationCount(),
                 ])
 
                 setMyInfo(member)
                 setSocialAccounts(accounts)
+                setUnreadCount(unread.unreadCount)
 
                 try {
                     setSeller(await getMySellerProfile())
@@ -72,6 +76,10 @@ function MyPage() {
             <button onClick={() => navigate('/preorders')}>프리오더 둘러보기</button>
             <button onClick={() => navigate('/favorites')}>찜한 프리오더</button>
             <button onClick={() => navigate('/orders')}>내 주문 · 결제</button>
+            <button onClick={() => navigate('/notifications')}>
+                알림 {unreadCount > 0 ? `(${unreadCount})` : ''}
+            </button>
+            <button onClick={() => navigate('/inquiries')}>1:1 문의</button>
             <button onClick={() => navigate('/creator/profile')}>인플루언서 프로필</button>
             <button onClick={() => navigate('/creator/collaborations')}>인플루언서 협업</button>
 
@@ -102,9 +110,7 @@ function MyPage() {
             <hr />
 
             <h2>판매자 기능</h2>
-            <button onClick={() => navigate('/seller/apply')}>
-                판매자 등록 / 신청 상태
-            </button>
+            <button onClick={() => navigate('/seller/apply')}>판매자 등록 / 신청 상태</button>
 
             {seller?.status === 'APPROVED' && (
                 <>
@@ -119,9 +125,11 @@ function MyPage() {
             )}
 
             {myInfo.role === 'ADMIN' && (
-                <><button onClick={() => navigate('/admin/dashboard')}>관리자 운영 대시보드</button><button onClick={() => navigate('/admin/sellers')}>
-                    판매자 신청 심사
-                </button></>
+                <>
+                    <button onClick={() => navigate('/admin/dashboard')}>관리자 운영 대시보드</button>
+                    <button onClick={() => navigate('/admin/sellers')}>판매자 신청 심사</button>
+                    <button onClick={() => navigate('/admin/inquiries')}>1:1 문의 답변 관리</button>
+                </>
             )}
 
             <hr />

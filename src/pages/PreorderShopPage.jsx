@@ -3,6 +3,7 @@ import { getVariants } from '../api/productApi'
 import { browsePreorders, createOrder, getOpenPreorders } from '../api/commerceApi'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { trackReferral } from '../api/collaborationApi'
+import { addFavoritePreorder, getFavoritePreorders, removeFavoritePreorder } from '../api/favoriteApi'
 
 const emptyAddress = { receiverName: '', receiverPhone: '', postalCode: '', address1: '', address2: '' }
 
@@ -13,10 +14,17 @@ function PreorderShopPage() {
     const [preorders, setPreorders] = useState([])
     const [variants, setVariants] = useState({})
     const [forms, setForms] = useState({})
+    const [favoriteIds, setFavoriteIds] = useState(new Set())
     const [filters, setFilters] = useState({ keyword:'', category:'', status:'OPEN' })
 
     useEffect(() => {
-        getOpenPreorders().then((list) => setPreorders(preorderId ? list.filter((p) => String(p.id) === preorderId) : list)).catch(() => alert('판매 중인 프리오더를 불러오지 못했어.'))
+        Promise.all([getOpenPreorders(), getFavoritePreorders()])
+            .then(([list, favorites]) => {
+                setPreorders(preorderId ? list.filter((p) => String(p.id) === preorderId) : list)
+                setFavoriteIds(new Set(favorites.map((item) => item.preorderId)))
+            })
+            .catch(() => alert('판매 중인 프리오더를 불러오지 못했어.'))
+
         if (referralCode) {
             const key = sessionStorage.getItem('movritVisitorKey') || crypto.randomUUID()
             sessionStorage.setItem('movritVisitorKey', key)
@@ -27,6 +35,24 @@ function PreorderShopPage() {
     const search = async (e) => {
         e.preventDefault()
         setPreorders(await browsePreorders(Object.fromEntries(Object.entries(filters).filter(([,v]) => v))))
+    }
+
+    const toggleFavorite = async (preorderId) => {
+        try {
+            if (favoriteIds.has(preorderId)) {
+                await removeFavoritePreorder(preorderId)
+                setFavoriteIds((current) => {
+                    const next = new Set(current)
+                    next.delete(preorderId)
+                    return next
+                })
+            } else {
+                await addFavoritePreorder(preorderId)
+                setFavoriteIds((current) => new Set([...current, preorderId]))
+            }
+        } catch (error) {
+            alert(error.response?.data?.message || '찜 상태를 변경하지 못했어.')
+        }
     }
 
     const loadVariants = async (preorder) => {
@@ -66,6 +92,7 @@ function PreorderShopPage() {
         </form>}
         {preorders.length === 0 ? <p>현재 판매 중인 프리오더가 없어.</p> : preorders.map((item) => <section key={item.id}>
             <h2>{item.title}</h2>
+            <button onClick={() => toggleFavorite(item.id)}>{favoriteIds.has(item.id) ? '♥ 찜 해제' : '♡ 찜하기'}</button>
             <p>{item.productName} · {Number(item.preorderPrice).toLocaleString()}원</p>
             <p>{item.brandName} · {item.category || '카테고리 없음'}</p><p>주문 {item.orderedQuantity} / 목표 {item.targetQuantity} · 달성률 {item.achievementRate.toFixed(1)}%</p>
             {item.status === 'OPEN' && <button onClick={() => loadVariants(item)}>옵션 선택 및 주문</button>}

@@ -4,9 +4,25 @@ export const login = async (data) => {
     const response = await api.post('/auth/login', data)
     return response.data
 }
+
 export const logout = async () => {
     const refreshToken = localStorage.getItem('refreshToken')
     if (refreshToken) await api.post('/auth/logout', { refreshToken })
+}
+
+export const forgotPassword = async (email) => {
+    const response = await api.post('/auth/password/forgot', { email })
+    return response.data
+}
+
+export const validatePasswordResetToken = async (token) => {
+    const response = await api.get('/auth/password/reset/validate', { params: { token } })
+    return response.data
+}
+
+export const resetPassword = async (token, newPassword) => {
+    const response = await api.post('/auth/password/reset', { token, newPassword })
+    return response.data
 }
 
 export const getMyInfo = async () => {

@@ -70,6 +70,7 @@ function MyPage() {
             <h1>마이페이지</h1>
 
             <button onClick={() => navigate('/preorders')}>프리오더 둘러보기</button>
+            <button onClick={() => navigate('/favorites')}>찜한 프리오더</button>
             <button onClick={() => navigate('/orders')}>내 주문 · 결제</button>
             <button onClick={() => navigate('/creator/profile')}>인플루언서 프로필</button>
             <button onClick={() => navigate('/creator/collaborations')}>인플루언서 협업</button>

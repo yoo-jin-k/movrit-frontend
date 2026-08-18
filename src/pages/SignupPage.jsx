@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { signup } from '../api/memberApi'
 
 function SignupPage() {
+    const navigate = useNavigate()
+
     const [form, setForm] = useState({
         email: '',
         password: '',
@@ -22,15 +25,15 @@ function SignupPage() {
         e.preventDefault()
 
         try {
-            const result = await signup(form)
+            await signup(form)
 
-            console.log('회원가입 성공:', result)
+            alert('회원가입이 완료됐어. 로그인해줘.')
 
-            alert('회원가입 성공!')
+            // 회원가입은 인증 토큰을 발급하지 않으므로 로그인 화면으로 이동시킨다.
+            navigate('/login', { replace: true })
         } catch (error) {
             console.error('회원가입 실패:', error)
-
-            alert('회원가입 실패')
+            alert('회원가입에 실패했어.')
         }
     }
 
@@ -39,7 +42,6 @@ function SignupPage() {
             <h1>MOVRIT 회원가입</h1>
 
             <form onSubmit={handleSubmit}>
-
                 <div>
                     <label>이메일</label>
                     <input
@@ -83,7 +85,6 @@ function SignupPage() {
                 <button type="submit">
                     회원가입
                 </button>
-
             </form>
         </div>
     )

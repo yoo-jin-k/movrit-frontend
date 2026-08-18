@@ -3,6 +3,7 @@ import {
     createShipment, deliverShipment, getSellerOrders, getSettlements, getShipments,
     prepareShipment, shipShipment,
 } from '../api/commerceApi'
+import { getSellerReviews, replyReview } from '../api/reviewApi'
 
 const labels = { PAID:'결제 완료', PREPARING:'배송 준비', SHIPPED:'배송 중', DELIVERED:'배송 완료', READY:'배송 등록', PENDING:'정산 대기', CONFIRMED:'정산 확정' }
 
@@ -10,12 +11,19 @@ function SellerOperationsPage() {
     const [orders, setOrders] = useState([])
     const [shipments, setShipments] = useState([])
     const [settlements, setSettlements] = useState([])
-    const load = async () => { const [o,s,t] = await Promise.all([getSellerOrders(),getShipments(),getSettlements()]); setOrders(o);setShipments(s);setSettlements(t) }
+    const [reviews, setReviews] = useState([])
+
+    const load = async () => {
+        const [o, s, t, r] = await Promise.all([getSellerOrders(), getShipments(), getSettlements(), getSellerReviews()])
+        setOrders(o); setShipments(s); setSettlements(t); setReviews(r)
+    }
+
     useEffect(() => {
-        Promise.all([getSellerOrders(), getShipments(), getSettlements()])
-            .then(([o, s, t]) => { setOrders(o); setShipments(s); setSettlements(t) })
+        Promise.all([getSellerOrders(), getShipments(), getSettlements(), getSellerReviews()])
+            .then(([o, s, t, r]) => { setOrders(o); setShipments(s); setSettlements(t); setReviews(r) })
             .catch(() => alert('운영 정보를 불러오지 못했어.'))
     }, [])
+
     const shipmentFor = (orderId) => shipments.find((s) => s.orderId === orderId)
     const action = async (job) => { try { await job(); await load() } catch (e) { alert(e.response?.data?.message || '처리에 실패했어.') } }
     const ship = (shipment) => {
@@ -23,6 +31,11 @@ function SellerOperationsPage() {
         const trackingNumber = courierCode && prompt('운송장 번호를 입력해줘.')
         if (trackingNumber) action(() => shipShipment(shipment.id, { courierCode, trackingNumber }))
     }
+    const reply = (review) => {
+        const text = prompt('구매자 리뷰에 남길 답글을 입력해줘.', review.sellerReply || '')
+        if (text?.trim()) action(() => replyReview(review.id, text.trim()))
+    }
+
     return <main>
         <h1>주문 · 배송 · 정산 운영</h1>
         <h2>판매 주문</h2>
@@ -36,6 +49,13 @@ function SellerOperationsPage() {
                 {s && <small> 배송 상태: {labels[s.status] || s.status} {s.trackingNumber || ''}</small>}<hr />
             </section>
         })}
+        <h2>구매 리뷰</h2>
+        {reviews.length === 0 ? <p>아직 등록된 리뷰가 없어.</p> : reviews.map((review) => <section key={review.id}>
+            <b>{review.productName}</b> · {'★'.repeat(review.rating)}
+            <p>{review.memberName}: {review.content}</p>
+            {review.sellerReply && <p>내 답글: {review.sellerReply}</p>}
+            <button onClick={() => reply(review)}>{review.sellerReply ? '답글 수정' : '답글 달기'}</button><hr />
+        </section>)}
         <h2>정산</h2>
         <p>구매 확정이 끝나면 관리자가 결제·환불 내역으로 정산액을 계산해.</p>
         {settlements.length === 0 ? <p>생성된 정산이 없어.</p> : settlements.map((s) => <section key={s.id}>

@@ -1,0 +1,100 @@
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { resetPassword, validatePasswordResetToken } from '../api/authApi'
+
+function ResetPasswordPage() {
+    const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
+    const token = searchParams.get('token') || ''
+    const [valid, setValid] = useState(null)
+    const [form, setForm] = useState({ newPassword: '', confirmPassword: '' })
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        if (!token) {
+            setValid(false)
+            return
+        }
+        validatePasswordResetToken(token)
+            .then((result) => setValid(result.valid))
+            .catch(() => setValid(false))
+    }, [token])
+
+    const submit = async (e) => {
+        e.preventDefault()
+        if (form.newPassword.length < 8) {
+            alert('비밀번호는 8자 이상으로 입력해줘.')
+            return
+        }
+        if (form.newPassword !== form.confirmPassword) {
+            alert('비밀번호 확인이 일치하지 않아.')
+            return
+        }
+
+        setLoading(true)
+        try {
+            const result = await resetPassword(token, form.newPassword)
+            sessionStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            alert(result.message)
+            navigate('/login', { replace: true })
+        } catch (error) {
+            console.error(error)
+            alert(error.response?.data?.message || '만료되었거나 사용할 수 없는 재설정 링크야.')
+            setValid(false)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    if (valid === null) return <p>재설정 링크를 확인하는 중...</p>
+
+    if (!valid) {
+        return (
+            <div>
+                <h1>비밀번호 재설정</h1>
+                <p>만료되었거나 유효하지 않은 링크야.</p>
+                <button onClick={() => navigate('/password/forgot')}>재설정 링크 다시 받기</button>
+                <button onClick={() => navigate('/login')}>로그인으로 돌아가기</button>
+            </div>
+        )
+    }
+
+    return (
+        <div>
+            <h1>새 비밀번호 설정</h1>
+            <p>8자 이상의 새 비밀번호를 입력해줘.</p>
+            <form onSubmit={submit}>
+                <label>
+                    새 비밀번호
+                    <input
+                        type="password"
+                        value={form.newPassword}
+                        onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
+                        minLength={8}
+                        maxLength={100}
+                        required
+                        autoComplete="new-password"
+                    />
+                </label>
+                <label>
+                    새 비밀번호 확인
+                    <input
+                        type="password"
+                        value={form.confirmPassword}
+                        onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+                        minLength={8}
+                        maxLength={100}
+                        required
+                        autoComplete="new-password"
+                    />
+                </label>
+                <button type="submit" disabled={loading}>
+                    {loading ? '변경 중...' : '비밀번호 변경'}
+                </button>
+            </form>
+        </div>
+    )
+}
+
+export default ResetPasswordPage

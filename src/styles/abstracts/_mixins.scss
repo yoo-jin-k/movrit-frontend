@@ -1,0 +1,22 @@
+@use './tokens' as *;
+
+@mixin mobile { @media (max-width: $bp-mobile) { @content; } }
+@mixin tablet { @media (max-width: $bp-tablet) { @content; } }
+@mixin desktop { @media (min-width: $bp-desktop) { @content; } }
+
+@mixin container {
+  width: min(calc(100% - 48px), $container-max);
+  margin-inline: auto;
+  @include mobile { width: min(calc(100% - 32px), $container-max); }
+}
+
+@mixin card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-2xl;
+}
+
+@mixin focus-ring {
+  outline: 3px solid rgba($color-primary, .16);
+  outline-offset: 2px;
+}

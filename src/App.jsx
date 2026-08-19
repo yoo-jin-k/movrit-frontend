@@ -27,10 +27,18 @@ import SellerCollaborationPage from './pages/SellerCollaborationPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import SellerDashboardPage from './pages/SellerDashboardPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import {
+  NoticeDetailPage,
+  NoticesPage,
+  NotFoundPage,
+  RoleSwitchPage,
+  SecurityPage,
+  TermsPage,
+  WithdrawalPage,
+} from './pages/CommonPages'
 
 function RootRedirect() {
-  const token = sessionStorage.getItem('accessToken')
-  return token ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />
+  return <Navigate to="/home" replace />
 }
 
 function ProtectedPage({ children }) {
@@ -48,7 +56,14 @@ function App() {
         <Route path="/password/reset" element={<ResetPasswordPage />} />
         <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
         <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
-        <Route path="/home" element={<ProtectedPage><BuyerHomePage /></ProtectedPage>} />
+        <Route path="/home" element={<BuyerHomePage />} />
+        <Route path="/notices" element={<NoticesPage />} />
+        <Route path="/notices/:noticeId" element={<NoticeDetailPage />} />
+        <Route path="/support" element={<ProtectedPage><InquiriesPage /></ProtectedPage>} />
+        <Route path="/roles" element={<ProtectedPage><RoleSwitchPage /></ProtectedPage>} />
+        <Route path="/settings/security" element={<ProtectedPage><SecurityPage /></ProtectedPage>} />
+        <Route path="/settings/terms" element={<ProtectedPage><TermsPage /></ProtectedPage>} />
+        <Route path="/settings/withdraw" element={<ProtectedPage><WithdrawalPage /></ProtectedPage>} />
         <Route path="/preorders" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
         <Route path="/preorders/:preorderId" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
         <Route path="/favorites" element={<ProtectedPage><FavoritePreordersPage /></ProtectedPage>} />
@@ -70,6 +85,7 @@ function App() {
         <Route path="/admin/sellers" element={<ProtectedPage><AdminSellerPage /></ProtectedPage>} />
         <Route path="/admin/dashboard" element={<ProtectedPage><AdminDashboardPage /></ProtectedPage>} />
         <Route path="/admin/inquiries" element={<ProtectedPage><AdminInquiriesPage /></ProtectedPage>} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )

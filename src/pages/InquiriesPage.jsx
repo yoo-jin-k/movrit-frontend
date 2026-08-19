@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { closeInquiry, createInquiry, getMyInquiries } from '../api/inquiryApi'
+import CommonLayout from '../components/layout/CommonLayout'
 
 function InquiriesPage() {
-    const navigate = useNavigate()
     const [items, setItems] = useState([])
     const [form, setForm] = useState({
         preorderId: '',
@@ -56,14 +55,11 @@ function InquiriesPage() {
     }
 
     return (
-        <div>
-            <h1>1:1 문의</h1>
-            <button onClick={() => navigate('/mypage')}>마이페이지</button>
-
-            <h2>문의 등록</h2>
-            <form onSubmit={submit}>
-                <label>
-                    문의 유형
+        <CommonLayout title="고객센터">
+            <div className="support-layout">
+                <section className="support-categories">{['주문/결제', '프리오더', '협업/계약', '정산', '계정', '기타'].map((category) => <article key={category}><strong>{category}</strong><small>자주 묻는 질문</small></article>)}</section>
+                <form className="common-card support-form" onSubmit={submit}><h2>1:1 문의하기</h2>
+                <label className="common-field">문의 유형
                     <select
                         value={form.category}
                         onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -76,8 +72,7 @@ function InquiriesPage() {
                         <option value="PREORDER">프리오더</option>
                     </select>
                 </label>
-                <label>
-                    관련 프리오더 ID (선택)
+                <label className="common-field">관련 프리오더 ID (선택)
                     <input
                         type="number"
                         min="1"
@@ -85,8 +80,7 @@ function InquiriesPage() {
                         onChange={(e) => setForm({ ...form, preorderId: e.target.value })}
                     />
                 </label>
-                <label>
-                    제목
+                <label className="common-field">제목
                     <input
                         value={form.title}
                         onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -94,8 +88,7 @@ function InquiriesPage() {
                         required
                     />
                 </label>
-                <label>
-                    내용
+                <label className="common-field">내용
                     <textarea
                         value={form.content}
                         onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -103,16 +96,15 @@ function InquiriesPage() {
                         required
                     />
                 </label>
-                <button type="submit">문의 등록</button>
-            </form>
-
-            <hr />
-            <h2>내 문의 내역</h2>
+                <button className="common-button" type="submit">문의 접수</button>
+                </form>
+            </div>
+            <section className="inquiry-history"><h2>내 문의 내역</h2>
             {loading && <p>불러오는 중...</p>}
             {!loading && items.length === 0 && <p>등록한 문의가 없어.</p>}
 
             {items.map((item) => (
-                <article key={item.id} style={{ border: '1px solid #ddd', padding: 12, marginTop: 12 }}>
+                <article key={item.id}>
                     <strong>[{item.category}] {item.title}</strong>
                     <p>상태: {item.status}</p>
                     {item.preorderTitle && <p>관련 프리오더: {item.preorderTitle}</p>}
@@ -127,8 +119,8 @@ function InquiriesPage() {
                         <button onClick={() => close(item.id)}>문의 종료</button>
                     )}
                 </article>
-            ))}
-        </div>
+            ))}</section>
+        </CommonLayout>
     )
 }
 

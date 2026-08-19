@@ -1,6 +1,7 @@
 @use './abstracts/tokens' as *;
 @use './abstracts/mixins' as *;
 @use './pages/buyer-home';
+@use './pages/common';
 
 * { box-sizing: border-box; }
 html { color-scheme: light; }

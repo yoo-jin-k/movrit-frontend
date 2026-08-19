@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login, getKakaoLoginUrl, getGoogleLoginUrl } from '../api/authApi'
+import CommonLayout from '../components/layout/CommonLayout'
 
 function LoginPage() {
     const navigate = useNavigate()
@@ -46,12 +47,11 @@ function LoginPage() {
     }
 
     return (
-        <div>
-            <h1>MOVRIT 로그인</h1>
-
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>이메일</label>
+        <CommonLayout title="로그인" className="common-auth-page">
+            <form className="common-card common-auth-card" onSubmit={handleSubmit}>
+                <h2>MOVRIT에 로그인</h2>
+                <p>프리오더와 협업을 한 곳에서 관리해.</p>
+                <label className="common-field">이메일
                     <input
                         type="email"
                         name="email"
@@ -59,11 +59,9 @@ function LoginPage() {
                         onChange={handleChange}
                         required
                         autoComplete="email"
-                    />
-                </div>
-
-                <div>
-                    <label>비밀번호</label>
+                        placeholder="name@example.com"
+                    /></label>
+                <label className="common-field">비밀번호
                     <input
                         type="password"
                         name="password"
@@ -71,23 +69,17 @@ function LoginPage() {
                         onChange={handleChange}
                         required
                         autoComplete="current-password"
-                    />
-                </div>
-
-                <button type="submit">로그인</button>
-            </form>
-
-            <button type="button" onClick={() => navigate('/password/forgot')}>
+                    /></label>
+                <button className="common-button" type="submit">로그인</button>
+                <button className="common-auth-card__forgot" type="button" onClick={() => navigate('/password/forgot')}>
                 비밀번호를 잊었어?
-            </button>
-
-            <button onClick={() => navigate('/signup')}>회원가입</button>
-
-            <hr />
-
-            <button type="button" onClick={handleKakaoLogin}>카카오로 로그인</button>
-            <button type="button" onClick={handleGoogleLogin}>Google로 로그인</button>
-        </div>
+                </button>
+                <hr />
+                <button className="common-button" type="button" onClick={handleGoogleLogin}>Google로 계속</button>
+                <button className="common-button" type="button" onClick={handleKakaoLogin}>Kakao로 계속</button>
+                <button className="common-auth-card__signup" type="button" onClick={() => navigate('/signup')}>회원가입</button>
+            </form>
+        </CommonLayout>
     )
 }
 

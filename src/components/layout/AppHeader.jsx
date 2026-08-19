@@ -5,7 +5,7 @@ const PRIMARY_LINKS = [
   { to: '/preorders', label: '프리오더' },
   { to: '/preorders', label: '카테고리' },
   { to: '/creator/profile', label: '크리에이터' },
-  { to: '/inquiries', label: '공지사항' },
+  { to: '/notices', label: '공지사항' },
 ]
 
 const ACTION_LINKS = [

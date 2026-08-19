@@ -34,7 +34,9 @@ function BuyerHomePage() {
   useEffect(() => {
     getOpenPreorders()
       .then(setItems)
-      .catch(() => setError('공구를 불러오지 못했어. 잠시 후 다시 시도해줘.'))
+      .catch(() => {
+        if (!import.meta.env.DEV) setError('공구를 불러오지 못했어. 잠시 후 다시 시도해줘.')
+      })
       .finally(() => setLoading(false))
   }, [])
 

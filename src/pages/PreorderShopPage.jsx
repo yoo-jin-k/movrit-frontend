@@ -83,7 +83,10 @@ function PreorderShopPage() {
     if (selected?.status === 'OPEN') loadVariants(selected).catch(() => {})
   }, [selected?.id])
 
-  const change = (id, name, value) => setForms((current) => ({ ...current, [id]: { ...current[id], [name]: value }))
+  const change = (id, name, value) => setForms((current) => ({
+    ...current,
+    [id]: { ...current[id], [name]: value },
+  }))
 
   const order = async (preorder) => {
     const form = forms[preorder.id]

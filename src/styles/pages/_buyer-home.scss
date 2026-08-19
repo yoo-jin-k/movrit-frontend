@@ -118,6 +118,24 @@
     font-weight: 700;
 
     img { width: 100%; height: 100%; object-fit: cover; }
+
+    &--lavender { background: linear-gradient(145deg, #eeeaff, #d9d2ff); }
+    &--sand { background: linear-gradient(145deg, #f7efe4, #e8d5bc); }
+    &--sage { background: linear-gradient(145deg, #e9f3ec, #c7ddcd); }
+    &--sky { background: linear-gradient(145deg, #e8f4ff, #c7e2fa); }
+  }
+
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 8px;
+    color: rgba($color-text, .72);
+
+    small { font-size: 11px; letter-spacing: .08em; }
+    strong { font-size: 42px; line-height: 1; }
   }
 
   &__body { padding: 18px 16px 28px; }

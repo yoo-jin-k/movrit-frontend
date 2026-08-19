@@ -13,10 +13,12 @@ function AdminInquiriesPage() {
     }
 
     useEffect(() => {
-        load().catch((error) => {
-            console.error(error)
-            alert('문의 목록을 불러오지 못했어.')
-        })
+        getAdminInquiries(status || null)
+            .then(setItems)
+            .catch((error) => {
+                console.error(error)
+                alert('문의 목록을 불러오지 못했어.')
+            })
     }, [status])
 
     const submitAnswer = async (id) => {

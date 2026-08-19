@@ -7,19 +7,13 @@ function FavoritePreordersPage() {
     const [favorites, setFavorites] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const load = async () => {
-        try {
-            setFavorites(await getFavoritePreorders())
-        } catch (error) {
-            alert(error.response?.data?.message || '찜한 프리오더를 불러오지 못했어.')
-        } finally {
-            setLoading(false)
-        }
-    }
-
     useEffect(() => {
-        load()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        getFavoritePreorders()
+            .then(setFavorites)
+            .catch((error) => {
+                alert(error.response?.data?.message || '찜한 프리오더를 불러오지 못했어.')
+            })
+            .finally(() => setLoading(false))
     }, [])
 
     const remove = async (preorderId) => {

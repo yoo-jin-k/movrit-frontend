@@ -6,18 +6,15 @@ function ResetPasswordPage() {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const token = searchParams.get('token') || ''
-    const [valid, setValid] = useState(null)
+    const [validation, setValidation] = useState({ token: '', valid: false })
     const [form, setForm] = useState({ newPassword: '', confirmPassword: '' })
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        if (!token) {
-            setValid(false)
-            return
-        }
+        if (!token) return
         validatePasswordResetToken(token)
-            .then((result) => setValid(result.valid))
-            .catch(() => setValid(false))
+            .then((result) => setValidation({ token, valid: result.valid }))
+            .catch(() => setValidation({ token, valid: false }))
     }, [token])
 
     const submit = async (e) => {
@@ -41,15 +38,15 @@ function ResetPasswordPage() {
         } catch (error) {
             console.error(error)
             alert(error.response?.data?.message || '만료되었거나 사용할 수 없는 재설정 링크야.')
-            setValid(false)
+            setValidation({ token, valid: false })
         } finally {
             setLoading(false)
         }
     }
 
-    if (valid === null) return <p>재설정 링크를 확인하는 중...</p>
+    if (token && validation.token !== token) return <p>재설정 링크를 확인하는 중...</p>
 
-    if (!valid) {
+    if (!token || !validation.valid) {
         return (
             <div>
                 <h1>비밀번호 재설정</h1>

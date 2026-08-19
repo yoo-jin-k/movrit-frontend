@@ -13,17 +13,12 @@ function NotificationsPage() {
     const [unreadCount, setUnreadCount] = useState(0)
     const [loading, setLoading] = useState(true)
 
-    const load = async () => {
-        const [notifications, unread] = await Promise.all([
-            getNotifications(),
-            getUnreadNotificationCount(),
-        ])
-        setItems(notifications)
-        setUnreadCount(unread.unreadCount)
-    }
-
     useEffect(() => {
-        load()
+        Promise.all([getNotifications(), getUnreadNotificationCount()])
+            .then(([notifications, unread]) => {
+                setItems(notifications)
+                setUnreadCount(unread.unreadCount)
+            })
             .catch((error) => {
                 console.error(error)
                 alert('알림을 불러오지 못했어.')

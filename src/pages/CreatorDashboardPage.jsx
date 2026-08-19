@@ -27,7 +27,19 @@ function CreatorDashboardPage() {
   }
 
   useEffect(() => {
-    loadDashboard()
+    getCreatorDashboard()
+      .then(({ data }) => {
+        setDashboard(data)
+        setError('')
+      })
+      .catch((err) => {
+        if (err.response?.status === 404) {
+          setError('아직 인플루언서 등록을 하지 않았어.')
+        } else {
+          setError('대시보드 정보를 불러오지 못했어.')
+        }
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const respondToProposal = async (campaignId, status) => {

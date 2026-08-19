@@ -18,7 +18,8 @@ function InquiriesPage() {
     }
 
     useEffect(() => {
-        load()
+        getMyInquiries()
+            .then(setItems)
             .catch((error) => {
                 console.error(error)
                 alert('문의 내역을 불러오지 못했어.')

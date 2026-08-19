@@ -2,6 +2,8 @@
 @use './abstracts/mixins' as *;
 @use './pages/buyer-home';
 @use './pages/common';
+@use './pages/admin';
+@use './pages/admin-extras';
 
 * { box-sizing: border-box; }
 html { color-scheme: light; }

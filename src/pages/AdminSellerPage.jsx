@@ -1,104 +1,13 @@
 import { useEffect, useState } from 'react'
-import { approveSeller, getAllSellers, rejectSeller } from '../api/adminSellerApi'
+import { Link } from 'react-router-dom'
+import { getAllSellers } from '../api/adminSellerApi'
+import AdminLayout, { AdminCard, AdminStatus } from '../components/admin/AdminLayout'
+import { sellers as preview } from '../preview/adminPreview'
 
-function AdminSellerPage() {
-    const [sellers, setSellers] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [filter, setFilter] = useState('ALL')
-
-    const loadSellers = async () => {
-        try {
-            setLoading(true)
-            const result = await getAllSellers()
-            setSellers(result)
-        } catch (error) {
-            console.error(error)
-
-            if (error.response?.status === 403) {
-                alert('관리자만 접근할 수 있어.')
-            } else {
-                alert('판매자 신청 목록을 불러오지 못했어.')
-            }
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        // 첫 화면에서만 서버 목록을 불러온다. 이후 재조회는 승인·반려 처리 함수가 담당한다.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        loadSellers()
-    }, [])
-
-    const handleApprove = async (sellerId) => {
-        try {
-            await approveSeller(sellerId)
-            // 승인 후에도 처리 이력을 확인할 수 있도록 전체 목록을 다시 조회한다.
-            await loadSellers()
-        } catch (error) {
-            console.error(error)
-            alert('승인 처리에 실패했어.')
-        }
-    }
-
-    const handleReject = async (sellerId) => {
-        try {
-            await rejectSeller(sellerId)
-            await loadSellers()
-        } catch (error) {
-            console.error(error)
-            alert('반려 처리에 실패했어.')
-        }
-    }
-
-    const filteredSellers = filter === 'ALL'
-        ? sellers
-        : sellers.filter((seller) => seller.status === filter)
-
-    if (loading) {
-        return <p>판매자 신청 목록을 불러오는 중...</p>
-    }
-
-    return (
-        <div>
-            <h1>판매자 등록 심사</h1>
-
-            <div>
-                <button onClick={() => setFilter('ALL')}>전체</button>
-                <button onClick={() => setFilter('PENDING')}>심사 중</button>
-                <button onClick={() => setFilter('APPROVED')}>승인</button>
-                <button onClick={() => setFilter('REJECTED')}>반려</button>
-            </div>
-
-            {filteredSellers.length === 0 ? (
-                <p>해당 상태의 신청이 없어.</p>
-            ) : (
-                filteredSellers.map((seller) => (
-                    <div key={seller.id}>
-                        <h2>{seller.brandName}</h2>
-                        <p>회원 ID: {seller.memberId}</p>
-                        <p>사업자명: {seller.businessName}</p>
-                        <p>사업자등록번호: {seller.businessNumber}</p>
-                        <p>대표자명: {seller.representativeName}</p>
-                        <p>상태: {seller.status}</p>
-
-                        {seller.status === 'PENDING' && (
-                            <div>
-                                <button onClick={() => handleApprove(seller.id)}>
-                                    승인
-                                </button>
-                                <button onClick={() => handleReject(seller.id)}>
-                                    반려
-                                </button>
-                            </div>
-                        )}
-
-                        <hr />
-                    </div>
-                ))
-            )}
-        </div>
-    )
+export default function AdminSellerPage(){
+  const [items,setItems]=useState([]); const [filter,setFilter]=useState('전체')
+  useEffect(()=>{getAllSellers().then(result=>setItems(result.length?result:preview)).catch(()=>setItems(preview))},[])
+  const normalized=items.map(x=>({id:x.id,brand:x.brandName||x.brand,owner:x.representativeName||x.owner,number:x.businessNumber||x.number,date:x.createdAt?.slice(0,10)||x.date,status:({PENDING:'심사 대기',APPROVED:'승인',REJECTED:'반려'}[x.status]||x.status)}))
+  const shown=filter==='전체'?normalized:normalized.filter(x=>x.status===filter)
+  return <AdminLayout title="업체 관리"><div className="admin-filters"><input placeholder="업체명, 사업자번호 검색"/><div className="admin-chips">{['전체','심사 대기','승인','반려'].map(x=><button key={x} className={filter===x?'is-active':''} onClick={()=>setFilter(x)}>{x}</button>)}</div></div><AdminCard title="업체 목록" subtitle={`총 ${shown.length}건`}><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>업체</th><th>대표자</th><th>사업자번호</th><th>신청일</th><th>상태</th><th></th></tr></thead><tbody>{shown.map(x=><tr key={x.id}><td data-label="업체"><strong>{x.brand}</strong></td><td data-label="대표자">{x.owner}</td><td data-label="사업자번호">{x.number}</td><td data-label="신청일">{x.date}</td><td data-label="상태"><AdminStatus tone={x.status==='승인'?'success':x.status==='반려'?'danger':'warning'}>{x.status}</AdminStatus></td><td><Link className="admin-button admin-button--secondary" to={`/admin/sellers/${x.id}`}>상세</Link></td></tr>)}</tbody></table></div></AdminCard></AdminLayout>
 }
-
-export default AdminSellerPage

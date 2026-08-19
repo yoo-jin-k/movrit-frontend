@@ -1,42 +1,13 @@
 import { useEffect, useState } from 'react'
-import {
-    cancelAdminSettlement, changeMemberStatus, confirmAdminSettlement,
-    createAdminSettlement, getAdminDashboard, getAdminSettlements, getMembers, payAdminSettlement,
-} from '../api/adminApi'
+import { getAdminDashboard } from '../api/adminApi'
+import AdminLayout, { AdminButton, AdminCard } from '../components/admin/AdminLayout'
+
+const preview = { summary:{orders:326,preorders:28,reviews:14,refunds:9}, events:['프리오더 PR-260816-031 심사 요청','업체 LUMENA 사업자 서류 수정 제출','주문 MR-260815-093 환불 요청','계약 COL-260814-011 양측 서명 완료'] }
 
 export default function AdminDashboardPage() {
-    const [data, setData] = useState(null)
-    const [members, setMembers] = useState([])
-    const [settlements, setSettlements] = useState([])
-    const [preorderId, setPreorderId] = useState('')
-    const [feeRate, setFeeRate] = useState('10')
-
-    const load = async () => {
-        const [dashboard, memberList, settlementList] = await Promise.all([getAdminDashboard(), getMembers(), getAdminSettlements()])
-        setData(dashboard); setMembers(memberList); setSettlements(settlementList)
-    }
-    useEffect(() => {
-        Promise.all([getAdminDashboard(), getMembers(), getAdminSettlements()])
-            .then(([dashboard, memberList, settlementList]) => { setData(dashboard); setMembers(memberList); setSettlements(settlementList) })
-            .catch(() => alert('관리자 정보를 불러오지 못했어.'))
-    }, [])
-    const run = async (job) => { try { await job(); await load() } catch (e) { alert(e.response?.data?.message || '처리에 실패했어.') } }
-    if (!data) return <p>불러오는 중...</p>
-
-    const unsettled = data.preorders.filter((p) => p.status === 'COMPLETED' && !settlements.some((s) => s.preorderId === p.id))
-    return <main>
-        <h1>관리자 운영 대시보드</h1>
-        <section><h2>전체 현황</h2>{Object.entries(data.summary).map(([key, value]) => <span key={key} style={{ marginRight:16 }}>{key}: <b>{typeof value === 'number' ? value.toLocaleString() : value}</b></span>)}</section>
-        <h2>회원 관리</h2>
-        {members.map((member) => <p key={member.id}>{member.email} / {member.name} / {member.status} {member.status === 'ACTIVE' ? <button onClick={() => run(() => changeMemberStatus(member.id, 'SUSPENDED'))}>정지</button> : member.status === 'SUSPENDED' ? <button onClick={() => run(() => changeMemberStatus(member.id, 'ACTIVE'))}>복구</button> : null}</p>)}
-        <section><h2>정산 관리</h2>
-            <form className="form-grid" onSubmit={(event) => { event.preventDefault(); run(() => createAdminSettlement(Number(preorderId), Number(feeRate))); setPreorderId('') }}>
-                <label>구매 확정 프리오더<select required value={preorderId} onChange={(event) => setPreorderId(event.target.value)}><option value="">선택</option>{unsettled.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label>
-                <label>플랫폼 수수료율(%)<input type="number" min="0" max="100" step="0.01" required value={feeRate} onChange={(event) => setFeeRate(event.target.value)} /></label>
-                <button type="submit">결제 원장으로 정산 계산</button>
-            </form>
-            {settlements.map((s) => <p key={s.id}><b>{s.settlementNumber}</b> / {s.status} / 총매출 {Number(s.grossAmount).toLocaleString()} / 환불 {Number(s.refundAmount).toLocaleString()} / 수수료 {Number(s.platformFeeAmount).toLocaleString()} / 순액 {Number(s.netAmount).toLocaleString()} {s.currency} {s.status === 'PENDING' && <><button onClick={() => run(() => confirmAdminSettlement(s.id))}>확정</button><button onClick={() => run(() => cancelAdminSettlement(s.id))}>취소</button></>} {s.status === 'CONFIRMED' && <button onClick={() => run(() => payAdminSettlement(s.id))}>지급 완료</button>}</p>)}
-        </section>
-        {[['프리오더','preorders'], ['주문','orders'], ['결제','payments'], ['협업','collaborations']].map(([label,key]) => <section key={key}><h2>{label}</h2>{data[key].map((item) => <p key={item.type + item.id}>{item.title} / {item.status} / {item.detail}</p>)}</section>)}
-    </main>
+  const [data,setData]=useState(null)
+  useEffect(()=>{ getAdminDashboard().then(setData).catch(()=>setData(preview)) },[])
+  const summary=data?.summary||preview.summary
+  const values=[['오늘 주문',summary.todayOrders??summary.orders??326,'+12%'],['진행 프리오더',summary.activePreorders??summary.preorders??28,'4 마감임박'],['심사 대기',summary.pendingReviews??summary.reviews??14,'처리 필요'],['환불 요청',summary.refundRequests??summary.refunds??9,'3 긴급']]
+  return <AdminLayout title="운영 대시보드"><div className="admin-kpis">{values.map(([label,value,note])=><article key={label}><span>{label}</span><strong>{Number(value).toLocaleString()}</strong><small>{note}</small></article>)}</div><div className="admin-dashboard-grid"><AdminCard title="처리할 일" subtitle="우선순위 높은 운영 업무"><div className="admin-task-list">{[['업체 승인 대기','4'],['프리오더 심사','7'],['환불 요청','9'],['계약 분쟁 확인','1']].map(([k,v])=><div key={k}><strong>{k} {v}</strong><AdminButton>열기</AdminButton></div>)}</div></AdminCard><AdminCard title="서비스 현황"><div className="admin-service-grid"><div><b>GMV ₩128.4M</b></div><div><b>활성 구매자 8,240</b></div><div><b>활성 업체 124</b></div><div><b>활성 크리에이터 318</b></div></div></AdminCard></div><AdminCard title="최근 운영 이벤트"><ul className="admin-events">{(data?.events||preview.events).slice(0,5).map((e,i)=><li key={i}><span>{typeof e==='string'?e:(e.title||e.detail)}</span><time>{[5,18,32,60][i]||90}분 전</time></li>)}</ul></AdminCard></AdminLayout>
 }

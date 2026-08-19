@@ -28,6 +28,12 @@ import AdminDashboardPage from './pages/AdminDashboardPage'
 import SellerDashboardPage from './pages/SellerDashboardPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import {
+  AdminCollaborationsPage, AdminContentPage, AdminCreatorDetailPage, AdminCreatorsPage,
+  AdminMemberDetailPage, AdminMembersPage, AdminPreorderDetailPage, AdminPreordersPage,
+  AdminRefundDetailPage, AdminRefundsPage, AdminReportsPage, AdminSellerDetailPage,
+  AdminSettingsPage, AdminSettlementsPage,
+} from './pages/AdminPages'
+import {
   NoticeDetailPage,
   NoticesPage,
   NotFoundPage,
@@ -83,8 +89,22 @@ function App() {
         <Route path="/seller/operations" element={<ProtectedPage><SellerOperationsPage /></ProtectedPage>} />
         <Route path="/seller/collaborations" element={<ProtectedPage><SellerCollaborationPage /></ProtectedPage>} />
         <Route path="/admin/sellers" element={<ProtectedPage><AdminSellerPage /></ProtectedPage>} />
+        <Route path="/admin/sellers/:id" element={<ProtectedPage><AdminSellerDetailPage /></ProtectedPage>} />
         <Route path="/admin/dashboard" element={<ProtectedPage><AdminDashboardPage /></ProtectedPage>} />
+        <Route path="/admin/members" element={<ProtectedPage><AdminMembersPage /></ProtectedPage>} />
+        <Route path="/admin/members/:id" element={<ProtectedPage><AdminMemberDetailPage /></ProtectedPage>} />
+        <Route path="/admin/creators" element={<ProtectedPage><AdminCreatorsPage /></ProtectedPage>} />
+        <Route path="/admin/creators/:id" element={<ProtectedPage><AdminCreatorDetailPage /></ProtectedPage>} />
+        <Route path="/admin/preorders" element={<ProtectedPage><AdminPreordersPage /></ProtectedPage>} />
+        <Route path="/admin/preorders/:id" element={<ProtectedPage><AdminPreorderDetailPage /></ProtectedPage>} />
+        <Route path="/admin/refunds" element={<ProtectedPage><AdminRefundsPage /></ProtectedPage>} />
+        <Route path="/admin/refunds/:id" element={<ProtectedPage><AdminRefundDetailPage /></ProtectedPage>} />
+        <Route path="/admin/collaborations" element={<ProtectedPage><AdminCollaborationsPage /></ProtectedPage>} />
+        <Route path="/admin/settlements" element={<ProtectedPage><AdminSettlementsPage /></ProtectedPage>} />
+        <Route path="/admin/content" element={<ProtectedPage><AdminContentPage /></ProtectedPage>} />
         <Route path="/admin/inquiries" element={<ProtectedPage><AdminInquiriesPage /></ProtectedPage>} />
+        <Route path="/admin/reports" element={<ProtectedPage><AdminReportsPage /></ProtectedPage>} />
+        <Route path="/admin/settings" element={<ProtectedPage><AdminSettingsPage /></ProtectedPage>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

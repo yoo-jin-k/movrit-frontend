@@ -1,54 +1,33 @@
-export const BUYER_HOME_PREVIEW_ITEMS = [
-  {
-    id: 'figma-preview-1',
-    status: 'OPEN',
-    title: 'Glow Serum 02',
-    brandName: 'LUMENA',
-    creatorName: '@muse.j',
-    preorderPrice: 29000,
-    daysLeft: 2,
-    achievementRate: 92,
-    orderedQuantity: 1246,
-    category: '뷰티',
-    previewTone: 'lavender',
-  },
-  {
-    id: 'figma-preview-2',
-    status: 'OPEN',
-    title: 'Daily Knit Set',
-    brandName: 'MORNING DEW',
-    creatorName: '@soydaily',
-    preorderPrice: 54000,
-    daysLeft: 4,
-    achievementRate: 84,
-    orderedQuantity: 832,
-    category: '패션',
-    previewTone: 'sand',
-  },
-  {
-    id: 'figma-preview-3',
-    status: 'OPEN',
-    title: 'Home Fragrance',
-    brandName: 'REST NOTE',
-    creatorName: '@homelog',
-    preorderPrice: 38000,
-    daysLeft: 6,
-    achievementRate: 73,
-    orderedQuantity: 604,
-    category: '리빙',
-    previewTone: 'sage',
-  },
-  {
-    id: 'figma-preview-4',
-    status: 'OPEN',
-    title: 'Travel Pouch',
-    brandName: 'MILE OBJECT',
-    creatorName: '@minji.pick',
-    preorderPrice: 22000,
-    daysLeft: 1,
-    achievementRate: 97,
-    orderedQuantity: 1580,
-    category: '여행',
-    previewTone: 'sky',
-  },
+const card = (id, title, creator, category, price, discount, deadline, source = 'MOVRIT 공구', tone = 'gray') => ({
+  id, title, creator, category, price, discount, deadline, source, tone,
+})
+
+export const CATEGORY_FILTERS = ['전체', '뷰티', '패션', '식품', '리빙', '육아', '건강', '디지털', '반려동물']
+
+export const POPULAR_GROUPBUYS = [
+  card('popular-1', '저자극 진정 앰플 2개 세트', '뷰티윤', '뷰티', 29900, 35, 'D-2'),
+  card('popular-2', '프리미엄 그래놀라 5종', '먹잘알민지', '식품', 24500, 28, '오늘마감', '외부 SNS 공구', 'blue'),
+  card('popular-3', '여름 쿨링 홈웨어 SET', '소이데일리', '패션', 39000, 41, 'D-3'),
+  card('popular-4', '무선 미니 블렌더', '홈로그', '디지털', 32900, 33, 'D-1', '외부 SNS 공구', 'blue'),
+]
+
+export const CREATOR_PREVIEWS = [
+  { id: 'creator-1', name: '뷰티윤', category: '뷰티', followers: '8.4만', active: 3 },
+  { id: 'creator-2', name: '먹잘알민지', category: '푸드', followers: '12.1만', active: 2 },
+  { id: 'creator-3', name: '소이데일리', category: '패션', followers: '5.7만', active: 4 },
+  { id: 'creator-4', name: '홈로그', category: '리빙', followers: '9.8만', active: 1 },
+]
+
+export const CLOSING_GROUPBUYS = [
+  card('closing-1', '프로틴 쿠키 12팩', '핏다정', '핏다', 21900, 30, '6시간'),
+  card('closing-2', '수분 선크림 1+1', '뷰티윤', '뷰티', 18900, 42, '8시간', '외부 SNS 공구', 'blue'),
+  card('closing-3', '아기 세탁세제 3L', '육아정원', '육아', 26000, 25, '10시간'),
+  card('closing-4', '호텔 수건 10장', '홈로그', '리빙', 35900, 38, '12시간'),
+]
+
+export const SNS_GROUPBUYS = [
+  card('sns-1', '제주 유기농 레몬즙', '라이프주', '라이', 31500, 22, 'D-4', '외부 SNS 공구', 'blue'),
+  card('sns-2', '데일리 골지 니트', '소이데일리', '소이', 27900, 36, 'D-2', '외부 SNS 공구', 'blue'),
+  card('sns-3', '키즈 영양 간식 BOX', '육아정원', '육아', 34000, 19, 'D-5', '외부 SNS 공구', 'blue'),
+  card('sns-4', '두피 케어 샴푸 SET', '뷰티윤', '뷰티', 25900, 31, 'D-1', '외부 SNS 공구', 'blue'),
 ]

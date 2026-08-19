@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import BuyerHomePage from './pages/BuyerHomePage'
 import MyPage from './pages/MyPage'
 import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import SocialLinkCallbackPage from './pages/SocialLinkCallbackPage'
@@ -29,7 +30,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 function RootRedirect() {
   const token = sessionStorage.getItem('accessToken')
-  return token ? <Navigate to="/mypage" replace /> : <Navigate to="/login" replace />
+  return token ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />
 }
 
 function ProtectedPage({ children }) {
@@ -47,6 +48,7 @@ function App() {
         <Route path="/password/reset" element={<ResetPasswordPage />} />
         <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
         <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
+        <Route path="/home" element={<ProtectedPage><BuyerHomePage /></ProtectedPage>} />
         <Route path="/preorders" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
         <Route path="/preorders/:preorderId" element={<ProtectedPage><PreorderShopPage /></ProtectedPage>} />
         <Route path="/favorites" element={<ProtectedPage><FavoritePreordersPage /></ProtectedPage>} />

@@ -4,6 +4,8 @@
 @use './pages/common';
 @use './pages/admin';
 @use './pages/admin-extras';
+@use './pages/buyer-v2';
+@use './pages/buyer-v2-extras';
 
 * { box-sizing: border-box; }
 html { color-scheme: light; }

@@ -1,0 +1,9 @@
+@use '../abstracts/tokens' as *;
+.buyer-favorite-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+.buyer-favorite-grid article { background:#fff; border:1px solid #f0f0f5; border-radius:18px; box-shadow:$shadow-card; padding:16px; }
+.buyer-favorite-card__image { aspect-ratio:1.35; background:#eeeef2; border-radius:12px; }
+.buyer-favorite-grid h2 { font-size:16px; margin:18px 0 8px; }
+.buyer-favorite-grid p { font-size:11px; color:#70707a; }
+.buyer-favorite-grid article>div:last-child { display:flex; justify-content:space-between; align-items:center; margin-top:20px; }
+@media(max-width:900px){.buyer-favorite-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.buyer-favorite-grid{grid-template-columns:1fr}}

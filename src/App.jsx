@@ -28,6 +28,10 @@ import AdminDashboardPage from './pages/AdminDashboardPage'
 import SellerDashboardPage from './pages/SellerDashboardPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import {
+  BuyerAddressesPage, BuyerCheckoutPage, BuyerNotificationSettingsPage, BuyerOrderCompletePage,
+  BuyerOrderDetailPage, BuyerPaymentsPage, BuyerPreorderStatePage, BuyerProfileEditPage,
+} from './pages/BuyerV2Pages'
+import {
   AdminCollaborationsPage, AdminContentPage, AdminCreatorDetailPage, AdminCreatorsPage,
   AdminMemberDetailPage, AdminMembersPage, AdminPreorderDetailPage, AdminPreordersPage,
   AdminRefundDetailPage, AdminRefundsPage, AdminReportsPage, AdminSellerDetailPage,
@@ -75,6 +79,14 @@ function App() {
         <Route path="/favorites" element={<ProtectedPage><FavoritePreordersPage /></ProtectedPage>} />
         <Route path="/mypage" element={<ProtectedPage><MyPage /></ProtectedPage>} />
         <Route path="/orders" element={<ProtectedPage><MyOrdersPage /></ProtectedPage>} />
+        <Route path="/orders/complete" element={<ProtectedPage><BuyerOrderCompletePage /></ProtectedPage>} />
+        <Route path="/orders/:orderId" element={<ProtectedPage><BuyerOrderDetailPage /></ProtectedPage>} />
+        <Route path="/checkout/:preorderId" element={<ProtectedPage><BuyerCheckoutPage /></ProtectedPage>} />
+        <Route path="/mypage/profile" element={<ProtectedPage><BuyerProfileEditPage /></ProtectedPage>} />
+        <Route path="/mypage/addresses" element={<ProtectedPage><BuyerAddressesPage /></ProtectedPage>} />
+        <Route path="/mypage/payments" element={<ProtectedPage><BuyerPaymentsPage /></ProtectedPage>} />
+        <Route path="/mypage/notifications" element={<ProtectedPage><BuyerNotificationSettingsPage /></ProtectedPage>} />
+        <Route path="/preorders/status/:state" element={<ProtectedPage><BuyerPreorderStatePage /></ProtectedPage>} />
         <Route path="/notifications" element={<ProtectedPage><NotificationsPage /></ProtectedPage>} />
         <Route path="/inquiries" element={<ProtectedPage><InquiriesPage /></ProtectedPage>} />
         <Route path="/creator/apply" element={<ProtectedPage><CreatorApplyPage /></ProtectedPage>} />

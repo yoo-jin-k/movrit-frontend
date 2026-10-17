@@ -2,10 +2,13 @@
 export function applicationPayload(
   form,
   { type, message, contact, answers, consents },
+  requirement = null,
 ) {
   return {
     message: message.trim(),
     expectedFormVersion: form.version,
+    expectedEligibilityRequirementId: requirement?.id ?? null,
+    expectedEligibilityRequirementVersion: requirement?.version ?? null,
     fulfillmentType: type,
     shippingContact: type === 'DELIVERY' ? contact : null,
     answers: form.questions

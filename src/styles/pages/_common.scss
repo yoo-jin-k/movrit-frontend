@@ -604,3 +604,9 @@
     }
   }
 }
+
+// 사용자와 업체 두 가입 유형을 화면 폭에 맞춰 표시합니다.
+.common-role-grid--membership {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  @include tablet { grid-template-columns: 1fr; }
+}

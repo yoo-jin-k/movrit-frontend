@@ -47,7 +47,10 @@ function LoginPage() {
       // 로그인 후에는 요청했던 캠페인 상세로 돌아가도록 합니다.
       const destination = location.state?.returnTo
       navigate(
-        /^\/campaign\/\d+$/.test(destination || '') ? destination : '/mypage',
+        /^\/campaign\/\d+$/.test(destination || '') ||
+          ['/home', '/seller/apply'].includes(destination)
+          ? destination
+          : '/mypage',
       )
     } catch (error) {
       setErrorMessage(loginError(error))

@@ -4,6 +4,8 @@ import {
   validateEligibility,
   applicationAvailable,
   eligibilityReason,
+  campaignRequirementSummary,
+  metricEvaluationSummary,
 } from '../src/features/discovery/eligibilityModel.js'
 const form = { campaignId: 9, version: 1 }
 const ready = {
@@ -29,7 +31,6 @@ test('미인증·중복·서버 거절·미지의 차단 사유는 신청 폼을
     { emailVerified: false },
     { alreadyApplied: true },
     { canApply: false },
-    { channelReady: false },
     { blockingReasons: ['UNKNOWN_REASON'] },
   ]) {
     assert.equal(applicationAvailable({ ...ready, ...override }, form), false)
@@ -48,5 +49,70 @@ test('누락되거나 잘못된 서버 상태를 신청 허용으로 해석하�
   assert.throws(() => validateEligibility({ ...ready, canApply: 'true' }, 9))
   assert.throws(() =>
     validateEligibility({ ...ready, blockingReasons: null }, 9),
+  )
+})
+
+test('채널 조건이 없는 캠페인은 서버 허용 시 채널 미등록만으로 차단하지 않습니다', () => {
+  assert.equal(
+    applicationAvailable({ ...ready, channelReady: false }, form),
+    true,
+  )
+})
+
+test('지표 미등록, 미확인, 기준 미달을 구분하며 서버 차단을 유지합니다', () => {
+  const codes = [
+    'CHANNEL_METRIC_REQUIRED',
+    'CHANNEL_METRIC_UNVERIFIED',
+    'CHANNEL_METRIC_BELOW_MINIMUM',
+  ]
+  assert.equal(new Set(codes.map(eligibilityReason)).size, 3)
+  for (const code of codes)
+    assert.equal(
+      applicationAvailable({ ...ready, blockingReasons: [code] }, form),
+      false,
+    )
+})
+test('명시적인 빈 조건만 조건 없음으로 표시하고 500을 캠페인 기준으로 표시합니다', () => {
+  assert.match(campaignRequirementSummary(null), /조건이 없습니다/)
+  for (const missing of [undefined, {}, [], { minimumValue: null }])
+    assert.doesNotMatch(campaignRequirementSummary(missing), /조건이 없습니다/)
+  assert.equal(
+    campaignRequirementSummary({
+      channelType: 'INSTAGRAM',
+      metricType: 'FOLLOWER_COUNT',
+      minimumValue: 500,
+    }),
+    '인스타그램 팔로워 수 500 이상',
+  )
+})
+test('이전 channelReady 없이도 신규 서버 응답을 검증합니다', () => {
+  const { channelReady, ...current } = ready
+  assert.equal(channelReady, true)
+  assert.equal(
+    applicationAvailable(
+      validateEligibility(
+        {
+          ...current,
+          channelProfileExists: false,
+          campaignRequirement: null,
+          metricEvaluation: null,
+        },
+        9,
+      ),
+      form,
+    ),
+    true,
+  )
+})
+
+test('미등록 지표를 0이나 최하 등급으로 표시하지 않습니다', () => {
+  assert.match(metricEvaluationSummary({ actualValue: null }), /미등록/)
+  assert.doesNotMatch(metricEvaluationSummary({ actualValue: null }), /0/)
+  assert.match(
+    metricEvaluationSummary({
+      actualValue: 0,
+      verificationStatus: 'UNVERIFIED',
+    }),
+    /0 · 미확인/,
   )
 })

@@ -7,6 +7,7 @@ import api from '../../api/axios'
 export default function LiveApplicationForm({
   campaignId,
   form,
+  requirement,
   onSubmitted,
   onRefresh,
 }) {
@@ -26,7 +27,11 @@ export default function LiveApplicationForm({
     try {
       const { data, status } = await api.post(
         `/campaigns/${campaignId}/applications`,
-        applicationPayload(form, { type, message, contact, answers, consents }),
+        applicationPayload(
+          form,
+          { type, message, contact, answers, consents },
+          requirement,
+        ),
         { timeout: 15000 },
       )
       if (status !== 201 || !data?.id)

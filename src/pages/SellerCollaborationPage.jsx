@@ -1,14 +1,115 @@
-import{useEffect,useState}from'react';import{collaborationAction,createCampaign,getCreators,getSellerCollaborations,getSellerCampaigns,getSellerPerformance,propose}from'../api/collaborationApi';import{getMyPreorders}from'../api/preorderApi'
-const empty={preorderId:'',title:'',description:'',category:'',minFollowerCount:0,recruitmentCount:1,rewardDescription:'',startAt:'',endAt:''}
-export default function SellerCollaborationPage(){const[preorders,setPreorders]=useState([]),[creators,setCreators]=useState([]),[campaigns,setCampaigns]=useState([]),[items,setItems]=useState([]),[performance,setPerformance]=useState([]),[form,setForm]=useState(empty)
- const load=()=>Promise.all([getMyPreorders(),getCreators(),getSellerCampaigns(),getSellerCollaborations(),getSellerPerformance()]).then(([a,b,c,d,e])=>{setPreorders(a);setCreators(b);setCampaigns(c);setItems(d);setPerformance(e)})
- useEffect(()=>{Promise.all([getMyPreorders(),getCreators(),getSellerCampaigns(),getSellerCollaborations(),getSellerPerformance()]).then(([a,b,c,d,e])=>{setPreorders(a);setCreators(b);setCampaigns(c);setItems(d);setPerformance(e)}).catch(()=>alert('협업 정보를 불러오지 못했어.'))},[])
- const action=async job=>{try{await job();await load()}catch(e){alert(e.response?.data?.message||'처리에 실패했어.')}}
- const submit=e=>{e.preventDefault();action(()=>createCampaign({...form,preorderId:Number(form.preorderId),minFollowerCount:Number(form.minFollowerCount),recruitmentCount:Number(form.recruitmentCount)}));setForm(empty)}
- return <main><h1>인플루언서 협업 관리</h1><form className="form-grid" onSubmit={submit}><h2>공개 모집 만들기</h2>
-  <label>프리오더<select required value={form.preorderId} onChange={e=>setForm({...form,preorderId:e.target.value})}><option value="">선택</option>{preorders.filter(p=>!campaigns.some(c=>c.preorderId===p.id)).map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></label>
-  {['title','description','category','rewardDescription'].map(n=><label key={n}>{({title:'모집 제목',description:'설명',category:'카테고리',rewardDescription:'보상 안내'})[n]}<input required={n==='title'} value={form[n]} onChange={e=>setForm({...form,[n]:e.target.value})}/></label>)}
-  <label>최소 팔로워<input type="number" min="0" value={form.minFollowerCount} onChange={e=>setForm({...form,minFollowerCount:e.target.value})}/></label><label>모집 인원<input type="number" min="1" value={form.recruitmentCount} onChange={e=>setForm({...form,recruitmentCount:e.target.value})}/></label>
-  <label>시작<input type="datetime-local" required value={form.startAt} onChange={e=>setForm({...form,startAt:e.target.value})}/></label><label>종료<input type="datetime-local" required value={form.endAt} onChange={e=>setForm({...form,endAt:e.target.value})}/></label><button>모집 등록</button></form>
- <h2>인플루언서 직접 제안</h2>{creators.map(c=><section key={c.id}><b>{c.nickname}</b> · {c.primaryCategory} · 팔로워 {c.followerCount.toLocaleString()}명 <button onClick={()=>{const preorderId=prompt('제안할 프리오더 ID를 입력해줘.');const message=preorderId&&prompt('제안 메시지를 입력해줘.');if(message)action(()=>propose({preorderId:Number(preorderId),creatorId:c.id,message}))}}>제안</button></section>)}
- <h2>지원·제안 현황</h2>{items.map(v=><section key={v.id}><b>{v.preorderTitle}</b> / {v.creatorNickname} / {v.type} / {v.status}{v.type==='APPLICATION'&&v.status==='PENDING'&&<><button onClick={()=>action(()=>collaborationAction(v.id,'approve'))}>승인</button><button onClick={()=>action(()=>collaborationAction(v.id,'reject'))}>거절</button></>} {v.status==='ACTIVE'&&<button onClick={()=>action(()=>collaborationAction(v.id,'end'))}>협업 종료</button>}<hr/></section>)}<h2>인플루언서별 성과</h2>{performance.map(p=><p key={p.collaborationId}>{p.creatorNickname} / {p.preorderTitle}: 클릭 {p.clicks}, 주문 {p.paidOrders}, GMV {Number(p.gmv).toLocaleString()}원, 전환율 {p.conversionRate.toFixed(1)}%</p>)}</main>}
+import { useEffect, useState } from 'react'
+import {
+  collaborationAction,
+  getCreators,
+  getSellerCollaborations,
+  getSellerPerformance,
+  propose,
+} from '../api/collaborationApi'
+import SellerCampaignManager from '../features/sellerCampaigns/SellerCampaignManager'
+export default function SellerCollaborationPage() {
+  const [creators, setCreators] = useState([]),
+    [items, setItems] = useState([]),
+    [performance, setPerformance] = useState([])
+  const load = () =>
+    Promise.all([
+      getCreators(),
+      getSellerCollaborations(),
+      getSellerPerformance(),
+    ]).then(([a, b, c]) => {
+      setCreators(a)
+      setItems(b)
+      setPerformance(c)
+    })
+  useEffect(() => {
+    Promise.all([
+      getCreators(),
+      getSellerCollaborations(),
+      getSellerPerformance(),
+    ])
+      .then(([a, b, c]) => {
+        setCreators(a)
+        setItems(b)
+        setPerformance(c)
+      })
+      .catch(() => alert('협업 정보를 불러오지 못했습니다.'))
+  }, [])
+  const action = async (job) => {
+    try {
+      await job()
+      await load()
+    } catch (e) {
+      alert(e.response?.data?.message || '처리에 실패했습니다.')
+    }
+  }
+  return (
+    <main>
+      <h1>브랜드 캠페인·협업 관리</h1>
+      <SellerCampaignManager />
+      <h2>인플루언서 직접 제안</h2>
+      {creators.map((c) => (
+        <section key={c.id}>
+          <b>{c.nickname}</b> · {c.primaryCategory} · 팔로워{' '}
+          {c.followerCount.toLocaleString()}명{' '}
+          <button
+            onClick={() => {
+              const preorderId = prompt('제안할 프리오더 ID를 입력해 주세요.')
+              const message =
+                preorderId && prompt('제안 메시지를 입력해 주세요.')
+              if (message)
+                action(() =>
+                  propose({
+                    preorderId: Number(preorderId),
+                    creatorId: c.id,
+                    message,
+                  }),
+                )
+            }}
+          >
+            제안
+          </button>
+        </section>
+      ))}
+      <h2>지원·제안 현황</h2>
+      {items.map((v) => (
+        <section key={v.id}>
+          <b>{v.preorderTitle}</b> / {v.creatorNickname} / {v.type} / {v.status}
+          {v.type === 'APPLICATION' && v.status === 'PENDING' && (
+            <>
+              <button
+                onClick={() =>
+                  action(() => collaborationAction(v.id, 'approve'))
+                }
+              >
+                승인
+              </button>
+              <button
+                onClick={() =>
+                  action(() => collaborationAction(v.id, 'reject'))
+                }
+              >
+                거절
+              </button>
+            </>
+          )}{' '}
+          {v.status === 'ACTIVE' && (
+            <button
+              onClick={() => action(() => collaborationAction(v.id, 'end'))}
+            >
+              협업 종료
+            </button>
+          )}
+          <hr />
+        </section>
+      ))}
+      <h2>인플루언서별 성과</h2>
+      {performance.map((p) => (
+        <p key={p.collaborationId}>
+          {p.creatorNickname} / {p.preorderTitle}: 클릭 {p.clicks}, 주문{' '}
+          {p.paidOrders}, GMV {Number(p.gmv).toLocaleString()}원, 전환율{' '}
+          {p.conversionRate.toFixed(1)}%
+        </p>
+      ))}
+    </main>
+  )
+}

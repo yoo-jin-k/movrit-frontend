@@ -1,3 +1,5 @@
+import { lazy, Suspense } from 'react'
+import MyCampaignsPage from './features/membership/MyCampaignsPage'
 import CampaignListingPage from './features/discovery/CampaignListingPage'
 import CampaignDetailPage from './features/discovery/CampaignDetailPage'
 import SpecialCampaignPage from './features/discovery/SpecialCampaignPage'
@@ -30,7 +32,28 @@ import CreatorApplyPage from './pages/CreatorApplyPage'
 import CreatorDashboardPage from './pages/CreatorDashboardPage'
 import SellerCollaborationPage from './pages/SellerCollaborationPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
-import SellerDashboardPage from './pages/SellerDashboardPage'
+const BusinessShell = lazy(() => import('./features/business/BusinessShell'))
+const BusinessHome = lazy(() => import('./features/business/BusinessHome'))
+const BusinessCampaigns = lazy(() =>
+  import('./features/business/BusinessCampaigns').then((module) => ({
+    default: module.BusinessCampaigns,
+  })),
+)
+const BusinessCampaignEditor = lazy(() =>
+  import('./features/business/BusinessCampaigns').then((module) => ({
+    default: module.BusinessCampaignEditor,
+  })),
+)
+const BusinessParticipants = lazy(
+  () => import('./features/business/BusinessParticipants'),
+)
+const BusinessContents = lazy(
+  () => import('./features/business/BusinessContents'),
+)
+const BusinessInbox = lazy(() => import('./features/business/BusinessInbox'))
+const BusinessSettings = lazy(
+  () => import('./features/business/BusinessSettings'),
+)
 import ProtectedRoute from './components/ProtectedRoute'
 import {
   BuyerAddressesPage,
@@ -79,411 +102,408 @@ function ProtectedPage({ children }) {
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<RootRedirect />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/password/forgot" element={<ForgotPasswordPage />} />
-        <Route path="/password/reset" element={<ResetPasswordPage />} />
-        <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
-        <Route path="/social-link/callback" element={<SocialLinkCallbackPage />} />
-        <Route path="/home" element={<BuyerHomePage />} />
-        <Route path="/category/:section" element={<CampaignListingPage />} />
-        <Route path="/search" element={<CampaignListingPage search />} />
-        <Route path="/campaign/:campaignId" element={<CampaignDetailPage />} />
-        <Route path="/special/:kind" element={<SpecialCampaignPage />} />
-        <Route path="/offerwall" element={<OfferwallPage />} />
-        <Route path="/offerwall/:shop" element={<OfferwallPage />} />
-        <Route path="/community/:board" element={<CommunityPage />} />
-        <Route path="/community/:board/:postId" element={<CommunityPage />} />
-        <Route path="/notices" element={<NoticesPage />} />
-        <Route path="/notices/:noticeId" element={<NoticeDetailPage />} />
-        <Route
-          path="/support"
-          element={
-            <ProtectedPage>
-              <InquiriesPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/roles"
-          element={
-            <ProtectedPage>
-              <RoleSwitchPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/settings/security"
-          element={
-            <ProtectedPage>
-              <SecurityPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/settings/terms"
-          element={
-            <ProtectedPage>
-              <TermsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/settings/withdraw"
-          element={
-            <ProtectedPage>
-              <WithdrawalPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/preorders"
-          element={
-            <ProtectedPage>
-              <PreorderShopPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/preorders/:preorderId"
-          element={
-            <ProtectedPage>
-              <PreorderShopPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/favorites"
-          element={
-            <ProtectedPage>
-              <FavoritePreordersPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/mypage"
-          element={
-            <ProtectedPage>
-              <MyPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <ProtectedPage>
-              <MyOrdersPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/orders/complete"
-          element={
-            <ProtectedPage>
-              <BuyerOrderCompletePage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/orders/:orderId"
-          element={
-            <ProtectedPage>
-              <BuyerOrderDetailPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/checkout/:preorderId"
-          element={
-            <ProtectedPage>
-              <BuyerCheckoutPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/mypage/profile"
-          element={
-            <ProtectedPage>
-              <BuyerProfileEditPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/mypage/addresses"
-          element={
-            <ProtectedPage>
-              <BuyerAddressesPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/mypage/payments"
-          element={
-            <ProtectedPage>
-              <BuyerPaymentsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/mypage/notifications"
-          element={
-            <ProtectedPage>
-              <BuyerNotificationSettingsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/preorders/status/:state"
-          element={
-            <ProtectedPage>
-              <BuyerPreorderStatePage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/notifications"
-          element={
-            <ProtectedPage>
-              <NotificationsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/inquiries"
-          element={
-            <ProtectedPage>
-              <InquiriesPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/creator/apply"
-          element={
-            <ProtectedPage>
-              <CreatorApplyPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/creator/dashboard"
-          element={
-            <ProtectedPage>
-              <CreatorDashboardPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/creator/profile"
-          element={
-            <ProtectedPage>
-              <CreatorPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/creator/collaborations"
-          element={
-            <ProtectedPage>
-              <CreatorCollaborationPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/seller/apply"
-          element={
-            <ProtectedPage>
-              <SellerApplyPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/seller/dashboard"
-          element={
-            <ProtectedPage>
-              <SellerDashboardPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/seller/brands"
-          element={
-            <ProtectedPage>
-              <BrandManagePage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/seller/products"
-          element={
-            <ProtectedPage>
-              <ProductManagePage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/seller/preorders"
-          element={
-            <ProtectedPage>
-              <PreorderManagePage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/seller/operations"
-          element={
-            <ProtectedPage>
-              <SellerOperationsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/seller/collaborations"
-          element={
-            <ProtectedPage>
-              <SellerCollaborationPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/sellers"
-          element={
-            <ProtectedPage>
-              <AdminSellerPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/sellers/:id"
-          element={
-            <ProtectedPage>
-              <AdminSellerDetailPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedPage>
-              <AdminDashboardPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/members"
-          element={
-            <ProtectedPage>
-              <AdminMembersPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/members/:id"
-          element={
-            <ProtectedPage>
-              <AdminMemberDetailPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/creators"
-          element={
-            <ProtectedPage>
-              <AdminCreatorsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/creators/:id"
-          element={
-            <ProtectedPage>
-              <AdminCreatorDetailPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/preorders"
-          element={
-            <ProtectedPage>
-              <AdminPreordersPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/preorders/:id"
-          element={
-            <ProtectedPage>
-              <AdminPreorderDetailPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/refunds"
-          element={
-            <ProtectedPage>
-              <AdminRefundsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/refunds/:id"
-          element={
-            <ProtectedPage>
-              <AdminRefundDetailPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/collaborations"
-          element={
-            <ProtectedPage>
-              <AdminCollaborationsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/settlements"
-          element={
-            <ProtectedPage>
-              <AdminSettlementsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/content"
-          element={
-            <ProtectedPage>
-              <AdminContentPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/inquiries"
-          element={
-            <ProtectedPage>
-              <AdminInquiriesPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/reports"
-          element={
-            <ProtectedPage>
-              <AdminReportsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route
-          path="/admin/settings"
-          element={
-            <ProtectedPage>
-              <AdminSettingsPage />
-            </ProtectedPage>
-          }
-        />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Suspense fallback={<p role="status">화면을 불러오고 있습니다.</p>}>
+        <Routes>
+          <Route path="/" element={<RootRedirect />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route
+            path="/mypage/campaigns"
+            element={
+              <ProtectedPage>
+                <MyCampaignsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route path="/password/forgot" element={<ForgotPasswordPage />} />
+          <Route path="/password/reset" element={<ResetPasswordPage />} />
+          <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+          <Route
+            path="/social-link/callback"
+            element={<SocialLinkCallbackPage />}
+          />
+          <Route path="/home" element={<BuyerHomePage />} />
+          <Route path="/category/:section" element={<CampaignListingPage />} />
+          <Route path="/search" element={<CampaignListingPage search />} />
+          <Route
+            path="/campaign/:campaignId"
+            element={<CampaignDetailPage />}
+          />
+          <Route path="/special/:kind" element={<SpecialCampaignPage />} />
+          <Route path="/offerwall" element={<OfferwallPage />} />
+          <Route path="/offerwall/:shop" element={<OfferwallPage />} />
+          <Route path="/community/:board" element={<CommunityPage />} />
+          <Route path="/community/:board/:postId" element={<CommunityPage />} />
+          <Route path="/notices" element={<NoticesPage />} />
+          <Route path="/notices/:noticeId" element={<NoticeDetailPage />} />
+          <Route
+            path="/support"
+            element={
+              <ProtectedPage>
+                <InquiriesPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/roles"
+            element={
+              <ProtectedPage>
+                <RoleSwitchPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/settings/security"
+            element={
+              <ProtectedPage>
+                <SecurityPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/settings/terms"
+            element={
+              <ProtectedPage>
+                <TermsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/settings/withdraw"
+            element={
+              <ProtectedPage>
+                <WithdrawalPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/preorders"
+            element={
+              <ProtectedPage>
+                <PreorderShopPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/preorders/:preorderId"
+            element={
+              <ProtectedPage>
+                <PreorderShopPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedPage>
+                <FavoritePreordersPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/mypage"
+            element={
+              <ProtectedPage>
+                <MyPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedPage>
+                <MyOrdersPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/orders/complete"
+            element={
+              <ProtectedPage>
+                <BuyerOrderCompletePage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/orders/:orderId"
+            element={
+              <ProtectedPage>
+                <BuyerOrderDetailPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/checkout/:preorderId"
+            element={
+              <ProtectedPage>
+                <BuyerCheckoutPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/mypage/profile"
+            element={
+              <ProtectedPage>
+                <BuyerProfileEditPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/mypage/addresses"
+            element={
+              <ProtectedPage>
+                <BuyerAddressesPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/mypage/payments"
+            element={
+              <ProtectedPage>
+                <BuyerPaymentsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/mypage/notifications"
+            element={
+              <ProtectedPage>
+                <BuyerNotificationSettingsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/preorders/status/:state"
+            element={
+              <ProtectedPage>
+                <BuyerPreorderStatePage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedPage>
+                <NotificationsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/inquiries"
+            element={
+              <ProtectedPage>
+                <InquiriesPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/creator/apply"
+            element={
+              <ProtectedPage>
+                <CreatorApplyPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/creator/dashboard"
+            element={
+              <ProtectedPage>
+                <CreatorDashboardPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/creator/profile"
+            element={
+              <ProtectedPage>
+                <CreatorPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/creator/collaborations"
+            element={
+              <ProtectedPage>
+                <CreatorCollaborationPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/seller/apply"
+            element={
+              <ProtectedPage>
+                <SellerApplyPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/seller"
+            element={
+              <ProtectedPage>
+                <BusinessShell />
+              </ProtectedPage>
+            }
+          >
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<BusinessHome />} />
+            <Route path="campaigns" element={<BusinessCampaigns />} />
+            <Route path="campaigns/new" element={<BusinessCampaignEditor />} />
+            <Route
+              path="campaigns/:campaignId"
+              element={<BusinessCampaignEditor />}
+            />
+            <Route path="participants" element={<BusinessParticipants />} />
+            <Route path="contents" element={<BusinessContents />} />
+            <Route path="inbox" element={<BusinessInbox />} />
+            <Route path="settings" element={<BusinessSettings />} />
+            <Route path="brands" element={<BrandManagePage />} />
+            <Route path="products" element={<ProductManagePage />} />
+            <Route path="preorders" element={<PreorderManagePage />} />
+            <Route path="operations" element={<SellerOperationsPage />} />
+            <Route
+              path="collaborations"
+              element={<SellerCollaborationPage />}
+            />
+          </Route>
+          <Route
+            path="/admin/sellers"
+            element={
+              <ProtectedPage>
+                <AdminSellerPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/sellers/:id"
+            element={
+              <ProtectedPage>
+                <AdminSellerDetailPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedPage>
+                <AdminDashboardPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/members"
+            element={
+              <ProtectedPage>
+                <AdminMembersPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/members/:id"
+            element={
+              <ProtectedPage>
+                <AdminMemberDetailPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/creators"
+            element={
+              <ProtectedPage>
+                <AdminCreatorsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/creators/:id"
+            element={
+              <ProtectedPage>
+                <AdminCreatorDetailPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/preorders"
+            element={
+              <ProtectedPage>
+                <AdminPreordersPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/preorders/:id"
+            element={
+              <ProtectedPage>
+                <AdminPreorderDetailPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/refunds"
+            element={
+              <ProtectedPage>
+                <AdminRefundsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/refunds/:id"
+            element={
+              <ProtectedPage>
+                <AdminRefundDetailPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/collaborations"
+            element={
+              <ProtectedPage>
+                <AdminCollaborationsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/settlements"
+            element={
+              <ProtectedPage>
+                <AdminSettlementsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/content"
+            element={
+              <ProtectedPage>
+                <AdminContentPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/inquiries"
+            element={
+              <ProtectedPage>
+                <AdminInquiriesPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <ProtectedPage>
+                <AdminReportsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedPage>
+                <AdminSettingsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

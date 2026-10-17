@@ -74,9 +74,7 @@ export default function LiveCampaignDetailPage({ campaignId }) {
                   ['참여 채널 안내', detail.channelGuide],
                   [
                     '참여 조건',
-                    detail.minFollowerCount == null
-                      ? null
-                      : `최소 팔로워 ${detail.minFollowerCount.toLocaleString()}명`,
+                    '아래 신청 영역에서 캠페인별 최신 참여 조건을 확인해 주세요.',
                   ],
                   ['일정 안내', detail.scheduleGuide],
                   ['배송 안내', detail.deliveryGuide],

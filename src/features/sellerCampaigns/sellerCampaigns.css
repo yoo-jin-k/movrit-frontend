@@ -1,0 +1,120 @@
+.seller-campaign-manager {
+  width: 100%;
+  max-width: 960px;
+  margin: 24px auto;
+  color: #222;
+}
+.seller-campaign-manager *,
+.seller-campaign-manager *::before,
+.seller-campaign-manager *::after {
+  box-sizing: border-box;
+}
+.seller-campaign-manager form,
+.seller-campaign-manager article {
+  border: 1px solid #e5e7eb;
+  padding: 24px;
+  border-radius: 16px;
+  margin: 20px 0;
+  background: #fff;
+}
+.seller-campaign-manager fieldset {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;
+  min-width: 0;
+}
+.seller-campaign-manager legend {
+  font-weight: 700;
+  padding: 0 6px;
+}
+.seller-campaign-manager label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.seller-campaign-manager input,
+.seller-campaign-manager select,
+.seller-campaign-manager textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  padding: 11px;
+  font: inherit;
+  color: inherit;
+}
+.seller-campaign-manager fieldset p {
+  grid-column: 1/-1;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0;
+  color: #555;
+}
+.seller-campaign-manager button {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 11px 16px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  cursor: pointer;
+}
+.seller-campaign-manager button[type='submit'] {
+  background: #191919;
+  color: #fff;
+}
+.seller-campaign-manager button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.seller-campaign-manager [role='alert'] {
+  color: #a42525;
+}
+.seller-campaign-manager [role='status'] {
+  color: #155a31;
+}
+.seller-campaign-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+@media (max-width: 600px) {
+  .seller-campaign-manager form,
+  .seller-campaign-manager article {
+    padding: 14px;
+  }
+  .seller-campaign-manager fieldset {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px;
+  }
+}
+.seller-campaign-manager .seller-form-full {
+  grid-column: 1/-1;
+  min-width: 0;
+}
+.seller-campaign-manager .seller-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+.seller-campaign-manager .seller-checkbox input {
+  width: 18px;
+  height: 18px;
+}
+.seller-campaign-manager .seller-form-item {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}

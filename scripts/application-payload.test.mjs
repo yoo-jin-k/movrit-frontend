@@ -35,3 +35,14 @@ test('동의하지 않은 문서를 자동 동의로 처리하지 않습니다',
     false,
   )
 })
+
+test('신청 시 확인한 조건 식별자와 버전을 전달해 삭제 후 재생성도 구분합니다', () => {
+  const first = applicationPayload(form, values, { id: 10, version: 0 })
+  const recreated = applicationPayload(form, values, { id: 11, version: 0 })
+  assert.equal(first.expectedEligibilityRequirementId, 10)
+  assert.equal(recreated.expectedEligibilityRequirementId, 11)
+  assert.equal(first.expectedEligibilityRequirementVersion, 0)
+  const none = applicationPayload(form, values, null)
+  assert.equal(none.expectedEligibilityRequirementId, null)
+  assert.equal(none.expectedEligibilityRequirementVersion, null)
+})

@@ -9,7 +9,7 @@ function BuyerHero() {
         <nav className="buyer-hero__description" aria-label="구매자 안내 메뉴">
           <Link to="/preorders">프리오더</Link>
           <Link to="/preorders">카테고리</Link>
-          <Link to="/creator/profile">크리에이터</Link>
+          <Link to="/creator/profile">활동 프로필</Link>
           <Link to="/inquiries">공지사항</Link>
         </nav>
       </div>

@@ -9,7 +9,12 @@ import {
 import EmailVerificationPanel from './EmailVerificationPanel'
 import LiveApplicationForm from './LiveApplicationForm'
 import { readCampaignEligibility } from '../../api/campaignParticipationApi'
-import { applicationAvailable, eligibilityReason } from './eligibilityModel'
+import {
+  applicationAvailable,
+  eligibilityReason,
+  campaignRequirementSummary,
+  metricEvaluationSummary,
+} from './eligibilityModel'
 import { participationError } from './participationError'
 
 // 이메일 소유 상태는 매번 서버에서 확인하고 실명 인증과 분리해서 안내합니다.
@@ -95,7 +100,12 @@ export default function CampaignParticipation({ campaignId, form, onRefresh }) {
         <section aria-label="신청 가능 상태">
           <h3>참여 조건</h3>
           <p>
-            활동 채널: {state.eligibility.channelReady ? '등록됨' : '등록 필요'}
+            {campaignRequirementSummary(state.eligibility.campaignRequirement)}
+          </p>
+          <p>{metricEvaluationSummary(state.eligibility.metricEvaluation)}</p>
+          <Link to="/creator/profile">내 채널 지표 확인</Link>
+          <p>
+            로그인, 이메일 인증, 모집기간 및 신청서 확인은 별도로 필요합니다.
           </p>
           <ul>
             {state.eligibility.blockingReasons.map((reason) => (
@@ -111,9 +121,10 @@ export default function CampaignParticipation({ campaignId, form, onRefresh }) {
       )}
       {!submitted && applicationAvailable(state.eligibility, form) ? (
         <LiveApplicationForm
-          key={form.version}
+          key={`${form.version}:${state.eligibility.campaignRequirement?.id ?? 'none'}:${state.eligibility.campaignRequirement?.version ?? 'none'}`}
           campaignId={campaignId}
           form={form}
+          requirement={state.eligibility.campaignRequirement}
           onRefresh={onRefresh}
           onSubmitted={(result) => {
             setSubmitted(result)

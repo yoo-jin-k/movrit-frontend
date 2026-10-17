@@ -4,7 +4,7 @@ import HeaderIconLink from './HeaderIconLink'
 const PRIMARY_LINKS = [
   { to: '/preorders', label: '프리오더' },
   { to: '/preorders', label: '카테고리' },
-  { to: '/creator/profile', label: '크리에이터' },
+  { to: '/creator/profile', label: '활동 프로필' },
   { to: '/notices', label: '공지사항' },
 ]
 

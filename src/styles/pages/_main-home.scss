@@ -2349,3 +2349,60 @@
 .campaign-calendar__period.is-results {
   color: #9b5a12;
 }
+
+// 실제 신청 폼은 모달 밖에서도 각 라벨과 입력칸을 독립된 행으로 배치합니다.
+.live-application-form {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  > fieldset {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+    margin: 0;
+    padding: 12px;
+    border: 1px solid #e8e8ed;
+  }
+
+  fieldset > label {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  input:not([type='checkbox']), select, textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px;
+    border: 1px solid #d9d9df;
+    border-radius: 6px;
+    font: inherit;
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .discovery-checkbox {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+  }
+
+  summary { cursor: pointer; }
+  button { min-height: 44px; }
+}

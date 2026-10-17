@@ -47,7 +47,10 @@ export default function LiveApplicationForm({
     }
   }
   return (
-    <form className="application-fieldset" onSubmit={submit}>
+    <form
+      className="live-application-form application-fieldset"
+      onSubmit={submit}
+    >
       <h3>캠페인 신청서</h3>
       <fieldset disabled={busy || conflict} className="application-fieldset">
         <legend>참여 정보</legend>
@@ -152,7 +155,9 @@ export default function LiveApplicationForm({
                   setConsents((old) => ({ ...old, [d.id]: e.target.checked }))
                 }
               />
-              {d.required ? '[필수]' : '[선택]'} {d.title}에 동의합니다.
+              <span>
+                {d.required ? '[필수]' : '[선택]'} {d.title}에 동의합니다.
+              </span>
             </label>
           </div>
         ))}

@@ -2,19 +2,21 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { login, getKakaoLoginUrl, getGoogleLoginUrl } from '../api/authApi'
 import CommonLayout from '../components/layout/CommonLayout'
+import { loginError } from '../features/auth/loginError'
 
 function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [errorMessage, setErrorMessage] = useState('')
+  const [busy, setBusy] = useState(false)
   const [form, setForm] = useState({ email: '', password: '' })
 
   const handleKakaoLogin = async () => {
     try {
       const url = await getKakaoLoginUrl()
       window.location.href = url
-    } catch (error) {
-      console.error(error)
-      alert('카카오 로그인을 시작하지 못했습니다.')
+    } catch {
+      setErrorMessage('카카오 로그인을 시작하지 못했습니다.')
     }
   }
 
@@ -22,9 +24,8 @@ function LoginPage() {
     try {
       const url = await getGoogleLoginUrl()
       window.location.href = url
-    } catch (error) {
-      console.error(error)
-      alert('구글 로그인을 시작하지 못했습니다.')
+    } catch {
+      setErrorMessage('구글 로그인을 시작하지 못했습니다.')
     }
   }
 
@@ -35,6 +36,9 @@ function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (busy) return
+    setBusy(true)
+    setErrorMessage('')
     try {
       const result = await login(form)
       sessionStorage.setItem('accessToken', result.accessToken)
@@ -46,8 +50,9 @@ function LoginPage() {
         /^\/campaign\/\d+$/.test(destination || '') ? destination : '/mypage',
       )
     } catch (error) {
-      console.error(error)
-      alert('이메일 또는 비밀번호를 확인해 주세요.')
+      setErrorMessage(loginError(error))
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -79,8 +84,9 @@ function LoginPage() {
             autoComplete="current-password"
           />
         </label>
-        <button className="common-button" type="submit">
-          로그인
+        <p role="alert">{errorMessage}</p>
+        <button className="common-button" type="submit" disabled={busy}>
+          {busy ? '로그인 중입니다…' : '로그인'}
         </button>
         <button
           className="common-auth-card__forgot"

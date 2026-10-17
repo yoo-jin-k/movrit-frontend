@@ -9,6 +9,7 @@ import CampaignSchedule from './CampaignSchedule'
 import { liveCampaignSchedule } from './scheduleModel'
 import DiscoveryLayout from './DiscoveryLayout'
 import CampaignParticipation from './CampaignParticipation'
+import CampaignPublicMedia from './CampaignPublicMedia'
 
 // 실제 상세와 신청 폼은 별도로 읽습니다. 폼 조회 실패가 공개 상세까지 숨기지 않도록 합니다.
 export default function LiveCampaignDetailPage({ campaignId }) {
@@ -64,6 +65,10 @@ export default function LiveCampaignDetailPage({ campaignId }) {
             <div className="discovery-detail__body">
               <h1>{detail.title}</h1>
               <p>{detail.brandName}</p>
+              <CampaignPublicMedia
+                key={`${campaignId}-${attempt}`}
+                campaignId={campaignId}
+              />
               <p>
                 {detail.description || '캠페인 소개가 등록되지 않았습니다.'}
               </p>

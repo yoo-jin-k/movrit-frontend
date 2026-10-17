@@ -1,0 +1,111 @@
+.campaign-media {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+  color: #222;
+}
+.campaign-media fieldset {
+  min-width: 0;
+  border: 1px solid #e5e5eb;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fff;
+}
+.campaign-media legend {
+  font-size: 18px;
+  font-weight: 700;
+  padding: 0 6px;
+}
+.campaign-media p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.campaign-media label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+.campaign-media input:not([type='checkbox']) {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid #dedee7;
+  padding: 10px;
+  border-radius: 7px;
+  background: white;
+}
+.campaign-media-upload {
+  margin: 16px 0;
+}
+.campaign-media-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.campaign-media-list li {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 16px;
+  border: 1px solid #ececf1;
+  padding: 12px;
+  border-radius: 10px;
+}
+.campaign-media img {
+  width: 112px;
+  height: 112px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f6f3fb;
+}
+.campaign-media-cover {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+.campaign-media-item {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.campaign-media-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.campaign-media button {
+  padding: 8px 12px;
+  border: 1px solid #dedee7;
+  border-radius: 6px;
+  background: white;
+  color: #5926c8;
+  cursor: pointer;
+}
+.campaign-media button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.campaign-media-address {
+  display: grid;
+  gap: 14px;
+}
+.campaign-media .campaign-media-confirm {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 18px;
+}
+.campaign-media .campaign-media-error {
+  color: #b42318;
+}
+@media (max-width: 480px) {
+  .campaign-media fieldset {
+    padding: 14px;
+  }
+  .campaign-media-list li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

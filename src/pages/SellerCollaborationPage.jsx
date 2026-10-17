@@ -1,3 +1,4 @@
+import { liveCampaignMediaApi } from '../api/liveCampaignMediaApi'
 import { useEffect, useState } from 'react'
 import {
   collaborationAction,
@@ -45,7 +46,7 @@ export default function SellerCollaborationPage() {
   return (
     <main>
       <h1>브랜드 캠페인·협업 관리</h1>
-      <SellerCampaignManager />
+      <SellerCampaignManager mediaApi={liveCampaignMediaApi} />
       <h2>인플루언서 직접 제안</h2>
       {creators.map((c) => (
         <section key={c.id}>

@@ -1,3 +1,5 @@
+import VisitEvidence from '../sellerCampaigns/VisitEvidence'
+import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import useBusinessList from './useBusinessList'
@@ -214,6 +216,11 @@ export default function BusinessParticipants() {
         >
           <StatusBadge status={selected.status} />
           <h3>{title(selected.campaignId)}</h3>
+          <VisitEvidence
+            key={`visit-${selected.id}`}
+            api={liveCampaignVisitEvidenceApi}
+            applicationId={selected.id}
+          />
           <dl className="business-details">
             <div>
               <dt>신청 당시 조건</dt>

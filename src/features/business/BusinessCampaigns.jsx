@@ -1,3 +1,4 @@
+import { liveCampaignMediaApi } from '../../api/liveCampaignMediaApi'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import useBusinessList from './useBusinessList'
@@ -280,6 +281,7 @@ export function BusinessCampaignEditor() {
         <span>04 미리보기</span>
       </div>
       <SellerCampaignManager
+        mediaApi={liveCampaignMediaApi}
         key={campaignId || 'new'}
         initialCampaignId={campaignId}
         dashboard

@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react'
+import VisitEvidence from './VisitEvidence'
+import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getSellerCampaigns } from '../../api/collaborationApi'
 import { getMyPreorders } from '../../api/preorderApi'
@@ -18,6 +20,14 @@ import { emptyRequirement, requirementForm } from './requirementModel'
 import { emptyCampaign, configuredCampaignPayload } from './campaignEditorModel'
 import './sellerCampaigns.css'
 import CampaignFormPreview from './CampaignFormPreview'
+import CampaignMediaFields from './CampaignMediaFields'
+import { emptyCampaignMediaDraft } from './campaignMediaDraft'
+import {
+  changeMediaFulfillment,
+  validateManagedPresentation,
+  validatePendingMedia,
+} from './campaignMediaContract'
+import { readMediaSession, prepareMediaSave } from './campaignMediaWorkflow'
 
 async function readOptionalForm(id) {
   try {
@@ -30,7 +40,18 @@ async function readOptionalForm(id) {
 export default function SellerCampaignManager({
   initialCampaignId,
   dashboard = false,
+  mediaApi = null,
 }) {
+  // 서버 반영 확인 뒤에만 mediaApi를 주입합니다. 기본 경로는 요청하지 않습니다.
+  const [mediaSession, setMediaSession] = useState(() => ({
+    managed: null,
+    draft: emptyCampaignMediaDraft(),
+  }))
+  const mediaRead = useCallback(
+    (id) => readMediaSession(mediaApi, id),
+    [mediaApi],
+  )
+  const submitting = useRef(false)
   const [preview, setPreview] = useState(false)
   const [state, setState] = useState({
     loading: true,
@@ -68,12 +89,14 @@ export default function SellerCampaignManager({
             )
           )
             throw new Error('이 캠페인을 수정할 권한이 없습니다.')
-          const [detail, requirement, existingForm] = await Promise.all([
+          const [detail, requirement, existingForm, media] = await Promise.all([
             readCampaign(initialCampaignId),
             readCampaignRequirement(initialCampaignId),
             readOptionalForm(initialCampaignId),
+            mediaRead(initialCampaignId),
           ])
           if (!active) return
+          if (media) setMediaSession(media)
           setOriginal(detail)
           setForm(detail)
           setSavedForm(existingForm)
@@ -99,17 +122,19 @@ export default function SellerCampaignManager({
     return () => {
       active = false
     }
-  }, [attempt, initialCampaignId])
+  }, [attempt, initialCampaignId, mediaRead])
   const edit = async (campaignId) => {
     setBusy(true)
     setError('')
     setNotice('')
     try {
-      const [detail, requirement, existingForm] = await Promise.all([
+      const [detail, requirement, existingForm, media] = await Promise.all([
         readCampaign(campaignId),
         readCampaignRequirement(campaignId),
         readOptionalForm(campaignId),
+        mediaRead(campaignId),
       ])
+      if (media) setMediaSession(media)
       setOriginal(detail)
       setForm(detail)
       setSavedForm(existingForm)
@@ -122,10 +147,12 @@ export default function SellerCampaignManager({
     } catch {
       setError('편집 정보를 불러오지 못했습니다. 다시 시도해 주세요.')
     } finally {
+      submitting.current = false
       setBusy(false)
     }
   }
   const reset = () => {
+    setMediaSession({ managed: null, draft: emptyCampaignMediaDraft() })
     setApplicationForm(emptyApplicationForm())
     setSavedForm(null)
     setFormDirty(true)
@@ -140,9 +167,20 @@ export default function SellerCampaignManager({
   }
   const submit = async (event) => {
     event.preventDefault()
-    if (busy || mustReload) return
+    if (busy || mustReload || submitting.current) return
     let payload
     try {
+      if (mediaApi)
+        validatePendingMedia(mediaSession.draft, {
+          editing: Boolean(original),
+          originalHadRepresentative: Boolean(
+            mediaSession.managed?.representativeImage ||
+              mediaSession.managed?.legacyRepresentativeImageUrl,
+          ),
+          originalFulfillmentTypes: savedForm?.allowedFulfillmentTypes || [],
+          originalVisitLocation: mediaSession.managed?.visitLocation,
+          fulfillmentTypes: applicationForm.allowedFulfillmentTypes,
+        })
       payload = configuredCampaignPayload(form, condition, original)
       if (formDirty || !original) {
         payload.applicationForm = applicationFormRequest(applicationForm)
@@ -153,19 +191,32 @@ export default function SellerCampaignManager({
       setError(failure.message)
       return
     }
+    submitting.current = true
     setBusy(true)
     setError('')
     setNotice('')
     try {
+      payload = await prepareMediaSave(
+        mediaApi,
+        payload,
+        mediaSession,
+        {
+          editing: Boolean(original),
+          originalFulfillmentTypes: savedForm?.allowedFulfillmentTypes || [],
+        },
+        (draft) => setMediaSession((current) => ({ ...current, draft })),
+      )
       const result = await saveConfiguredCampaign(payload, original?.id)
-      const [detail, requirement, campaigns, confirmedForm] = await Promise.all(
-        [
+      if (mediaApi) validateManagedPresentation(result.presentation)
+      const [detail, requirement, campaigns, confirmedForm, media] =
+        await Promise.all([
           readCampaign(result.campaign.id),
           readCampaignRequirement(result.campaign.id),
           getSellerCampaigns(),
           readCampaignForm(result.campaign.id),
-        ],
-      )
+          mediaRead(result.campaign.id),
+        ])
+      if (media) setMediaSession(media)
       setOriginal(detail)
       setForm(detail)
       setCondition(requirementForm(requirement))
@@ -175,7 +226,11 @@ export default function SellerCampaignManager({
       setFormDirty(false)
       setFormConfigured(true)
       setState((current) => ({ ...current, campaigns }))
-      setNotice('캠페인·참여 조건·신청서를 저장하고 다시 확인했습니다.')
+      setNotice(
+        mediaApi
+          ? '캠페인·신청서·이미지·방문 정보를 저장하고 다시 확인했습니다.'
+          : '캠페인·참여 조건·신청서를 저장하고 다시 확인했습니다.',
+      )
     } catch (failure) {
       setMustReload(true)
       setError(
@@ -186,6 +241,7 @@ export default function SellerCampaignManager({
             : '저장 결과를 확인하지 못했습니다. 목록을 새로고침해 저장 여부를 확인해 주세요.',
       )
     } finally {
+      submitting.current = false
       setBusy(false)
     }
   }
@@ -234,13 +290,39 @@ export default function SellerCampaignManager({
               <ApplicationFormFields
                 value={applicationForm}
                 onChange={(value) => {
+                  if (mediaApi)
+                    setMediaSession((current) => ({
+                      ...current,
+                      draft: changeMediaFulfillment(
+                        current.draft,
+                        applicationForm.allowedFulfillmentTypes,
+                        value.allowedFulfillmentTypes,
+                      ),
+                    }))
                   setApplicationForm(value)
                   setFormDirty(true)
                 }}
                 disabled={busy || mustReload}
               />
+              {mediaApi && (
+                <CampaignMediaFields
+                  value={mediaSession.draft}
+                  onChange={(draft) =>
+                    setMediaSession((current) => ({ ...current, draft }))
+                  }
+                  fulfillmentTypes={applicationForm.allowedFulfillmentTypes}
+                  disabled={busy || mustReload}
+                />
+              )}
             </div>
             <aside className="business-editor-summary">
+              {original && (
+                <VisitEvidence
+                  key={`visit-history-${original.id}-${mediaSession.managed?.version ?? 0}`}
+                  api={liveCampaignVisitEvidenceApi}
+                  campaignId={original.id}
+                />
+              )}
               {dashboard && (
                 <>
                   <h2>작성 상태</h2>

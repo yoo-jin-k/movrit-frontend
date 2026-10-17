@@ -1,3 +1,5 @@
+import VisitEvidence from '../sellerCampaigns/VisitEvidence'
+import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/axios'
@@ -88,6 +90,11 @@ export default function MyCampaignsPage() {
               <p>
                 신청 #{item.id} · {STATUS[item.status] || '상태 확인 필요'}
               </p>
+              <VisitEvidence
+                key={`visit-${item.id}-${attempt}`}
+                api={liveCampaignVisitEvidenceApi}
+                applicationId={item.id}
+              />
               {contents.loading ? (
                 <p role="status">콘텐츠 내역을 확인하고 있습니다.</p>
               ) : (

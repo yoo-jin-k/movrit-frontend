@@ -1,0 +1,139 @@
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { getMyInfo } from '../../api/authApi'
+import {
+  requestEmailCode,
+  confirmEmailCode,
+  readEmailStatus,
+} from '../../api/emailVerificationApi'
+import EmailVerificationPanel from './EmailVerificationPanel'
+import LiveApplicationForm from './LiveApplicationForm'
+import { readCampaignEligibility } from '../../api/campaignParticipationApi'
+import { applicationAvailable, eligibilityReason } from './eligibilityModel'
+import { participationError } from './participationError'
+
+// 이메일 소유 상태는 매번 서버에서 확인하고 실명 인증과 분리해서 안내합니다.
+export default function CampaignParticipation({ campaignId, form, onRefresh }) {
+  const location = useLocation()
+  const loggedIn = Boolean(sessionStorage.getItem('accessToken'))
+  const [state, setState] = useState({
+    loading: loggedIn,
+    email: '',
+    verified: false,
+    error: '',
+  })
+  const [submitted, setSubmitted] = useState(null)
+  const [attempt, setAttempt] = useState(0)
+  useEffect(() => {
+    if (!loggedIn) return
+    const controller = new AbortController()
+    Promise.allSettled([
+      getMyInfo(),
+      readEmailStatus(controller.signal),
+      readCampaignEligibility(campaignId, controller.signal),
+    ]).then(([member, status, eligibility]) => {
+      if (controller.signal.aborted) return
+      setState({
+        loading: false,
+        email: member.status === 'fulfilled' ? member.value.email : '',
+        verified: status.status === 'fulfilled' && status.value.emailVerified,
+        error:
+          member.status === 'rejected' || status.status === 'rejected'
+            ? '이메일 인증 상태를 불러오지 못했습니다.'
+            : '',
+        eligibility:
+          eligibility.status === 'fulfilled' ? eligibility.value : null,
+        eligibilityError:
+          eligibility.status === 'rejected'
+            ? participationError(
+                eligibility.reason,
+                '신청 가능 상태를 불러오지 못했습니다.',
+              )
+            : '',
+      })
+    })
+    return () => controller.abort()
+  }, [loggedIn, attempt, campaignId])
+  const reload = () => {
+    setState((old) => ({ ...old, loading: true }))
+    setAttempt((value) => value + 1)
+  }
+  if (!loggedIn)
+    return (
+      <p className="discovery-info">
+        <Link to="/login" state={{ returnTo: location.pathname }}>
+          로그인
+        </Link>{' '}
+        후 이메일 인증과 신청 조건을 확인해 주세요.
+      </p>
+    )
+  if (state.loading) return <p role="status">참여 조건을 확인하고 있습니다.</p>
+  if (state.error)
+    return (
+      <div>
+        <p role="alert">{state.error}</p>
+        <button type="button" onClick={reload}>
+          인증 상태 다시 확인
+        </button>
+      </div>
+    )
+  return (
+    <>
+      <EmailVerificationPanel
+        key={state.email}
+        email={state.email}
+        verified={state.verified}
+        requestCode={requestEmailCode}
+        confirmCode={confirmEmailCode}
+        onVerified={reload}
+      />
+      {submitted && (
+        <p role="status">신청이 접수되었습니다. 신청 번호 {submitted.id}</p>
+      )}
+      {state.eligibilityError && <p role="alert">{state.eligibilityError}</p>}
+      {state.eligibility && (
+        <section aria-label="신청 가능 상태">
+          <h3>참여 조건</h3>
+          <p>
+            활동 채널: {state.eligibility.channelReady ? '등록됨' : '등록 필요'}
+          </p>
+          <ul>
+            {state.eligibility.blockingReasons.map((reason) => (
+              <li key={reason}>{eligibilityReason(reason)}</li>
+            ))}
+          </ul>
+          {form && state.eligibility.formVersion !== form.version && (
+            <p role="alert">
+              신청 조건이 변경되었습니다. 최신 조건을 다시 확인해 주세요.
+            </p>
+          )}
+        </section>
+      )}
+      {!submitted && applicationAvailable(state.eligibility, form) ? (
+        <LiveApplicationForm
+          key={form.version}
+          campaignId={campaignId}
+          form={form}
+          onRefresh={onRefresh}
+          onSubmitted={(result) => {
+            setSubmitted(result)
+            reload()
+          }}
+        />
+      ) : (
+        <button type="button" className="discovery-primary-button" disabled>
+          {submitted || state.eligibility?.alreadyApplied
+            ? '신청 완료'
+            : '현재 신청할 수 없습니다'}
+        </button>
+      )}
+      <button
+        type="button"
+        className="discovery-outline-button"
+        onClick={onRefresh}
+      >
+        최신 참여 조건 확인
+      </button>
+    </>
+  )
+}

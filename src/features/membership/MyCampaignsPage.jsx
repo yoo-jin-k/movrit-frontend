@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import BuyerLayout from '../../components/buyer/BuyerLayout'
+import { readMyCampaignContents } from '../../api/myCampaignContentApi'
+import MyContentSubmission from './MyContentSubmission'
 
 const STATUS = {
   SUBMITTED: '신청 접수',
-  SELECTED: '선정',
+  SELECTED: '선정 · 참여 수락 대기',
   REJECTED: '미선정',
   ACTIVE: '참여 중',
   CONTENT_SUBMITTED: '콘텐츠 제출',
@@ -18,8 +20,27 @@ const STATUS = {
 export default function MyCampaignsPage() {
   const [state, setState] = useState({ loading: true, items: [], error: '' })
   const [attempt, setAttempt] = useState(0)
+  const [contents, setContents] = useState({
+    loading: true,
+    items: [],
+    error: false,
+  })
+  const reload = () => {
+    setState((old) => ({ ...old, loading: true }))
+    setContents({ loading: true, items: [], error: false })
+    setAttempt((value) => value + 1)
+  }
   useEffect(() => {
     const controller = new AbortController()
+    readMyCampaignContents(controller.signal)
+      .then((items) => {
+        if (!controller.signal.aborted)
+          setContents({ loading: false, items, error: false })
+      })
+      .catch(() => {
+        if (!controller.signal.aborted)
+          setContents({ loading: false, items: [], error: true })
+      })
     api
       .get('/campaigns/applications/mine', {
         signal: controller.signal,
@@ -51,13 +72,7 @@ export default function MyCampaignsPage() {
       ) : state.error ? (
         <div>
           <p role="alert">{state.error}</p>
-          <button
-            type="button"
-            onClick={() => {
-              setState((old) => ({ ...old, loading: true }))
-              setAttempt((v) => v + 1)
-            }}
-          >
+          <button type="button" onClick={reload}>
             다시 시도
           </button>
         </div>
@@ -73,6 +88,21 @@ export default function MyCampaignsPage() {
               <p>
                 신청 #{item.id} · {STATUS[item.status] || '상태 확인 필요'}
               </p>
+              {contents.loading ? (
+                <p role="status">콘텐츠 내역을 확인하고 있습니다.</p>
+              ) : (
+                <MyContentSubmission
+                  key={`${item.id}-${attempt}`}
+                  application={item}
+                  submission={
+                    contents.items.find(
+                      (content) => content.applicationId === item.id,
+                    ) || null
+                  }
+                  available={!contents.error}
+                  onReload={reload}
+                />
+              )}
             </li>
           ))}
         </ul>

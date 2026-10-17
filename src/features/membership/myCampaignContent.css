@@ -1,0 +1,100 @@
+/* 내 신청 목록 안에서만 적용하는 최소 입력 영역입니다. 기존 사용자 헤더·화면 레이아웃은 유지합니다. */
+.my-campaign-content {
+  margin: 16px 0 24px;
+  padding: 20px;
+  border: 1px solid #e9e9ed;
+  border-radius: 12px;
+  background: #fff;
+  color: #222;
+  min-width: 0;
+  max-width: 100%;
+}
+.my-campaign-content h3 {
+  font-size: 17px;
+  margin: 0 0 14px;
+}
+.my-campaign-content p {
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.my-campaign-content a {
+  color: #5926c8;
+  text-decoration: underline;
+}
+.my-campaign-content label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.my-campaign-content input,
+.my-campaign-content textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 400;
+  background: #fff;
+  color: #222;
+}
+.my-campaign-content textarea {
+  resize: vertical;
+}
+.my-campaign-content button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  cursor: pointer;
+  margin: 6px 8px 6px 0;
+}
+.my-campaign-content button[type='submit'] {
+  background: #222;
+  color: white;
+  border-color: #222;
+}
+.my-campaign-content button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.my-campaign-content__status,
+.my-campaign-content__review {
+  background: #f6f3fb;
+  padding: 12px;
+  border-radius: 8px;
+}
+.my-campaign-content__review strong {
+  font-size: 13px;
+}
+.my-campaign-content [role='alert'] {
+  color: #a42525;
+}
+.my-campaign-content [role='status'] {
+  color: #386b46;
+}
+.my-campaign-content small {
+  display: block;
+  color: #777;
+  line-height: 1.7;
+  font-size: 11px;
+}
+.my-campaign-content :focus-visible {
+  outline: 3px solid #9976df;
+  outline-offset: 3px;
+}
+@media (max-width: 520px) {
+  .my-campaign-content {
+    padding: 15px;
+  }
+}

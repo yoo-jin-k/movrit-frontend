@@ -1,7 +1,10 @@
 // 오프셋 없는 실제 API 시각은 계약에 따라 서울 시각으로 해석합니다.
 export function seoulInstant(value) {
-  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(value)) return null
-  const parsed = new Date(/(?:Z|[+-]\d{2}:\d{2})$/.test(value) ? value : `${value}+09:00`)
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(value))
+    return null
+  const parsed = new Date(
+    /(?:Z|[+-]\d{2}:\d{2})$/.test(value) ? value : `${value}+09:00`,
+  )
   return Number.isNaN(parsed.getTime()) ? null : parsed
 }
 
@@ -76,12 +79,15 @@ export function periodsOnDay(periods, day) {
 export function monthGrid(year, month) {
   const offset = new Date(Date.UTC(year, month - 1, 1)).getUTCDay()
   const count = new Date(Date.UTC(year, month, 0)).getUTCDate()
-  return Array.from({ length: Math.ceil((offset + count) / 7) * 7 }, (_, index) => {
-    const day = index - offset + 1
-    return day < 1 || day > count
-      ? null
-      : `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-  })
+  return Array.from(
+    { length: Math.ceil((offset + count) / 7) * 7 },
+    (_, index) => {
+      const day = index - offset + 1
+      return day < 1 || day > count
+        ? null
+        : `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    },
+  )
 }
 export function shiftMonth(year, month, delta) {
   const date = new Date(Date.UTC(year, month - 1 + delta, 1))

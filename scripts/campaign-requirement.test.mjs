@@ -64,8 +64,9 @@ test('재조회한 값과 버전을 보존하고 다른 캠페인 응답은 거�
 })
 
 test('수정 시 숨겨진 기존 캠페인 필드와 일정 버전을 보존합니다', async () => {
-  const { configuredCampaignPayload } =
-    await import('../src/features/sellerCampaigns/campaignEditorModel.js')
+  const { configuredCampaignPayload } = await import(
+    '../src/features/sellerCampaigns/campaignEditorModel.js'
+  )
   const form = {
     preorderId: '4',
     title: '캠페인',

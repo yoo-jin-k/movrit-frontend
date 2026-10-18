@@ -1,0 +1,15 @@
+# 사용자 보존 작업과 과거 QA 기록은 자동 정리하지 않습니다.
+node_modules/
+dist/
+public/
+docs/
+src/features/experience/
+scripts/experience-client.test.mjs
+src/api/brandApi 2.js
+src/api/preorderApi 2.js
+src/api/productApi 2.js
+src/api/sellerApi 2.js
+src/pages/AdminSellerPage 2.jsx
+src/pages/BrandManagePage 2.jsx
+src/pages/PreorderManagePage 2.jsx
+src/pages/ProductManagePage 2.jsx

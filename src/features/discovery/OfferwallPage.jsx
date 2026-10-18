@@ -43,7 +43,11 @@ export default function OfferwallPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setNotice('포인트 내역은 서비스 연동 후 확인할 수 있습니다.')}
+                  onClick={() =>
+                    setNotice(
+                      '포인트 내역은 서비스 연동 후 확인할 수 있습니다.',
+                    )
+                  }
                 >
                   내 저금통 내역 확인하기 →
                 </button>
@@ -66,7 +70,11 @@ export default function OfferwallPage() {
                 <button
                   type="button"
                   className="discovery-primary-button"
-                  onClick={() => setNotice('제휴 링크 발급 API가 연결되면 이용할 수 있습니다.')}
+                  onClick={() =>
+                    setNotice(
+                      '제휴 링크 발급 API가 연결되면 이용할 수 있습니다.',
+                    )
+                  }
                 >
                   상품 찾아보기
                 </button>
@@ -98,7 +106,9 @@ export default function OfferwallPage() {
             <form
               onSubmit={(event) => {
                 event.preventDefault()
-                setNotice('추천 링크 발급 기능을 준비 중입니다. 입력한 주소는 전송되지 않았습니다.')
+                setNotice(
+                  '추천 링크 발급 기능을 준비 중입니다. 입력한 주소는 전송되지 않았습니다.',
+                )
               }}
             >
               <input
@@ -114,7 +124,10 @@ export default function OfferwallPage() {
               </button>
             </form>
             <h3>유의사항</h3>
-            <p>적립 대상, 적립률, 취소 및 환불 시 처리 기준은 제휴 정책 확정 후 안내됩니다.</p>
+            <p>
+              적립 대상, 적립률, 취소 및 환불 시 처리 기준은 제휴 정책 확정 후
+              안내됩니다.
+            </p>
           </section>
         </div>
       </main>

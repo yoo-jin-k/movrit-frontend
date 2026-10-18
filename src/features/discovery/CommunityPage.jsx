@@ -29,7 +29,9 @@ export default function CommunityPage() {
   })
   const selected = params.get('category') || '전체'
   const title = BOARDS.find(([key]) => key === board)?.[1] || '커뮤니티'
-  const post = COMMUNITY_POSTS.find((item) => item.id === postId && item.board === board)
+  const post = COMMUNITY_POSTS.find(
+    (item) => item.id === postId && item.board === board,
+  )
   const entries = COMMUNITY_POSTS.filter(
     (item) =>
       item.board === board &&
@@ -49,16 +51,23 @@ export default function CommunityPage() {
             <h2>FAQ Top 5</h2>
             <p>다른 사람들은 어떤 내용이 궁금할까요?</p>
             <div className="discovery-community__faq">
-              {['채널 연결', '캠페인 신청', '선정 기준', '콘텐츠 등록', '캠페인 일정'].map(
-                (item) => (
-                  <Link to="/community/guide/guide" key={item}>
-                    {item}
-                  </Link>
-                ),
-              )}
+              {[
+                '채널 연결',
+                '캠페인 신청',
+                '선정 기준',
+                '콘텐츠 등록',
+                '캠페인 일정',
+              ].map((item) => (
+                <Link to="/community/guide/guide" key={item}>
+                  {item}
+                </Link>
+              ))}
             </div>
           </div>
-          <Link className="discovery-community__guide" to="/community/guide/guide">
+          <Link
+            className="discovery-community__guide"
+            to="/community/guide/guide"
+          >
             처음 오셨나요?<strong>MOVRIT 사용설명서</strong>
             <span aria-hidden="true">📖</span>
           </Link>
@@ -100,25 +109,37 @@ export default function CommunityPage() {
                 onSubmit={(event) => {
                   event.preventDefault()
                   try {
-                    localStorage.setItem('movrit-community-draft', JSON.stringify(draft))
-                    setNotice('이 기기에 임시저장했습니다. 게시판에는 등록되지 않았습니다.')
+                    localStorage.setItem(
+                      'movrit-community-draft',
+                      JSON.stringify(draft),
+                    )
+                    setNotice(
+                      '이 기기에 임시저장했습니다. 게시판에는 등록되지 않았습니다.',
+                    )
                   } catch {
-                    setNotice('임시저장하지 못했습니다. 브라우저 저장 공간을 확인해 주세요.')
+                    setNotice(
+                      '임시저장하지 못했습니다. 브라우저 저장 공간을 확인해 주세요.',
+                    )
                   }
                 }}
               >
                 <p className="discovery-info">
-                  게시글 등록 기능을 준비 중입니다. 작성한 내용은 이 기기에 임시저장할 수 있습니다.
+                  게시글 등록 기능을 준비 중입니다. 작성한 내용은 이 기기에
+                  임시저장할 수 있습니다.
                 </p>
                 <label>
                   분류
                   <select
                     value={draft.category}
-                    onChange={(event) => setDraft({ ...draft, category: event.target.value })}
+                    onChange={(event) =>
+                      setDraft({ ...draft, category: event.target.value })
+                    }
                   >
-                    {['일상', '체험단', '정보공유', '질문하기'].map((category) => (
-                      <option key={category}>{category}</option>
-                    ))}
+                    {['일상', '체험단', '정보공유', '질문하기'].map(
+                      (category) => (
+                        <option key={category}>{category}</option>
+                      ),
+                    )}
                   </select>
                 </label>
                 <label>
@@ -128,7 +149,9 @@ export default function CommunityPage() {
                     minLength={3}
                     maxLength={100}
                     value={draft.title}
-                    onChange={(event) => setDraft({ ...draft, title: event.target.value })}
+                    onChange={(event) =>
+                      setDraft({ ...draft, title: event.target.value })
+                    }
                     placeholder="제목을 입력해 주세요."
                   />
                 </label>
@@ -138,12 +161,17 @@ export default function CommunityPage() {
                     required
                     minLength={10}
                     value={draft.body}
-                    onChange={(event) => setDraft({ ...draft, body: event.target.value })}
+                    onChange={(event) =>
+                      setDraft({ ...draft, body: event.target.value })
+                    }
                     placeholder="내용을 입력해 주세요."
                   />
                 </label>
                 <div>
-                  <Link to={`/community/${board}`} className="discovery-outline-button">
+                  <Link
+                    to={`/community/${board}`}
+                    className="discovery-outline-button"
+                  >
                     목록으로
                   </Link>
                   <button type="submit" className="discovery-primary-button">
@@ -162,7 +190,10 @@ export default function CommunityPage() {
                     <h3>댓글</h3>
                     <p>댓글 기능을 준비 중입니다.</p>
                   </section>
-                  <Link className="discovery-outline-button" to={`/community/${board}`}>
+                  <Link
+                    className="discovery-outline-button"
+                    to={`/community/${board}`}
+                  >
                     목록으로
                   </Link>
                 </article>
@@ -176,22 +207,27 @@ export default function CommunityPage() {
               <>
                 <div className="discovery-community__filters">
                   <div>
-                    {['전체', '일상', '체험단', '정보공유', '질문하기'].map((name) => (
-                      <button
-                        type="button"
-                        key={name}
-                        aria-pressed={selected === name}
-                        onClick={() => {
-                          const next = new URLSearchParams(params)
-                          next.set('category', name)
-                          setParams(next)
-                        }}
-                      >
-                        {name}
-                      </button>
-                    ))}
+                    {['전체', '일상', '체험단', '정보공유', '질문하기'].map(
+                      (name) => (
+                        <button
+                          type="button"
+                          key={name}
+                          aria-pressed={selected === name}
+                          onClick={() => {
+                            const next = new URLSearchParams(params)
+                            next.set('category', name)
+                            setParams(next)
+                          }}
+                        >
+                          {name}
+                        </button>
+                      ),
+                    )}
                   </div>
-                  <Link to={`/community/${board}/write`} className="discovery-dark-button">
+                  <Link
+                    to={`/community/${board}/write`}
+                    className="discovery-dark-button"
+                  >
                     글 등록
                   </Link>
                 </div>
@@ -224,7 +260,9 @@ export default function CommunityPage() {
                       </Link>
                     ))
                   ) : (
-                    <p className="main-home__state">조건에 맞는 게시글이 없습니다.</p>
+                    <p className="main-home__state">
+                      조건에 맞는 게시글이 없습니다.
+                    </p>
                   )}
                 </div>
               </>

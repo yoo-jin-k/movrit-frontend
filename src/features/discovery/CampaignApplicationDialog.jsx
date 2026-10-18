@@ -37,7 +37,9 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
     setValues({
       answers: {},
       consents: {},
-      deliveryAddress: form.deliveryAddressRequired ? { ...EMPTY_ADDRESS } : null,
+      deliveryAddress: form.deliveryAddressRequired
+        ? { ...EMPTY_ADDRESS }
+        : null,
     })
     setErrors({})
     setResult('')
@@ -88,14 +90,16 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
       nextErrors.media = '필수 SNS 채널의 연결을 갱신해야 합니다.'
     if (previewState === 'unconfigured' || !form.experienceType)
       nextErrors.configuration = '이행 조건 또는 필수 제공자 구성이 필요합니다.'
-    if (item.detail.blockingReason) nextErrors.eligibility = item.detail.blockingReason
+    if (item.detail.blockingReason)
+      nextErrors.eligibility = item.detail.blockingReason
     setErrors(nextErrors)
     setResult(
       Object.keys(nextErrors).length
         ? ''
         : '입력 항목 검증을 통과했습니다. 실제 인증·동의 저장·신청은 수행되지 않았습니다.',
     )
-    if (Object.keys(nextErrors).length) requestAnimationFrame(() => errorSummary.current?.focus())
+    if (Object.keys(nextErrors).length)
+      requestAnimationFrame(() => errorSummary.current?.focus())
   }
 
   return (
@@ -108,14 +112,18 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
       <form noValidate autoComplete="off" onSubmit={validate}>
         <div className="discovery-dialog__title">
           <h2 id="campaign-application-title">캠페인 신청</h2>
-          <button type="button" aria-label="신청창 닫기" onClick={() => dialogRef.current.close()}>
+          <button
+            type="button"
+            aria-label="신청창 닫기"
+            onClick={() => dialogRef.current.close()}
+          >
             ×
           </button>
         </div>
         <p>{item.title}</p>
         <p className="discovery-info">
-          개발 미리보기입니다. 실제 개인정보나 인증정보를 입력하지 마세요. 입력한 내용은 서버로
-          전송하거나 브라우저에 저장하지 않습니다.
+          개발 미리보기입니다. 실제 개인정보나 인증정보를 입력하지 마세요.
+          입력한 내용은 서버로 전송하거나 브라우저에 저장하지 않습니다.
         </p>
         <div className="application-version">
           확인 중인 조건 버전 <strong>v{displayedVersion}</strong>
@@ -148,7 +156,9 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
             type="button"
             className="discovery-outline-button"
             onClick={() =>
-              setResult('실제 본인인증 및 SNS 연결은 제공자 계약과 API 연결 후 이용할 수 있습니다.')
+              setResult(
+                '실제 본인인증 및 SNS 연결은 제공자 계약과 API 연결 후 이용할 수 있습니다.',
+              )
             }
           >
             인증·채널 연결 안내
@@ -160,13 +170,15 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
           </p>
         ))}
         {item.detail.blockingReason && (
-          <p className="application-field-error">{item.detail.blockingReason}</p>
+          <p className="application-field-error">
+            {item.detail.blockingReason}
+          </p>
         )}
         {displayedVersion !== expectedVersion && (
           <div className="application-version-alert" role="alert">
             <p>
-              캠페인 조건이 v{expectedVersion}로 변경되었습니다. 기존 답변과 동의를 다시 확인해야
-              합니다.
+              캠페인 조건이 v{expectedVersion}로 변경되었습니다. 기존 답변과
+              동의를 다시 확인해야 합니다.
             </p>
             <button
               type="button"
@@ -182,7 +194,12 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
           </div>
         )}
         {Object.keys(errors).length > 0 && (
-          <div ref={errorSummary} tabIndex={-1} className="application-error-summary" role="alert">
+          <div
+            ref={errorSummary}
+            tabIndex={-1}
+            className="application-error-summary"
+            role="alert"
+          >
             <strong>입력 내용을 확인해 주세요.</strong>
             <ul>
               {Object.entries(errors).map(([key, text]) => (
@@ -220,29 +237,39 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
               <input
                 type="checkbox"
                 checked={values.deliveryAddress.additionalDetailNeeded}
-                onChange={(event) => updateAddress('additionalDetailNeeded', event.target.checked)}
+                onChange={(event) =>
+                  updateAddress('additionalDetailNeeded', event.target.checked)
+                }
               />
               상세주소가 필요한 주소입니다.
             </label>
             <label>
-              상세주소 {values.deliveryAddress.additionalDetailNeeded ? '(필수)' : '(선택)'}
+              상세주소{' '}
+              {values.deliveryAddress.additionalDetailNeeded
+                ? '(필수)'
+                : '(선택)'}
               <input
                 type="text"
                 name="addressLine2"
                 required={values.deliveryAddress.additionalDetailNeeded}
                 value={values.deliveryAddress.addressLine2}
-                onChange={(event) => updateAddress('addressLine2', event.target.value)}
+                onChange={(event) =>
+                  updateAddress('addressLine2', event.target.value)
+                }
                 aria-invalid={Boolean(errors.addressLine2)}
               />
               {fieldError('addressLine2')}
             </label>
             <p className="discovery-muted">
-              우편번호 검색 제공자는 미정입니다. 현재는 검수용 직접 입력만 제공합니다.
+              우편번호 검색 제공자는 미정입니다. 현재는 검수용 직접 입력만
+              제공합니다.
             </p>
           </fieldset>
         )}
         {form.experienceType === 'VISIT' && (
-          <p className="discovery-info">방문형 캠페인은 수령인·배송 주소를 입력받지 않습니다.</p>
+          <p className="discovery-info">
+            방문형 캠페인은 수령인·배송 주소를 입력받지 않습니다.
+          </p>
         )}
         {!form.experienceType && (
           <p className="discovery-info">
@@ -251,7 +278,9 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
         )}
         <fieldset className="application-fieldset">
           <legend>캠페인 질문</legend>
-          {form.questions.length === 0 && <p>신청 질문이 아직 구성되지 않았습니다.</p>}
+          {form.questions.length === 0 && (
+            <p>신청 질문이 아직 구성되지 않았습니다.</p>
+          )}
           {form.questions.map((q) => (
             <fieldset key={q.id} className="application-question">
               <legend>
@@ -268,12 +297,15 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
                     required={q.required}
                     aria-invalid={Boolean(errors[`question-${q.id}`])}
                     onChange={(event) =>
-                      updateAnswer(q, { text: event.target.value, optionIds: [] })
+                      updateAnswer(q, {
+                        text: event.target.value,
+                        optionIds: [],
+                      })
                     }
                   />
                   <small>
-                    {Array.from(values.answers[q.id]?.text || '').length} / {q.maxLength}자 · 최소
-                    글자 수 조건 없음
+                    {Array.from(values.answers[q.id]?.text || '').length} /{' '}
+                    {q.maxLength}자 · 최소 글자 수 조건 없음
                   </small>
                 </>
               ) : (
@@ -289,7 +321,9 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
                         type={q.type === 'SINGLE_CHOICE' ? 'radio' : 'checkbox'}
                         name={`question-${q.id}`}
                         value={option.id}
-                        checked={(values.answers[q.id]?.optionIds || []).includes(option.id)}
+                        checked={(
+                          values.answers[q.id]?.optionIds || []
+                        ).includes(option.id)}
                         onChange={(event) => {
                           const selected = values.answers[q.id]?.optionIds || []
                           updateAnswer(q, {
@@ -315,7 +349,8 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
         <fieldset className="application-fieldset">
           <legend>문서별 확인</legend>
           <p className="discovery-muted">
-            아래 문서는 검수용 예시입니다. 실제 법문이 구성되기 전에는 신청할 수 없습니다.
+            아래 문서는 검수용 예시입니다. 실제 법문이 구성되기 전에는 신청할 수
+            없습니다.
           </p>
           {form.consents.map((document) => (
             <fieldset key={document.documentId} className="application-consent">
@@ -325,7 +360,8 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
               <details>
                 <summary>문서 내용 및 버전 확인</summary>
                 <small>
-                  문서 {document.documentId} · 버전 {document.documentVersionId} · 검수용 예시
+                  문서 {document.documentId} · 버전 {document.documentVersionId}{' '}
+                  · 검수용 예시
                 </small>
                 <p>{document.body}</p>
               </details>
@@ -335,7 +371,10 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
                     <input
                       type="radio"
                       name={`consent-${document.documentId}`}
-                      checked={values.consents[document.documentId]?.accepted === accepted}
+                      checked={
+                        values.consents[document.documentId]?.accepted ===
+                        accepted
+                      }
                       onChange={() => updateConsent(document, accepted)}
                     />
                     {accepted ? '동의 예시 선택' : '동의하지 않음'}
@@ -369,7 +408,8 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
                   setPreviewState(state)
                   setErrors({})
                   setResult('')
-                  if (state === 'termsChanged') setExpectedVersion(displayedVersion + 1)
+                  if (state === 'termsChanged')
+                    setExpectedVersion(displayedVersion + 1)
                 }}
               >
                 {Object.entries(PREVIEW_STATES).map(([value, label]) => (

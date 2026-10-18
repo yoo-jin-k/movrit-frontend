@@ -14,7 +14,10 @@ function dayNumber(value) {
   const parts = Object.fromEntries(
     koreanDate.formatToParts(date).map(({ type, value }) => [type, value]),
   )
-  return Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)) / DAY_MS
+  return (
+    Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)) /
+    DAY_MS
+  )
 }
 
 export function campaignTiming(schedule, now = new Date()) {

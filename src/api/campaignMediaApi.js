@@ -1,3 +1,4 @@
+import { fileUploadBody } from './fileUpload.js'
 import {
   requireAssetId,
   validateManagedPresentation,
@@ -23,8 +24,7 @@ export function createCampaignMediaApi({
     async upload(file, signal) {
       ready()
       validateCampaignImageFile(file)
-      const body = new FormData()
-      body.append('file', file)
+      const body = fileUploadBody(file)
       const response = await authenticated.post(
         '/campaign-image-assets',
         body,

@@ -115,9 +115,7 @@ export function withCampaignPresentation(
     ...presentationRequest(draft, {
       editing,
       version: managed?.version,
-      originalHadRepresentative: Boolean(
-        managed?.representativeImage,
-      ),
+      originalHadRepresentative: Boolean(managed?.representativeImage),
       originalVisitLocation: managed?.visitLocation,
       originalFulfillmentTypes,
       fulfillmentTypes,

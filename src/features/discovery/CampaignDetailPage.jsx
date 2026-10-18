@@ -15,7 +15,9 @@ function InformationSection({ title, lines, children }) {
         {lines?.length ? (
           lines.map((line) => <p key={line}>{line}</p>)
         ) : (
-          <p className="discovery-muted">해당 캠페인의 안내가 아직 구성되지 않았습니다.</p>
+          <p className="discovery-muted">
+            해당 캠페인의 안내가 아직 구성되지 않았습니다.
+          </p>
         )}
         {children}
       </dd>
@@ -44,7 +46,9 @@ function PreviewCampaignDetailPage() {
         <main className="discovery-width discovery-detail">
           <div className="discovery-detail__layout">
             <div className="discovery-detail__body">
-              <div className={`discovery-detail__visual ${expanded ? 'is-expanded' : ''}`}>
+              <div
+                className={`discovery-detail__visual ${expanded ? 'is-expanded' : ''}`}
+              >
                 <img src={item.image} alt={item.title} />
                 <div className="discovery-detail__visual-copy">
                   <span>MOVRIT CAMPAIGN</span>
@@ -66,8 +70,14 @@ function PreviewCampaignDetailPage() {
                   title={detail.fulfillment?.title || '참여 및 이행안내'}
                   lines={detail.fulfillment?.paragraphs}
                 />
-                <InformationSection title="참여 자격 및 조건" lines={detail.qualifications} />
-                <InformationSection title="캠페인 미션" lines={detail.missions} />
+                <InformationSection
+                  title="참여 자격 및 조건"
+                  lines={detail.qualifications}
+                />
+                <InformationSection
+                  title="캠페인 미션"
+                  lines={detail.missions}
+                />
                 <InformationSection
                   title="필수 채널 및 제출요건"
                   lines={
@@ -83,10 +93,14 @@ function PreviewCampaignDetailPage() {
                       className="discovery-outline-button"
                       onClick={async () => {
                         try {
-                          await navigator.clipboard.writeText(detail.keywords.join(', '))
+                          await navigator.clipboard.writeText(
+                            detail.keywords.join(', '),
+                          )
                           setNotice('이 캠페인의 예시 키워드를 복사했습니다.')
                         } catch {
-                          setNotice('복사하지 못했습니다. 키워드를 직접 선택해 주세요.')
+                          setNotice(
+                            '복사하지 못했습니다. 키워드를 직접 선택해 주세요.',
+                          )
                         }
                       }}
                     >
@@ -94,7 +108,10 @@ function PreviewCampaignDetailPage() {
                     </button>
                   </InformationSection>
                 )}
-                <InformationSection title="추가 안내사항" lines={detail.warnings} />
+                <InformationSection
+                  title="추가 안내사항"
+                  lines={detail.warnings}
+                />
               </dl>
             </div>
             <aside className="discovery-detail__summary">
@@ -114,15 +131,21 @@ function PreviewCampaignDetailPage() {
               <p>
                 신청 {item.applicants.toLocaleString()} / {item.capacity}명
               </p>
-              <small>모집·일정·조건은 화면 검수용 예시이며 실제 모집이 아닙니다.</small>
-              {detail.blockingReason && <p className="discovery-info">{detail.blockingReason}</p>}
+              <small>
+                모집·일정·조건은 화면 검수용 예시이며 실제 모집이 아닙니다.
+              </small>
+              {detail.blockingReason && (
+                <p className="discovery-info">{detail.blockingReason}</p>
+              )}
               <button
                 className="discovery-primary-button"
                 type="button"
                 disabled={Boolean(detail.blockingReason)}
                 onClick={() => dialog.current?.showModal()}
               >
-                {detail.blockingReason ? '신청 조건 준비 중' : '캠페인 신청하기'}
+                {detail.blockingReason
+                  ? '신청 조건 준비 중'
+                  : '캠페인 신청하기'}
               </button>
               {detail.blockingReason && import.meta.env.DEV && (
                 <button
@@ -141,11 +164,16 @@ function PreviewCampaignDetailPage() {
             </div>
             <CampaignGrid
               items={PREVIEW_CAMPAIGNS.filter(
-                (campaign) => campaign.id !== item.id && campaign.kind === item.kind,
+                (campaign) =>
+                  campaign.id !== item.id && campaign.kind === item.kind,
               ).slice(0, 5)}
             />
           </section>
-          <CampaignApplicationDialog key={item.id} item={item} dialogRef={dialog} />
+          <CampaignApplicationDialog
+            key={item.id}
+            item={item}
+            dialogRef={dialog}
+          />
         </main>
       )}
     </DiscoveryLayout>

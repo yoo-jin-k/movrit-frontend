@@ -18,29 +18,34 @@ function AppHeader() {
   return (
     <header className="app-header">
       <div className="app-header__inner">
-
         {/* 헤더 - 상단 공지사항 */}
-        <div className="app-header__top">
-
-        </div>
+        <div className="app-header__top"></div>
 
         {/* 헤더 - 중간 메인(로고) */}
         <div className="app-header__middle">
-          <Link to="/home" className="app-header__logo">MOVRIT</Link>
+          <Link to="/home" className="app-header__logo">
+            MOVRIT
+          </Link>
           <nav className="app-header__actions" aria-label="개인 메뉴">
-            {ACTION_LINKS.map((item) => <HeaderIconLink key={item.label} {...item} />)}
-            <Link to="/mypage" className="app-header__mypage">마이페이지</Link>
+            {ACTION_LINKS.map((item) => (
+              <HeaderIconLink key={item.label} {...item} />
+            ))}
+            <Link to="/mypage" className="app-header__mypage">
+              마이페이지
+            </Link>
           </nav>
         </div>
 
         {/* 헤더 - 하단 메뉴바 */}
         <div className="app-header__bottom">
           <nav className="app-header__nav" aria-label="주요 메뉴">
-            {PRIMARY_LINKS.map((item) => <Link key={item.label} to={item.to}>{item.label}</Link>)}
+            {PRIMARY_LINKS.map((item) => (
+              <Link key={item.label} to={item.to}>
+                {item.label}
+              </Link>
+            ))}
           </nav>
         </div>
-
-
       </div>
     </header>
   )

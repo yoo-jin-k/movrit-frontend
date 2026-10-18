@@ -32,12 +32,12 @@ export function validateEligibility(data, campaignId) {
 export function applicationAvailable(eligibility, form) {
   return Boolean(
     form &&
-    eligibility?.canApply === true &&
-    eligibility.emailVerified === true &&
-    eligibility.alreadyApplied === false &&
-    eligibility.blockingReasons.length === 0 &&
-    eligibility.formVersion === form.version &&
-    String(eligibility.campaignId) === String(form.campaignId),
+      eligibility?.canApply === true &&
+      eligibility.emailVerified === true &&
+      eligibility.alreadyApplied === false &&
+      eligibility.blockingReasons.length === 0 &&
+      eligibility.formVersion === form.version &&
+      String(eligibility.campaignId) === String(form.campaignId),
   )
 }
 export function eligibilityReason(code) {

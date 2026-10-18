@@ -39,7 +39,9 @@ test('공개 폼의 버전과 선택 동의 여부를 보존합니다', () => {
     version: 2,
     allowedFulfillmentTypes: ['VISIT'],
     questions: [{ id: 'q', label: '방문 시간', required: true }],
-    agreements: [{ id: 'a', title: '선택 문서', version: 'v2', required: false }],
+    agreements: [
+      { id: 'a', title: '선택 문서', version: 'v2', required: false },
+    ],
   }
   assert.equal(validateCampaignForm(form), form)
   assert.equal(form.agreements[0].body, undefined)
@@ -62,7 +64,13 @@ test('보강된 질문 선택지와 동의문 본문을 보존하고 잘못된 �
       },
     ],
     agreements: [
-      { id: 'a', title: '동의문', version: 'v3', required: true, body: '문서 본문 예시' },
+      {
+        id: 'a',
+        title: '동의문',
+        version: 'v3',
+        required: true,
+        body: '문서 본문 예시',
+      },
     ],
   }
   assert.equal(validateCampaignForm(form).agreements[0].body, '문서 본문 예시')
@@ -77,7 +85,12 @@ test('보강된 질문 선택지와 동의문 본문을 보존하고 잘못된 �
 
 test('실제 계약의 서울 현지 마감일을 PC 시간대와 무관하게 계산합니다', () => {
   const item = adaptCampaignSummary(
-    { id: 9, title: '날짜 검수', startAt: '2026-10-17T00:00:00', endAt: '2026-10-21T23:59:00' },
+    {
+      id: 9,
+      title: '날짜 검수',
+      startAt: '2026-10-17T00:00:00',
+      endAt: '2026-10-21T23:59:00',
+    },
     new Date('2026-10-16T15:00:00Z'),
   )
   assert.equal(item.daysLeft, 4)
@@ -86,7 +99,12 @@ test('실제 계약의 서울 현지 마감일을 PC 시간대와 무관하게 �
 
 test('카드도 달력과 동일하게 자정 종료의 직전 날짜를 사용합니다', () => {
   const item = adaptCampaignSummary(
-    { id: 9, title: '자정 검수', startAt: '2026-10-17T00:00:00', endAt: '2026-10-21T00:00:00' },
+    {
+      id: 9,
+      title: '자정 검수',
+      startAt: '2026-10-17T00:00:00',
+      endAt: '2026-10-21T00:00:00',
+    },
     new Date('2026-10-17T01:00:00Z'),
   )
   assert.equal(item.daysLeft, 3)

@@ -141,7 +141,9 @@
   font-size: 12px;
   font-weight: 700;
 
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     width: 100%;
     min-height: 48px;
     padding: 0 14px;
@@ -185,7 +187,8 @@
     border-top: 1px solid #e8e8ed;
   }
 
-  &__forgot, &__signup {
+  &__forgot,
+  &__signup {
     width: max-content;
     padding: 0;
     border: 0;
@@ -263,7 +266,8 @@
   background: white;
   box-shadow: $shadow-card;
 
-  p, small {
+  p,
+  small {
     margin: 0;
     color: $color-muted;
     font-size: 12px;
@@ -539,7 +543,9 @@
   .common-role-grid {
     grid-template-columns: 1fr;
   }
-  .common-card--settings, .common-card--medium, .common-card--wide {
+  .common-card--settings,
+  .common-card--medium,
+  .common-card--wide {
     width: 100%;
   }
   .support-layout {
@@ -566,7 +572,12 @@
       font-size: 24px;
     }
   }
-  .common-card, .common-auth-card, .common-account-card, .common-card--withdraw, .common-card--empty, .common-signup-form {
+  .common-card,
+  .common-auth-card,
+  .common-account-card,
+  .common-card--withdraw,
+  .common-card--empty,
+  .common-signup-form {
     width: 100%;
     min-height: auto;
     margin-top: 24px;
@@ -608,5 +619,7 @@
 // 사용자와 업체 두 가입 유형을 화면 폭에 맞춰 표시합니다.
 .common-role-grid--membership {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  @include tablet { grid-template-columns: 1fr; }
+  @include tablet {
+    grid-template-columns: 1fr;
+  }
 }

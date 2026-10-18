@@ -8,12 +8,23 @@ export default function CampaignCard({ item }) {
     <article className="main-campaign-card">
       <Link
         className="main-campaign-card__content"
-        to={item.preview || item.campaign ? `/campaign/${item.id}` : `/preorders/${item.id}`}
+        to={
+          item.preview || item.campaign
+            ? `/campaign/${item.id}`
+            : `/preorders/${item.id}`
+        }
       >
         <div className="main-campaign-card__image">
-          {!item.image && <span className="main-home__state">이미지 준비 중</span>}
+          {!item.image && (
+            <span className="main-home__state">이미지 준비 중</span>
+          )}
           {item.image && (
-            <img className="main-campaign-card__photo" src={item.image} alt="" loading="lazy" />
+            <img
+              className="main-campaign-card__photo"
+              src={item.image}
+              alt=""
+              loading="lazy"
+            />
           )}
           {item.preview && (
             <span
@@ -31,7 +42,9 @@ export default function CampaignCard({ item }) {
           )}
         </div>
         <h3>{item.title}</h3>
-        <p className="main-campaign-card__description">{item.description || item.category}</p>
+        <p className="main-campaign-card__description">
+          {item.description || item.category}
+        </p>
       </Link>
       {item.preview ? (
         <button
@@ -52,7 +65,11 @@ export default function CampaignCard({ item }) {
           </svg>
         </button>
       ) : item.campaign ? null : (
-        <Link className="main-campaign-card__favorite" to="/favorites" aria-label="찜 목록 보기">
+        <Link
+          className="main-campaign-card__favorite"
+          to="/favorites"
+          aria-label="찜 목록 보기"
+        >
           <img src="/assets/main-home/card-heart.svg" alt="" />
         </Link>
       )}

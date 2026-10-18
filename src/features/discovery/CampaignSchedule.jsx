@@ -1,13 +1,23 @@
 import { useId, useState } from 'react'
-import { monthGrid, periodsOnDay, schedulePeriods, seoulDay, shiftMonth } from './scheduleModel'
+import {
+  monthGrid,
+  periodsOnDay,
+  schedulePeriods,
+  seoulDay,
+  shiftMonth,
+} from './scheduleModel'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 
 // 요약과 달력이 같은 일정 원본을 사용하며 겹친 기간은 별도 색상과 텍스트로 모두 표시합니다.
 export default function CampaignSchedule({ schedule }) {
   const periods = schedulePeriods(schedule)
-  const valid = periods.filter((period) => !period.invalid && (period.start || period.end))
-  const first = valid.map((period) => period.start || period.end).sort()[0] || seoulDay(new Date())
+  const valid = periods.filter(
+    (period) => !period.invalid && (period.start || period.end),
+  )
+  const first =
+    valid.map((period) => period.start || period.end).sort()[0] ||
+    seoulDay(new Date())
   const [display, setDisplay] = useState({
     year: Number(first.slice(0, 4)),
     month: Number(first.slice(5, 7)),
@@ -16,7 +26,8 @@ export default function CampaignSchedule({ schedule }) {
   const calendarId = useId()
   const cells = monthGrid(display.year, display.month)
   const today = seoulDay(new Date())
-  const move = (delta) => setDisplay((current) => shiftMonth(current.year, current.month, delta))
+  const move = (delta) =>
+    setDisplay((current) => shiftMonth(current.year, current.month, delta))
   return (
     <section className="campaign-schedule" aria-label="캠페인 일정">
       <dl className="campaign-schedule__summary">
@@ -44,13 +55,21 @@ export default function CampaignSchedule({ schedule }) {
           ) : (
             <>
               <div className="campaign-calendar__navigation">
-                <button type="button" aria-label="이전 달" onClick={() => move(-1)}>
+                <button
+                  type="button"
+                  aria-label="이전 달"
+                  onClick={() => move(-1)}
+                >
                   ‹
                 </button>
                 <h3 aria-live="polite">
                   {display.year}년 {display.month}월
                 </h3>
-                <button type="button" aria-label="다음 달" onClick={() => move(1)}>
+                <button
+                  type="button"
+                  aria-label="다음 달"
+                  onClick={() => move(1)}
+                >
                   ›
                 </button>
               </div>
@@ -77,7 +96,9 @@ export default function CampaignSchedule({ schedule }) {
                               className="campaign-calendar__day"
                               aria-current={day === today ? 'date' : undefined}
                             >
-                              <time dateTime={day}>{Number(day.slice(-2))}</time>
+                              <time dateTime={day}>
+                                {Number(day.slice(-2))}
+                              </time>
                               {periodsOnDay(periods, day).map((period) => (
                                 <span
                                   key={period.id}
@@ -85,8 +106,12 @@ export default function CampaignSchedule({ schedule }) {
                                   title={`${period.label} ${period.text}`}
                                   aria-label={`${day} ${period.label}`}
                                 >
-                                  {['selection', 'results'].includes(period.id) ? '◆' : '●'}
-                                  <span className="campaign-calendar__sr">{period.label}</span>
+                                  {['selection', 'results'].includes(period.id)
+                                    ? '◆'
+                                    : '●'}
+                                  <span className="campaign-calendar__sr">
+                                    {period.label}
+                                  </span>
                                 </span>
                               ))}
                             </div>
@@ -111,7 +136,9 @@ export default function CampaignSchedule({ schedule }) {
                 ))}
               </ul>
               {periods.some((period) => period.invalid) && (
-                <p role="alert">시작일과 종료일을 확인해야 하는 일정이 있습니다.</p>
+                <p role="alert">
+                  시작일과 종료일을 확인해야 하는 일정이 있습니다.
+                </p>
               )}
             </>
           )}

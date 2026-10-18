@@ -2372,7 +2372,9 @@
     min-width: 0;
   }
 
-  input:not([type='checkbox']), select, textarea {
+  input:not([type='checkbox']),
+  select,
+  textarea {
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
@@ -2403,6 +2405,10 @@
     margin: 2px 0 0;
   }
 
-  summary { cursor: pointer; }
-  button { min-height: 44px; }
+  summary {
+    cursor: pointer;
+  }
+  button {
+    min-height: 44px;
+  }
 }

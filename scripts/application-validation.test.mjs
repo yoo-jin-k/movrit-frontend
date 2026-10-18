@@ -38,7 +38,10 @@ function fixture(profile = 'delivery') {
 }
 test('배송형 유효 입력과 선택 동의 거절을 허용합니다', () => {
   const { form, values } = fixture()
-  assert.deepEqual(validateApplicationPreview(form, values, form.termsVersion), {})
+  assert.deepEqual(
+    validateApplicationPreview(form, values, form.termsVersion),
+    {},
+  )
 })
 test('배송 필수값과 조건부 상세주소 누락을 차단합니다', () => {
   const { form, values } = fixture()
@@ -50,22 +53,36 @@ test('배송 필수값과 조건부 상세주소 누락을 차단합니다', () 
 })
 test('방문형은 주소 없이 검증되며 주소 전달을 차단합니다', () => {
   const { form, values } = fixture('visit')
-  assert.deepEqual(validateApplicationPreview(form, values, form.termsVersion), {})
+  assert.deepEqual(
+    validateApplicationPreview(form, values, form.termsVersion),
+    {},
+  )
   values.deliveryAddress = {}
-  assert.ok(validateApplicationPreview(form, values, form.termsVersion).deliveryAddress)
+  assert.ok(
+    validateApplicationPreview(form, values, form.termsVersion).deliveryAddress,
+  )
 })
 test('필수 단답형에 임의의 최소 10자 제한을 적용하지 않습니다', () => {
   const { form, values } = fixture('clip')
-  assert.deepEqual(validateApplicationPreview(form, values, form.termsVersion), {})
+  assert.deepEqual(
+    validateApplicationPreview(form, values, form.termsVersion),
+    {},
+  )
   values.answers['602'].text = ' '
-  assert.ok(validateApplicationPreview(form, values, form.termsVersion)['question-602'])
+  assert.ok(
+    validateApplicationPreview(form, values, form.termsVersion)['question-602'],
+  )
 })
 test('중복·허용되지 않은 옵션을 차단합니다', () => {
   const { form, values } = fixture('clip')
   values.answers['601'].optionIds = ['6010', '6010']
-  assert.ok(validateApplicationPreview(form, values, form.termsVersion)['question-601'])
+  assert.ok(
+    validateApplicationPreview(form, values, form.termsVersion)['question-601'],
+  )
   values.answers['601'].optionIds = ['unknown']
-  assert.ok(validateApplicationPreview(form, values, form.termsVersion)['question-601'])
+  assert.ok(
+    validateApplicationPreview(form, values, form.termsVersion)['question-601'],
+  )
 })
 test('조건·질문·동의 버전 변경을 차단합니다', () => {
   const { form, values } = fixture()
@@ -89,7 +106,10 @@ test('선택 문서도 명시적 선택이 필요하고 필수 문서 거절은 
 import { campaignTiming } from '../src/features/discovery/campaignDates.js'
 test('상세 마감일과 목록 잔여일이 일치합니다', () => {
   const detail = createCampaignDetails('visit', 10)
-  assert.equal(campaignTiming(detail.schedule, '2026-10-17T04:00:00+09:00').daysLeft, 4)
+  assert.equal(
+    campaignTiming(detail.schedule, '2026-10-17T04:00:00+09:00').daysLeft,
+    4,
+  )
 })
 test('미구성 일정은 잔여일과 오늘 오픈을 만들지 않습니다', () => {
   assert.deepEqual(campaignTiming(null), { daysLeft: null, today: false })
@@ -99,7 +119,16 @@ test('한국 날짜 경계 및 당일 마감을 반영합니다', () => {
     recruitmentStartsAt: '2026-10-17T10:00:00+09:00',
     recruitmentEndsAt: '2026-10-21T10:00:00+09:00',
   }
-  assert.deepEqual(campaignTiming(schedule, '2026-10-16T15:00:00Z'), { daysLeft: 4, today: true })
-  assert.equal(campaignTiming(schedule, '2026-10-21T00:00:00+09:00').daysLeft, 0)
-  assert.equal(campaignTiming(schedule, '2026-10-22T00:00:00+09:00').daysLeft, -1)
+  assert.deepEqual(campaignTiming(schedule, '2026-10-16T15:00:00Z'), {
+    daysLeft: 4,
+    today: true,
+  })
+  assert.equal(
+    campaignTiming(schedule, '2026-10-21T00:00:00+09:00').daysLeft,
+    0,
+  )
+  assert.equal(
+    campaignTiming(schedule, '2026-10-22T00:00:00+09:00').daysLeft,
+    -1,
+  )
 })

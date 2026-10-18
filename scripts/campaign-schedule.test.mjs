@@ -50,7 +50,11 @@ test('월·연도 이동과 윤년 월격자를 정확히 생성합니다', () =
 test('서버 필드가 없으면 예시 일정으로 채우지 않습니다', () => {
   assert.ok(schedulePeriods(null).every((p) => p.text === '미구성'))
   assert.deepEqual(periodsOnDay(schedulePeriods(null), '2026-10-17'), [])
-  assert.ok(schedulePeriods(liveCampaignSchedule({})).every((period) => period.text === '미구성'))
+  assert.ok(
+    schedulePeriods(liveCampaignSchedule({})).every(
+      (period) => period.text === '미구성',
+    ),
+  )
 })
 test('시작일이 종료일보다 늦으면 잘못된 기간을 색칠하지 않습니다', () => {
   const periods = schedulePeriods({
@@ -63,8 +67,14 @@ test('시작일이 종료일보다 늦으면 잘못된 기간을 색칠하지 �
 test('UTC/KST 자정과 정확한 마감 순간을 구분합니다', () => {
   assert.equal(seoulDay('2026-10-16T15:00:00Z'), '2026-10-17')
   assert.equal(seoulDay('2026-10-17T00:00:00'), '2026-10-17')
-  assert.equal(periodHasEnded('2026-10-17T18:00:00', new Date('2026-10-17T08:59:59.999Z')), false)
-  assert.equal(periodHasEnded('2026-10-17T18:00:00', new Date('2026-10-17T09:00:00Z')), true)
+  assert.equal(
+    periodHasEnded('2026-10-17T18:00:00', new Date('2026-10-17T08:59:59.999Z')),
+    false,
+  )
+  assert.equal(
+    periodHasEnded('2026-10-17T18:00:00', new Date('2026-10-17T09:00:00Z')),
+    true,
+  )
 })
 
 test('실제 서버의 자정 제외 경계와 단계별 필드를 일치시킵니다', () => {
@@ -82,7 +92,9 @@ test('실제 서버의 자정 제외 경계와 단계별 필드를 일치시킵�
   assert.equal(periods[3].text, '01.03~01.04')
   assert.equal(periods[4].text, '01.06')
   assert.equal(
-    periodsOnDay(periods, '2027-01-02').some((period) => period.id === 'recruitment'),
+    periodsOnDay(periods, '2027-01-02').some(
+      (period) => period.id === 'recruitment',
+    ),
     false,
   )
   assert.equal(schedule.version, 3)

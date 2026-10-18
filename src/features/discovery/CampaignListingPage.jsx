@@ -22,14 +22,21 @@ export default function CampaignListingPage({ search = false }) {
     if (key !== 'page') next.delete('page')
     setParams(next)
   }
-  const valid = ['제품', '지역', '기자단', '오늘오픈', '프리미어'].includes(section)
+  const valid = ['제품', '지역', '기자단', '오늘오픈', '프리미어'].includes(
+    section,
+  )
   const categories =
     section === '제품'
       ? PRODUCT_CATEGORIES
       : section === '지역'
         ? LOCAL_CATEGORIES
         : section === '프리미어'
-          ? ['전체', '블로그 프리미어', '인스타그램 프리미어', '네이버 인플루언서']
+          ? [
+              '전체',
+              '블로그 프리미어',
+              '인스타그램 프리미어',
+              '네이버 인플루언서',
+            ]
           : []
   const unsupported = !previewMode && !search && section !== '제품'
   const filtered = items
@@ -43,7 +50,8 @@ export default function CampaignListingPage({ search = false }) {
       if (search) return item.title.toLocaleLowerCase().includes(query)
       if (section === '오늘오픈' && !item.today) return false
       if (section === '프리미어' && !item.premier) return false
-      if (['제품', '지역', '기자단'].includes(section) && item.kind !== section) return false
+      if (['제품', '지역', '기자단'].includes(section) && item.kind !== section)
+        return false
       if (
         category !== '전체' &&
         section !== '프리미어' &&
@@ -53,7 +61,8 @@ export default function CampaignListingPage({ search = false }) {
       if (
         section === '프리미어' &&
         category !== '전체' &&
-        item.media !== (category === '인스타그램 프리미어' ? '인스타그램' : '블로그')
+        item.media !==
+          (category === '인스타그램 프리미어' ? '인스타그램' : '블로그')
       )
         return false
       return (
@@ -67,7 +76,8 @@ export default function CampaignListingPage({ search = false }) {
         : sort === 'popular'
           ? (b.applicants || 0) - (a.applicants || 0)
           : sort === 'chance'
-            ? (a.applicants / a.capacity || Infinity) - (b.applicants / b.capacity || Infinity)
+            ? (a.applicants / a.capacity || Infinity) -
+              (b.applicants / b.capacity || Infinity)
             : 0,
     )
   const pages = Math.max(1, Math.ceil(filtered.length / 20))
@@ -100,7 +110,10 @@ export default function CampaignListingPage({ search = false }) {
                     ⌖ {region} ⌄
                   </button>
                   {regionOpen && (
-                    <div className="discovery-region__options" aria-label="지역 선택">
+                    <div
+                      className="discovery-region__options"
+                      aria-label="지역 선택"
+                    >
                       {REGIONS.map((name) => (
                         <button
                           type="button"
@@ -120,7 +133,10 @@ export default function CampaignListingPage({ search = false }) {
               )}
             </div>
             {!search && categories.length > 0 && (
-              <nav className="discovery-filter-chips" aria-label="세부 카테고리">
+              <nav
+                className="discovery-filter-chips"
+                aria-label="세부 카테고리"
+              >
                 {categories.map((name) => (
                   <button
                     type="button"
@@ -133,7 +149,10 @@ export default function CampaignListingPage({ search = false }) {
                   </button>
                 ))}
                 {section === '프리미어' && (
-                  <Link to="/community/guide" className="discovery-premier-link">
+                  <Link
+                    to="/community/guide"
+                    className="discovery-premier-link"
+                  >
                     더 많은 프리미어 자격을 원한다면?
                   </Link>
                 )}
@@ -194,7 +213,9 @@ export default function CampaignListingPage({ search = false }) {
                   <button
                     type="button"
                     key={index}
-                    aria-current={currentPage === index + 1 ? 'page' : undefined}
+                    aria-current={
+                      currentPage === index + 1 ? 'page' : undefined
+                    }
                     onClick={() => update('page', String(index + 1))}
                   >
                     {index + 1}

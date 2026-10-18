@@ -8,7 +8,11 @@ const FILTERS = [
 
 function BuyerFilterChips({ value, onChange }) {
   return (
-    <div className="buyer-filter-chips" role="tablist" aria-label="프리오더 필터">
+    <div
+      className="buyer-filter-chips"
+      role="tablist"
+      aria-label="프리오더 필터"
+    >
       {FILTERS.map((filter) => (
         <button
           key={filter.key}

@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom'
-import { MENU_ITEMS, PRODUCT_CATEGORIES, LOCAL_CATEGORIES } from '../../features/discovery/catalog'
+import {
+  MENU_ITEMS,
+  PRODUCT_CATEGORIES,
+  LOCAL_CATEGORIES,
+} from '../../features/discovery/catalog'
 
 export default function MainHomeHeader() {
   const [params] = useSearchParams()
@@ -20,7 +24,9 @@ export default function MainHomeHeader() {
           <strong>공지사항</strong>
           <Link to="/notices">MOVRIT의 새로운 소식을 확인해 보세요.</Link>
           <div>
-            <Link to={loggedIn ? '/mypage' : '/login'}>{loggedIn ? '마이페이지' : '로그인'}</Link>
+            <Link to={loggedIn ? '/mypage' : '/login'}>
+              {loggedIn ? '마이페이지' : '로그인'}
+            </Link>
             <Link to="/support">광고문의</Link>
             <Link to="/support">고객센터</Link>
           </div>
@@ -83,7 +89,11 @@ export default function MainHomeHeader() {
         </nav>
       </div>
       {menuOpen && (
-        <nav id="discovery-mega-menu" className="discovery-mega-menu" aria-label="전체 카테고리">
+        <nav
+          id="discovery-mega-menu"
+          className="discovery-mega-menu"
+          aria-label="전체 카테고리"
+        >
           <div className="discovery-width">
             <div>
               <h2>제품</h2>

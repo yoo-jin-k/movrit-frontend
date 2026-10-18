@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom'
 
 // 문구는 이미지에 합성하지 않고 코드로 관리하여 다른 브랜드 문구가 남지 않도록 합니다.
 const BANNERS = [
-  ['일상에 새로운 취향을', '/category/제품', 'living', '좋아하는 제품을 MOVRIT에서 만나보세요.'],
+  [
+    '일상에 새로운 취향을',
+    '/category/제품',
+    'living',
+    '좋아하는 제품을 MOVRIT에서 만나보세요.',
+  ],
   [
     '특별한 하루의 시작',
     '/category/지역?category=숙박',
@@ -40,7 +45,12 @@ const BANNERS = [
     'review',
     '일상에서 발견한 좋은 제품의 이야기',
   ],
-  ['짧은 영상, 새로운 발견', '/special/clip', 'clip', '나만의 시선으로 경험을 기록해 보세요.'],
+  [
+    '짧은 영상, 새로운 발견',
+    '/special/clip',
+    'clip',
+    '나만의 시선으로 경험을 기록해 보세요.',
+  ],
   [
     '오늘 열리는 새로운 기회',
     '/category/오늘오픈',
@@ -55,8 +65,16 @@ export default function BannerCarousel() {
   const [paused, setPaused] = useState(false)
   const [hovered, setHovered] = useState(false)
   useEffect(() => {
-    if (paused || hovered || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const timer = window.setInterval(() => setPage((value) => (value + 1) % 3), 6000)
+    if (
+      paused ||
+      hovered ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+      return
+    const timer = window.setInterval(
+      () => setPage((value) => (value + 1) % 3),
+      6000,
+    )
     return () => window.clearInterval(timer)
   }, [paused, hovered])
   const first = page * 3
@@ -70,7 +88,8 @@ export default function BannerCarousel() {
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setHovered(false)
+        if (!event.currentTarget.contains(event.relatedTarget))
+          setHovered(false)
       }}
     >
       <div className="discovery-carousel__viewport">
@@ -83,7 +102,10 @@ export default function BannerCarousel() {
               tabIndex={position === 0 || position === 4 ? -1 : 0}
               aria-hidden={position === 0 || position === 4}
             >
-              <img src={`/assets/discovery/banners/${BANNERS[index][2]}.png`} alt="" />
+              <img
+                src={`/assets/discovery/banners/${BANNERS[index][2]}.png`}
+                alt=""
+              />
               <div className="discovery-carousel__copy">
                 <small>MOVRIT</small>
                 <h2>{BANNERS[index][0]}</h2>
@@ -94,13 +116,21 @@ export default function BannerCarousel() {
         </div>
       </div>
       <div className="discovery-width discovery-carousel__controls">
-        <button type="button" aria-label="이전 배너" onClick={() => setPage((page + 2) % 3)}>
+        <button
+          type="button"
+          aria-label="이전 배너"
+          onClick={() => setPage((page + 2) % 3)}
+        >
           ‹
         </button>
         <span aria-live="off">
           {page + 1} <i>/</i> 3
         </span>
-        <button type="button" aria-label="다음 배너" onClick={() => setPage((page + 1) % 3)}>
+        <button
+          type="button"
+          aria-label="다음 배너"
+          onClick={() => setPage((page + 1) % 3)}
+        >
           ›
         </button>
         <button

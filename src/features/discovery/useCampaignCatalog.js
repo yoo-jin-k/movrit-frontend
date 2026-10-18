@@ -19,11 +19,19 @@ export function useCampaignCatalog() {
     readCampaigns(controller.signal)
       .then((data) => {
         if (!controller.signal.aborted)
-          setState({ items: adaptCampaignList(data), loading: false, error: '' })
+          setState({
+            items: adaptCampaignList(data),
+            loading: false,
+            error: '',
+          })
       })
       .catch((error) => {
         if (!controller.signal.aborted)
-          setState({ items: [], loading: false, error: campaignReadError(error) })
+          setState({
+            items: [],
+            loading: false,
+            error: campaignReadError(error),
+          })
       })
     return () => controller.abort()
   }, [])

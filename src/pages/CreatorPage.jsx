@@ -51,7 +51,9 @@ export default function CreatorPage() {
         '저장했습니다. 직접 입력한 지표는 확인 전까지 미확인 상태입니다.',
       )
     } catch {
-      setError('저장 결과를 확인하지 못했습니다. 다시 불러온 후 저장 여부를 확인해 주세요.')
+      setError(
+        '저장 결과를 확인하지 못했습니다. 다시 불러온 후 저장 여부를 확인해 주세요.',
+      )
     } finally {
       setSaving(false)
     }

@@ -5,7 +5,9 @@ function BuyerHero() {
   return (
     <section className="buyer-hero" aria-labelledby="buyer-hero-title">
       <div>
-        <h2 id="buyer-hero-title" className="buyer-hero__title">사기 전에, 같이 가능성을 만들어요.</h2>
+        <h2 id="buyer-hero-title" className="buyer-hero__title">
+          사기 전에, 같이 가능성을 만들어요.
+        </h2>
         <nav className="buyer-hero__description" aria-label="구매자 안내 메뉴">
           <Link to="/preorders">프리오더</Link>
           <Link to="/preorders">카테고리</Link>

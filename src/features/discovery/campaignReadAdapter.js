@@ -33,20 +33,25 @@ export function adaptCampaignSummary(dto, now = new Date()) {
       },
       now,
     ),
-    recruitmentEnded: periodHasEnded(liveCampaignSchedule(dto).recruitmentEndsAt, now),
+    recruitmentEnded: periodHasEnded(
+      liveCampaignSchedule(dto).recruitmentEndsAt,
+      now,
+    ),
     premier: false,
     shoppingreview: false,
     source: dto,
   }
 }
 export function adaptCampaignList(data) {
-  if (!Array.isArray(data)) throw new Error('캠페인 목록 응답 형식이 올바르지 않습니다.')
+  if (!Array.isArray(data))
+    throw new Error('캠페인 목록 응답 형식이 올바르지 않습니다.')
   return data.map((dto) => adaptCampaignSummary(dto))
 }
 
 // 표시용 날짜도 서울 현지 시각인 응답 문자열을 그대로 보여줍니다.
 export function displayCampaignDate(value) {
-  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)
+  return typeof value === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)
     ? value.slice(0, 16).replace('T', ' ')
     : '미구성'
 }
@@ -69,7 +74,8 @@ export function validateCampaignForm(dto) {
         typeof q.id !== 'string' ||
         typeof q.label !== 'string' ||
         (q.options != null &&
-          (!Array.isArray(q.options) || q.options.some((option) => typeof option !== 'string'))),
+          (!Array.isArray(q.options) ||
+            q.options.some((option) => typeof option !== 'string'))),
     ) ||
     dto.agreements.some(
       (d) =>

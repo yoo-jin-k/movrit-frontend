@@ -8,7 +8,9 @@ export default function SpecialCampaignPage() {
   const { items, loading, error, previewMode } = useCampaignCatalog()
   const clip = kind === 'clip'
   const title = clip ? '클립' : '구매평'
-  const filtered = items.filter((item) => (clip ? item.media === '클립' : item.shoppingreview))
+  const filtered = items.filter((item) =>
+    clip ? item.media === '클립' : item.shoppingreview,
+  )
   return (
     <DiscoveryLayout>
       <main className="discovery-width discovery-special">
@@ -16,7 +18,10 @@ export default function SpecialCampaignPage() {
           className={`discovery-special__banner ${clip ? 'is-clip' : ''}`}
           aria-label={`${title} 캠페인 소개`}
         >
-          <img src={`/assets/discovery/banners/${clip ? 'clip' : 'review'}.png`} alt="" />
+          <img
+            src={`/assets/discovery/banners/${clip ? 'clip' : 'review'}.png`}
+            alt=""
+          />
           <div className="discovery-special__copy">
             <h1>{title} 캠페인이란?</h1>
             <p>

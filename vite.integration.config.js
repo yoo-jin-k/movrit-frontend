@@ -9,7 +9,9 @@ export default mergeConfig(
       host: '127.0.0.1',
       port: 5174,
       strictPort: true,
-      proxy: { '/api': { target: 'http://localhost:18080', changeOrigin: true } },
+      proxy: {
+        '/api': { target: 'http://localhost:18080', changeOrigin: true },
+      },
     },
   }),
 )

@@ -36,7 +36,9 @@ export default function BuyerHomePage() {
           </>,
           items
             .filter((item) => item.preview)
-            .sort((a, b) => a.applicants / a.capacity - b.applicants / b.capacity)
+            .sort(
+              (a, b) => a.applicants / a.capacity - b.applicants / b.capacity,
+            )
             .slice(0, 10),
           '/category/제품?sort=chance',
         ],
@@ -53,7 +55,10 @@ export default function BuyerHomePage() {
     <DiscoveryLayout>
       <main>
         <BannerCarousel />
-        <nav className="discovery-width discovery-shortcuts" aria-label="캠페인 바로가기">
+        <nav
+          className="discovery-width discovery-shortcuts"
+          aria-label="캠페인 바로가기"
+        >
           {SHORTCUTS.map(([label, icon, to]) => (
             <Link key={label} to={to}>
               <span aria-hidden="true">
@@ -76,7 +81,10 @@ export default function BuyerHomePage() {
                 )}
               </h2>
             </div>
-            <nav className="main-home-categories" aria-label="인기 캠페인 카테고리">
+            <nav
+              className="main-home-categories"
+              aria-label="인기 캠페인 카테고리"
+            >
               {['전체', '맛집', '뷰티', '육아', '식품'].map((filter) => (
                 <button
                   type="button"
@@ -103,7 +111,10 @@ export default function BuyerHomePage() {
               </div>
               <CampaignGrid items={cards} loading={loading} error={error} />
               {i === 1 && (
-                <Link to="/support" className="discovery-promo discovery-promo--purple">
+                <Link
+                  to="/support"
+                  className="discovery-promo discovery-promo--purple"
+                >
                   <span>브랜드의 이야기를 들려주세요</span>
                   <strong>광고주이신가요?</strong>
                   <b>캠페인 문의하기 →</b>

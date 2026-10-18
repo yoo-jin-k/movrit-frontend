@@ -13,7 +13,8 @@ export function validateApplicationPreview(form, values, displayedVersion) {
       ['addressLine1', '주소'],
     ]) {
       if (!values.deliveryAddress?.[key]?.trim())
-        errors[key] = `${label}${key === 'recipientName' ? '을' : '를'} 입력해 주세요.`
+        errors[key] =
+          `${label}${key === 'recipientName' ? '을' : '를'} 입력해 주세요.`
     }
     if (
       values.deliveryAddress?.additionalDetailNeeded &&
@@ -30,7 +31,8 @@ export function validateApplicationPreview(form, values, displayedVersion) {
     const answer = values.answers[q.id]
     if (q.type === 'SHORT_TEXT') {
       const text = answer?.text || ''
-      if (q.required && !text.trim()) errors[`question-${q.id}`] = '필수 질문에 답변해 주세요.'
+      if (q.required && !text.trim())
+        errors[`question-${q.id}`] = '필수 질문에 답변해 주세요.'
       if (q.maxLength != null && Array.from(text).length > q.maxLength)
         errors[`question-${q.id}`] = `${q.maxLength}자 이내로 입력해 주세요.`
     } else {
@@ -48,7 +50,8 @@ export function validateApplicationPreview(form, values, displayedVersion) {
       }
     }
     if (answer && answer.questionVersion !== q.version)
-      errors[`question-${q.id}`] = '질문 버전이 변경되었습니다. 다시 답변해 주세요.'
+      errors[`question-${q.id}`] =
+        '질문 버전이 변경되었습니다. 다시 답변해 주세요.'
   }
 
   for (const document of form.consents) {

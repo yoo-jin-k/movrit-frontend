@@ -1,3 +1,7 @@
+/**
+ * 전달된 공동구매 소개·가격·마감 정보를 표시합니다.
+ * 숫자 ID만 실제 프리오더 상세로 연결하고 예시 문자열 ID는 목록으로 안내합니다.
+ */
 import { Link } from 'react-router-dom'
 
 function GroupbuyCard({ item }) {

@@ -1,3 +1,7 @@
+/**
+ * 업체가 참여 조건 없음 또는 지원되는 지표 조건을 선택하도록 합니다.
+ * 지원하지 않는 기존 조건은 임의 변환하지 않고 입력 제한과 안내를 통해 구분합니다.
+ */
 import { emptyRequirement } from './requirementModel'
 export default function RequirementFields({
   value,

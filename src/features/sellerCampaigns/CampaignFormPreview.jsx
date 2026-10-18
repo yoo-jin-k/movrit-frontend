@@ -1,3 +1,7 @@
+/**
+ * 작성 중인 캠페인·조건·신청 폼을 읽기 전용 대화상자로 보여줍니다.
+ * 실제 동의 효력이나 신청 가능 여부를 확정하지 않고 개인정보를 수집하지 않습니다.
+ */
 import { DetailDialog } from '../business/BusinessUi'
 import { dateLabel } from '../business/businessModel'
 // 현재 작성값만 보여주는 미리보기입니다. 신청 가능 판정·등록·개인정보 수집을 수행하지 않습니다.

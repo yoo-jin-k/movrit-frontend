@@ -1,3 +1,7 @@
+/**
+ * 운영 대시보드를 조회하고 카드와 이벤트 목록으로 표시합니다.
+ * 현재 구현은 조회 실패 및 일부 누락 값에 예시 통계를 사용하므로 모든 표시값을 실운영 통계로 간주하지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import { getAdminDashboard } from '../api/adminApi'
 import AdminLayout, {

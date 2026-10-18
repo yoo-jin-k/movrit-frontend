@@ -1,3 +1,7 @@
+/**
+ * 이미지의 크기·MIME과 공개 방문 주소의 필수값·길이·우편번호를 빠르게 검사합니다.
+ * 실제 이미지 디코딩·메타데이터 제거·자산 소유권 검증은 서버 책임입니다.
+ */
 // PM 승인 파일 경계의 빠른 클라이언트 검사입니다. 실제 형식·픽셀·소유권 판정은 서버가 수행합니다.
 export const CAMPAIGN_IMAGE_MAX_BYTES = 5 * 1024 * 1024
 export const CAMPAIGN_DETAIL_IMAGE_LIMIT = 5

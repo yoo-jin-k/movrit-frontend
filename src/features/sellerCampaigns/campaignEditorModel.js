@@ -1,3 +1,7 @@
+/**
+ * 본문·모집 일정과 참여 조건을 configured 요청으로 묶습니다.
+ * 수정 시 기존 상세 필드를 보존하고 일정/조건 버전을 전달하여 동시 변경을 서버가 감지할 수 있게 합니다.
+ */
 import { requirementPayload } from './requirementModel.js'
 export const emptyCampaign = () => ({
   preorderId: '',
@@ -35,6 +39,7 @@ export function configuredCampaignPayload(form, condition, original = null) {
     endAt: form.endAt,
     minFollowerCount: original?.minFollowerCount ?? 0,
   }
+  // 수정 화면에서 직접 편집하지 않는 상세 필드도 기존 값으로 전달하여 본문 저장 시 유실되지 않도록 합니다.
   if (original) {
     if (!Number.isSafeInteger(original.scheduleVersion))
       throw new Error('최신 캠페인을 다시 불러와 주세요.')

@@ -1,3 +1,7 @@
+/**
+ * 업체가 현재 조회한 신청 항목을 읽기 전용으로 나란히 비교합니다.
+ * 신청 당시 조건과 지표를 표시하며 자동 점수 산정이나 일괄 선정 요청은 수행하지 않습니다.
+ */
 import { DetailDialog, StatusBadge } from './BusinessUi'
 import { campaignRequirementSummary } from '../discovery/eligibilityModel'
 // 비교는 현재 업체의 조회된 신청만 사용합니다. 선택 체크는 선정 명령이나 점수 산정이 아닙니다.

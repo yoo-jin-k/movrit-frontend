@@ -1,3 +1,7 @@
+/**
+ * 공통 캠페인 조회 훅의 항목을 카테고리별로 걸러 홈 섹션에 배치합니다.
+ * 선정 확률 등 예시 지표 기반 섹션은 previewMode에서만 구성합니다.
+ */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import DiscoveryLayout from '../features/discovery/DiscoveryLayout'

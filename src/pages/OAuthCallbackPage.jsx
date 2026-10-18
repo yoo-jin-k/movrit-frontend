@@ -1,3 +1,7 @@
+/**
+ * 소셜 콜백의 토큰을 전용 세션 처리 함수에 전달하고 완료 경로로 이동합니다.
+ * 이전 계정의 갱신 토큰이 새 액세스 토큰과 함께 남지 않도록 세션 초기화를 위임합니다.
+ */
 import { useEffect } from 'react'
 import { saveOAuthSession } from '../features/auth/oauthSession'
 import { useNavigate, useSearchParams } from 'react-router-dom'

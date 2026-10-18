@@ -1,3 +1,7 @@
+/**
+ * 정해진 배너를 페이지 단위로 순환하며 정지·마우스 위치·모션 감소 설정을 반영합니다.
+ * 배너 문구는 이미지가 아닌 코드에 두고 타이머는 효과 정리 시 해제합니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 

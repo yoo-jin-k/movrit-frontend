@@ -1,3 +1,7 @@
+/**
+ * 로그인 상태·회원 정보·이메일 확인·캠페인 자격 응답을 함께 확인합니다.
+ * 최신 서버 판정과 신청 폼 버전이 맞을 때 실제 폼을 열며 이메일 소유 확인을 실명 인증으로 취급하지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { getMyInfo } from '../../api/authApi'

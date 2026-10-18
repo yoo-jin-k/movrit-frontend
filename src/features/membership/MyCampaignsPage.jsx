@@ -1,3 +1,7 @@
+/**
+ * 본인 신청과 콘텐츠 내역을 따로 조회하고 신청별 제출·참여 처리 화면에 연결합니다.
+ * 콘텐츠 조회 실패 시 제출을 막으며 새로고침으로 각 항목의 처리 상태를 다시 구성합니다.
+ */
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useEffect, useState } from 'react'
@@ -27,6 +31,7 @@ export default function MyCampaignsPage() {
     items: [],
     error: false,
   })
+  // 신청과 콘텐츠 양쪽을 다시 읽고 항목 key를 바꾸어 이전 저장 잠금·입력 상태를 최신 응답으로 교체합니다.
   const reload = () => {
     setState((old) => ({ ...old, loading: true }))
     setContents({ loading: true, items: [], error: false })

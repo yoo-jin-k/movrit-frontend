@@ -1,3 +1,7 @@
+/**
+ * 인증번호 발송과 확인, 만료까지 남은 시간을 화면 상태로 관리합니다.
+ * 발송 요청 ID와 번호를 확인 요청에 묶고 완료 후 부모가 최신 인증 상태를 다시 읽도록 합니다.
+ */
 import { participationError } from './participationError'
 import { useEffect, useState } from 'react'
 import { seoulInstant } from './scheduleModel'
@@ -23,6 +27,7 @@ export default function EmailVerificationPanel({
   const expires = challenge ? seoulInstant(challenge.expiresAt) : null
   const remaining =
     expires == null ? null : Math.max(0, Math.ceil((expires - now) / 1000))
+  // 서버가 발급한 요청 정보를 새 인증 시도로 보관하고 이전 번호 입력은 초기화합니다.
   const send = async () => {
     if (busy) return
     setBusy(true)
@@ -43,6 +48,7 @@ export default function EmailVerificationPanel({
       setBusy(false)
     }
   }
+  // 현재 발송 요청과 번호를 함께 확인한 뒤 부모에게 최신 이메일 상태 재조회를 요청합니다.
   const confirm = async (event) => {
     event.preventDefault()
     if (busy || remaining === 0) return

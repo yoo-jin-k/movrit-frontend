@@ -1,3 +1,7 @@
+/**
+ * 서버 상태 번역, 검토 요청 검증, 링크와 서울 시간 표시를 담당합니다.
+ * 수정 요청 의견과 expectedVersion을 검사하고 마감 예정 목록은 현재 시각 이후 종료 항목으로 제한합니다.
+ */
 // 서버가 제공한 상태만 번역합니다. 알 수 없는 상태를 완료로 취급하지 않습니다.
 export const statusNames = {
   SUBMITTED: '접수',
@@ -14,6 +18,7 @@ export const statusNames = {
   ANSWERED: '답변 완료',
   CLOSED: '종료',
 }
+// 외부 콘텐츠 링크는 http/https만 허용합니다. URL이 잘못되면 링크로 표시하지 않도록 null을 반환합니다.
 export function safeContentUrl(value) {
   try {
     const url = new URL(value)
@@ -22,6 +27,7 @@ export function safeContentUrl(value) {
     return null
   }
 }
+// 검토 시점의 버전을 반드시 보내며 수정 요청일 때는 빈 의견을 거부합니다.
 export function reviewPayload(item, comment, action) {
   if (!Number.isSafeInteger(item.version) || item.version < 0)
     throw new Error('최신 콘텐츠 버전을 확인한 후 검토해 주세요.')
@@ -32,6 +38,7 @@ export function reviewPayload(item, comment, action) {
     throw new Error('검토 의견은 2,000자 이내로 입력해 주세요.')
   return { comment: value || null, expectedVersion: item.version }
 }
+// 오프셋이 없는 시각에는 서울 오프셋을 붙이고 누락/파싱 실패를 별도 안내로 표시합니다.
 export function dateLabel(value) {
   if (!value) return '일정 미제공'
   const date = new Date(
@@ -48,6 +55,7 @@ export function dateLabel(value) {
       }).format(date)
 }
 
+// 마감 시각이 현재보다 늦은 항목을 가까운 순서로 정렬해 최대 네 개만 표시합니다.
 export function upcomingCampaigns(campaigns, now = Date.now()) {
   const timestamp = (value) =>
     value

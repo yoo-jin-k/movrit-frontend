@@ -1,3 +1,7 @@
+/**
+ * 공통 캠페인 편집기와 기존 협업 제안·성과 화면을 함께 제공합니다.
+ * 제안과 상태 명령이 완료되면 협업 목록을 다시 조회합니다.
+ */
 import { liveCampaignMediaApi } from '../api/liveCampaignMediaApi'
 import { useEffect, useState } from 'react'
 import {
@@ -35,6 +39,7 @@ export default function SellerCollaborationPage() {
       })
       .catch(() => alert('협업 정보를 불러오지 못했습니다.'))
   }, [])
+  // 협업 명령이 완료된 후 업체 목록과 성과를 다시 조회합니다. 실패 시 서버 안내가 있으면 우선 표시합니다.
   const action = async (job) => {
     try {
       await job()

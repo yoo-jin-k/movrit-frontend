@@ -1,3 +1,7 @@
+/**
+ * 신청 당시 주소 또는 업체 주소 변경 이력을 기록 확인 클릭 시 조회합니다.
+ * 조회 실패와 기록 없음을 구분하며 현재 주소로 과거 기록을 소급 대체하지 않습니다.
+ */
 import { useEffect, useRef, useState } from 'react'
 
 function Location({ value }) {
@@ -34,6 +38,8 @@ export default function VisitEvidence({
   useEffect(() => () => request.current?.abort(), [])
   const snapshot = applicationId != null
   if (!api) return null
+  // 새 조회 전에 이전 요청을 취소하고 이전 기록을 지웁니다.
+  // 요청 오류와 available=false를 구분하므로 권한 오류를 미기록으로 표시하지 않습니다.
   async function load() {
     request.current?.abort()
     const controller = new AbortController()

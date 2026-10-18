@@ -1,3 +1,7 @@
+/**
+ * 기본 회원 정보로 가입하고 선택한 이용 목적에 맞는 로그인 후 경로를 전달합니다.
+ * 업체 선택은 안내 경로에만 쓰며 가입 요청에 업체 권한을 부여하는 값으로 보내지 않습니다.
+ */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signup } from '../api/memberApi'
@@ -29,6 +33,7 @@ function SignupPage() {
     })
   }
 
+  // 가입 요청은 기본 회원 정보만 전송합니다. 이용 목적은 성공 후 로그인 화면에 넘길 복귀 경로로만 사용합니다.
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (submitting) return

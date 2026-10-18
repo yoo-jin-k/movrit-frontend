@@ -1,3 +1,7 @@
+/**
+ * 상태별 운영 문의를 조회하고 문의 ID별로 입력한 답변을 전송합니다.
+ * 빈 답변을 막고 등록 후 목록을 다시 읽으며 실패 시 입력 내용을 성공 처리하지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import { answerInquiry, getAdminInquiries } from '../api/inquiryApi'
 import AdminLayout, {
@@ -24,6 +28,7 @@ function AdminInquiriesPage() {
       })
   }, [status])
 
+  // 문의 ID별 답변을 공백 제거 후 검증합니다. 저장 성공 시 그 답변 입력만 지우고 현재 필터 목록을 재조회합니다.
   const submitAnswer = async (id) => {
     const answer = answers[id]?.trim()
     if (!answer) {

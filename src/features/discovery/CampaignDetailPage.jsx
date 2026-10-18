@@ -1,3 +1,7 @@
+/**
+ * 예시 ID는 개발 상세로, 실제 ID는 서버 상세 화면으로 분기합니다.
+ * 예시 상세는 캠페인별 조건·일정·신청 미리보기를 사용하며 실제 API 결과와 섞지 않습니다.
+ */
 import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'

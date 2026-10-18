@@ -1,3 +1,7 @@
+/**
+ * 프리오더 검색·상세·관심 등록과 배송 정보를 포함한 주문 생성을 처리합니다.
+ * 판매 대상 SKU 중 활성·가용 재고가 있는 옵션만 표시하며 실제 주문 제한은 서버가 다시 검사합니다.
+ */
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { getVariants } from '../api/productApi'
@@ -66,6 +70,7 @@ function PreorderShopPage() {
     [preorders, preorderId],
   )
 
+  // 비어 있는 검색 입력은 쿼리에서 제외하고 새 조회 결과로 목록을 교체합니다.
   const search = async (event) => {
     event.preventDefault()
     setPreorders(
@@ -77,6 +82,7 @@ function PreorderShopPage() {
     )
   }
 
+  // 관심 등록/삭제 요청이 성공한 뒤 Set을 새로 만들어 화면 상태를 갱신합니다.
   const toggleFavorite = async (id) => {
     try {
       if (favoriteIds.has(id)) {
@@ -126,6 +132,8 @@ function PreorderShopPage() {
       [id]: { ...current[id], [name]: value },
     }))
 
+  // 배송 필수값과 회원별 최대 수량을 먼저 확인한 뒤 주문 요청 키와 함께 전송합니다.
+  // 여기의 주문 생성은 실제 결제 승인까지 완료하는 동작이 아닙니다.
   const order = async (preorder) => {
     const form = forms[preorder.id]
     if (!form?.productVariantId) return alert('주문할 옵션을 선택해줘.')

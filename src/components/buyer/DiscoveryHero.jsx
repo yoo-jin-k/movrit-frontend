@@ -1,3 +1,7 @@
+/**
+ * 공동구매 탐색 안내와 프리오더 진입 링크를 표시합니다.
+ * 오늘 마감 숫자는 고정 디자인 값이며 서버 통계 조회 결과가 아닙니다.
+ */
 import { Link } from 'react-router-dom'
 
 function DiscoveryHero() {

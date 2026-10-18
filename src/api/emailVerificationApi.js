@@ -1,3 +1,7 @@
+/**
+ * 이메일 소유 확인의 발송·번호 확인·상태 조회를 처리합니다.
+ * 발송 응답의 요청 ID·마스킹 주소·만료 시각을 검사하며 인증번호 자체는 이 모듈에서 보관하지 않습니다.
+ */
 import api from './axios'
 import { seoulInstant } from '../features/discovery/scheduleModel'
 

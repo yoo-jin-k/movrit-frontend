@@ -1,3 +1,7 @@
+/**
+ * 업체 신청 목록을 캠페인·상태로 걸러 상세·비교·개별 선정/반려를 제공합니다.
+ * 비교 체크는 선정 명령이 아니며 실제 처리 실패 뒤에는 최신 상태를 확인하도록 잠급니다.
+ */
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useState } from 'react'
@@ -36,6 +40,7 @@ export default function BusinessParticipants() {
     setError('')
     setLocked(false)
   }
+  // 상세에서 선택한 한 신청에만 선정/반려 명령을 보냅니다. 비교 체크 목록을 일괄 처리하지 않습니다.
   const submit = async () => {
     if (!action || busy || locked) return
     setBusy(true)

@@ -1,3 +1,7 @@
+/**
+ * 업체 레이아웃이 조회한 승인 프로필을 표시하고 기존 관리 화면으로 연결합니다.
+ * 여기서 별도 심사 상태를 만들거나 업체 정보를 자동 변경하지 않습니다.
+ */
 import { Link, useOutletContext } from 'react-router-dom'
 import { PageHeader } from './BusinessUi'
 export default function BusinessSettings() {

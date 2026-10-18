@@ -1,3 +1,7 @@
+/**
+ * 공개 탐색·로그인·개인·업체·운영 화면의 경로와 중첩 레이아웃을 구성합니다.
+ * 업체 화면은 지연 로딩하고 공통 Suspense를 사용하며 토큰 진입 확인과 업체 승인 확인을 각각의 계층에 맡깁니다.
+ */
 import { lazy, Suspense } from 'react'
 import MyCampaignsPage from './features/membership/MyCampaignsPage'
 import CampaignListingPage from './features/discovery/CampaignListingPage'

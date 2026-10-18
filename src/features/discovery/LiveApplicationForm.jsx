@@ -1,3 +1,7 @@
+/**
+ * 서버가 제공한 참여 방식·질문·동의 문서로 실제 신청 요청을 구성합니다.
+ * 충돌 이후에는 다시 확인하도록 막으며 개인정보는 컴포넌트 메모리에만 둡니다.
+ */
 import { participationError } from './participationError'
 import { applicationPayload } from './applicationPayload'
 import { useState } from 'react'
@@ -19,6 +23,8 @@ export default function LiveApplicationForm({
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [conflict, setConflict] = useState(false)
+  // 현재 폼·조건 버전을 포함해 신청하고 201 및 신청 ID가 확인된 경우에만 완료 콜백을 호출합니다.
+  // 409는 폼을 잠그며 그 외 오류도 성공으로 처리하지 않고 신청 내역 확인 안내를 표시합니다.
   const submit = async (event) => {
     event.preventDefault()
     if (busy || conflict) return

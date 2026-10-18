@@ -1,3 +1,7 @@
+/**
+ * 예시 캠페인의 질문·동의·연락처 입력과 검증 상태를 미리 보여줍니다.
+ * 실제 신청을 전송하지 않으며 버전이 바뀌면 이전 답변과 동의를 초기화합니다.
+ */
 import { useRef, useState } from 'react'
 import { validateApplicationPreview } from './applicationValidation'
 

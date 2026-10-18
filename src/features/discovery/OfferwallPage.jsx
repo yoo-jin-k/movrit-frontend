@@ -1,3 +1,7 @@
+/**
+ * 제휴 쇼핑몰 선택과 링크 입력의 화면 구성을 보여줍니다.
+ * 안내 상태만 변경하며 적립이나 외부 결제를 실행하는 API는 연결되어 있지 않습니다.
+ */
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'

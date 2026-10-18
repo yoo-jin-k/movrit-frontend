@@ -1,3 +1,7 @@
+/**
+ * 운영자 목록·상세·설정의 디자인 예시 화면을 한 모듈에 제공합니다.
+ * preview 데이터와 고정 문구를 사용하며 표시된 승인·정산·설정 버튼을 실제 API 처리로 설명하지 않습니다.
+ */
 import { Link, useParams } from 'react-router-dom'
 import AdminLayout, {
   AdminButton,
@@ -44,6 +48,7 @@ function Filters({
   )
 }
 
+// 미리보기 배열과 열 정의로 운영 목록 레이아웃을 만듭니다. 필터 UI는 실제 서버 검색을 수행하지 않습니다.
 function ListPage({ title, subtitle, rows, columns, detailBase, filters }) {
   return (
     <AdminLayout title={title}>
@@ -100,6 +105,7 @@ function ListPage({ title, subtitle, rows, columns, detailBase, filters }) {
   )
 }
 
+// 선택한 예시 항목의 정보와 활동을 표시합니다. 이 공통 상세의 심사 버튼은 서버 승인 요청과 연결되지 않습니다.
 function DetailPage({
   title,
   profile,

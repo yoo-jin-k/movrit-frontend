@@ -1,3 +1,7 @@
+/**
+ * 채널 프로필 응답과 직접 입력한 인스타그램 수치를 검사합니다.
+ * 수치 형식과 검증 상태 라벨을 구분하며 입력만으로 검증 완료 상태를 만들지 않습니다.
+ */
 export function validateChannelProfile(data) {
   if (
     !data ||
@@ -20,6 +24,7 @@ export function validateChannelProfile(data) {
   }
   return data
 }
+// 입력 문자열을 정수 수치로 변환하며 현재 지원하는 채널·지표 계약에 맞춰 요청을 만듭니다.
 export function instagramMetricRequest(value) {
   if (!/^\d+$/.test(String(value)) || !Number.isSafeInteger(Number(value)))
     throw new Error('팔로워 수를 0 이상의 정수로 입력해 주세요.')

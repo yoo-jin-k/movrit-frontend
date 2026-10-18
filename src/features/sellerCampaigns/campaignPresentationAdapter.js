@@ -1,3 +1,7 @@
+/**
+ * 이전 숫자 이미지 ID 기반 응답을 정렬된 읽기 모델로 변환합니다.
+ * 행 ID와 UUID 자산 ID를 혼동하지 않고 중복·잘못된 순서를 오류로 처리합니다.
+ */
 // ff7caa6 읽기 DTO 전용입니다. detailImageId는 업로드 자산 ID가 아닙니다.
 // URL을 공개/인증 미리보기로 판정하거나 네트워크 요청을 수행하지 않습니다.
 export function readCampaignDetailImages(presentation) {

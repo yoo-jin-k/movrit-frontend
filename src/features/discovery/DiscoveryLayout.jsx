@@ -1,3 +1,7 @@
+/**
+ * 탐색용 헤더·푸터·안내 영역을 공유하고 경로 변경 시 화면 위치를 정리합니다.
+ * 개별 목록과 상세의 조회·오류 처리는 하위 화면에 맡깁니다.
+ */
 import { useEffect } from 'react'
 import { isCampaignPreview } from './useCampaignCatalog'
 import { Link, useLocation } from 'react-router-dom'

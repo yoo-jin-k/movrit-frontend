@@ -1,3 +1,7 @@
+/**
+ * 이메일 로그인과 소셜 로그인 시작을 처리합니다.
+ * 이메일 로그인 성공 후 토큰을 저장하고 안전한 내부 복귀 경로를 선택하며 상태 코드별 실패 문구를 표시합니다.
+ */
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { login, getKakaoLoginUrl, getGoogleLoginUrl } from '../api/authApi'

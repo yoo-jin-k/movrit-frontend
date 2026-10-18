@@ -1,3 +1,7 @@
+/**
+ * 개발 환경과 VITE_CAMPAIGN_DATA_MODE 설정에 따라 예시 또는 실제 목록을 선택합니다.
+ * 실제 모드의 빈 응답·오류는 그대로 유지하며 요청 취소 후 상태 갱신을 막습니다.
+ */
 import { useEffect, useState } from 'react'
 import { readCampaigns, campaignReadError } from '../../api/campaignReadApi'
 import { adaptCampaignList } from './campaignReadAdapter'

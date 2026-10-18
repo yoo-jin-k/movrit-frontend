@@ -1,3 +1,7 @@
+/**
+ * 업체 목록 응답을 화면 필드와 한국어 상태로 정규화해 필터링합니다.
+ * 현재 빈 응답이나 조회 실패에는 preview 업체를 사용하며 승인·반려 쓰기 동작은 이 페이지에 없습니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllSellers } from '../api/adminSellerApi'

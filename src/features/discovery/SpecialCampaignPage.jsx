@@ -1,3 +1,7 @@
+/**
+ * 클립·구매평 구분에 맞춰 조회된 캠페인을 골라 표시합니다.
+ * 예시 모드와 실제 데이터의 지원 범위를 구분하여 화면을 구성합니다.
+ */
 import { useParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'
 import CampaignGrid from './CampaignGrid'

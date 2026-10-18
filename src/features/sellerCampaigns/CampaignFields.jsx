@@ -1,3 +1,7 @@
+/**
+ * 기본 캠페인 정보와 모집 일정을 부모가 관리하는 입력값으로 표시합니다.
+ * 생성/수정 여부와 disabled 상태를 전달받아 입력 가능 범위를 제한합니다.
+ */
 export default function CampaignFields({
   value,
   onChange,

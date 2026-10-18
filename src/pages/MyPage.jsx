@@ -1,3 +1,7 @@
+/**
+ * 로그인 회원 정보를 읽어 개인 메뉴를 표시하고 로그아웃을 처리합니다.
+ * 서버 로그아웃 호출과 별도로 브라우저 토큰을 정리한 뒤 로그인 경로로 이동합니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getMyInfo, logout } from '../api/authApi'
@@ -26,6 +30,7 @@ export default function MyPage() {
         navigate('/login')
       })
   }, [navigate])
+  // 서버 로그아웃 실패와 관계없이 이 브라우저의 액세스/갱신 토큰을 정리합니다.
   const signout = async () => {
     try {
       await logout()

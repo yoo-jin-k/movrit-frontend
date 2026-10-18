@@ -1,3 +1,7 @@
+/**
+ * 활동 대시보드와 제안 응답 처리를 제공합니다.
+ * 조회 404는 활동 내역 없음으로 안내하고 상태 변경 후 대시보드를 다시 확인합니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -49,6 +53,7 @@ function CreatorDashboardPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  // 제안 응답을 저장한 뒤 대시보드를 다시 읽습니다. 오류 시 기존 상태를 임의로 변경하지 않습니다.
   const respondToProposal = async (campaignId, status) => {
     try {
       await updateCreatorCampaignStatus(campaignId, status)

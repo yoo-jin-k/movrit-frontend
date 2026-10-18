@@ -1,3 +1,7 @@
+/**
+ * 알림 목록과 미확인 건수를 함께 조회하고 개별/전체 읽음 처리를 제공합니다.
+ * 대상 유형에 따라 기존 경로로 이동하며 개발 모드의 조회 실패에는 예시 알림을 표시합니다.
+ */
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -62,6 +66,7 @@ function NotificationsPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  // 읽지 않은 알림은 먼저 서버 읽음 처리를 시도합니다. 대상 유형에 맞는 화면 이동은 이후 별도로 수행합니다.
   const openNotification = async (item) => {
     try {
       if (!item.read) {
@@ -82,6 +87,7 @@ function NotificationsPage() {
     }
   }
 
+  // 전체 읽음 명령 성공 후 목록의 읽음 표시와 미확인 건수를 함께 갱신합니다.
   const readAll = async () => {
     try {
       await markAllNotificationsRead()

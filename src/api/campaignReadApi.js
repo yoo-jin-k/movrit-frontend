@@ -1,3 +1,7 @@
+/**
+ * 로그인하지 않은 방문자도 사용할 수 있는 공개 캠페인·신청 폼 조회를 담당합니다.
+ * 인증 갱신 인터셉터가 없는 클라이언트를 사용하며, 필요한 필드를 검증한 뒤 화면에 전달합니다.
+ */
 import axios from 'axios'
 import {
   adaptCampaignSummary,
@@ -10,10 +14,12 @@ const publicApi = axios.create({
   headers: { Accept: 'application/json' },
 })
 
+// 공개 모집 목록을 반환합니다. 카드 형태 정규화는 목록을 소비하는 어댑터에서 수행합니다.
 export async function readCampaigns(signal) {
   return (await publicApi.get('/collaborations/campaigns/open', { signal }))
     .data
 }
+// 본문 응답의 최소 구조를 확인하되 상세 필드가 사라지지 않도록 원본 DTO를 반환합니다.
 export async function readCampaign(id, signal) {
   const { data } = await publicApi.get(
     `/collaborations/campaigns/${encodeURIComponent(id)}`,
@@ -24,6 +30,7 @@ export async function readCampaign(id, signal) {
   adaptCampaignSummary(data)
   return data
 }
+// 서버가 정의한 참여 방식·질문·동의 문서 구조를 검사한 뒤 실제 신청 화면에 전달합니다.
 export async function readCampaignForm(id, signal) {
   const { data } = await publicApi.get(
     `/campaigns/${encodeURIComponent(id)}/application-form`,

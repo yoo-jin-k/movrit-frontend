@@ -1,3 +1,7 @@
+/**
+ * 역할 진입 안내·공지·계정 설정·없는 경로 안내 화면을 제공합니다.
+ * 공지와 설정은 현재 고정 표시이며 역할 링크 선택 자체가 서버 권한을 부여하지 않습니다.
+ */
 import { Link, useNavigate } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'
 

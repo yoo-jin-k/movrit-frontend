@@ -1,3 +1,7 @@
+/**
+ * 브랜드 선택에 따른 상품 등록과 상품별 SKU·입고·안전재고·썸네일을 관리합니다.
+ * SKU 변경 뒤 해당 상품의 옵션만 재조회하며 상품 기본 정보와 파일 업로드는 별도 요청입니다.
+ */
 import { useEffect, useState } from 'react'
 import { getMyBrands } from '../api/brandApi'
 import {
@@ -40,6 +44,7 @@ function ProductManagePage() {
   const [variants, setVariants] = useState({})
   const [loading, setLoading] = useState(true)
 
+  // 활성 브랜드 중 기존 선택이 유효하면 유지하고 없으면 첫 활성 브랜드로 입력값을 맞춥니다.
   const loadBrands = async () => {
     try {
       const brandList = await getMyBrands()
@@ -68,6 +73,7 @@ function ProductManagePage() {
     }
   }
 
+  // 상품별 SKU 목록을 병렬 조회한 뒤 상품 ID를 키로 저장합니다. 조회 실패에는 기존 옵션이 남지 않게 비웁니다.
   const loadProducts = async () => {
     try {
       const productList = await getMyProducts()
@@ -88,8 +94,8 @@ function ProductManagePage() {
   }
 
   /**
-   * 특정 상품의 SKU 목록만 다시 조회한다.
-   * 입고/안전재고 변경 직후 DB에 반영된 최신 값을 받아 화면에 바로 보여준다.
+   * 특정 상품의 SKU 목록만 다시 조회합니다.
+   * 입고/안전재고 변경 직후 DB에 반영된 최신 값을 받아 화면에 바로 보여줍니다.
    */
   const refreshVariants = async (productId) => {
     const updatedVariants = await getVariants(productId)
@@ -106,15 +112,16 @@ function ProductManagePage() {
   }
 
   useEffect(() => {
-    // 최초 진입 시 브랜드와 상품을 한 번에 불러온다.
+    // 최초 진입 시 브랜드와 상품을 한 번에 불러옵니다.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load()
-    // load는 화면 내 갱신에도 쓰이므로 최초 마운트에서만 실행한다.
+    // load는 화면 내 갱신에도 쓰이므로 최초 마운트에서만 실행합니다.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const activeBrands = brands.filter((brand) => brand.status === 'ACTIVE')
 
+  // 상품 가격과 브랜드 ID를 숫자로 변환하여 등록하고 선택한 브랜드는 다음 입력에도 유지합니다.
   const submitProduct = async (e) => {
     e.preventDefault()
 
@@ -139,6 +146,7 @@ function ProductManagePage() {
     }
   }
 
+  // 상품별로 분리한 SKU 입력을 전송하고 성공한 상품의 옵션 목록만 다시 조회합니다.
   const submitVariant = async (productId) => {
     const form = variantForms[productId] || emptyVariant
     try {

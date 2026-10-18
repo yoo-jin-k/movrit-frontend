@@ -1,3 +1,7 @@
+/**
+ * 로그인 HTTP 상태를 사용자 안내로 변환합니다.
+ * 통신 실패·접근 차단·서버 장애를 비밀번호 오류와 구분합니다.
+ */
 // 접근 차단이나 통신 장애를 잘못된 비밀번호로 단정하지 않습니다.
 export function loginError(error) {
   const status = error.response?.status

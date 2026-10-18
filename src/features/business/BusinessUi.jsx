@@ -1,3 +1,7 @@
+/**
+ * 업체 화면의 제목·상태·목록 상태·상세 대화상자·카드를 공통 제공합니다.
+ * 목록의 실패와 비어 있음을 분리하고 대화상자는 브라우저의 모달 초점 처리를 사용합니다.
+ */
 import { useEffect, useId, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { dateLabel, statusNames } from './businessModel'
@@ -20,6 +24,7 @@ export function StatusBadge({ status }) {
     </span>
   )
 }
+// 로딩·오류·빈 목록을 순서대로 판정하므로 오류를 등록 내역 없음으로 숨기지 않습니다.
 export function ListState({ state, children }) {
   if (state.loading)
     return (
@@ -48,6 +53,7 @@ export function DetailDialog({ title, onClose, children, busy = false }) {
   const ref = useRef(null),
     titleId = useId()
   useEffect(() => {
+    // 모달을 열기 전 초점을 저장하여 닫거나 화면에서 제거될 때 원래 실행 요소로 돌려줍니다.
     const previous = document.activeElement
     const dialog = ref.current
     dialog.showModal()

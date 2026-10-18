@@ -1,3 +1,7 @@
+/**
+ * URL 쿼리를 카테고리·미디어·지역·정렬·페이지 상태로 사용합니다.
+ * 가져온 목록을 화면에서 필터링하며 실제 데이터에서 미지원인 예시 전용 구분은 별도로 안내합니다.
+ */
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'
@@ -16,6 +20,7 @@ export default function CampaignListingPage({ search = false }) {
   const sort = params.get('sort') || 'latest'
   const page = Math.max(1, Number(params.get('page')) || 1)
   const query = (params.get('q') || '').toLocaleLowerCase()
+  // 필터를 바꾸면 페이지를 초기화하여 이전 페이지 번호 때문에 결과가 비어 보이지 않게 합니다.
   const update = (key, value) => {
     const next = new URLSearchParams(params)
     next.set(key, value)

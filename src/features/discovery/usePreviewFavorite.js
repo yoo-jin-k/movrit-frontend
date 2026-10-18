@@ -1,3 +1,7 @@
+/**
+ * 미리보기 카드의 찜을 세션 저장소와 변경 이벤트로 공유합니다.
+ * 저장소 사용이 제한되면 현재 탭의 메모리를 쓰며 서버 찜 API는 호출하지 않습니다.
+ */
 import { useSyncExternalStore } from 'react'
 
 const EVENT = 'movrit-preview-favorites-changed'
@@ -23,6 +27,7 @@ export function usePreviewFavorite(campaignId) {
       return fallback.get(key) || false
     }
   }
+  // 같은 캠페인 카드가 여러 곳에 있어도 저장소 변경을 함께 구독하도록 React 외부 저장소 훅을 사용합니다.
   const saved = useSyncExternalStore(subscribe, read, () => false)
 
   // 서버 찜과 혼동하지 않도록 미리보기 저장소만 변경하고 모든 카드에 알립니다.

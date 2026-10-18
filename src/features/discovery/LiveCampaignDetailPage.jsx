@@ -1,3 +1,7 @@
+/**
+ * 공개 본문과 신청 폼을 각각 조회하여 한쪽 실패가 다른쪽 결과를 숨기지 않게 합니다.
+ * 실제 미디어 조회와 신청 영역을 연결하고 새로고침 시 최신 데이터로 다시 구성합니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {

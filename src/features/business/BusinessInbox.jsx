@@ -1,3 +1,7 @@
+/**
+ * 알림과 문의 목록을 탭으로 구분하고 읽음 처리·문의 등록을 수행합니다.
+ * 명령이 성공하면 해당 목록을 다시 조회하며 입력 폼을 데이터로 바꾸는 책임을 이 화면에 둡니다.
+ */
 import { useState } from 'react'
 import useBusinessList from './useBusinessList'
 import { createInquiry } from '../../api/inquiryApi'
@@ -12,6 +16,7 @@ export default function BusinessInbox() {
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [locked, setLocked] = useState(false)
+  // 읽음 처리 성공 후 알림 목록을 재조회하며 오류 시 읽음 완료를 로컬에서 확정하지 않습니다.
   const read = async (id) => {
     setBusy(true)
     setError('')
@@ -24,6 +29,7 @@ export default function BusinessInbox() {
       setBusy(false)
     }
   }
+  // 브라우저 FormData에서 제목과 내용을 추출하여 문의를 저장합니다. 성공 후 폼을 비우고 문의 목록을 다시 읽습니다.
   const send = async (event) => {
     event.preventDefault()
     if (busy || locked) return

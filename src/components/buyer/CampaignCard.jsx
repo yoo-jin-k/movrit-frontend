@@ -1,3 +1,7 @@
+/**
+ * 실제 캠페인·프리오더와 미리보기 항목의 상세 경로를 구분합니다.
+ * 미리보기 찜만 세션 상태를 변경하며 실제 캠페인 카드에 가짜 신청 인원이나 찜 저장 성공을 추가하지 않습니다.
+ */
 import { usePreviewFavorite } from '../../features/discovery/usePreviewFavorite'
 import { Link } from 'react-router-dom'
 

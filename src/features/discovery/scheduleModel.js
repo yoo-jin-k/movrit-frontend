@@ -1,3 +1,7 @@
+/**
+ * 서울 시각 해석과 일정 단계 매핑·달력 셀·기간 경계를 공통 계산합니다.
+ * API에 없는 일정은 다른 단계의 날짜로 만들지 않고 종료 제외 경계를 표시용 날짜와 맞춥니다.
+ */
 // 오프셋 없는 실제 API 시각은 계약에 따라 서울 시각으로 해석합니다.
 export function seoulInstant(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(value))
@@ -67,6 +71,7 @@ export function schedulePeriods(schedule) {
 function shortDay(day) {
   return day.slice(5).replace('-', '.')
 }
+// 한 날짜에 겹치는 모든 유효 기간을 반환하여 달력이 단일 단계만 표시하지 않게 합니다.
 export function periodsOnDay(periods, day) {
   return periods.filter(
     (period) =>
@@ -76,6 +81,7 @@ export function periodsOnDay(periods, day) {
       day <= (period.end || period.start),
   )
 }
+// 월 첫 요일 앞의 빈 칸과 실제 날짜를 구성합니다. UTC 계산으로 사용자 시간대에 따른 요일 이동을 피합니다.
 export function monthGrid(year, month) {
   const offset = new Date(Date.UTC(year, month - 1, 1)).getUTCDay()
   const count = new Date(Date.UTC(year, month, 0)).getUTCDate()
@@ -89,6 +95,7 @@ export function monthGrid(year, month) {
     },
   )
 }
+// 월 경계를 Date의 달 계산에 맡겨 12월 다음 달과 1월 이전 달의 연도를 함께 조정합니다.
 export function shiftMonth(year, month, delta) {
   const date = new Date(Date.UTC(year, month - 1 + delta, 1))
   return { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1 }

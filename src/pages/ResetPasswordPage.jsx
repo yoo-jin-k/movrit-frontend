@@ -1,3 +1,7 @@
+/**
+ * URL의 재설정 토큰을 먼저 확인하고 새 비밀번호와 확인 입력을 검증합니다.
+ * 변경 성공 후 기존 토큰을 지우며 실패 시 현재 링크를 유효한 것으로 유지하지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { resetPassword, validatePasswordResetToken } from '../api/authApi'
@@ -17,6 +21,7 @@ function ResetPasswordPage() {
       .catch(() => setValidation({ token, valid: false }))
   }, [token])
 
+  // 새 비밀번호의 길이와 일치 여부를 먼저 확인하고 성공 시 기존 로그인 세션을 정리합니다.
   const submit = async (e) => {
     e.preventDefault()
     if (form.newPassword.length < 8) {

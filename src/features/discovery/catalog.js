@@ -1,3 +1,7 @@
+/**
+ * 탐색 메뉴·필터 상수와 개발용 캠페인·커뮤니티 예시를 정의합니다.
+ * PREVIEW_CAMPAIGNS는 개발 환경에서만 생성하며 실제 API 데이터와 구분해 사용합니다.
+ */
 import { createCampaignDetails } from './campaignDetails'
 import { campaignTiming } from './campaignDates'
 import { periodHasEnded } from './scheduleModel'

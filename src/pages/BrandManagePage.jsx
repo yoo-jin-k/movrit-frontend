@@ -1,3 +1,7 @@
+/**
+ * 내 브랜드 조회·기본 정보 편집과 로고/커버 업로드를 처리합니다.
+ * 신규 브랜드 ID를 받은 후 파일을 순서대로 업로드하므로 후속 파일 실패가 앞선 기본 정보 저장을 되돌리지는 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import {
   changeBrandStatus,
@@ -25,6 +29,7 @@ function BrandManagePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
+  // 내 브랜드를 조회하고 배열 응답만 목록에 반영합니다. 403은 업체 승인 관련 안내로 구분합니다.
   const loadBrands = async () => {
     try {
       setLoading(true)
@@ -53,6 +58,8 @@ function BrandManagePage() {
     setShowForm(false)
   }
 
+  // 기본 정보 생성/수정을 먼저 완료한 뒤 선택한 로고·커버만 업로드합니다.
+  // 후속 업로드가 실패해도 앞선 요청이 저장됐을 수 있으므로 이 흐름을 원자 트랜잭션으로 설명하지 않습니다.
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -68,7 +75,7 @@ function BrandManagePage() {
         if (form.logoFile) await uploadBrandLogo(editingId, form.logoFile)
         if (form.coverFile) await uploadBrandCover(editingId, form.coverFile)
       } else {
-        // 브랜드 기본 정보를 먼저 만든 뒤 발급된 ID로 이미지를 저장한다.
+        // 브랜드 기본 정보를 먼저 만든 뒤 발급된 ID로 이미지를 저장합니다.
         const createdBrand = await createBrand({
           name: form.name,
           description: form.description,
@@ -89,6 +96,7 @@ function BrandManagePage() {
     }
   }
 
+  // 개별 이미지 교체 성공 후 브랜드 목록을 다시 읽습니다. 이 동작은 이름·설명 폼 저장과 분리되어 있습니다.
   const handleImageUpload = async (brandId, type, file) => {
     if (!file) return
 

@@ -1,3 +1,7 @@
+/**
+ * 이미지 선택·정렬·설명과 방문 주소 확인을 화면 초안에 반영합니다.
+ * 파일은 선택 시 검증하고 미리보기 URL은 사용이 끝나면 해제하며 업로드는 부모 저장 흐름이 담당합니다.
+ */
 import { useEffect, useRef, useState } from 'react'
 import {
   appendDetailImage,
@@ -11,6 +15,7 @@ import {
 } from './campaignMediaValidation'
 import './campaignMedia.css'
 
+// 선택 파일 또는 인증 blob의 임시 URL을 이미지에 연결하고 파일 교체·언마운트 시 URL을 해제합니다.
 function LocalImage({ image }) {
   const imageRef = useRef(null)
   useEffect(() => {
@@ -39,6 +44,8 @@ export default function CampaignMediaFields({
 }) {
   const [error, setError] = useState('')
   const visit = fulfillmentTypes.includes('VISIT')
+  // 선택한 파일을 먼저 검증한 다음 새 초안을 한 번에 전달합니다.
+  // 파일 선택 입력을 비워 같은 파일을 다시 고를 수 있게 하며 오류 시 부모의 기존 목록을 유지합니다.
   function choose(event, representative) {
     const files = Array.from(event.target.files || [])
     event.target.value = ''
@@ -65,6 +72,7 @@ export default function CampaignMediaFields({
       setError(failure.message)
     }
   }
+  // 주소 일부가 바뀌면 이전 공개 확인을 해제하여 수정된 주소를 다시 확인하도록 합니다.
   function locationField(key, text) {
     setError('')
     onChange({
@@ -73,6 +81,7 @@ export default function CampaignMediaFields({
       locationConfirmed: false,
     })
   }
+  // 확인 체크를 켤 때 필수 주소와 길이를 검사하며, 성공한 정규화 값만 부모 초안으로 전달합니다.
   function confirmLocation(checked) {
     try {
       const location = checked

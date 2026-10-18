@@ -1,3 +1,7 @@
+/**
+ * 캠페인 본문·조건·신청 폼·표시정보를 configured 저장 요청으로 전달합니다.
+ * ID가 있으면 수정하고 없으면 생성하며, 응답에 캠페인 ID가 없으면 저장 성공을 확정하지 않습니다.
+ */
 import api from './axios'
 export async function saveConfiguredCampaign(payload, campaignId) {
   const response = campaignId

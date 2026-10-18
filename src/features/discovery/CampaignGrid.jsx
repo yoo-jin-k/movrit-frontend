@@ -1,3 +1,7 @@
+/**
+ * 목록의 로딩·조회 오류·빈 결과를 먼저 표시한 뒤 캠페인 카드를 배치합니다.
+ * 데이터를 생성하거나 네트워크 요청을 수행하지 않습니다.
+ */
 import CampaignCard from '../../components/buyer/CampaignCard'
 export default function CampaignGrid({ items, loading, error }) {
   if (loading)

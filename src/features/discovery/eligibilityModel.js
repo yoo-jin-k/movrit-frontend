@@ -1,3 +1,7 @@
+/**
+ * 서버 자격 판정과 폼 버전의 일치 여부를 확인하고 사유·조건·평가 결과를 설명합니다.
+ * 필드 누락과 명시적인 조건 없음(null)을 구분하여 불완전한 응답으로 신청을 열지 않습니다.
+ */
 const REASONS = {
   CAMPAIGN_NOT_OPEN: '현재 신청 기간이 아니거나 모집이 종료되었습니다.',
   CREATOR_NOT_APPROVED: '서버의 사용자 참여 정책 확인이 필요합니다.',
@@ -29,6 +33,7 @@ export function validateEligibility(data, campaignId) {
   }
   return data
 }
+// 서버 허용 판정과 공개 폼의 버전이 일치하는지 함께 확인하여 오래된 폼으로 신청하지 않게 합니다.
 export function applicationAvailable(eligibility, form) {
   return Boolean(
     form &&
@@ -62,6 +67,7 @@ export function campaignRequirementSummary(requirement) {
     return '캠페인에 별도 채널 지표 조건이 있습니다.'
   return `${channels[requirement.channelType]} ${metrics[requirement.metricType]} ${requirement.minimumValue.toLocaleString('ko-KR')} 이상${requirement.measurementPeriod ? ` (집계기간: ${requirement.measurementPeriod})` : ''}`
 }
+// 당시 평가값과 검증 상태를 표시하며 누락된 수치를 임의의 통과값으로 만들지 않습니다.
 export function metricEvaluationSummary(evaluation) {
   if (!evaluation) return ''
   if (evaluation.actualValue == null)

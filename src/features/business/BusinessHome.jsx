@@ -1,3 +1,7 @@
+/**
+ * 승인 업체의 캠페인·신청·콘텐츠 목록으로 대시보드 수치를 계산합니다.
+ * 조회 실패와 빈 목록을 구분하고 앞으로 마감하는 캠페인만 별도로 표시합니다.
+ */
 import { Link, useOutletContext } from 'react-router-dom'
 import useBusinessList from './useBusinessList'
 import { CampaignCards, ListState, PageHeader } from './BusinessUi'

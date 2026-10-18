@@ -1,3 +1,7 @@
+/**
+ * 내 업체 프로필을 조회하여 APPROVED 상태에만 중첩 업체 화면을 열어 줍니다.
+ * 로딩·심사 미승인·조회 실패를 구분하고 승인된 프로필을 하위 화면에 전달합니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { getMySellerProfile } from '../../api/sellerApi'

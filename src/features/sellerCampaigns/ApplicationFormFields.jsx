@@ -1,8 +1,13 @@
+/**
+ * 참여 방식·추가 질문·동의 문서의 편집값을 부모 폼으로 전달합니다.
+ * 행별 변경은 새 배열로 반영하며 저장 요청과 버전 검증은 상위 편집기에 맡깁니다.
+ */
 export default function ApplicationFormFields({
   value,
   onChange,
   disabled = false,
 }) {
+  // 변경한 질문 행만 새 객체로 바꾸고 다른 질문과 동의 문서는 유지합니다.
   const updateQuestion = (index, patch) =>
     onChange({
       ...value,
@@ -10,6 +15,7 @@ export default function ApplicationFormFields({
         i === index ? { ...q, ...patch } : q,
       ),
     })
+  // 동의 문서 한 행을 갱신합니다. 문서의 법적 효력이나 승인 상태를 이 입력 변경으로 판정하지 않습니다.
   const updateAgreement = (index, patch) =>
     onChange({
       ...value,

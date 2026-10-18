@@ -1,3 +1,7 @@
+/**
+ * 예시 게시글의 목록·검색·상세와 브라우저 초안 저장을 제공합니다.
+ * 초안은 localStorage에만 저장되며 실제 게시글 작성 API로 발행하지 않습니다.
+ */
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'

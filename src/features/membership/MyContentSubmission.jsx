@@ -1,3 +1,7 @@
+/**
+ * 서버 신청 상태에 따라 참여 수락·체험 확인·최초 제출·재제출 동작을 구분합니다.
+ * 진행 중 요청을 ref로 중복 방지하고 성공 또는 불명확한 결과 뒤에는 최신 내역 조회를 요구합니다.
+ */
 import { useRef, useState } from 'react'
 import {
   submitMyCampaignContent,
@@ -30,6 +34,8 @@ export default function MyContentSubmission({
   const participationAction = myParticipationAction(application)
   const canSubmit =
     available && contentSubmissionAllowed(application, submission)
+  // 최초 제출과 재제출을 같은 서버 경로로 보내되 payload의 expectedVersion으로 구분합니다.
+  // 진행 중 ref와 상태를 함께 검사해 연속 입력으로 같은 요청이 겹치지 않도록 합니다.
   const submit = async (event) => {
     event.preventDefault()
     if (inFlight.current || locked || !canSubmit) return
@@ -64,6 +70,8 @@ export default function MyContentSubmission({
       setBusy(false)
     }
   }
+  // 참여 수락과 체험 확인은 화면의 확인 단계 후 실행합니다.
+  // 응답 후 로컬에서 다음 업무 상태를 추측하지 않고 최신 내역을 다시 확인하도록 합니다.
   const confirmParticipation = async () => {
     if (!participationAction || !confirmAction || inFlight.current || locked)
       return

@@ -1,3 +1,7 @@
+/**
+ * 같은 일정 모델로 기간 요약과 월별 달력을 구성합니다.
+ * 기간이 겹치는 날짜는 여러 단계를 함께 표시하고 월 이동은 원본 일정 값을 변경하지 않습니다.
+ */
 import { useId, useState } from 'react'
 import {
   monthGrid,

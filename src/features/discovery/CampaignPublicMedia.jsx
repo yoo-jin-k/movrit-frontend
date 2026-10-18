@@ -1,3 +1,7 @@
+/**
+ * 공개 전용 표시정보에서 이미지와 현재 공개 방문 장소만 렌더링합니다.
+ * 조회 실패에는 재시도 안내를 표시하며 소유자 미리보기나 과거 신청 증빙을 대신 사용하지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import { liveCampaignMediaApi } from '../../api/liveCampaignMediaApi'
 import './campaignPublicMedia.css'

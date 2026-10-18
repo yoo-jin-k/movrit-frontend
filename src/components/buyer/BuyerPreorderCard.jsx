@@ -1,3 +1,7 @@
+/**
+ * 프리오더 가격·마감 상태·썸네일을 표시하고 상세 경로로 연결합니다.
+ * 디자인 예시 ID는 실상품 상세로 보내지 않고 목록 경로를 사용합니다.
+ */
 import { Link } from 'react-router-dom'
 
 function BuyerPreorderCard({ item }) {

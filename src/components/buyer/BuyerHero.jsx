@@ -1,3 +1,7 @@
+/**
+ * 구매자 첫 화면의 안내 문구와 기존 프리오더·프로필 진입 링크를 표시합니다.
+ * 데이터 조회나 구매 처리 없이 화면 이동만 제공합니다.
+ */
 import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 

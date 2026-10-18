@@ -1,3 +1,7 @@
+/**
+ * 주문·프로필·배송지·결제수단·설정의 디자인 예시 화면을 제공합니다.
+ * 미리보기 배열과 고정 내용을 사용하며 결제 화면의 이동 버튼은 주문 생성이나 결제 승인 요청이 아닙니다.
+ */
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import BuyerLayout, {
   BuyerButton,
@@ -10,6 +14,7 @@ import {
   paymentMethods,
 } from '../preview/buyerV2Preview'
 
+// 현재 버튼은 주문 완료 예시 경로로 이동합니다. 결제 API 호출이나 실제 주문 저장은 수행하지 않습니다.
 export function BuyerCheckoutPage() {
   const navigate = useNavigate()
   return (

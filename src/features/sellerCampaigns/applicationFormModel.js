@@ -1,8 +1,14 @@
+/**
+ * 신청 폼의 초기값과 저장 요청을 구성하고 질문·문서의 ID·내용·버전을 검증합니다.
+ * 문서나 필수 동의를 자동으로 만들지 않으며 입력된 계약 정보를 그대로 전달합니다.
+ */
 export const emptyApplicationForm = () => ({
   allowedFulfillmentTypes: [],
   questions: [],
   agreements: [],
 })
+// 참여 방식과 질문·문서를 검증하고 제출 가능한 DTO로 변환합니다.
+// 식별자 중복이나 필수 문서 내용 누락은 서버 호출 전 오류로 반환합니다.
 export function applicationFormRequest(value) {
   if (
     !Array.isArray(value.allowedFulfillmentTypes) ||

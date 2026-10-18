@@ -1,3 +1,8 @@
+/**
+ * 업체 승인과 소유 목록을 확인한 뒤 본문·조건·신청 폼·미디어를 한 편집 흐름으로 구성합니다.
+ * 파일 업로드와 configured 저장을 구분하고 최신 버전으로 저장한 뒤 관련 데이터를 다시 조회합니다.
+ * 충돌·응답 불명확 시 자동 재전송하지 않고 최신 정보 확인 전까지 편집 명령을 잠급니다.
+ */
 import VisitEvidence from './VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -29,6 +34,7 @@ import {
 } from './campaignMediaContract'
 import { readMediaSession, prepareMediaSave } from './campaignMediaWorkflow'
 
+// 신청 폼 조회의 404만 미구성으로 취급합니다. 권한 오류나 통신 장애는 정상 빈 폼으로 바꾸지 않습니다.
 async function readOptionalForm(id) {
   try {
     return await readCampaignForm(id)
@@ -123,6 +129,8 @@ export default function SellerCampaignManager({
       active = false
     }
   }, [attempt, initialCampaignId, mediaRead])
+  // 본문·조건·신청 폼·미디어를 모두 읽은 뒤 편집 상태를 교체합니다.
+  // 어느 조회든 실패하면 최신 상태를 확보한 것으로 간주하지 않습니다.
   const edit = async (campaignId) => {
     setBusy(true)
     setError('')
@@ -151,6 +159,7 @@ export default function SellerCampaignManager({
       setBusy(false)
     }
   }
+  // 새 캠페인 작성 시 기존 ID·버전·신청 폼·미디어 초안을 함께 비워 다른 캠페인의 참조가 섞이지 않게 합니다.
   const reset = () => {
     setMediaSession({ managed: null, draft: emptyCampaignMediaDraft() })
     setApplicationForm(emptyApplicationForm())
@@ -165,6 +174,7 @@ export default function SellerCampaignManager({
     setNotice('')
     setMustReload(false)
   }
+  // 로컬 검증은 네트워크 요청 전에 수행합니다. 이후 실패는 서버 반영 여부가 불명확할 수 있으므로 재조회 잠금을 사용합니다.
   const submit = async (event) => {
     event.preventDefault()
     if (busy || mustReload || submitting.current) return
@@ -196,6 +206,8 @@ export default function SellerCampaignManager({
     setError('')
     setNotice('')
     try {
+      // 새 파일을 업로드해 자산 ID를 얻은 뒤 configured 요청에 이미지 참조를 포함합니다.
+      // 이 단계의 파일 업로드는 뒤의 본문·신청 폼 저장과 별도 요청입니다.
       payload = await prepareMediaSave(
         mediaApi,
         payload,
@@ -206,6 +218,7 @@ export default function SellerCampaignManager({
         },
         (draft) => setMediaSession((current) => ({ ...current, draft })),
       )
+      // 서버 저장 응답만으로 화면의 최신값을 확정하지 않고 관련 조회가 모두 성공한 뒤 완료 안내를 표시합니다.
       const result = await saveConfiguredCampaign(payload, original?.id)
       if (mediaApi) validateManagedPresentation(result.presentation)
       const [detail, requirement, campaigns, confirmedForm, media] =

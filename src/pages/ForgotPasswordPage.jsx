@@ -1,3 +1,7 @@
+/**
+ * 입력한 이메일로 비밀번호 재설정을 요청하고 서버 안내를 보여줍니다.
+ * 응답에 포함된 개발용 토큰을 별도 상태로 보관하므로 실제 이메일 전달 성공을 화면만으로 판정하지 않습니다.
+ */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { forgotPassword } from '../api/authApi'
@@ -10,6 +14,7 @@ function ForgotPasswordPage() {
   const [message, setMessage] = useState('')
   const [devToken, setDevToken] = useState(null)
 
+  // 메일 요청 중 상태로 중복 입력을 제한하고 서버가 제공한 안내와 개발용 토큰을 별도로 보관합니다.
   const submit = async (e) => {
     e.preventDefault()
     setLoading(true)

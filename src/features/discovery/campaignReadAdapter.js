@@ -1,3 +1,7 @@
+/**
+ * 실제 캠페인 응답을 카드 모델로 바꾸고 공개 신청 폼의 필수 구조를 확인합니다.
+ * 응답에 없는 이미지·채널·지역을 예시 값으로 보완하지 않습니다.
+ */
 import { campaignTiming } from './campaignDates.js'
 import {
   liveCampaignSchedule,
@@ -42,6 +46,7 @@ export function adaptCampaignSummary(dto, now = new Date()) {
     source: dto,
   }
 }
+// 목록 전체가 배열인지 확인한 후 항목을 동일 규칙으로 변환합니다. 잘못된 목록을 빈 성공 응답으로 취급하지 않습니다.
 export function adaptCampaignList(data) {
   if (!Array.isArray(data))
     throw new Error('캠페인 목록 응답 형식이 올바르지 않습니다.')

@@ -1,3 +1,7 @@
+/**
+ * 기존 업체 대시보드의 서버 요약 수치를 표시합니다.
+ * 값이 도착하기 전에는 로딩을 유지하며 조회 실패를 예시 통계로 대체하지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import { getSellerDashboard } from '../api/sellerApi'
 

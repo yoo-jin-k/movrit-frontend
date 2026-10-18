@@ -1,13 +1,19 @@
+/**
+ * 화면 초안을 UUID 자산 참조와 표시정보 버전을 포함한 저장 계약으로 변환합니다.
+ * 이미지 전체 목록과 주소의 생략·null·객체 의미를 구분하고 업로드 전 입력 검증도 제공합니다.
+ */
 import {
   validateVisitLocationInput,
   validateCampaignImageFile,
 } from './campaignMediaValidation.js'
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+// 숫자 이미지 행 ID나 URL이 UUID 자산 참조로 들어오지 않도록 검사하고 소문자로 정규화합니다.
 export function requireAssetId(value) {
   if (typeof value !== 'string' || !UUID.test(value))
     throw new Error('이미지 업로드 결과를 확인해 주세요.')
   return value.toLowerCase()
 }
+// 대표와 상세 전체를 치환할 요청을 만듭니다. 수정에는 표시 버전이 필요하고 신규 생성은 버전 필드를 생략합니다.
 export function presentationRequest(
   draft,
   {
@@ -57,6 +63,7 @@ export function presentationRequest(
     },
   }
 }
+// 표시 버전과 상세 배열, 자산 ID의 형식·중복을 검사합니다. 불완전한 응답으로 편집 초안을 만들지 않습니다.
 export function validateManagedPresentation(data) {
   if (
     !data ||
@@ -102,6 +109,8 @@ export function changeMediaFulfillment(draft, previous, next) {
     : { ...draft, locationConfirmed: false }
 }
 
+// 기존 configured 본문을 유지한 채 표시정보를 합칩니다.
+// 폼을 이번에 수정하지 않았다면 기존 참여 방식을 사용해 주소 전송 의미를 판단합니다.
 export function withCampaignPresentation(
   payload,
   draft,
@@ -123,6 +132,8 @@ export function withCampaignPresentation(
   }
 }
 
+// 이미지만 바꾸고 기존 방문 주소가 같으면 주소 키를 생략해 현재 값을 유지합니다.
+// 배송형은 null, 신규·수정한 방문 주소는 명시적으로 확인된 객체를 보내며 이전 비활성 주소를 자동 공개하지 않습니다.
 function visitLocationRequest(
   draft,
   {
@@ -163,6 +174,8 @@ function visitLocationRequest(
   return visitLocation
 }
 
+// 아직 자산 ID가 없는 파일도 업로드 전에 필수 대표·파일·설명·주소를 검사합니다.
+// 입력 오류 때문에 불필요한 업로드나 저장 잠금이 시작되지 않도록 편집기가 먼저 호출합니다.
 export function validatePendingMedia(draft, options = {}) {
   if (
     !draft.representative &&

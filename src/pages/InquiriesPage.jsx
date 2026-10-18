@@ -1,3 +1,7 @@
+/**
+ * 본인 문의 목록과 작성 폼, 문의 종료 동작을 제공합니다.
+ * 작성 후 재조회하고 종료 시 서버가 반환한 항목으로 갱신하며 오류는 안내로 남깁니다.
+ */
 import { useEffect, useState } from 'react'
 import { closeInquiry, createInquiry, getMyInquiries } from '../api/inquiryApi'
 import CommonLayout from '../components/layout/CommonLayout'
@@ -26,6 +30,7 @@ function InquiriesPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  // 폼을 문의 요청으로 전송하고 성공하면 입력값을 초기화한 뒤 본인 문의를 재조회합니다.
   const submit = async (e) => {
     e.preventDefault()
     try {
@@ -44,6 +49,7 @@ function InquiriesPage() {
     }
   }
 
+  // 서버가 반환한 종료 결과로 해당 문의만 교체합니다. 요청 실패 시 기존 항목을 남깁니다.
   const close = async (id) => {
     try {
       const updated = await closeInquiry(id)

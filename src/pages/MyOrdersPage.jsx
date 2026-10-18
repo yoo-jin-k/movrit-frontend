@@ -1,3 +1,7 @@
+/**
+ * 본인 주문을 표시용 상태로 정규화하여 탭별로 보여줍니다.
+ * 현재 빈 응답에는 예시 주문을 사용하며 조회 실패의 예시 대체는 개발 모드에서만 수행합니다.
+ */
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyOrders } from '../api/commerceApi'

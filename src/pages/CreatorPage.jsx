@@ -1,3 +1,7 @@
+/**
+ * 본인의 채널 지표와 검증 상태를 조회하고 입력한 인스타그램 팔로워 수를 저장합니다.
+ * 클라이언트는 숫자 형식을 검증하며 수동 입력값을 공식 채널 인증 결과로 바꾸지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'

@@ -1,3 +1,7 @@
+/**
+ * 서버 상세 오류와 필드 오류를 우선 사용한 뒤 상태별 기본 안내로 보완합니다.
+ * 통신 실패만으로 저장 여부나 인증 성공 여부를 단정하지 않습니다.
+ */
 // 업무 오류는 서버 안내를 우선 사용하고 통신 실패는 성공 여부를 단정하지 않습니다.
 export function participationError(error, fallback) {
   const detail = error.response?.data?.detail

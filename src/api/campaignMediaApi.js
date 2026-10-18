@@ -1,3 +1,8 @@
+/**
+ * 캠페인 이미지 자산의 업로드·소유자 미리보기·관리 조회와 공개 조회를 분리합니다.
+ * 비활성 클라이언트는 요청 전에 중단하며, 활성 클라이언트도 자산 식별자와 응답 형식을 검사합니다.
+ * 업로드 실패를 성공으로 바꾸지 않고 호출한 편집기가 재조회 여부를 결정하도록 오류를 전달합니다.
+ */
 import { fileUploadBody } from './fileUpload.js'
 import {
   requireAssetId,
@@ -21,6 +26,8 @@ export function createCampaignMediaApi({
     return `/campaigns/${encodeURIComponent(id)}/presentation`
   }
   return {
+    // 파일의 빠른 형식 검사를 통과한 경우에만 전송하고 미연결 자산 응답을 확인합니다.
+    // 업로드 성공은 캠페인에 이미지 연결까지 저장됐다는 뜻이 아닙니다.
     async upload(file, signal) {
       ready()
       validateCampaignImageFile(file)
@@ -42,6 +49,7 @@ export function createCampaignMediaApi({
         )
       return data
     },
+    // 소유자 인증 요청으로 받은 이미지 blob만 반환합니다. 표시용 객체 URL 생성과 해제는 화면이 담당합니다.
     async preview(assetId, signal) {
       ready()
       const id = requireAssetId(assetId)

@@ -1,3 +1,7 @@
+/**
+ * 검색어를 URL 쿼리로 전달하고 카테고리 전체 메뉴를 여닫습니다.
+ * 로그인 메뉴는 토큰 존재 여부로 표시하며 메뉴 이동과 Escape 입력 시 펼친 메뉴를 닫습니다.
+ */
 import { useState } from 'react'
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom'
 import {

@@ -1,3 +1,7 @@
+/**
+ * 서버 찜 목록을 표시하고 삭제 성공 뒤 해당 항목을 화면에서 제거합니다.
+ * 현재 빈 응답에는 예시 목록이 사용되며 조회 오류의 예시 대체는 개발 모드에서만 수행합니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {

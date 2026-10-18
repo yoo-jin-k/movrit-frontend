@@ -1,3 +1,7 @@
+/**
+ * 내 캠페인 목록의 검색·모집 상태 필터와 조회 전용 상세를 제공합니다.
+ * 신청 수는 현재 응답 상태를 집계하며 신규/수정 경로에서는 공통 편집기에 실제 미디어 API를 주입합니다.
+ */
 import { liveCampaignMediaApi } from '../../api/liveCampaignMediaApi'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'

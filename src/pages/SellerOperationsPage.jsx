@@ -1,3 +1,7 @@
+/**
+ * 업체 주문·배송·정산·리뷰를 함께 조회하고 배송 처리와 리뷰 답글을 제공합니다.
+ * 배송 명령과 답글은 서버 처리 후 전체 목록을 재조회하며 실패를 완료 상태로 바꾸지 않습니다.
+ */
 import { useEffect, useState } from 'react'
 import {
   createShipment,
@@ -56,6 +60,7 @@ function SellerOperationsPage() {
   }, [])
 
   const shipmentFor = (orderId) => shipments.find((s) => s.orderId === orderId)
+  // 배송 처리나 답글 저장 뒤 운영 목록을 다시 읽습니다. 일부 조회 실패도 완료 안내로 숨기지 않고 오류 안내로 전달합니다.
   const action = async (job) => {
     try {
       await job()
@@ -64,6 +69,7 @@ function SellerOperationsPage() {
       alert(e.response?.data?.message || '처리에 실패했어.')
     }
   }
+  // 택배사와 운송장 번호가 입력된 경우에만 발송 명령을 실행합니다. 실제 배송 추적 조회와는 별개입니다.
   const ship = (shipment) => {
     const courierCode = prompt(
       '택배사 코드를 입력해줘.',

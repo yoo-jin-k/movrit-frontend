@@ -1,3 +1,7 @@
+/**
+ * 소셜 계정 연결 콜백의 성공 여부와 안내 문구를 보여준 뒤 마이페이지로 돌아갑니다.
+ * 연결 결과를 안내할 뿐 로그인 토큰을 새로 발급하거나 저장하지 않습니다.
+ */
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 

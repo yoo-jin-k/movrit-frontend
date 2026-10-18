@@ -1,3 +1,7 @@
+/**
+ * 참여 조건의 화면 초기값·요청·응답 검증을 모읍니다.
+ * 쓰기는 인스타그램 팔로워 수 조건으로 제한하고 조회 응답의 캠페인 ID와 버전을 확인합니다.
+ */
 export const emptyRequirement = () => ({
   mode: 'NONE',
   channelType: 'INSTAGRAM',
@@ -13,6 +17,7 @@ export function requirementForm(requirement) {
         minimumValue: String(requirement.minimumValue),
       }
 }
+// 조건 없음은 null로 보내며 현재 쓰기 UI가 지원하는 인스타그램 팔로워 조건만 요청으로 변환합니다.
 export function requirementPayload(form) {
   if (form.mode === 'NONE') return null
   if (

@@ -1,3 +1,7 @@
+/**
+ * 업체 화면에서 사용하는 인증 목록 조회와 신청/콘텐츠 처리 명령을 전달합니다.
+ * 목록 응답이 배열인지 확인하고 소유권·상태 전이 판정은 서버에 맡깁니다.
+ */
 import api from '../../api/axios'
 // 모든 업무 조회는 인증된 판매자 전용 목록입니다. 소유권과 상태 전이는 서버에서 재검증합니다.
 export async function readBusinessList(path, signal) {

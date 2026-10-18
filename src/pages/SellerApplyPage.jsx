@@ -1,3 +1,7 @@
+/**
+ * 업체 신청 이력을 먼저 확인하고 신청 폼 또는 심사 상태를 표시합니다.
+ * 404는 미신청으로 처리하며 신청 결과를 받으면 같은 화면에서 상태 표시로 전환합니다.
+ */
 import { useEffect, useState } from 'react'
 import { applySeller, getMySellerProfile } from '../api/sellerApi'
 
@@ -15,15 +19,15 @@ function SellerApplyPage() {
   const [seller, setSeller] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // 페이지 진입 시 이미 신청한 회원인지 먼저 확인한다.
-  // 신청 이력이 있으면 중복 신청 폼 대신 현재 심사 상태를 보여준다.
+  // 페이지 진입 시 이미 신청한 회원인지 먼저 확인합니다.
+  // 신청 이력이 있으면 중복 신청 폼 대신 현재 심사 상태를 보여줍니다.
   useEffect(() => {
     const loadSeller = async () => {
       try {
         const result = await getMySellerProfile()
         setSeller(result)
       } catch (error) {
-        // 404는 아직 신청하지 않은 정상 상태다.
+        // 404는 아직 신청하지 않은 정상 상태입니다.
         if (error.response?.status !== 404) {
           console.error(error)
         }

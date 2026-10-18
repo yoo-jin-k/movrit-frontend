@@ -1,3 +1,7 @@
+/**
+ * 공개 캠페인·본인 협업·성과를 함께 읽어 기존 협업 화면에 표시합니다.
+ * 협업 명령이 성공하면 목록을 다시 읽고 실패 안내를 표시하며 일반 캠페인 신청은 별도 상세 경로로 연결합니다.
+ */
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
@@ -29,6 +33,7 @@ export default function CreatorCollaborationPage() {
       })
       .catch(() => alert('협업 정보를 불러오지 못했습니다.'))
   }, [])
+  // 선택한 협업 명령을 완료한 후 캠페인·협업·성과를 다시 조회하는 공통 이벤트 흐름입니다.
   const action = async (job) => {
     try {
       await job()

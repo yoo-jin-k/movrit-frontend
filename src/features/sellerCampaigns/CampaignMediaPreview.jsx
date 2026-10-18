@@ -1,3 +1,7 @@
+/**
+ * 실제 저장 없이 미디어 입력·방문/배송 전환을 점검하는 독립 검수 화면입니다.
+ * 상태는 화면 메모리에서만 바꾸며 변경 후 주소 확인 체크를 해제합니다.
+ */
 import { useState } from 'react'
 import CampaignMediaFields from './CampaignMediaFields'
 import { emptyCampaignMediaDraft } from './campaignMediaDraft'

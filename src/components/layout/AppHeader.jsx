@@ -1,3 +1,7 @@
+/**
+ * 구매자 공통 헤더의 로고·메뉴·개인 링크를 배열에서 렌더링합니다.
+ * 네트워크 요청 없이 기존 라우트로 이동하며 알림 수나 권한 상태를 조회하지 않습니다.
+ */
 import { Link } from 'react-router-dom'
 import HeaderIconLink from './HeaderIconLink'
 

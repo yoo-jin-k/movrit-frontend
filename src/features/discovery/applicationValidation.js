@@ -1,3 +1,7 @@
+/**
+ * 미리보기 입력의 필수값·질문 선택·동의 버전을 검사해 필드별 오류를 만듭니다.
+ * 인증·동의 효력·실제 모집 마감과 접근 권한은 이 검증으로 확정하지 않습니다.
+ */
 // 서버의 ApplicationFormValidator 규칙 중 화면에서 확인 가능한 조건만 검증합니다.
 // 인증 근거, 실제 동의 효력, 마감 및 권한의 최종 판정은 서버 책임으로 남겨 둡니다.
 export function validateApplicationPreview(form, values, displayedVersion) {

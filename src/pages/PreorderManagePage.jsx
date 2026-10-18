@@ -1,3 +1,7 @@
+/**
+ * 상품별 활성 SKU를 골라 프리오더 초안을 만들고 서버 상태별 명령을 제공합니다.
+ * 상품을 바꾸면 옵션 선택을 초기화하며 숫자·날짜 입력을 요청 형식으로 바꾼 뒤 서버 결과로 목록을 갱신합니다.
+ */
 import { useEffect, useMemo, useState } from 'react'
 import { getMyProducts, getVariants } from '../api/productApi'
 import {
@@ -58,6 +62,7 @@ function PreorderManagePage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
+  // 상품 조회와 프리오더 조회의 실패 처리를 분리합니다. 상품 선택이 없다면 조회된 첫 상품으로 초기화합니다.
   const load = async () => {
     setLoading(true)
     try {
@@ -90,7 +95,7 @@ function PreorderManagePage() {
 
   useEffect(() => {
     if (!form.productId) {
-      // 상품 선택을 지우면 이전 상품의 SKU가 남지 않게 즉시 초기화한다.
+      // 상품 선택을 지우면 이전 상품의 SKU가 남지 않게 즉시 초기화합니다.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setProductVariants([])
       return
@@ -108,6 +113,7 @@ function PreorderManagePage() {
 
   const change = (name, value) =>
     setForm((current) => ({ ...current, [name]: value }))
+  // 다른 상품을 선택하면 이전 상품의 SKU 선택을 함께 초기화하여 잘못된 옵션 연결을 방지합니다.
   const changeProduct = (value) =>
     setForm((current) => ({ ...current, productId: value, variantIds: [] }))
   const toggleVariant = (id) =>
@@ -118,6 +124,8 @@ function PreorderManagePage() {
         : [...current.variantIds, id],
     }))
 
+  // 선택 SKU·모집 기간·수량 조건을 확인하고 선택 입력의 빈 값은 null로 변환합니다.
+  // 생성 성공 후 반환된 프리오더를 목록에 반영하며 상품을 새로 생성하지 않습니다.
   const submit = async (e) => {
     e.preventDefault()
     if (form.variantIds.length === 0)
@@ -164,6 +172,7 @@ function PreorderManagePage() {
     }
   }
 
+  // 서버가 반환한 변경 항목으로 목록을 갱신합니다. 화면에서 다음 상태를 계산해 먼저 적용하지 않습니다.
   const changeStatus = async (id, action) => {
     try {
       const changed = await action()
@@ -176,6 +185,7 @@ function PreorderManagePage() {
     }
   }
 
+  // 삭제 확인을 받은 뒤 서버 삭제가 성공한 경우에만 현재 목록에서 제외합니다.
   const remove = async (id) => {
     if (!window.confirm('이 프리오더 초안을 삭제할까?')) return
     try {

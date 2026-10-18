@@ -1,3 +1,7 @@
+/**
+ * 업체 소유 콘텐츠의 승인·수정 요청을 서버 버전과 함께 처리합니다.
+ * 처리 결과가 불명확하거나 충돌하면 명령을 잠그고 최신 목록 확인을 요구하며 업체 승인을 운영자 최종 승인과 구분합니다.
+ */
 import { useState } from 'react'
 import useBusinessList from './useBusinessList'
 import { reviewContent } from './businessApi'
@@ -26,6 +30,8 @@ export default function BusinessContents() {
     setAction('approve')
     setLocked(false)
   }
+  // 수정 요청 의견과 현재 콘텐츠 버전을 검증한 뒤 선택한 검토 명령을 보냅니다.
+  // 충돌이나 응답 실패 뒤에는 같은 화면에서 반복 저장하지 않도록 잠금 상태를 사용합니다.
   const submit = async (event) => {
     event.preventDefault()
     if (busy || locked) return

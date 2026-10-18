@@ -1,3 +1,7 @@
+/**
+ * 가격·목표 달성률·참여 수와 관심 상태를 전달받아 표시합니다.
+ * 관심 변경은 부모 콜백에 위임하므로 이 카드가 서버 저장 결과를 직접 확정하지 않습니다.
+ */
 import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import ProgressBar from '../ui/ProgressBar'

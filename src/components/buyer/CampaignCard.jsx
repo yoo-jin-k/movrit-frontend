@@ -4,9 +4,13 @@
  */
 import { usePreviewFavorite } from '../../features/discovery/usePreviewFavorite'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 // 카드 이동과 미리보기 찜을 분리하여 중첩 링크와 상태 불일치를 방지합니다.
 export default function CampaignCard({ item }) {
+  // 실제 URL이 실패해도 다른 상품 사진으로 대체하지 않고 상태를 안내합니다.
+  const [failedImage, setFailedImage] = useState(null)
+  const visibleImage = item.image && item.image !== failedImage
   const [saved, toggleSaved] = usePreviewFavorite(item.id)
   return (
     <article className="main-campaign-card">
@@ -19,13 +23,16 @@ export default function CampaignCard({ item }) {
         }
       >
         <div className="main-campaign-card__image">
-          {!item.image && (
-            <span className="main-home__state">이미지 준비 중</span>
+          {!visibleImage && (
+            <span className="main-home__state">
+              {item.image ? '이미지를 불러오지 못했습니다.' : '이미지 준비 중'}
+            </span>
           )}
-          {item.image && (
+          {visibleImage && (
             <img
               className="main-campaign-card__photo"
               src={item.image}
+              onError={() => setFailedImage(item.image)}
               alt=""
               loading="lazy"
             />

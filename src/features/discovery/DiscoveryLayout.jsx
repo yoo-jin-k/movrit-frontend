@@ -3,13 +3,14 @@
  * 개별 목록과 상세의 조회·오류 처리는 하위 화면에 맡깁니다.
  */
 import { useEffect } from 'react'
-import { isCampaignPreview } from './useCampaignCatalog'
+import { useCampaignPreview } from './useCampaignCatalog'
 import { Link, useLocation } from 'react-router-dom'
 import MainHomeHeader from '../../components/buyer/MainHomeHeader'
 import '../../styles/pages/_main-home.scss'
 
 export default function DiscoveryLayout({ children, notice, onCloseNotice }) {
   const { pathname } = useLocation()
+  const previewMode = useCampaignPreview()
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [pathname])
@@ -44,9 +45,7 @@ export default function DiscoveryLayout({ children, notice, onCloseNotice }) {
       </footer>
       {import.meta.env.DEV && (
         <div className="discovery-demo-label">
-          {isCampaignPreview
-            ? '개발 미리보기 · 캠페인 예시'
-            : '캠페인 서버 연동'}
+          {previewMode ? '개발 미리보기 · 캠페인 예시' : '캠페인 서버 연동'}
         </div>
       )}
       {notice && (

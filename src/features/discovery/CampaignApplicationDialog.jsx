@@ -3,6 +3,8 @@
  * 실제 신청을 전송하지 않으며 버전이 바뀌면 이전 답변과 동의를 초기화합니다.
  */
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { LIVE_CAMPAIGN_LIST } from './campaignDataMode'
 import { validateApplicationPreview } from './applicationValidation'
 
 const EMPTY_ADDRESS = {
@@ -398,7 +400,7 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
           입력 항목 검증 · 미리보기
         </button>
         <button type="button" className="discovery-primary-button" disabled>
-          실제 신청은 서비스 연동 후 가능합니다.
+          예시 캠페인은 실제 신청할 수 없습니다.
         </button>
         {import.meta.env.DEV && (
           <details className="application-qa-controls">
@@ -426,6 +428,7 @@ export default function CampaignApplicationDialog({ item, dialogRef }) {
             <p>이 선택은 실제 인증·SNS 상태를 변경하지 않습니다.</p>
           </details>
         )}
+        <Link to={LIVE_CAMPAIGN_LIST}>실제 모집 중인 캠페인 보기 →</Link>
       </form>
     </dialog>
   )

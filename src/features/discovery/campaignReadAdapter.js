@@ -10,7 +10,7 @@ import {
   periodEndInstant,
 } from './scheduleModel.js'
 
-// 실제 공개 DTO에는 사진·채널·지역·캠페인 종류가 없습니다. 다른 상품이나 예시 값으로 보완하지 않습니다.
+// 대표 이미지는 해당 캠페인의 공개 DTO 값만 사용합니다. 미제공 채널·지역·종류는 예시 값으로 보완하지 않습니다.
 export function adaptCampaignSummary(dto, now = new Date()) {
   if (!dto || dto.id == null || typeof dto.title !== 'string')
     throw new Error('캠페인 응답 형식이 올바르지 않습니다.')
@@ -21,7 +21,11 @@ export function adaptCampaignSummary(dto, now = new Date()) {
     title: dto.title,
     description: dto.description || dto.rewardDescription || '',
     category: dto.category || '',
-    image: null,
+    image:
+      typeof dto.representativeImageUrl === 'string' &&
+      dto.representativeImageUrl.trim()
+        ? dto.representativeImageUrl
+        : null,
     media: null,
     kind: null,
     capacity: dto.recruitmentCount ?? null,

@@ -109,3 +109,19 @@ test('카드도 달력과 동일하게 자정 종료의 직전 날짜를 사용�
   )
   assert.equal(item.daysLeft, 3)
 })
+
+// 새 필드가 없는 기존 서버 응답도 지원하며 다른 상품 사진을 가져오지 않습니다.
+test('해당 캠페인의 대표 이미지가 있을 때만 카드 사진으로 사용합니다', () => {
+  const dto = {
+    id: 20,
+    title: '대표 이미지 검수',
+    representativeImageUrl: '/api/campaigns/20/media/representative/content',
+  }
+  assert.equal(adaptCampaignSummary(dto).image, dto.representativeImageUrl)
+  for (const value of [undefined, null, '', '  ', 42]) {
+    assert.equal(
+      adaptCampaignSummary({ ...dto, representativeImageUrl: value }).image,
+      null,
+    )
+  }
+})

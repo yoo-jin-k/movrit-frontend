@@ -10,6 +10,7 @@ import CampaignApplicationDialog from './CampaignApplicationDialog'
 import { PREVIEW_CAMPAIGNS } from './catalog'
 import LiveCampaignDetailPage from './LiveCampaignDetailPage'
 import CampaignSchedule from './CampaignSchedule'
+import { LIVE_CAMPAIGN_LIST } from './campaignDataMode'
 
 function InformationSection({ title, lines, children }) {
   return (
@@ -48,6 +49,13 @@ function PreviewCampaignDetailPage() {
         </main>
       ) : (
         <main className="discovery-width discovery-detail">
+          <aside className="discovery-info" aria-label="예시 캠페인 안내">
+            <p>
+              이 페이지는 화면 확인용 예시 캠페인입니다. 실제 신청은 접수되지
+              않습니다.
+            </p>
+            <Link to={LIVE_CAMPAIGN_LIST}>실제 모집 중인 캠페인 보기 →</Link>
+          </aside>
           <div className="discovery-detail__layout">
             <div className="discovery-detail__body">
               <div
@@ -149,7 +157,7 @@ function PreviewCampaignDetailPage() {
               >
                 {detail.blockingReason
                   ? '신청 조건 준비 중'
-                  : '캠페인 신청하기'}
+                  : '신청 폼 미리보기'}
               </button>
               {detail.blockingReason && import.meta.env.DEV && (
                 <button

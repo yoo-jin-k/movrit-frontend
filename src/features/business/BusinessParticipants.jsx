@@ -4,7 +4,7 @@
  */
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import useBusinessList from './useBusinessList'
 import ParticipantComparison from './ParticipantComparison'
@@ -17,6 +17,9 @@ export default function BusinessParticipants() {
   const campaigns = useBusinessList('/collaborations/campaigns/seller')
   const [params, setParams] = useSearchParams()
   const [checkedIds, setCheckedIds] = useState([])
+  const [search, setSearch] = useState('')
+  const inFlight = useRef(false)
+  const applicationId = params.get('applicationId') || ''
   const [comparing, setComparing] = useState(false)
   const [status, setStatus] = useState(''),
     [selected, setSelected] = useState(null),
@@ -29,7 +32,9 @@ export default function BusinessParticipants() {
   const shown = state.data.filter(
     (item) =>
       (!campaignId || String(item.campaignId) === campaignId) &&
-      (!status || item.status === status),
+      (!status || item.status === status) &&
+      (!applicationId || String(item.id) === applicationId) &&
+      (!search.trim() || `${item.creatorNickname || ''} ${item.id}`.toLowerCase().includes(search.trim().toLowerCase())),
   )
   const compared = shown.filter((item) => checkedIds.includes(item.id))
   const title = (id) =>
@@ -42,7 +47,8 @@ export default function BusinessParticipants() {
   }
   // 상세에서 선택한 한 신청에만 선정/반려 명령을 보냅니다. 비교 체크 목록을 일괄 처리하지 않습니다.
   const submit = async () => {
-    if (!action || busy || locked) return
+    if (!action || inFlight.current || locked) return
+    inFlight.current = true
     setBusy(true)
     setError('')
     try {
@@ -58,6 +64,7 @@ export default function BusinessParticipants() {
           : '처리 결과를 확인하지 못했습니다. 목록을 새로 불러와 결과를 확인해 주세요.',
       )
     } finally {
+      inFlight.current = false
       setBusy(false)
     }
   }
@@ -71,7 +78,10 @@ export default function BusinessParticipants() {
         현재는 업체 직접 선정 방식입니다. 선정과 참여자의 수락은 별도 단계이며,
         선정 전 배송 연락처는 표시하지 않습니다.
       </p>
+      {applicationId && <p className="business-info">신청 #{applicationId} 확인 <button onClick={() => setParams({})}>전체 참여자 보기</button></p>}
+      {campaigns.error && <p role="alert">캠페인 이름과 필터 목록을 조회하지 못했습니다. <button onClick={campaigns.reload}>다시 확인</button></p>}
       <div className="business-filters">
+        <input aria-label="참여자 이름 또는 신청 번호 검색" placeholder="참여자 이름 또는 신청 번호" value={search} onChange={e => setSearch(e.target.value)} />
         <select
           aria-label="캠페인 필터"
           value={campaignId}
@@ -229,12 +239,32 @@ export default function BusinessParticipants() {
               이 참여자의 제출 콘텐츠 확인 →
             </Link>
           </p>
-          <VisitEvidence
-            key={`visit-${selected.id}`}
-            api={liveCampaignVisitEvidenceApi}
-            applicationId={selected.id}
-          />
+          {selected.fulfillmentType === 'VISIT' && <VisitEvidence key={`visit-${selected.id}`} api={liveCampaignVisitEvidenceApi} applicationId={selected.id} />}
+          {selected.fulfillmentType === 'DELIVERY' && <section><h3>배송 연락처</h3>{selected.shippingContact ? <p>{selected.shippingContact.recipientName}<br />{selected.shippingContact.recipientPhone}<br />{[selected.shippingContact.postalCode, selected.shippingContact.address1, selected.shippingContact.address2].filter(Boolean).join(' ')}</p> : <p>{['SUBMITTED','REJECTED'].includes(selected.status) ? '선정 전 배송 연락처는 공개되지 않습니다.' : '조회 가능한 배송 연락처가 없습니다.'}</p>}</section>}
+          {selected.status === 'CANCELLED' && <p>취소 사유: {selected.cancellationReason || '기록 없음'} · {dateLabel(selected.cancelledAt)}</p>}
           <dl className="business-details">
+            <div>
+              <dt>배송 연락처</dt>
+              <dd>
+                {selected.shippingContact
+                  ? `${selected.shippingContact.recipientName || '수령인 미등록'} · ${selected.shippingContact.recipientPhone || '연락처 미등록'}`
+                  : '참여 확정 후 확인할 수 있습니다.'}
+              </dd>
+            </div>
+            {selected.shippingContact && (
+              <div>
+                <dt>배송 주소</dt>
+                <dd>
+                  {[
+                    selected.shippingContact.postalCode,
+                    selected.shippingContact.address1,
+                    selected.shippingContact.address2,
+                  ]
+                    .filter(Boolean)
+                    .join(' ') || '주소가 등록되지 않았습니다.'}
+                </dd>
+              </div>
+            )}
             <div>
               <dt>신청 당시 조건</dt>
               <dd>

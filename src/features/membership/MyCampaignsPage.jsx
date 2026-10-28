@@ -1,6 +1,6 @@
 /** 본인 전용 작업공간을 조회하여 선택한 신청의 일정·안내·제출을 함께 표시합니다. */
 import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import BuyerLayout from '../../components/buyer/BuyerLayout'
 import CampaignSchedule from '../discovery/CampaignSchedule'
@@ -141,7 +141,8 @@ function Workspace({ item, onReload, attempt }) {
 export default function MyCampaignsPage() {
   const [state, setState] = useState({ loading: true, items: [], error: '' })
   const [attempt, setAttempt] = useState(0)
-  const [params, setParams] = useSearchParams()
+  // 진입 시에는 상세를 열지 않고 사용자가 직접 선택한 신청만 표시합니다.
+  const [selectedId, setSelectedId] = useState(null)
   const [filter, setFilter] = useState('')
   const reload = () => {
     setState((old) => ({ ...old, loading: true }))
@@ -184,10 +185,7 @@ export default function MyCampaignsPage() {
   const shown = state.items.filter(
     (item) => !filter || item.application.status === filter,
   )
-  const selected =
-    shown.find(
-      (item) => String(item.application.id) === params.get('applicationId'),
-    ) || shown[0]
+  const selected = shown.find((item) => item.application.id === selectedId)
   return (
     <BuyerLayout title="내 캠페인" className="campaign-workspace">
       <div className="campaign-workspace__toolbar">
@@ -196,6 +194,12 @@ export default function MyCampaignsPage() {
           새로고침
         </button>
       </div>
+      <p className="campaign-workspace__submission-help">
+        목록에서 캠페인을 선택하면 일정과 제출 작업을 확인하실 수 있습니다. 선정
+        후 참여 수락과 체험 완료 확인을 진행하면 상세 하단의 ‘콘텐츠
+        제출·검토’에서 게시물 링크를 제출하실 수 있습니다. 제출한 링크와 브랜드
+        검토 결과도 같은 곳에 표시됩니다.
+      </p>
       {state.loading ? (
         <p role="status">내 캠페인을 불러오고 있습니다.</p>
       ) : state.error ? (
@@ -209,7 +213,13 @@ export default function MyCampaignsPage() {
         <>
           <label className="campaign-workspace__filter">
             진행 상태{' '}
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <select
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value)
+                setSelectedId(null)
+              }}
+            >
               <option value="">전체 ({state.items.length})</option>
               {Object.entries(APPLICATION_STATUS).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -228,12 +238,7 @@ export default function MyCampaignsPage() {
                     <li key={item.application.id}>
                       <button
                         aria-current={selected === item ? 'true' : undefined}
-                        onClick={() =>
-                          setParams(
-                            { applicationId: String(item.application.id) },
-                            { replace: true },
-                          )
-                        }
+                        onClick={() => setSelectedId(item.application.id)}
                       >
                         <span className="campaign-workspace__status">
                           {APPLICATION_STATUS[item.application.status] ||
@@ -251,19 +256,21 @@ export default function MyCampaignsPage() {
                           {workspaceTime(item.campaign.contentSubmissionEndAt)}
                         </small>
                         <span className="campaign-workspace__open">
-                          작업 확인 →
+                          일정·제출 확인 →
                         </span>
                       </button>
                     </li>
                   ))}
                 </ul>
               </nav>
-              <Workspace
-                key={`${selected.application.id}-${attempt}`}
-                item={selected}
-                attempt={attempt}
-                onReload={reload}
-              />
+              {selected && (
+                <Workspace
+                  key={`${selected.application.id}-${attempt}`}
+                  item={selected}
+                  attempt={attempt}
+                  onReload={reload}
+                />
+              )}
             </div>
           )}
         </>

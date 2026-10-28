@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signup } from '../api/memberApi'
+import { normalizeMemberNickname } from '../features/membership/memberNickname'
 import CommonLayout from '../components/layout/CommonLayout'
 import {
   SIGNUP_OPTIONS,
@@ -18,6 +19,7 @@ function SignupPage() {
     email: '',
     password: '',
     name: '',
+    nickname: '',
     phone: '',
   })
   const [submitting, setSubmitting] = useState(false)
@@ -41,10 +43,17 @@ function SignupPage() {
       setSubmitError('이름을 입력해 주세요.')
       return
     }
+    let nickname
+    try {
+      nickname = normalizeMemberNickname(form.nickname)
+    } catch (cause) {
+      setSubmitError(cause.message)
+      return
+    }
     setSubmitting(true)
     setSubmitError('')
     try {
-      await signup(form)
+      await signup({ ...form, nickname })
 
       alert('회원가입이 완료되었습니다. 로그인해주세요.')
 
@@ -56,7 +65,7 @@ function SignupPage() {
     } catch (error) {
       setSubmitError(
         error.response?.status === 409
-          ? '이미 가입된 이메일입니다. 로그인해 주세요.'
+          ? '이미 사용 중인 이메일 또는 닉네임입니다. 입력 내용을 확인해 주세요.'
           : '회원가입에 실패했습니다. 입력 내용을 확인해 주세요.',
       )
     } finally {
@@ -138,6 +147,21 @@ function SignupPage() {
             onChange={handleChange}
           />
         </label>
+        <label className="common-field">
+          닉네임
+          <input
+            name="nickname"
+            autoComplete="nickname"
+            required
+            maxLength={20}
+            value={form.nickname}
+            onChange={handleChange}
+            aria-describedby="signup-nickname-help"
+          />
+        </label>
+        <p id="signup-nickname-help">
+          닉네임은 2~20자의 한글, 영문, 숫자, 밑줄과 공백으로 입력해 주세요.
+        </p>
         <label className="common-field">
           휴대폰번호
           <input

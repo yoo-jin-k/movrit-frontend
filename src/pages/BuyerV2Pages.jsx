@@ -3,6 +3,7 @@
  * 미리보기 배열과 고정 내용을 사용하며 결제 화면의 이동 버튼은 주문 생성이나 결제 승인 요청이 아닙니다.
  */
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import MemberProfilePage from '../features/membership/MemberProfilePage'
 import BuyerLayout, {
   BuyerButton,
   BuyerCard,
@@ -153,42 +154,9 @@ export function BuyerOrderDetailPage() {
   )
 }
 
+// 기존 프로필 경로를 서버 회원 닉네임 설정 화면으로 연결합니다.
 export function BuyerProfileEditPage() {
-  return (
-    <BuyerLayout title="프로필 수정">
-      <BuyerCard className="buyer-profile-form" title="기본 정보">
-        <div className="buyer-form-grid">
-          <label>
-            이름
-            <input defaultValue="김유진" />
-          </label>
-          <label>
-            이메일
-            <input defaultValue="yujin@example.com" />
-          </label>
-          <label>
-            휴대폰
-            <input defaultValue="010-0000-0000" />
-          </label>
-          <label>
-            닉네임
-            <input defaultValue="유진" />
-          </label>
-          <label className="is-wide">
-            한줄 소개
-            <input defaultValue="프리오더 쇼핑을 좋아해요" />
-          </label>
-        </div>
-        <label className="buyer-avatar-field">
-          프로필 이미지<span>김</span>
-          <BuyerButton>이미지 변경</BuyerButton>
-        </label>
-        <div className="buyer-form-actions">
-          <BuyerButton variant="primary">변경사항 저장</BuyerButton>
-        </div>
-      </BuyerCard>
-    </BuyerLayout>
-  )
+  return <MemberProfilePage />
 }
 
 export function BuyerAddressesPage() {

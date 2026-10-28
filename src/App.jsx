@@ -3,6 +3,8 @@
  * 업체 화면은 지연 로딩하고 공통 Suspense를 사용하며 토큰 진입 확인과 업체 승인 확인을 각각의 계층에 맡깁니다.
  */
 import { lazy, Suspense } from 'react'
+import MainHomeHeader from './components/buyer/MainHomeHeader'
+import AdminAccess from './components/AdminAccess'
 import MyCampaignsPage from './features/membership/MyCampaignsPage'
 import CampaignListingPage from './features/discovery/CampaignListingPage'
 import CampaignDetailPage from './features/discovery/CampaignDetailPage'
@@ -103,6 +105,16 @@ function ProtectedPage({ children }) {
   return <ProtectedRoute>{children}</ProtectedRoute>
 }
 
+/** 독립 본문 화면에도 공통 헤더를 제공하며 기존 인증 경계는 유지합니다. */
+function UserPage({ children }) {
+  return (
+    <>
+      <MainHomeHeader />
+      {children}
+    </>
+  )
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -121,10 +133,21 @@ function App() {
           />
           <Route path="/password/forgot" element={<ForgotPasswordPage />} />
           <Route path="/password/reset" element={<ResetPasswordPage />} />
-          <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+          <Route
+            path="/oauth/callback"
+            element={
+              <UserPage>
+                <OAuthCallbackPage />
+              </UserPage>
+            }
+          />
           <Route
             path="/social-link/callback"
-            element={<SocialLinkCallbackPage />}
+            element={
+              <UserPage>
+                <SocialLinkCallbackPage />
+              </UserPage>
+            }
           />
           <Route path="/home" element={<BuyerHomePage />} />
           <Route path="/category/:section" element={<CampaignListingPage />} />
@@ -312,7 +335,9 @@ function App() {
             path="/creator/dashboard"
             element={
               <ProtectedPage>
-                <CreatorDashboardPage />
+                <UserPage>
+                  <CreatorDashboardPage />
+                </UserPage>
               </ProtectedPage>
             }
           />
@@ -328,7 +353,9 @@ function App() {
             path="/creator/collaborations"
             element={
               <ProtectedPage>
-                <CreatorCollaborationPage />
+                <UserPage>
+                  <CreatorCollaborationPage />
+                </UserPage>
               </ProtectedPage>
             }
           />
@@ -336,7 +363,9 @@ function App() {
             path="/seller/apply"
             element={
               <ProtectedPage>
-                <SellerApplyPage />
+                <UserPage>
+                  <SellerApplyPage />
+                </UserPage>
               </ProtectedPage>
             }
           />
@@ -373,7 +402,9 @@ function App() {
             path="/admin/sellers"
             element={
               <ProtectedPage>
-                <AdminSellerPage />
+                <AdminAccess>
+                  <AdminSellerPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -381,7 +412,9 @@ function App() {
             path="/admin/sellers/:id"
             element={
               <ProtectedPage>
-                <AdminSellerDetailPage />
+                <AdminAccess>
+                  <AdminSellerDetailPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -389,7 +422,9 @@ function App() {
             path="/admin/dashboard"
             element={
               <ProtectedPage>
-                <AdminDashboardPage />
+                <AdminAccess>
+                  <AdminDashboardPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -397,7 +432,9 @@ function App() {
             path="/admin/members"
             element={
               <ProtectedPage>
-                <AdminMembersPage />
+                <AdminAccess>
+                  <AdminMembersPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -405,7 +442,9 @@ function App() {
             path="/admin/members/:id"
             element={
               <ProtectedPage>
-                <AdminMemberDetailPage />
+                <AdminAccess>
+                  <AdminMemberDetailPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -413,7 +452,9 @@ function App() {
             path="/admin/creators"
             element={
               <ProtectedPage>
-                <AdminCreatorsPage />
+                <AdminAccess>
+                  <AdminCreatorsPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -421,7 +462,9 @@ function App() {
             path="/admin/creators/:id"
             element={
               <ProtectedPage>
-                <AdminCreatorDetailPage />
+                <AdminAccess>
+                  <AdminCreatorDetailPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -429,7 +472,9 @@ function App() {
             path="/admin/preorders"
             element={
               <ProtectedPage>
-                <AdminPreordersPage />
+                <AdminAccess>
+                  <AdminPreordersPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -437,7 +482,9 @@ function App() {
             path="/admin/preorders/:id"
             element={
               <ProtectedPage>
-                <AdminPreorderDetailPage />
+                <AdminAccess>
+                  <AdminPreorderDetailPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -445,7 +492,9 @@ function App() {
             path="/admin/refunds"
             element={
               <ProtectedPage>
-                <AdminRefundsPage />
+                <AdminAccess>
+                  <AdminRefundsPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -453,7 +502,9 @@ function App() {
             path="/admin/refunds/:id"
             element={
               <ProtectedPage>
-                <AdminRefundDetailPage />
+                <AdminAccess>
+                  <AdminRefundDetailPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -461,7 +512,9 @@ function App() {
             path="/admin/collaborations"
             element={
               <ProtectedPage>
-                <AdminCollaborationsPage />
+                <AdminAccess>
+                  <AdminCollaborationsPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -469,7 +522,9 @@ function App() {
             path="/admin/settlements"
             element={
               <ProtectedPage>
-                <AdminSettlementsPage />
+                <AdminAccess>
+                  <AdminSettlementsPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -477,7 +532,9 @@ function App() {
             path="/admin/content"
             element={
               <ProtectedPage>
-                <AdminContentPage />
+                <AdminAccess>
+                  <AdminContentPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -485,7 +542,9 @@ function App() {
             path="/admin/inquiries"
             element={
               <ProtectedPage>
-                <AdminInquiriesPage />
+                <AdminAccess>
+                  <AdminInquiriesPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -493,7 +552,9 @@ function App() {
             path="/admin/reports"
             element={
               <ProtectedPage>
-                <AdminReportsPage />
+                <AdminAccess>
+                  <AdminReportsPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />
@@ -501,7 +562,9 @@ function App() {
             path="/admin/settings"
             element={
               <ProtectedPage>
-                <AdminSettingsPage />
+                <AdminAccess>
+                  <AdminSettingsPage />
+                </AdminAccess>
               </ProtectedPage>
             }
           />

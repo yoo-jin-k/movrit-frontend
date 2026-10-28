@@ -159,6 +159,31 @@
 }
 
 .main-home-header {
+  // 다른 본문 레이아웃에서도 메인과 같은 글꼴·색상·입력 스타일을 사용합니다.
+  color: #222;
+  font:
+    14px/1.5 'Movrit Pretendard',
+    $font-family;
+  button,
+  input {
+    font: inherit;
+  }
+  button {
+    color: inherit;
+  }
+  h2 {
+    margin-top: 0;
+  }
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible {
+    outline: 2px solid #6b38db;
+    outline-offset: 4px;
+  }
   position: relative;
   z-index: 30;
   background: #fff;
@@ -242,7 +267,7 @@
       gap: 8px;
       white-space: nowrap;
     }
-    a:first-child {
+    > .main-home-header__login {
       padding: 4px 13px 4px 5px;
       border: 1px solid #e6e6e6;
       border-radius: 40px;
@@ -1613,7 +1638,7 @@
   .main-home-header__actions {
     font-size: 12px;
     gap: 10px;
-    a:first-child {
+    > .main-home-header__login {
       padding: 4px 7px;
     }
   }
@@ -2410,5 +2435,65 @@
   }
   button {
     min-height: 44px;
+  }
+}
+
+// 계정 메뉴는 헤더 내부에 배치하며 긴 닉네임과 작은 화면에서도 영역을 벗어나지 않습니다.
+.main-home-account {
+  position: relative;
+  min-width: 0;
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 13px 4px 5px;
+    border: 1px solid #e6e6e6;
+    border-radius: 40px;
+    background: white;
+    max-width: 220px;
+  }
+  &__nickname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__dropdown {
+    z-index: 60;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 200px;
+    max-width: calc(100vw - 32px);
+    padding: 6px;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 8px 24px #0002;
+    a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    a:hover,
+    a:focus-visible {
+      background: #f6f3fb;
+    }
+    p {
+      margin: 8px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #666;
+    }
+  }
+}
+@media (max-width: 640px) {
+  .main-home-account__trigger {
+    max-width: clamp(74px, calc(100vw - 250px), 130px);
+    padding: 4px 7px;
+    gap: 5px;
+  }
+  .main-home-account__dropdown {
+    right: -60px;
   }
 }

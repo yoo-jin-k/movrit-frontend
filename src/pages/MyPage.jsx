@@ -50,9 +50,9 @@ export default function MyPage() {
   return (
     <BuyerLayout title="마이페이지">
       <BuyerCard className="buyer-my-profile">
-        <span>{member.name?.slice(0, 1)}</span>
+        <span>{(member.nickname || 'M').slice(0, 1)}</span>
         <div>
-          <h2>{member.name}</h2>
+          <h2>{member.nickname || '내 계정'}</h2>
           <p>{member.email}</p>
         </div>
         <Link

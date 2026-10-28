@@ -3,14 +3,28 @@
  * 로그인 메뉴는 토큰 존재 여부로 표시하며 메뉴 이동과 Escape 입력 시 펼친 메뉴를 닫습니다.
  */
 import { useState } from 'react'
-import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom'
+import AccountMenu from './AccountMenu'
+import '../../styles/pages/_main-home.scss'
+import {
+  Link,
+  NavLink,
+  useNavigate,
+  useSearchParams,
+  useLocation,
+} from 'react-router-dom'
 import {
   MENU_ITEMS,
   PRODUCT_CATEGORIES,
   LOCAL_CATEGORIES,
 } from '../../features/discovery/catalog'
 
+/** 페이지 이동 후 이전 검색 입력과 열린 메뉴가 남지 않도록 초기화합니다. */
 export default function MainHomeHeader() {
+  const { pathname, search } = useLocation()
+  return <HeaderContent key={`${pathname}${search}`} />
+}
+
+function HeaderContent() {
   const [params] = useSearchParams()
   const [query, setQuery] = useState(params.get('q') || '')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -61,12 +75,13 @@ export default function MainHomeHeader() {
             </button>
           </form>
           <nav className="main-home-header__actions" aria-label="개인 메뉴">
-            <Link to="/mypage">
-              <span className="main-home-header__avatar" aria-hidden="true">
-                ☺
-              </span>
-              마이페이지⌄
-            </Link>
+            {loggedIn ? (
+              <AccountMenu />
+            ) : (
+              <Link className="main-home-header__login" to="/login">
+                로그인
+              </Link>
+            )}
             <Link to="/notifications" aria-label="알림">
               <img src="/assets/main-home/bell.svg" alt="" />
             </Link>

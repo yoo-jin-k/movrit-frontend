@@ -31,6 +31,24 @@ export default function CampaignFields({
           </select>
         </label>
         <label>
+          선정 방식
+          <select
+            required
+            value={value.selectionMode || ''}
+            onChange={(event) => change('selectionMode', event.target.value)}
+          >
+            <option value="" disabled>
+              선정 방식 확인 필요
+            </option>
+            <option value="BRAND_DIRECT">브랜드 직접 선정</option>
+            <option value="OPERATOR">운영자 선정</option>
+          </select>
+        </label>
+        <p>
+          브랜드 직접 선정은 업체가, 운영자 선정은 관리자가 참여자를 선정합니다.
+          신청 이력이 생기면 선정 방식을 변경할 수 없습니다.
+        </p>
+        <label>
           모집 제목
           <input
             required

@@ -45,6 +45,10 @@ export default function CommunityPage() {
   return (
     <DiscoveryLayout notice={notice} onCloseNotice={() => setNotice('')}>
       <main className="discovery-width discovery-community">
+        <p className="discovery-info">
+          현재 게시판은 서비스 안내와 예시 글을 표시합니다. 글·댓글 공개 등록은
+          지원하지 않으며 작성 내용은 이 기기에만 임시저장됩니다.
+        </p>
         <div className="discovery-community__welcome">
           <div>
             <h1>커뮤니티</h1>

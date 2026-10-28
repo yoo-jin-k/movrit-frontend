@@ -1,9 +1,6 @@
-/**
- * 알림 목록과 미확인 건수를 함께 조회하고 개별/전체 읽음 처리를 제공합니다.
- * 대상 유형에 따라 기존 경로로 이동하며 개발 모드의 조회 실패에는 예시 알림을 표시합니다.
- */
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+/** 실제 알림만 조회하며 실패와 빈 목록을 구분합니다. 읽음 처리 후 서버 값을 다시 확인합니다. */
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   getNotifications,
   getUnreadNotificationCount,
@@ -11,139 +8,131 @@ import {
   markNotificationRead,
 } from '../api/notificationApi'
 import CommonLayout from '../components/layout/CommonLayout'
-
-const previewNotifications = [
-  {
-    id: 'p1',
-    title: '프리오더 목표가 78% 달성됐어',
-    createdAt: '2분 전',
-    read: false,
-  },
-  {
-    id: 'p2',
-    title: 'LUMENA에서 새로운 협업 제안을 보냈어',
-    createdAt: '18분 전',
-    read: false,
-  },
-  {
-    id: 'p3',
-    title: '주문이 결제 완료됐어',
-    createdAt: '1시간 전',
-    read: true,
-  },
-  {
-    id: 'p4',
-    title: '콘텐츠 수정 요청이 도착했어',
-    createdAt: '3시간 전',
-    read: true,
-  },
-  {
-    id: 'p5',
-    title: '8월 정산 예정 금액이 확정됐어',
-    createdAt: '어제',
-    read: true,
-  },
-  { id: 'p6', title: '서비스 점검 공지', createdAt: '8/14', read: true },
-]
-
-function NotificationsPage() {
-  const navigate = useNavigate()
-  const [items, setItems] = useState([])
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [loading, setLoading] = useState(true)
-
+import {
+  filterNotifications,
+  notificationPath,
+} from '../features/business/notificationModel'
+import { workspaceTime } from '../features/membership/campaignWorkspaceModel'
+export default function NotificationsPage() {
+  const [state, setState] = useState({
+    loading: true,
+    items: [],
+    count: null,
+    error: '',
+  })
+  const [attempt, setAttempt] = useState(0),
+    [filter, setFilter] = useState(''),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState('')
+  const inFlight = useRef(false)
+  const reload = () => {
+    setState((old) => ({ ...old, loading: true }))
+    setAttempt((v) => v + 1)
+  }
   useEffect(() => {
+    let active = true
     Promise.all([getNotifications(), getUnreadNotificationCount()])
-      .then(([notifications, unread]) => {
-        setItems(notifications)
-        setUnreadCount(unread.unreadCount)
+      .then(([items, unread]) => {
+        if (!Array.isArray(items) || !Number.isSafeInteger(unread.count))
+          throw new Error('알림 형식을 확인할 수 없습니다.')
+        if (active)
+          setState({ loading: false, items, count: unread.count, error: '' })
       })
-      .catch((error) => {
-        console.error(error)
-        if (import.meta.env.DEV) setItems(previewNotifications)
-        else alert('알림을 불러오지 못했어.')
+      .catch(() => {
+        if (active)
+          setState({
+            loading: false,
+            items: [],
+            count: null,
+            error: '알림을 불러오지 못했습니다. 다시 확인해 주세요.',
+          })
       })
-      .finally(() => setLoading(false))
-  }, [])
-
-  // 읽지 않은 알림은 먼저 서버 읽음 처리를 시도합니다. 대상 유형에 맞는 화면 이동은 이후 별도로 수행합니다.
-  const openNotification = async (item) => {
-    try {
-      if (!item.read) {
-        const updated = await markNotificationRead(item.id)
-        setItems((current) =>
-          current.map((value) => (value.id === item.id ? updated : value)),
-        )
-        setUnreadCount((value) => Math.max(0, value - 1))
-      }
-    } catch (error) {
-      console.error(error)
+    return () => {
+      active = false
     }
-
-    if (item.targetType === 'PREORDER' && item.targetId) {
-      navigate(`/preorders/${item.targetId}`)
-    } else if (item.targetType === 'INQUIRY') {
-      navigate('/inquiries')
-    }
-  }
-
-  // 전체 읽음 명령 성공 후 목록의 읽음 표시와 미확인 건수를 함께 갱신합니다.
-  const readAll = async () => {
+  }, [attempt])
+  const read = async (id) => {
+    if (inFlight.current) return
+    inFlight.current = true
+    setBusy(true)
+    setError('')
     try {
-      await markAllNotificationsRead()
-      setItems((current) =>
-        current.map((item) => ({
-          ...item,
-          read: true,
-          readAt: item.readAt || new Date().toISOString(),
-        })),
+      if (id != null) await markNotificationRead(id)
+      else await markAllNotificationsRead()
+      reload()
+    } catch {
+      setError(
+        '읽음 처리 결과를 확인하지 못했습니다. 새로고침으로 최신 상태를 확인해 주세요.',
       )
-      setUnreadCount(0)
-    } catch (error) {
-      console.error(error)
-      alert('알림을 모두 읽음 처리하지 못했어.')
+    } finally {
+      inFlight.current = false
+      setBusy(false)
     }
   }
-
+  const shown = filterNotifications(state.items, filter)
   return (
     <CommonLayout title="알림센터">
+      <p>읽지 않은 알림 {state.count ?? '—'}개</p>
       <div className="common-chips">
-        {['전체', '주문', '협업', '정산', '공지'].map((chip) => (
-          <button key={chip}>{chip}</button>
+        {[
+          ['', '전체'],
+          ['unread', '읽지 않음'],
+          ['campaign', '캠페인'],
+          ['PREORDER', '프리오더'],
+          ['INQUIRY', '문의'],
+        ].map(([value, label]) => (
+          <button
+            key={value}
+            aria-pressed={filter === value}
+            onClick={() => setFilter(value)}
+          >
+            {label}
+          </button>
         ))}
-        <button onClick={readAll} disabled={unreadCount === 0}>
+        <button
+          onClick={() => read(null)}
+          disabled={busy || state.loading || !state.count}
+        >
           모두 읽음
         </button>
+        <button onClick={reload} disabled={busy || state.loading}>
+          새로고침
+        </button>
       </div>
-      <section className="notification-list">
-        {loading && <div className="common-empty">알림을 불러오는 중...</div>}
-        {!loading && items.length === 0 && (
-          <div className="common-empty">아직 알림이 없어.</div>
-        )}
-        {!loading &&
-          items.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              onClick={() => openNotification(item)}
-            >
-              <i className={item.read ? '' : 'is-unread'} />
-              <div>
-                <strong>{item.title}</strong>
-                {item.message && <p>{item.message}</p>}
-                <small>
-                  {typeof item.id === 'string'
-                    ? item.createdAt
-                    : item.createdAt
-                      ? new Date(item.createdAt).toLocaleString()
-                      : ''}
-                </small>
+      {error && <p role="alert">{error}</p>}
+      {state.loading ? (
+        <p role="status">알림을 불러오고 있습니다.</p>
+      ) : state.error ? (
+        <p role="alert">{state.error}</p>
+      ) : !shown.length ? (
+        <p>표시할 알림이 없습니다.</p>
+      ) : (
+        <section className="notification-list">
+          {shown.map((item) => (
+            <article key={item.id} className="common-card">
+              <h2>{item.title}</h2>
+              <p>{item.message}</p>
+              <small>
+                {workspaceTime(item.createdAt)} ·{' '}
+                {item.read ? '읽음' : '읽지 않음'}
+              </small>
+              <div className="common-chips">
+                <button
+                  disabled={busy || item.read}
+                  onClick={() => read(item.id)}
+                >
+                  {item.read ? '읽음' : '읽음 표시'}
+                </button>
+                {notificationPath(item) && (
+                  <Link className="common-button" to={notificationPath(item)}>
+                    관련 내역 보기
+                  </Link>
+                )}
               </div>
-            </button>
+            </article>
           ))}
-      </section>
+        </section>
+      )}
     </CommonLayout>
   )
 }
-
-export default NotificationsPage

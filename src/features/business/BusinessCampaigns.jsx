@@ -12,6 +12,7 @@ import { readCampaignRequirement } from '../../api/campaignRequirementApi'
 import { campaignRequirementSummary } from '../discovery/eligibilityModel'
 import SellerCampaignManager from '../sellerCampaigns/SellerCampaignManager'
 import CampaignContactEditor from './CampaignContactEditor'
+import { SELECTION_MODES } from './selectionModeModel'
 
 // 누적 선정/수락 이력은 추론하지 않고 현재 응답 상태별 건수만 집계합니다.
 function CampaignCounts({ campaignId, applications }) {
@@ -63,7 +64,9 @@ function CampaignDetail({ campaign, applications, onClose }) {
       <dl className="business-details">
         <div>
           <dt>선정 주체</dt>
-          <dd>업체 직접 선정</dd>
+          <dd>
+            {SELECTION_MODES[campaign.selectionMode] || '선정 방식 확인 필요'}
+          </dd>
         </div>
         <div>
           <dt>참여 조건</dt>
@@ -220,7 +223,10 @@ export function BusinessCampaigns() {
                             {c.open ? '공개' : '비공개'}
                           </span>
                         </td>
-                        <td>업체 직접 선정</td>
+                        <td>
+                          {SELECTION_MODES[c.selectionMode] ||
+                            '선정 방식 확인 필요'}
+                        </td>
                         <td>
                           {applications.loading || applications.error
                             ? '—'
@@ -255,8 +261,8 @@ export function BusinessCampaigns() {
         </ListState>
       </section>
       <p className="business-info">
-        현재는 업체 직접 선정 방식입니다. 공개 상태와 모집 일정은 별도로 확인해
-        주세요.
+        캠페인별 선정 주체를 확인해 주세요. 공개 상태와 모집 일정은 별도로
+        확인하실 수 있습니다.
       </p>
       {selected && (
         <CampaignDetail

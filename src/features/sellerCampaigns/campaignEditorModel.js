@@ -3,8 +3,10 @@
  * 수정 시 기존 상세 필드를 보존하고 일정/조건 버전을 전달하여 동시 변경을 서버가 감지할 수 있게 합니다.
  */
 import { requirementPayload } from './requirementModel.js'
+import { selectionModeField } from '../business/selectionModeModel.js'
 export const emptyCampaign = () => ({
   preorderId: '',
+  selectionMode: 'BRAND_DIRECT',
   title: '',
   description: '',
   category: '',
@@ -30,6 +32,7 @@ export function configuredCampaignPayload(form, condition, original = null) {
   )
     throw new Error('모집 시작보다 늦은 종료일을 입력해 주세요.')
   const campaign = {
+    ...selectionModeField(form, original),
     title: form.title.trim(),
     description: form.description,
     category: form.category,

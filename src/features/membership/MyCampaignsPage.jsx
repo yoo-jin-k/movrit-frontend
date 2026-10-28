@@ -1,6 +1,6 @@
 /** 본인 전용 작업공간을 조회하여 선택한 신청의 일정·안내·제출을 함께 표시합니다. */
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../api/axios'
 import BuyerLayout from '../../components/buyer/BuyerLayout'
 import CampaignSchedule from '../discovery/CampaignSchedule'
@@ -14,6 +14,7 @@ import {
   workspaceTime,
 } from './campaignWorkspaceModel'
 import './myCampaignWorkspace.css'
+import { SELECTION_MODES } from '../business/selectionModeModel'
 
 function Guide({ title, value }) {
   return (
@@ -43,6 +44,7 @@ function Workspace({ item, onReload, attempt }) {
           캠페인 상세 보기 ↗
         </Link>
       </header>
+      <p>선정 방식: {SELECTION_MODES[campaign.selectionMode] || '확인 필요'}</p>
       <p className="campaign-workspace__next" role="status">
         {nextCampaignAction(application, content)}
       </p>
@@ -143,6 +145,9 @@ export default function MyCampaignsPage() {
   const [attempt, setAttempt] = useState(0)
   // 진입 시에는 상세를 열지 않고 사용자가 직접 선택한 신청만 표시합니다.
   const [selectedId, setSelectedId] = useState(null)
+  const [params, setParams] = useSearchParams()
+  const targetApplication = params.get('applicationId')
+  const targetContent = params.get('contentId')
   const [filter, setFilter] = useState('')
   const reload = () => {
     setState((old) => ({ ...old, loading: true }))
@@ -183,7 +188,11 @@ export default function MyCampaignsPage() {
     return () => controller.abort()
   }, [attempt])
   const shown = state.items.filter(
-    (item) => !filter || item.application.status === filter,
+    (item) =>
+      (!filter || item.application.status === filter) &&
+      (!targetApplication ||
+        String(item.application.id) === targetApplication) &&
+      (!targetContent || String(item.content?.id) === targetContent),
   )
   const selected = shown.find((item) => item.application.id === selectedId)
   return (
@@ -194,6 +203,19 @@ export default function MyCampaignsPage() {
           새로고침
         </button>
       </div>
+      {(targetApplication || targetContent) && (
+        <p>
+          알림과 연결된 캠페인 목록입니다.{' '}
+          <button
+            onClick={() => {
+              setParams({})
+              setSelectedId(null)
+            }}
+          >
+            전체 캠페인 보기
+          </button>
+        </p>
+      )}
       <p className="campaign-workspace__submission-help">
         목록에서 캠페인을 선택하면 일정과 제출 작업을 확인하실 수 있습니다. 선정
         후 참여 수락과 체험 완료 확인을 진행하면 상세 하단의 ‘콘텐츠

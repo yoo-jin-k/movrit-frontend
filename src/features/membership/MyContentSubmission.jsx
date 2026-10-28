@@ -6,6 +6,7 @@ import { useRef, useState } from 'react'
 import {
   submitMyCampaignContent,
   updateMyParticipation,
+  cancelMyCampaignApplication,
 } from '../../api/myCampaignContentApi'
 import {
   contentSubmissionAllowed,
@@ -21,6 +22,10 @@ import {
   workspaceTime,
   submissionWindowMessage,
 } from './campaignWorkspaceModel'
+import {
+  canCancelCampaign,
+  cancellationPayload,
+} from './campaignCancellationModel'
 import './myCampaignContent.css'
 
 // 서버 상태와 최신 version을 함께 사용합니다. 저장 결과가 불명확하면 자동 재전송하지 않습니다.
@@ -49,6 +54,8 @@ export default function MyContentSubmission({
     [notice, setNotice] = useState('')
   const [confirmAction, setConfirmAction] = useState(false)
   const inFlight = useRef(false)
+  const [cancelling, setCancelling] = useState(false)
+  const [reason, setReason] = useState('')
   const participationAction = myParticipationAction(application)
   const windowNotice = submissionWindowMessage(campaign, submission)
   const eligible =
@@ -116,6 +123,34 @@ export default function MyContentSubmission({
         failure.response?.status === 409
           ? '참여 상태가 변경되었습니다. 최신 내역을 확인해 주세요.'
           : '처리 결과를 확인하지 못했습니다. 다시 실행하기 전에 최신 내역을 확인해 주세요.',
+      )
+    } finally {
+      inFlight.current = false
+      setBusy(false)
+    }
+  }
+  // 확인된 취소 결과도 서버 재조회 후 반영하며 응답 불명확 시 같은 취소를 재전송하지 않습니다.
+  const cancel = async (event) => {
+    event.preventDefault()
+    if (inFlight.current || locked || !cancelling) return
+    let payload
+    try {
+      payload = cancellationPayload(application, reason)
+    } catch (failure) {
+      setError(failure.message)
+      return
+    }
+    inFlight.current = true
+    setBusy(true)
+    setError('')
+    try {
+      await cancelMyCampaignApplication(application.id, payload)
+      setLocked(true)
+      setNotice('캠페인 참여를 취소했습니다. 최신 내역을 확인해 주세요.')
+    } catch {
+      setLocked(true)
+      setError(
+        '취소 결과를 확인하지 못했습니다. 최신 내역에서 상태를 확인해 주세요.',
       )
     } finally {
       inFlight.current = false
@@ -311,6 +346,51 @@ export default function MyContentSubmission({
             ? '체험 완료 확인 후 콘텐츠를 제출하실 수 있습니다.'
             : '참여 진행 상태에 따라 콘텐츠 제출이 열립니다.'}
         </p>
+      )}
+      {application.status === 'CANCELLED' && (
+        <p>
+          취소 시각: {workspaceTime(application.cancelledAt)}
+          <br />
+          취소 사유: {application.cancellationReason || '기록 없음'}
+        </p>
+      )}
+      {canCancelCampaign(application) && (
+        <div className="my-campaign-content__review">
+          <button
+            type="button"
+            disabled={busy || locked}
+            onClick={() => setCancelling((value) => !value)}
+          >
+            캠페인 참여 취소
+          </button>
+          {cancelling && (
+            <form onSubmit={cancel}>
+              <p>
+                이 캠페인 참여를 취소하시겠습니까? 상품 주문·결제 취소는 별도로
+                처리됩니다.
+              </p>
+              <label>
+                취소 사유
+                <textarea
+                  required
+                  value={reason}
+                  disabled={busy || locked}
+                  onChange={(event) => setReason(event.target.value)}
+                />
+              </label>
+              <button type="submit" disabled={busy || locked}>
+                참여 취소 확정
+              </button>
+              <button
+                type="button"
+                disabled={busy || locked}
+                onClick={() => setCancelling(false)}
+              >
+                참여 유지
+              </button>
+            </form>
+          )}
+        </div>
       )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}

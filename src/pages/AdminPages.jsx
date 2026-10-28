@@ -52,6 +52,10 @@ function Filters({
 function ListPage({ title, subtitle, rows, columns, detailBase, filters }) {
   return (
     <AdminLayout title={title}>
+      <p role="note">
+        운영 화면 예시입니다. 표시된 회원·업무 내역은 실제 조회 결과가 아니며
+        변경 사항은 저장되지 않습니다.
+      </p>
       <Filters {...filters} />
       <AdminCard
         title={subtitle}
@@ -116,6 +120,10 @@ function DetailPage({
 }) {
   return (
     <AdminLayout title={title}>
+      <p role="note">
+        운영 화면 예시입니다. 표시된 회원·업무 내역은 실제 조회 결과가 아니며
+        변경 사항은 저장되지 않습니다.
+      </p>
       <AdminCard className="admin-profile">
         <div className="admin-profile__avatar">
           {profile.name?.slice(0, 1) || 'M'}
@@ -130,11 +138,15 @@ function DetailPage({
         <div className="admin-profile__actions">
           {review ? (
             <>
-              <AdminButton tone="danger">반려</AdminButton>
-              <AdminButton tone="primary">승인</AdminButton>
+              <AdminButton disabled tone="danger">
+                반려
+              </AdminButton>
+              <AdminButton disabled tone="primary">
+                승인
+              </AdminButton>
             </>
           ) : (
-            <AdminButton>계정 정지</AdminButton>
+            <AdminButton disabled>계정 정지</AdminButton>
           )}
         </div>
       </AdminCard>
@@ -479,6 +491,10 @@ export function AdminContentPage() {
 export function AdminReportsPage() {
   return (
     <AdminLayout title="운영 설정 / 리포트">
+      <p role="note">
+        운영 화면 예시입니다. 표시된 회원·업무 내역은 실제 조회 결과가 아니며
+        변경 사항은 저장되지 않습니다.
+      </p>
       <div className="admin-report-grid">
         <AdminCard title="운영 리포트">
           <div className="admin-metric-list">
@@ -529,6 +545,10 @@ function Settings() {
 export function AdminSettingsPage() {
   return (
     <AdminLayout title="운영 설정">
+      <p role="note">
+        운영 화면 예시입니다. 표시된 회원·업무 내역은 실제 조회 결과가 아니며
+        변경 사항은 저장되지 않습니다.
+      </p>
       <div className="admin-single-column">
         <Settings />
         <AdminCard title="관리자 알림">
@@ -537,7 +557,9 @@ export function AdminSettingsPage() {
           </p>
           <div className="admin-form-row">
             <input type="email" defaultValue="admin@movrit.kr" />
-            <AdminButton tone="primary">저장</AdminButton>
+            <AdminButton disabled tone="primary">
+              저장
+            </AdminButton>
           </div>
         </AdminCard>
       </div>

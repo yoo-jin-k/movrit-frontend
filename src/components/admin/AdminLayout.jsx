@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 
 const menu = [
   ['대시보드', '/admin/dashboard'],
+  ['캠페인 참여자', '/admin/campaign-participants'],
   ['회원', '/admin/members'],
   ['업체', '/admin/sellers'],
   ['인플루언서', '/admin/creators'],
@@ -43,7 +44,7 @@ export default function AdminLayout({
             </NavLink>
           ))}
         </nav>
-        <span className="admin-sidebar__user">관리자 김은영</span>
+        <span className="admin-sidebar__user">운영자 계정</span>
       </aside>
       <main className="admin-main">
         <header className="admin-page-head">

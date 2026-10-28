@@ -1,98 +1,108 @@
-/**
- * 운영 대시보드를 조회하고 카드와 이벤트 목록으로 표시합니다.
- * 현재 구현은 조회 실패 및 일부 누락 값에 예시 통계를 사용하므로 모든 표시값을 실운영 통계로 간주하지 않습니다.
- */
+/** 서버가 반환한 누적 집계만 표시하며 오늘 통계·증감률·가짜 운영 이벤트를 만들지 않습니다. */
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getAdminDashboard } from '../api/adminApi'
-import AdminLayout, {
-  AdminButton,
-  AdminCard,
-} from '../components/admin/AdminLayout'
-
-const preview = {
-  summary: { orders: 326, preorders: 28, reviews: 14, refunds: 9 },
-  events: [
-    '프리오더 PR-260816-031 심사 요청',
-    '업체 LUMENA 사업자 서류 수정 제출',
-    '주문 MR-260815-093 환불 요청',
-    '계약 COL-260814-011 양측 서명 완료',
-  ],
-}
-
+import AdminLayout, { AdminCard } from '../components/admin/AdminLayout'
 export default function AdminDashboardPage() {
-  const [data, setData] = useState(null)
+  const [state, setState] = useState({ loading: true, data: null, error: '' }),
+    [attempt, setAttempt] = useState(0)
   useEffect(() => {
+    let active = true
     getAdminDashboard()
-      .then(setData)
-      .catch(() => setData(preview))
-  }, [])
-  const summary = data?.summary || preview.summary
-  const values = [
-    ['오늘 주문', summary.todayOrders ?? summary.orders ?? 326, '+12%'],
-    [
-      '진행 프리오더',
-      summary.activePreorders ?? summary.preorders ?? 28,
-      '4 마감임박',
-    ],
-    ['심사 대기', summary.pendingReviews ?? summary.reviews ?? 14, '처리 필요'],
-    ['환불 요청', summary.refundRequests ?? summary.refunds ?? 9, '3 긴급'],
-  ]
+      .then((data) => {
+        if (!data?.summary) throw new Error('집계 응답 확인 필요')
+        if (active) setState({ loading: false, data, error: '' })
+      })
+      .catch(() => {
+        if (active)
+          setState({
+            loading: false,
+            data: null,
+            error: '운영 현황을 불러오지 못했습니다.',
+          })
+      })
+    return () => {
+      active = false
+    }
+  }, [attempt])
   return (
     <AdminLayout title="운영 대시보드">
-      <div className="admin-kpis">
-        {values.map(([label, value, note]) => (
-          <article key={label}>
-            <span>{label}</span>
-            <strong>{Number(value).toLocaleString()}</strong>
-            <small>{note}</small>
-          </article>
-        ))}
-      </div>
-      <div className="admin-dashboard-grid">
-        <AdminCard title="처리할 일" subtitle="우선순위 높은 운영 업무">
-          <div className="admin-task-list">
+      <button
+        className="admin-button"
+        disabled={state.loading}
+        onClick={() => {
+          setState({ loading: true, data: null, error: '' })
+          setAttempt((v) => v + 1)
+        }}
+      >
+        새로고침
+      </button>
+      {state.loading ? (
+        <p role="status">운영 현황을 확인하고 있습니다.</p>
+      ) : state.error ? (
+        <p role="alert">{state.error}</p>
+      ) : (
+        <>
+          <div className="admin-kpis">
             {[
-              ['업체 승인 대기', '4'],
-              ['프리오더 심사', '7'],
-              ['환불 요청', '9'],
-              ['계약 분쟁 확인', '1'],
-            ].map(([k, v]) => (
-              <div key={k}>
+              ['members', '회원'],
+              ['sellers', '업체'],
+              ['creators', '활동 프로필'],
+              ['preorders', '전체 프리오더'],
+              ['orders', '전체 주문'],
+              ['pendingSettlements', '정산 대기'],
+            ].map(([key, label]) => (
+              <article key={key}>
+                <span>{label}</span>
                 <strong>
-                  {k} {v}
+                  {state.data.summary[key] == null
+                    ? '미제공'
+                    : Number(state.data.summary[key]).toLocaleString()}
                 </strong>
-                <AdminButton>열기</AdminButton>
-              </div>
+                <small>서버 누적 집계</small>
+              </article>
             ))}
           </div>
-        </AdminCard>
-        <AdminCard title="서비스 현황">
-          <div className="admin-service-grid">
-            <div>
-              <b>GMV ₩128.4M</b>
+          <AdminCard title="운영 관리">
+            <div className="admin-task-list">
+              {[
+                ['업체 심사', '/admin/sellers'],
+                ['문의 확인', '/admin/inquiries'],
+                ['캠페인 참여자', '/admin/campaign-participants'],
+              ].map(([label, to]) => (
+                <Link className="admin-button" key={to} to={to}>
+                  {label} →
+                </Link>
+              ))}
             </div>
-            <div>
-              <b>활성 구매자 8,240</b>
-            </div>
-            <div>
-              <b>활성 업체 124</b>
-            </div>
-            <div>
-              <b>활성 크리에이터 318</b>
-            </div>
-          </div>
-        </AdminCard>
-      </div>
-      <AdminCard title="최근 운영 이벤트">
-        <ul className="admin-events">
-          {(data?.events || preview.events).slice(0, 5).map((e, i) => (
-            <li key={i}>
-              <span>{typeof e === 'string' ? e : e.title || e.detail}</span>
-              <time>{[5, 18, 32, 60][i] || 90}분 전</time>
-            </li>
-          ))}
-        </ul>
-      </AdminCard>
+          </AdminCard>
+          <AdminCard title="서버 제공 운영 목록">
+            {[
+              ['preorders', '프리오더'],
+              ['collaborations', '협업'],
+              ['settlements', '정산'],
+            ].map(([key, label]) => (
+              <section key={key}>
+                <h3>{label}</h3>
+                {!Array.isArray(state.data[key]) ? (
+                  <p>정보 미제공</p>
+                ) : !state.data[key].length ? (
+                  <p>등록된 내역이 없습니다.</p>
+                ) : (
+                  <ul>
+                    {state.data[key].slice(0, 5).map((item) => (
+                      <li key={item.id}>
+                        {item.title} · {item.status}
+                        <p>{item.detail}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            ))}
+          </AdminCard>
+        </>
+      )}
     </AdminLayout>
   )
 }

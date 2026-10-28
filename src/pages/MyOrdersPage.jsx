@@ -1,12 +1,11 @@
 /**
  * 본인 주문을 표시용 상태로 정규화하여 탭별로 보여줍니다.
- * 현재 빈 응답에는 예시 주문을 사용하며 조회 실패의 예시 대체는 개발 모드에서만 수행합니다.
+ * 서버의 빈 응답과 조회 실패를 예시 주문으로 대체하지 않습니다.
  */
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyOrders } from '../api/commerceApi'
 import BuyerLayout, { BuyerCard } from '../components/buyer/BuyerLayout'
-import { buyerOrders } from '../preview/buyerV2Preview'
 
 const labels = {
   PENDING_PAYMENT: '진행중',
@@ -19,12 +18,23 @@ const labels = {
 }
 export default function MyOrdersPage() {
   const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true),
+    [error, setError] = useState(''),
+    [attempt, setAttempt] = useState(0)
   const [filter, setFilter] = useState('전체')
   useEffect(() => {
     getMyOrders()
-      .then((items) => setOrders(items.length ? items : buyerOrders))
-      .catch(() => setOrders(import.meta.env.DEV ? buyerOrders : []))
-  }, [])
+      .then((items) => {
+        if (!Array.isArray(items)) throw new Error('응답 형식 오류')
+        setOrders(items)
+        setError('')
+      })
+      .catch(() => {
+        setOrders([])
+        setError('주문 내역을 불러오지 못했습니다.')
+      })
+      .finally(() => setLoading(false))
+  }, [attempt])
   const normalized = orders.map((o) => ({
     id: o.id,
     number: o.orderNumber || o.number,
@@ -55,6 +65,22 @@ export default function MyOrdersPage() {
           </button>
         ))}
       </div>
+      <button
+        disabled={loading}
+        onClick={() => {
+          setLoading(true)
+          setAttempt((v) => v + 1)
+        }}
+      >
+        새로고침
+      </button>
+      {loading ? (
+        <p role="status">주문을 불러오고 있습니다.</p>
+      ) : error ? (
+        <p role="alert">{error}</p>
+      ) : !shown.length ? (
+        <p>표시할 주문이 없습니다.</p>
+      ) : null}
       <div className="buyer-order-list">
         {shown.map((o) => (
           <BuyerCard key={o.id} className="buyer-order-row">

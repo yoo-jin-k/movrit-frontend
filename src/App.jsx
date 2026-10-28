@@ -6,6 +6,9 @@ import { lazy, Suspense } from 'react'
 import MainHomeHeader from './components/buyer/MainHomeHeader'
 import AdminAccess from './components/AdminAccess'
 import MyCampaignsPage from './features/membership/MyCampaignsPage'
+const AdminCampaignParticipantsPage = lazy(
+  () => import('./pages/AdminCampaignParticipantsPage'),
+)
 import CampaignListingPage from './features/discovery/CampaignListingPage'
 import CampaignDetailPage from './features/discovery/CampaignDetailPage'
 import SpecialCampaignPage from './features/discovery/SpecialCampaignPage'
@@ -398,6 +401,16 @@ function App() {
               element={<SellerCollaborationPage />}
             />
           </Route>
+          <Route
+            path="/admin/campaign-participants"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminCampaignParticipantsPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
           <Route
             path="/admin/sellers"
             element={

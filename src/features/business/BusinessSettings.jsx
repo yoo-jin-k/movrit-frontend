@@ -10,10 +10,15 @@ export default function BusinessSettings() {
     <>
       <PageHeader
         title="업체 설정"
-        description="등록된 업체 정보와 관리 메뉴를 확인하세요."
+        description="승인된 사업자 정보를 확인하고 브랜드·상품 관리 화면으로 이동하세요."
       />
       <section className="business-panel business-settings">
         <h2>업체 정보</h2>
+        <p>
+          심사에 사용된 사업자 정보는 조회 전용입니다. 변경이 필요하면{' '}
+          <Link to="/seller/inbox?tab=inquiries">문의하기</Link>로 요청해
+          주세요.
+        </p>
         <dl className="business-details">
           {[
             ['상호', profile.businessName],

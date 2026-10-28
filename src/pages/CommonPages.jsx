@@ -49,6 +49,9 @@ export function RoleSwitchPage() {
 export function NoticesPage() {
   return (
     <CommonLayout title="공지사항">
+      <p role="note">
+        공지 화면 예시입니다. 아래 일정과 정책은 실제 운영 공지가 아닙니다.
+      </p>
       <section className="common-list-wrap">
         <label className="common-field common-field--search">
           검색
@@ -73,6 +76,10 @@ export function NoticesPage() {
 export function NoticeDetailPage() {
   return (
     <CommonLayout title="공지 상세">
+      <p role="note">
+        공지 내용 예시입니다. 실제 운영 일정이나 정책을 안내하는 내용이
+        아닙니다.
+      </p>
       <article className="common-card common-card--wide notice-detail-card">
         <h2>8월 정산 일정 안내</h2>
         <small>2026.08.16 · 운영팀</small>
@@ -108,6 +115,10 @@ const termItems = [
 function SettingsPage({ title, heading, items }) {
   return (
     <CommonLayout title={title}>
+      <p role="note">
+        설정 화면 예시입니다. 표시된 보안·동의 상태는 실제 계정 상태가 아니며
+        변경은 저장되지 않습니다.
+      </p>
       <section className="common-card common-card--settings">
         <h2>{heading}</h2>
         <div className="common-setting-list">
@@ -149,6 +160,10 @@ export function TermsPage() {
 export function WithdrawalPage() {
   return (
     <CommonLayout title="계정 탈퇴">
+      <p role="note">
+        탈퇴 신청은 아직 연결되지 않았습니다.{' '}
+        <Link to="/inquiries">고객센터에 문의해 주세요.</Link>
+      </p>
       <section className="common-card common-card--withdraw">
         <h2>계정 탈퇴</h2>
         <p>탈퇴 전 아래 내용을 확인해줘.</p>
@@ -164,7 +179,9 @@ export function WithdrawalPage() {
           확인 문구
           <input placeholder="탈퇴합니다" />
         </label>
-        <button className="common-button">계정 탈퇴 요청</button>
+        <button className="common-button" disabled>
+          계정 탈퇴 요청 (준비 중)
+        </button>
       </section>
     </CommonLayout>
   )

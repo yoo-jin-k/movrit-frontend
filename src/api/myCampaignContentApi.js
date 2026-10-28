@@ -41,3 +41,15 @@ export async function updateMyParticipation(applicationId, action) {
     throw new Error('참여 처리 결과를 확인할 수 없습니다.')
   return data
 }
+
+// 캠페인 참여 취소만 수행하며 주문·결제 취소 API와 분리합니다.
+export async function cancelMyCampaignApplication(applicationId, payload) {
+  const { data } = await api.patch(
+    `/campaigns/applications/${encodeURIComponent(applicationId)}/cancel`,
+    payload,
+    { timeout: 15000 },
+  )
+  if (String(data?.id) !== String(applicationId) || data.status !== 'CANCELLED')
+    throw new Error('취소 결과를 확인할 수 없습니다.')
+  return data
+}

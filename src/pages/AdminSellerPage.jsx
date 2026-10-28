@@ -1,24 +1,20 @@
 /**
  * 업체 목록 응답을 화면 필드와 한국어 상태로 정규화해 필터링합니다.
- * 현재 빈 응답이나 조회 실패에는 preview 업체를 사용하며 승인·반려 쓰기 동작은 이 페이지에 없습니다.
+ * 빈 목록·조회 실패를 구분하고 업체 검색과 실제 상세 조회로 연결합니다.
  */
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import useBusinessList from '../features/business/useBusinessList'
 import { Link } from 'react-router-dom'
-import { getAllSellers } from '../api/adminSellerApi'
 import AdminLayout, {
   AdminCard,
   AdminStatus,
 } from '../components/admin/AdminLayout'
-import { sellers as preview } from '../preview/adminPreview'
 
 export default function AdminSellerPage() {
-  const [items, setItems] = useState([])
+  const state = useBusinessList('/admin/sellers')
+  const items = state.data
   const [filter, setFilter] = useState('전체')
-  useEffect(() => {
-    getAllSellers()
-      .then((result) => setItems(result.length ? result : preview))
-      .catch(() => setItems(preview))
-  }, [])
+  const [search, setSearch] = useState('')
   const normalized = items.map((x) => ({
     id: x.id,
     brand: x.brandName || x.brand,
@@ -29,14 +25,22 @@ export default function AdminSellerPage() {
       { PENDING: '심사 대기', APPROVED: '승인', REJECTED: '반려' }[x.status] ||
       x.status,
   }))
-  const shown =
-    filter === '전체'
-      ? normalized
-      : normalized.filter((x) => x.status === filter)
+  const shown = normalized.filter(
+    (x) =>
+      (filter === '전체' || x.status === filter) &&
+      `${x.brand || ''} ${x.number || ''}`
+        .toLowerCase()
+        .includes(search.trim().toLowerCase()),
+  )
   return (
     <AdminLayout title="업체 관리">
       <div className="admin-filters">
-        <input placeholder="업체명, 사업자번호 검색" />
+        <input
+          aria-label="업체 검색"
+          placeholder="업체명, 사업자번호 검색"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
         <div className="admin-chips">
           {['전체', '심사 대기', '승인', '반려'].map((x) => (
             <button
@@ -49,6 +53,20 @@ export default function AdminSellerPage() {
           ))}
         </div>
       </div>
+      <button
+        className="admin-button"
+        disabled={state.loading}
+        onClick={state.reload}
+      >
+        새로고침
+      </button>
+      {state.loading ? (
+        <p role="status">업체 목록을 불러오고 있습니다.</p>
+      ) : state.error ? (
+        <p role="alert">{state.error}</p>
+      ) : !shown.length ? (
+        <p>조건에 맞는 업체가 없습니다.</p>
+      ) : null}
       <AdminCard title="업체 목록" subtitle={`총 ${shown.length}건`}>
         <div className="admin-table-wrap">
           <table className="admin-table">

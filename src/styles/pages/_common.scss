@@ -623,3 +623,24 @@
     grid-template-columns: 1fr;
   }
 }
+
+// 문의 유형을 실제 선택 버튼으로 제공하면서 기존 카드형 표현을 유지합니다.
+.support-categories > button {
+  min-height: 76px;
+  border: 1px solid #e6e4ee;
+  border-radius: 12px;
+  background: #fff;
+  color: #38333f;
+  padding: 16px;
+  font: inherit;
+  cursor: pointer;
+  &[aria-pressed='true'] {
+    border-color: #8a55cc;
+    background: #f6f0ff;
+    color: #7242aa;
+  }
+  &:focus-visible {
+    outline: 2px solid #8a55cc;
+    outline-offset: 3px;
+  }
+}

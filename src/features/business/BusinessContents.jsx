@@ -18,6 +18,7 @@ export default function BusinessContents() {
   const state = useBusinessList('/campaign-contents/seller')
   const [params, setParams] = useSearchParams()
   const applicationId = params.get('applicationId')
+  const contentId = params.get('contentId')
   const [filter, setFilter] = useState(''),
     [selected, setSelected] = useState(null),
     [comment, setComment] = useState(''),
@@ -29,7 +30,8 @@ export default function BusinessContents() {
   const shown = state.data.filter(
     (item) =>
       (!filter || item.status === filter) &&
-      (!applicationId || String(item.applicationId) === applicationId),
+      (!applicationId || String(item.applicationId) === applicationId) &&
+      (!contentId || String(item.id) === contentId),
   )
   const choose = (item) => {
     setSelected(item)
@@ -78,6 +80,12 @@ export default function BusinessContents() {
         title="콘텐츠"
         description="제출된 콘텐츠를 확인하고 검토 의견을 전달하세요."
       />
+      {contentId && (
+        <p className="business-info">
+          콘텐츠 #{contentId} 확인{' '}
+          <button onClick={() => setParams({})}>전체 콘텐츠 보기</button>
+        </p>
+      )}
       {applicationId && (
         <p className="business-info">
           신청 #{applicationId}의 제출 내역{' '}

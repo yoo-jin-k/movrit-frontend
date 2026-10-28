@@ -2,7 +2,7 @@
  * 주문·프로필·배송지·결제수단·설정의 디자인 예시 화면을 제공합니다.
  * 미리보기 배열과 고정 내용을 사용하며 결제 화면의 이동 버튼은 주문 생성이나 결제 승인 요청이 아닙니다.
  */
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import MemberProfilePage from '../features/membership/MemberProfilePage'
 import BuyerLayout, {
   BuyerButton,
@@ -17,9 +17,12 @@ import {
 
 // 현재 버튼은 주문 완료 예시 경로로 이동합니다. 결제 API 호출이나 실제 주문 저장은 수행하지 않습니다.
 export function BuyerCheckoutPage() {
-  const navigate = useNavigate()
   return (
     <BuyerLayout title="주문/결제" className="buyer-checkout">
+      <p role="note">
+        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+        내용은 저장되지 않습니다.
+      </p>
       <div className="buyer-checkout__grid">
         <BuyerCard className="buyer-checkout__form">
           <h2>배송 정보</h2>
@@ -66,11 +69,8 @@ export function BuyerCheckoutPage() {
               <dd>₩29,000</dd>
             </div>
           </dl>
-          <p>목표 달성 시 실제 결제가 진행됩니다.</p>
-          <BuyerButton
-            variant="primary"
-            onClick={() => navigate('/orders/complete')}
-          >
+          <p>예시 금액입니다. 실제 주문이나 결제는 생성되지 않습니다.</p>
+          <BuyerButton variant="primary" disabled>
             프리오더 참여
           </BuyerButton>
         </BuyerCard>
@@ -82,6 +82,10 @@ export function BuyerCheckoutPage() {
 export function BuyerOrderCompletePage() {
   return (
     <BuyerLayout title="주문 완료">
+      <p role="note">
+        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+        내용은 저장되지 않습니다.
+      </p>
       <BuyerCard className="buyer-complete">
         <span className="buyer-complete__check">✓</span>
         <h2>프리오더 참여가 완료됐어</h2>
@@ -113,12 +117,16 @@ export function BuyerOrderDetailPage() {
   const steps = ['참여 완료', '목표 달성', '결제', '배송', '구매확정']
   return (
     <BuyerLayout title="주문 상세">
+      <p role="note">
+        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+        내용은 저장되지 않습니다.
+      </p>
       <BuyerCard className="buyer-order-hero">
         <div>
           <strong>{order.status}</strong>
           <p>현재 달성률 78% · 마감까지 2일</p>
         </div>
-        <BuyerButton>배송지 변경</BuyerButton>
+        <BuyerButton disabled>배송지 변경</BuyerButton>
       </BuyerCard>
       <BuyerCard title="진행 상태">
         <ol className="buyer-order-steps">
@@ -162,6 +170,10 @@ export function BuyerProfileEditPage() {
 export function BuyerAddressesPage() {
   return (
     <BuyerLayout title="배송지 관리">
+      <p role="note">
+        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+        내용은 저장되지 않습니다.
+      </p>
       <div className="buyer-stack">
         {buyerAddresses.map((a) => (
           <BuyerCard key={a.id} className="buyer-manage-row">
@@ -175,7 +187,7 @@ export function BuyerAddressesPage() {
               </p>
             </div>
             <div>
-              <BuyerButton>수정</BuyerButton>
+              <BuyerButton disabled>수정</BuyerButton>
               {!a.primary && (
                 <button className="buyer-text-danger">삭제</button>
               )}
@@ -190,6 +202,10 @@ export function BuyerAddressesPage() {
 export function BuyerPaymentsPage() {
   return (
     <BuyerLayout title="결제수단 관리">
+      <p role="note">
+        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+        내용은 저장되지 않습니다.
+      </p>
       <div className="buyer-stack">
         {paymentMethods.map((p) => (
           <BuyerCard key={p.id} className="buyer-manage-row">
@@ -199,7 +215,9 @@ export function BuyerPaymentsPage() {
               </strong>
               <p>{p.primary ? '기본 결제수단' : p.detail}</p>
             </div>
-            <BuyerButton>{p.primary ? '기본' : '기본으로'}</BuyerButton>
+            <BuyerButton disabled>
+              {p.primary ? '기본' : '기본으로'}
+            </BuyerButton>
           </BuyerCard>
         ))}
         <BuyerButton variant="primary">+ 결제수단 추가</BuyerButton>
@@ -210,6 +228,10 @@ export function BuyerPaymentsPage() {
 export function BuyerNotificationSettingsPage() {
   return (
     <BuyerLayout title="알림 설정">
+      <p role="note">
+        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+        내용은 저장되지 않습니다.
+      </p>
       <div className="buyer-settings-list">
         <BuyerToggle label="프리오더 마감 알림" note="필수/서비스 알림" />
         <BuyerToggle label="목표 달성/실패 알림" note="필수/서비스 알림" />
@@ -273,11 +295,19 @@ export function BuyerPreorderStatePage() {
   if (!config)
     return (
       <BuyerLayout title="상태를 찾을 수 없어">
+        <p role="note">
+          예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+          내용은 저장되지 않습니다.
+        </p>
         <Link to="/home">홈으로</Link>
       </BuyerLayout>
     )
   return (
     <BuyerLayout title={config.title}>
+      <p role="note">
+        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
+        내용은 저장되지 않습니다.
+      </p>
       <div className="buyer-state">
         <div className="buyer-state__image" />
         <section>

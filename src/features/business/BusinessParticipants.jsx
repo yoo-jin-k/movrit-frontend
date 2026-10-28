@@ -240,31 +240,9 @@ export default function BusinessParticipants() {
             </Link>
           </p>
           {selected.fulfillmentType === 'VISIT' && <VisitEvidence key={`visit-${selected.id}`} api={liveCampaignVisitEvidenceApi} applicationId={selected.id} />}
-          {selected.fulfillmentType === 'DELIVERY' && <section><h3>배송 연락처</h3>{selected.shippingContact ? <p>{selected.shippingContact.recipientName}<br />{selected.shippingContact.recipientPhone}<br />{[selected.shippingContact.postalCode, selected.shippingContact.address1, selected.shippingContact.address2].filter(Boolean).join(' ')}</p> : <p>{['SUBMITTED','REJECTED'].includes(selected.status) ? '선정 전 배송 연락처는 공개되지 않습니다.' : '조회 가능한 배송 연락처가 없습니다.'}</p>}</section>}
+          {selected.fulfillmentType === 'DELIVERY' && <section><h3>배송 연락처</h3>{selected.shippingContact ? <p>{selected.shippingContact.recipientName}<br />{selected.shippingContact.recipientPhone}<br />{[selected.shippingContact.postalCode, selected.shippingContact.address1, selected.shippingContact.address2].filter(Boolean).join(' ')}</p> : <p>{['ACTIVE','CONTENT_SUBMITTED','REVISION_REQUESTED','COMPLETED'].includes(selected.status) ? '등록된 배송 연락처가 없습니다.' : '참여자가 수락한 뒤 확인할 수 있습니다.'}</p>}</section>}
           {selected.status === 'CANCELLED' && <p>취소 사유: {selected.cancellationReason || '기록 없음'} · {dateLabel(selected.cancelledAt)}</p>}
           <dl className="business-details">
-            <div>
-              <dt>배송 연락처</dt>
-              <dd>
-                {selected.shippingContact
-                  ? `${selected.shippingContact.recipientName || '수령인 미등록'} · ${selected.shippingContact.recipientPhone || '연락처 미등록'}`
-                  : '참여 확정 후 확인할 수 있습니다.'}
-              </dd>
-            </div>
-            {selected.shippingContact && (
-              <div>
-                <dt>배송 주소</dt>
-                <dd>
-                  {[
-                    selected.shippingContact.postalCode,
-                    selected.shippingContact.address1,
-                    selected.shippingContact.address2,
-                  ]
-                    .filter(Boolean)
-                    .join(' ') || '주소가 등록되지 않았습니다.'}
-                </dd>
-              </div>
-            )}
             <div>
               <dt>신청 당시 조건</dt>
               <dd>

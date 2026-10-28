@@ -72,3 +72,57 @@ export function myParticipationAction(application) {
     return 'experience-confirm'
   return null
 }
+
+// 채널은 사용자가 선택하며 기존 단일 링크에 없던 채널을 자동 추정하지 않습니다.
+export const CONTENT_CHANNELS = {
+  INSTAGRAM: '인스타그램',
+  BLOG: '블로그',
+  YOUTUBE: '유튜브',
+  CLIP: '클립',
+  OTHER: '기타',
+}
+export const CONTENT_EXAMPLES = {
+  INSTAGRAM: 'https://www.instagram.com/p/...',
+  BLOG: 'https://blog.naver.com/...',
+  YOUTUBE: 'https://www.youtube.com/watch?v=...',
+  CLIP: 'https://',
+  OTHER: 'https://',
+}
+export function contentLinks(submission) {
+  return submission?.links?.length
+    ? submission.links
+    : submission?.contentUrl
+      ? [{ channelType: '', contentUrl: submission.contentUrl }]
+      : []
+}
+export function myContentLinksPayload(application, submission, links, note) {
+  if (!Array.isArray(links) || !links.length)
+    throw new Error('콘텐츠 링크를 하나 이상 입력해 주세요.')
+  if (links.length > 5)
+    throw new Error('게시물 링크는 최대 5개까지 제출할 수 있습니다.')
+  const checked = links.map((link) => {
+    if (!Object.hasOwn(CONTENT_CHANNELS, link.channelType))
+      throw new Error('콘텐츠를 게시한 채널을 선택해 주세요.')
+    const payload = myContentPayload(
+      application,
+      submission,
+      link.contentUrl,
+      note,
+    )
+    const parsed = new URL(payload.contentUrl)
+    if (
+      link.channelType === 'INSTAGRAM' &&
+      (!['instagram.com', 'www.instagram.com'].includes(parsed.hostname) ||
+        !/^\/(p|reel|tv)\/[^/]+/.test(parsed.pathname))
+    )
+      throw new Error('인스타그램 게시물 또는 릴스의 공개 URL을 입력해 주세요.')
+    return { channelType: link.channelType, contentUrl: payload.contentUrl }
+  })
+  if (new Set(checked.map((link) => link.contentUrl)).size !== checked.length)
+    throw new Error('동일한 URL을 중복 제출할 수 없습니다.')
+  return {
+    links: checked,
+    note: String(note || '').trim() || null,
+    expectedVersion: submission?.version ?? null,
+  }
+}

@@ -5,7 +5,7 @@
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import useBusinessList from './useBusinessList'
 import ParticipantComparison from './ParticipantComparison'
 import { actOnApplication } from './businessApi'
@@ -221,6 +221,14 @@ export default function BusinessParticipants() {
         >
           <StatusBadge status={selected.status} />
           <h3>{title(selected.campaignId)}</h3>
+          <p>
+            <Link
+              className="business-link"
+              to={`/seller/contents?applicationId=${selected.id}`}
+            >
+              이 참여자의 제출 콘텐츠 확인 →
+            </Link>
+          </p>
           <VisitEvidence
             key={`visit-${selected.id}`}
             api={liveCampaignVisitEvidenceApi}

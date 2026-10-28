@@ -14,7 +14,10 @@ import {
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
 
 // 요약과 달력이 같은 일정 원본을 사용하며 겹친 기간은 별도 색상과 텍스트로 모두 표시합니다.
-export default function CampaignSchedule({ schedule }) {
+export default function CampaignSchedule({
+  schedule,
+  defaultExpanded = false,
+}) {
   const periods = schedulePeriods(schedule)
   const valid = periods.filter(
     (period) => !period.invalid && (period.start || period.end),
@@ -26,7 +29,7 @@ export default function CampaignSchedule({ schedule }) {
     year: Number(first.slice(0, 4)),
     month: Number(first.slice(5, 7)),
   })
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(defaultExpanded)
   const calendarId = useId()
   const cells = monthGrid(display.year, display.month)
   const today = seoulDay(new Date())

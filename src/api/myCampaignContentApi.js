@@ -15,7 +15,7 @@ export async function readMyCampaignContents(signal) {
 // 응답의 신청 ID와 버전을 확인한 뒤 반환합니다. 연결 오류 시 저장됐는지는 부모가 재조회해야 합니다.
 export async function submitMyCampaignContent(applicationId, payload) {
   const { data } = await api.post(
-    `/campaign-contents/applications/${encodeURIComponent(applicationId)}`,
+    `/campaign-contents/applications/${encodeURIComponent(applicationId)}${payload.links ? '/links' : ''}`,
     payload,
     { timeout: 15000 },
   )

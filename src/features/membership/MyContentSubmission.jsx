@@ -12,18 +12,36 @@ import {
   myParticipationAction,
   MY_CONTENT_STATUS,
   myContentLink,
-  myContentPayload,
+  myContentLinksPayload,
+  contentLinks,
+  CONTENT_CHANNELS,
+  CONTENT_EXAMPLES,
 } from './myContentModel'
+import {
+  workspaceTime,
+  submissionWindowMessage,
+} from './campaignWorkspaceModel'
 import './myCampaignContent.css'
 
 // 서버 상태와 최신 version을 함께 사용합니다. 저장 결과가 불명확하면 자동 재전송하지 않습니다.
 export default function MyContentSubmission({
   application,
+  campaign,
   submission,
   available,
   onReload,
 }) {
-  const [url, setUrl] = useState(submission?.contentUrl || '')
+  const [links, setLinks] = useState(() =>
+    contentLinks(submission).length
+      ? contentLinks(submission)
+      : [{ channelType: '', contentUrl: '' }],
+  )
+  const editLink = (index, field, value) =>
+    setLinks((items) =>
+      items.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item,
+      ),
+    )
   const [note, setNote] = useState(submission?.note || '')
   const [busy, setBusy] = useState(false),
     [locked, setLocked] = useState(false),
@@ -32,8 +50,10 @@ export default function MyContentSubmission({
   const [confirmAction, setConfirmAction] = useState(false)
   const inFlight = useRef(false)
   const participationAction = myParticipationAction(application)
-  const canSubmit =
+  const windowNotice = submissionWindowMessage(campaign, submission)
+  const eligible =
     available && contentSubmissionAllowed(application, submission)
+  const canSubmit = eligible && !windowNotice
   // 최초 제출과 재제출을 같은 서버 경로로 보내되 payload의 expectedVersion으로 구분합니다.
   // 진행 중 ref와 상태를 함께 검사해 연속 입력으로 같은 요청이 겹치지 않도록 합니다.
   const submit = async (event) => {
@@ -41,7 +61,7 @@ export default function MyContentSubmission({
     if (inFlight.current || locked || !canSubmit) return
     let payload
     try {
-      payload = myContentPayload(application, submission, url, note)
+      payload = myContentLinksPayload(application, submission, links, note)
     } catch (failure) {
       setError(failure.message)
       return
@@ -61,9 +81,13 @@ export default function MyContentSubmission({
       setError(
         failure.response?.status === 409
           ? '콘텐츠 또는 참여 상태가 변경되었습니다. 최신 내역을 확인한 후 다시 제출해 주세요.'
-          : failure.response?.status === 403 || failure.response?.status === 404
-            ? '이 신청에 콘텐츠를 제출할 수 없습니다. 권한과 최신 상태를 확인해 주세요.'
-            : '제출 결과를 확인하지 못했습니다. 중복 제출을 방지하기 위해 최신 내역에서 반영 여부를 먼저 확인해 주세요.',
+          : failure.response?.status === 400
+            ? failure.response?.data?.detail ||
+              '채널과 콘텐츠 URL 형식을 확인해 주세요. 최신 내역 확인 후 다시 입력하실 수 있습니다.'
+            : failure.response?.status === 403 ||
+                failure.response?.status === 404
+              ? '이 신청에 콘텐츠를 제출할 수 없습니다. 권한과 최신 상태를 확인해 주세요.'
+              : '제출 결과를 확인하지 못했습니다. 중복 제출을 방지하기 위해 최신 내역에서 반영 여부를 먼저 확인해 주세요.',
       )
     } finally {
       inFlight.current = false
@@ -156,18 +180,28 @@ export default function MyContentSubmission({
             {MY_CONTENT_STATUS[submission.status] || '콘텐츠 상태 확인 필요'} ·
             버전 {submission.version ?? '미확인'}
           </p>
+          {contentLinks(submission).map((link, index) => (
+            <p key={index}>
+              {CONTENT_CHANNELS[link.channelType] || '기존 제출'} ·{' '}
+              {myContentLink(link.contentUrl) ? (
+                <a
+                  href={myContentLink(link.contentUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  제출한 콘텐츠 열기 ↗
+                </a>
+              ) : (
+                '콘텐츠 링크를 확인해 주세요.'
+              )}
+            </p>
+          ))}
           <p>
-            {myContentLink(submission.contentUrl) ? (
-              <a
-                href={myContentLink(submission.contentUrl)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                현재 제출한 콘텐츠 열기 ↗
-              </a>
-            ) : (
-              '콘텐츠 링크를 확인해 주세요.'
-            )}
+            최근 제출: {workspaceTime(submission.submittedAt)}
+            <br />
+            최근 검토: {workspaceTime(submission.reviewedAt)}
+            <br />
+            수정 요청 횟수: {submission.revisionCount ?? '미제공'}
           </p>
           {submission.note && <p>제출 메모: {submission.note}</p>}
           {submission.reviewComment && (
@@ -184,20 +218,70 @@ export default function MyContentSubmission({
       ) : (
         <p>아직 제출한 콘텐츠가 없습니다.</p>
       )}
+      {eligible && windowNotice && <p role="status">{windowNotice}</p>}
       {canSubmit && (
         <form onSubmit={submit}>
-          <label>
-            콘텐츠 URL
-            <input
-              type="url"
-              required
-              maxLength={1000}
-              value={url}
-              onChange={(event) => setUrl(event.target.value)}
-              placeholder="https://"
+          {links.map((link, index) => (
+            <fieldset
+              key={index}
               disabled={busy || locked}
-            />
-          </label>
+              className="my-campaign-content__link"
+            >
+              <legend>게시물 {index + 1}</legend>
+              <label>
+                게시 채널 {index + 1}
+                <select
+                  required
+                  value={link.channelType}
+                  onChange={(event) =>
+                    editLink(index, 'channelType', event.target.value)
+                  }
+                >
+                  <option value="">채널 선택</option>
+                  {Object.entries(CONTENT_CHANNELS).map(([value, name]) => (
+                    <option key={value} value={value}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                콘텐츠 URL {index + 1}
+                <input
+                  type="url"
+                  required
+                  maxLength={1000}
+                  value={link.contentUrl}
+                  onChange={(event) =>
+                    editLink(index, 'contentUrl', event.target.value)
+                  }
+                  placeholder={CONTENT_EXAMPLES[link.channelType] || 'https://'}
+                />
+              </label>
+              {links.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLinks((items) => items.filter((_, i) => i !== index))
+                  }
+                >
+                  게시물 {index + 1} 삭제
+                </button>
+              )}
+            </fieldset>
+          ))}
+          <button
+            type="button"
+            disabled={busy || locked || links.length >= 5}
+            onClick={() =>
+              setLinks((items) => [
+                ...items,
+                { channelType: '', contentUrl: '' },
+              ])
+            }
+          >
+            + 게시물 링크 추가 (최대 5개)
+          </button>
           <label>
             제출 메모 (선택)
             <textarea
@@ -221,7 +305,7 @@ export default function MyContentSubmission({
           </button>
         </form>
       )}
-      {available && !canSubmit && !submission && (
+      {available && !eligible && !submission && (
         <p>
           {application.status === 'ACTIVE' && !application.experienceConfirmedAt
             ? '체험 완료 확인 후 콘텐츠를 제출하실 수 있습니다.'

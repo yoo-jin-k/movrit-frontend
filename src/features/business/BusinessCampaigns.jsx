@@ -11,6 +11,7 @@ import { dateLabel } from './businessModel'
 import { readCampaignRequirement } from '../../api/campaignRequirementApi'
 import { campaignRequirementSummary } from '../discovery/eligibilityModel'
 import SellerCampaignManager from '../sellerCampaigns/SellerCampaignManager'
+import CampaignContactEditor from './CampaignContactEditor'
 
 // 누적 선정/수락 이력은 추론하지 않고 현재 응답 상태별 건수만 집계합니다.
 function CampaignCounts({ campaignId, applications }) {
@@ -57,6 +58,7 @@ function CampaignDetail({ campaign, applications, onClose }) {
       <p>
         {campaign.brandName} · {campaign.category || '분류 미제공'}
       </p>
+      <CampaignContactEditor campaignId={campaign.id} />
       <h3>운영 정보</h3>
       <dl className="business-details">
         <div>

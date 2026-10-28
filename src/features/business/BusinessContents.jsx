@@ -3,6 +3,8 @@
  * 처리 결과가 불명확하거나 충돌하면 명령을 잠그고 최신 목록 확인을 요구하며 업체 승인을 운영자 최종 승인과 구분합니다.
  */
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { contentLinks, CONTENT_CHANNELS } from '../membership/myContentModel'
 import useBusinessList from './useBusinessList'
 import { reviewContent } from './businessApi'
 import { DetailDialog, ListState, PageHeader, StatusBadge } from './BusinessUi'
@@ -14,6 +16,8 @@ import {
 } from './businessModel'
 export default function BusinessContents() {
   const state = useBusinessList('/campaign-contents/seller')
+  const [params, setParams] = useSearchParams()
+  const applicationId = params.get('applicationId')
   const [filter, setFilter] = useState(''),
     [selected, setSelected] = useState(null),
     [comment, setComment] = useState(''),
@@ -22,7 +26,11 @@ export default function BusinessContents() {
     [busy, setBusy] = useState(false),
     [locked, setLocked] = useState(false),
     [notice, setNotice] = useState('')
-  const shown = state.data.filter((item) => !filter || item.status === filter)
+  const shown = state.data.filter(
+    (item) =>
+      (!filter || item.status === filter) &&
+      (!applicationId || String(item.applicationId) === applicationId),
+  )
   const choose = (item) => {
     setSelected(item)
     setComment('')
@@ -70,6 +78,12 @@ export default function BusinessContents() {
         title="콘텐츠"
         description="제출된 콘텐츠를 확인하고 검토 의견을 전달하세요."
       />
+      {applicationId && (
+        <p className="business-info">
+          신청 #{applicationId}의 제출 내역{' '}
+          <button onClick={() => setParams({})}>전체 콘텐츠 보기</button>
+        </p>
+      )}
       <div className="business-filters">
         <select
           aria-label="콘텐츠 상태 필터"
@@ -147,20 +161,23 @@ export default function BusinessContents() {
             {selected.creatorNickname} · 버전 {selected.version ?? '미확인'}
           </p>
           <StatusBadge status={selected.status} />
-          <p>
-            {safeContentUrl(selected.contentUrl) ? (
-              <a
-                className="business-link"
-                href={safeContentUrl(selected.contentUrl)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                제출 콘텐츠 새 창에서 열기 ↗
-              </a>
-            ) : (
-              '열 수 있는 콘텐츠 주소가 아닙니다.'
-            )}
-          </p>
+          {contentLinks(selected).map((link, index) => (
+            <p key={index}>
+              {CONTENT_CHANNELS[link.channelType] || '기존 제출'} ·{' '}
+              {safeContentUrl(link.contentUrl) ? (
+                <a
+                  className="business-link"
+                  href={safeContentUrl(link.contentUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  제출 콘텐츠 새 창에서 열기 ↗
+                </a>
+              ) : (
+                '열 수 있는 콘텐츠 주소가 아닙니다.'
+              )}
+            </p>
+          ))}
           <p>{selected.note || '제출 메모가 없습니다.'}</p>
           <h3>최근 검토 의견</h3>
           <p>{selected.reviewComment || '아직 검토 의견이 없습니다.'}</p>

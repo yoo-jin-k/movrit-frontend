@@ -98,3 +98,19 @@
     padding: 15px;
   }
 }
+
+.my-campaign-content__link {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #e9e9ed;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+.my-campaign-content__link select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font: inherit;
+  background: white;
+}

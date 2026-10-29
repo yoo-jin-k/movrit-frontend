@@ -1,0 +1,136 @@
+/* 참여자 목록과 우측 상세만 확장하며 기존 업체 화면의 색상과 간격을 따릅니다. */
+.business-shell .participant-name-button {
+  border: 0;
+  background: transparent;
+  padding: 6px 0;
+  font-weight: 700;
+  color: #30243f;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.business-shell .participant-metrics {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+.business-shell .participant-metrics li {
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+  border: 1px solid #ece7f1;
+  border-radius: 10px;
+}
+.business-shell .participant-metrics small {
+  display: block;
+  color: #716879;
+  line-height: 1.6;
+}
+.business-shell .participant-metrics.is-compact {
+  gap: 8px;
+  font-size: 12px;
+}
+.business-shell .participant-metrics.is-compact li {
+  border: 0;
+  padding: 0;
+  gap: 4px;
+}
+.business-shell .participant-portfolio section {
+  border-top: 1px solid #eee8f3;
+  margin-top: 24px;
+  padding-top: 6px;
+}
+.business-shell .participant-profile {
+  display: flex;
+  gap: 14px;
+  align-items: start;
+}
+.business-shell .participant-profile p {
+  margin: 4px 0;
+}
+.business-shell .participant-history {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.business-shell .participant-history li {
+  border: 1px solid #ece7f1;
+  border-radius: 12px;
+  padding: 16px;
+}
+.business-shell .participant-history h4 {
+  margin: 0;
+  font-size: 15px;
+}
+.business-shell .participant-history a {
+  display: inline-block;
+  margin: 6px 12px 6px 0;
+  min-height: 32px;
+}
+.business-shell .participant-portfolio h3 span {
+  display: block;
+  font-size: 12px;
+  color: #796d84;
+  margin-top: 8px;
+}
+.business-shell .participant-portfolio {
+  overflow-wrap: anywhere;
+}
+.business-shell .participant-portfolio dd {
+  white-space: pre-wrap;
+}
+.business-shell .participant-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.business-shell .participant-decision {
+  border-top: 1px solid #e8e0ef;
+  background: #fff;
+  padding: 20px 0 8px;
+  margin-top: 24px;
+}
+.business-shell .participants-table {
+  min-width: 840px;
+}
+@media (max-width: 700px) {
+  .business-shell .participants-table {
+    min-width: 0;
+    width: 100%;
+  }
+  .business-shell .participants-table thead {
+    display: none;
+  }
+  .business-shell .participants-table tbody {
+    display: grid;
+    gap: 14px;
+  }
+  .business-shell .participants-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    border-bottom: 1px solid #e8e0ef;
+    padding: 12px;
+  }
+  .business-shell .participants-table td {
+    display: block;
+    padding: 10px;
+    border: 0;
+    overflow-wrap: anywhere;
+  }
+  .business-shell .participants-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    color: #786d83;
+    margin-bottom: 8px;
+  }
+  .business-shell .participants-table td:first-child,
+  .business-shell .participants-table td:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+}

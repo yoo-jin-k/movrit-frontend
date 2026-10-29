@@ -1,27 +1,31 @@
 /**
- * 업체 신청 목록을 캠페인·상태로 걸러 상세·비교·개별 선정/반려를 제공합니다.
- * 비교 체크는 선정 명령이 아니며 실제 처리 실패 뒤에는 최신 상태를 확인하도록 잠급니다.
+ * 업체 신청 목록을 캠페인·상태로 걸러 상세·개별 선정/반려를 제공합니다.
+ * 실제 처리 실패 뒤에는 최신 상태를 확인하도록 잠급니다.
  */
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import useBusinessList from './useBusinessList'
-import ParticipantComparison from './ParticipantComparison'
 import { actOnApplication } from './businessApi'
 import { DetailDialog, ListState, PageHeader, StatusBadge } from './BusinessUi'
 import { dateLabel, statusNames } from './businessModel'
-import { campaignRequirementSummary } from '../discovery/eligibilityModel'
+import ParticipantPortfolio, {
+  ParticipantMetrics,
+} from './ParticipantPortfolio'
+import useParticipantDetail from './useParticipantDetail'
+import { readParticipantPortfolio } from '../../api/participantPortfolioApi'
+import { myContentLink } from '../membership/myContentModel'
+import { completedCountLabel } from './participantPortfolioModel'
+import './participantPortfolio.css'
 import { SELECTION_MODES, canSelectApplication } from './selectionModeModel'
 export default function BusinessParticipants() {
   const state = useBusinessList('/campaigns/applications/seller')
   const campaigns = useBusinessList('/collaborations/campaigns/seller')
   const [params, setParams] = useSearchParams()
-  const [checkedIds, setCheckedIds] = useState([])
   const [search, setSearch] = useState('')
   const inFlight = useRef(false)
   const applicationId = params.get('applicationId') || ''
-  const [comparing, setComparing] = useState(false)
   const [status, setStatus] = useState(''),
     [selected, setSelected] = useState(null),
     [action, setAction] = useState(''),
@@ -29,6 +33,10 @@ export default function BusinessParticipants() {
     [notice, setNotice] = useState(''),
     [busy, setBusy] = useState(false),
     [locked, setLocked] = useState(false)
+  const portfolio = useParticipantDetail(
+    selected?.id ?? null,
+    readParticipantPortfolio,
+  )
   const campaignId = params.get('campaignId') || ''
   const shown = state.data.filter(
     (item) =>
@@ -40,7 +48,6 @@ export default function BusinessParticipants() {
           .toLowerCase()
           .includes(search.trim().toLowerCase())),
   )
-  const compared = shown.filter((item) => checkedIds.includes(item.id))
   const title = (id) =>
     campaigns.data.find((c) => c.id === id)?.title || `캠페인 #${id}`
   const selectionMode = (item) =>
@@ -52,12 +59,15 @@ export default function BusinessParticipants() {
     setError('')
     setLocked(false)
   }
-  // 상세에서 선택한 한 신청에만 선정/반려 명령을 보냅니다. 비교 체크 목록을 일괄 처리하지 않습니다.
+  // 상세에서 선택한 한 신청에만 선정/반려 명령을 보냅니다. 다른 신청의 상태는 변경하지 않습니다.
   const submit = async () => {
     if (
       !action ||
       inFlight.current ||
       locked ||
+      portfolio.loading ||
+      portfolio.error ||
+      !portfolio.data ||
       !canSelectApplication(selected, selectionMode(selected), 'brand')
     )
       return
@@ -160,7 +170,7 @@ export default function BusinessParticipants() {
       <section className="business-panel">
         <div className="business-panel-heading">
           <h2>
-            신청자 확인·비교{' '}
+            참여자 확인{' '}
             <span>{state.loading || state.error ? '—' : shown.length}</span>
           </h2>
           <small>선정과 참여 수락은 별도입니다.</small>
@@ -168,13 +178,13 @@ export default function BusinessParticipants() {
         <ListState state={state}>
           {shown.length ? (
             <div className="business-table-scroll">
-              <table>
+              <table className="participants-table">
                 <thead>
                   <tr>
-                    <th>비교</th>
                     <th>참여자</th>
                     <th>캠페인</th>
-                    <th>참여 방식</th>
+                    <th>채널·지표</th>
+                    <th>완료 이력</th>
                     <th>상태</th>
                     <th>신청일</th>
                     <th>관리</th>
@@ -183,43 +193,49 @@ export default function BusinessParticipants() {
                 <tbody>
                   {shown.map((item) => (
                     <tr key={item.id}>
-                      <td>
-                        <input
-                          className="business-compare-check"
-                          type="checkbox"
-                          aria-label={`${item.creatorNickname} 신청 ${item.id} 비교 선택`}
-                          checked={compared.some((v) => v.id === item.id)}
-                          onChange={(event) =>
-                            setCheckedIds((ids) =>
-                              event.target.checked
-                                ? [...ids, item.id]
-                                : ids.filter((id) => id !== item.id),
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
+                      <td data-label="참여자">
                         <div className="business-cell-media">
                           <span className="business-avatar" aria-hidden="true">
                             {item.creatorNickname?.slice(0, 1) || 'M'}
                           </span>
-                          <strong>{item.creatorNickname}</strong>
+                          <button
+                            disabled={busy}
+                            className="participant-name-button"
+                            onClick={() => choose(item)}
+                            aria-label={`${item.creatorNickname || '참여자'} 신청 ${item.id} 상세 보기`}
+                          >
+                            {item.creatorNickname || '닉네임 미등록'}
+                          </button>
                         </div>
                       </td>
-                      <td>{title(item.campaignId)}</td>
-                      <td>
-                        {item.fulfillmentType === 'DELIVERY'
-                          ? '배송'
-                          : item.fulfillmentType === 'VISIT'
-                            ? '방문'
-                            : '미확인'}
+                      <td data-label="캠페인">{title(item.campaignId)}</td>
+                      <td data-label="채널·지표">
+                        <ParticipantMetrics
+                          metrics={item.creatorMetrics}
+                          compact
+                        />
+                        {myContentLink(item.creatorChannelUrl) && (
+                          <a
+                            className="business-link"
+                            href={myContentLink(item.creatorChannelUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            활동 채널 ↗
+                          </a>
+                        )}
                       </td>
-                      <td>
+                      <td data-label="완료 이력">
+                        {completedCountLabel(item.completedCampaignCount)}
+                      </td>
+                      <td data-label="상태">
                         <StatusBadge status={item.status} />
                       </td>
-                      <td>{dateLabel(item.submittedAt)}</td>
-                      <td>
-                        <button onClick={() => choose(item)}>상세 보기</button>
+                      <td data-label="신청일">{dateLabel(item.submittedAt)}</td>
+                      <td data-label="관리">
+                        <button disabled={busy} onClick={() => choose(item)}>
+                          상세 보기
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -230,34 +246,41 @@ export default function BusinessParticipants() {
             <div className="business-empty">조건에 맞는 신청이 없습니다.</div>
           )}
         </ListState>
-        {!state.loading && !state.error && shown.length > 0 && (
-          <div className="business-selection-bar">
-            <span>
-              <strong>{compared.length}명</strong> 비교 선택 · 선정 결과에는
-              반영되지 않습니다.
-            </span>
-            <button
-              disabled={compared.length < 2}
-              onClick={() => setComparing(true)}
-            >
-              선택 비교
-            </button>
-          </div>
-        )}
       </section>
-      {comparing && (
-        <ParticipantComparison
-          items={compared}
-          campaignTitle={title}
-          onClose={() => setComparing(false)}
-        />
-      )}
       {selected && (
         <DetailDialog
           title={`${selected.creatorNickname} · 신청 상세`}
           onClose={() => setSelected(null)}
           busy={busy}
         >
+          <div className="participant-navigation" aria-label="참여자 이동">
+            <button
+              disabled={
+                busy || shown.findIndex((item) => item.id === selected.id) <= 0
+              }
+              onClick={() =>
+                choose(
+                  shown[shown.findIndex((item) => item.id === selected.id) - 1],
+                )
+              }
+            >
+              이전 참여자
+            </button>
+            <button
+              disabled={
+                busy ||
+                shown.findIndex((item) => item.id === selected.id) >=
+                  shown.length - 1
+              }
+              onClick={() =>
+                choose(
+                  shown[shown.findIndex((item) => item.id === selected.id) + 1],
+                )
+              }
+            >
+              다음 참여자
+            </button>
+          </div>
           <StatusBadge status={selected.status} />
           <h3>{title(selected.campaignId)}</h3>
           <p>
@@ -317,77 +340,60 @@ export default function BusinessParticipants() {
               {dateLabel(selected.cancelledAt)}
             </p>
           )}
-          <dl className="business-details">
-            <div>
-              <dt>신청 당시 조건</dt>
-              <dd>
-                {campaignRequirementSummary(
-                  selected.eligibilityRequirementSnapshot,
-                )}
-              </dd>
+          <section>
+            <h3>신청 메시지</h3>
+            <p>{selected.message || '작성된 내용이 없습니다.'}</p>
+          </section>
+          {portfolio.loading ? (
+            <p role="status">참여자 프로필과 완료 이력을 확인하고 있습니다.</p>
+          ) : portfolio.error ? (
+            <div role="alert">
+              <p>{portfolio.error}</p>
+              <button onClick={portfolio.reload}>상세 다시 확인</button>
             </div>
-            <div>
-              <dt>조건 버전</dt>
-              <dd>{selected.eligibilityRequirementVersion ?? '조건 없음'}</dd>
-            </div>
-            <div>
-              <dt>이메일 확인</dt>
-              <dd>{selected.emailVerified ? '확인됨' : '미확인'}</dd>
-            </div>
-            <div>
-              <dt>신청 메시지</dt>
-              <dd>{selected.message || '작성된 내용이 없습니다.'}</dd>
-            </div>
-          </dl>
-          <h3>신청 답변</h3>
-          {selected.answers?.length ? (
-            selected.answers.map((a) => (
-              <p key={a.questionId}>
-                <strong>질문 {a.questionId}</strong>
-                <br />
-                {a.value || '답변 없음'}
-              </p>
-            ))
-          ) : (
-            <p>추가 답변이 없습니다.</p>
-          )}
-          <p className="business-info">
-            지표 값·출처·측정일은 이 목록에서 제공되지 않습니다. 미확인 값을
-            0으로 판단하지 않습니다.
-          </p>
-          {canSelectApplication(selected, selectionMode(selected), 'brand') && (
-            <>
-              <div className="business-actions">
-                <button
-                  disabled={busy || locked}
-                  onClick={() => setAction('select')}
-                >
-                  참여자 선정
-                </button>
-                <button
-                  disabled={busy || locked}
-                  onClick={() => setAction('reject')}
-                >
-                  미선정 처리
-                </button>
-              </div>
-              {action && (
-                <div className="business-info">
-                  <p>
-                    이 신청을 {action === 'select' ? '선정' : '미선정'}{' '}
-                    처리하시겠습니까?
-                  </p>
+          ) : portfolio.data ? (
+            <ParticipantPortfolio data={portfolio.data} />
+          ) : null}
+          {!portfolio.loading &&
+            !portfolio.error &&
+            portfolio.data &&
+            canSelectApplication(
+              selected,
+              selectionMode(selected),
+              'brand',
+            ) && (
+              <>
+                <div className="business-actions participant-decision">
                   <button
-                    className="business-primary"
                     disabled={busy || locked}
-                    onClick={submit}
+                    onClick={() => setAction('select')}
                   >
-                    {busy ? '처리 중...' : '확정'}
+                    참여자 선정
+                  </button>
+                  <button
+                    disabled={busy || locked}
+                    onClick={() => setAction('reject')}
+                  >
+                    미선정 처리
                   </button>
                 </div>
-              )}
-            </>
-          )}
+                {action && (
+                  <div className="business-info">
+                    <p>
+                      이 신청을 {action === 'select' ? '선정' : '미선정'}{' '}
+                      처리하시겠습니까?
+                    </p>
+                    <button
+                      className="business-primary"
+                      disabled={busy || locked}
+                      onClick={submit}
+                    >
+                      {busy ? '처리 중...' : '확정'}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           {error && (
             <p role="alert" className="business-error">
               {error}

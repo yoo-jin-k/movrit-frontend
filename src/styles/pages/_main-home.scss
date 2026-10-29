@@ -2469,14 +2469,30 @@
     border-radius: 10px;
     background: white;
     box-shadow: 0 8px 24px #0002;
-    a {
+    hr {
+      border: 0;
+      border-top: 1px solid #dedede;
+      margin: 6px 8px;
+    }
+    button {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      color: inherit;
+    }
+    a,
+    button {
       display: block;
       padding: 10px 12px;
       border-radius: 6px;
       font-size: 14px;
     }
     a:hover,
-    a:focus-visible {
+    a:focus-visible,
+    button:hover,
+    button:focus-visible {
       background: #f6f3fb;
     }
     p {

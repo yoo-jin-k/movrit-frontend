@@ -2,7 +2,7 @@
  * 검색어를 URL 쿼리로 전달하고 카테고리 전체 메뉴를 여닫습니다.
  * 로그인 메뉴는 토큰 존재 여부로 표시하며 메뉴 이동과 Escape 입력 시 펼친 메뉴를 닫습니다.
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AccountMenu from './AccountMenu'
 import '../../styles/pages/_main-home.scss'
 import {
@@ -29,7 +29,15 @@ function HeaderContent() {
   const [query, setQuery] = useState(params.get('q') || '')
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
-  const loggedIn = Boolean(sessionStorage.getItem('accessToken'))
+  const [loggedIn, setLoggedIn] = useState(() =>
+    Boolean(sessionStorage.getItem('accessToken')),
+  )
+  useEffect(() => {
+    const refresh = () =>
+      setLoggedIn(Boolean(sessionStorage.getItem('accessToken')))
+    window.addEventListener('movrit:session-updated', refresh)
+    return () => window.removeEventListener('movrit:session-updated', refresh)
+  }, [])
   return (
     <header
       className="main-home-header"

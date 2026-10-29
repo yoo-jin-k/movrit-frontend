@@ -34,6 +34,7 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       refreshToken &&
+      !original?.skipAuthRefresh &&
       !original?._retry &&
       !original?.url?.includes('/auth/refresh')
     ) {
@@ -42,6 +43,9 @@ api.interceptors.response.use(
       original._retry = true
       try {
         const { data } = await axios.post('/api/auth/refresh', { refreshToken })
+        // 로그아웃 이후 도착한 갱신 응답으로 세션이 복구되지 않게 합니다.
+        if (localStorage.getItem('refreshToken') !== refreshToken)
+          return Promise.reject(error)
         sessionStorage.setItem('accessToken', data.accessToken)
         localStorage.setItem('refreshToken', data.refreshToken)
         original.headers.Authorization = `Bearer ${data.accessToken}`
@@ -50,7 +54,7 @@ api.interceptors.response.use(
         localStorage.removeItem('refreshToken')
       }
     }
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !original?.skipAuthRefresh) {
       sessionStorage.removeItem('accessToken')
       if (window.location.pathname !== '/login') window.location.href = '/login'
     }

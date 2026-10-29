@@ -4,6 +4,7 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import LogoutButton from '../../features/auth/LogoutButton'
 import { getMyInfo } from '../../api/authApi'
 import { getMySellerProfile } from '../../api/sellerApi'
 
@@ -110,6 +111,11 @@ export default function AccountMenu() {
               관리자 페이지
             </Link>
           )}
+          <hr />
+          <Link to="/settings" onClick={() => setOpen(false)}>
+            설정
+          </Link>
+          <LogoutButton />
           {failed && <p role="status">계정 정보를 확인하지 못했습니다.</p>}
         </nav>
       )}

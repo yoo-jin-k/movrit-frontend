@@ -67,6 +67,9 @@ function LoginPage() {
     <CommonLayout title="로그인" className="common-auth-page">
       <form className="common-card common-auth-card" onSubmit={handleSubmit}>
         <h2>MOVRIT에 로그인</h2>
+        {location.state?.sessionNotice && (
+          <p role="status">{location.state.sessionNotice}</p>
+        )}
         <p>프리오더와 협업을 한 곳에서 관리하세요.</p>
         <label className="common-field">
           이메일

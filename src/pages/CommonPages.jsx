@@ -1,7 +1,9 @@
 /**
  * 역할 진입 안내·공지·계정 설정·없는 경로 안내 화면을 제공합니다.
- * 공지와 설정은 현재 고정 표시이며 역할 링크 선택 자체가 서버 권한을 부여하지 않습니다.
+ * 보안 설정은 실제 계정 기능으로 연결하며 역할 링크 선택 자체가 서버 권한을 부여하지 않습니다.
  */
+import AccountPasswordPage from '../features/membership/AccountPasswordPage'
+
 import { Link, useNavigate } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'
 
@@ -98,13 +100,6 @@ export function NoticeDetailPage() {
   )
 }
 
-const securityItems = [
-  ['비밀번호 변경', '90일 전 변경', '관리'],
-  ['2단계 인증', '사용 안 함', '관리'],
-  ['로그인 알림', '사용 중', '사용중'],
-  ['최근 로그인 기기', 'MacBook Pro · iPhone', '관리'],
-  ['연결된 소셜 계정', 'Google · Kakao', '관리'],
-]
 const termItems = [
   ['서비스 이용약관', '필수 · 동의 완료', '보기'],
   ['개인정보 수집/이용', '필수 · 동의 완료', '보기'],
@@ -143,9 +138,7 @@ function SettingsPage({ title, heading, items }) {
   )
 }
 export function SecurityPage() {
-  return (
-    <SettingsPage title="보안 설정" heading="보안 설정" items={securityItems} />
-  )
+  return <AccountPasswordPage />
 }
 export function TermsPage() {
   return (

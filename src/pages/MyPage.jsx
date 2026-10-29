@@ -4,13 +4,12 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getMyInfo, logout } from '../api/authApi'
-import BuyerLayout, {
-  BuyerButton,
-  BuyerCard,
-} from '../components/buyer/BuyerLayout'
+import LogoutButton from '../features/auth/LogoutButton'
+import { getMyInfo } from '../api/authApi'
+import BuyerLayout, { BuyerCard } from '../components/buyer/BuyerLayout'
 
 const links = [
+  ['계정 설정', '닉네임·비밀번호·배송지 관리', '/settings'],
   ['내 캠페인 신청', '신청 및 진행 상태 확인', '/mypage/campaigns'],
   ['활동 프로필', '캠페인 참여에 사용할 프로필 관리', '/creator/profile'],
   ['주문 내역', '설정 및 상세 보기', '/orders'],
@@ -30,17 +29,6 @@ export default function MyPage() {
         navigate('/login')
       })
   }, [navigate])
-  // 서버 로그아웃 실패와 관계없이 이 브라우저의 액세스/갱신 토큰을 정리합니다.
-  const signout = async () => {
-    try {
-      await logout()
-    } catch (error) {
-      console.error(error)
-    }
-    sessionStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
-    navigate('/login')
-  }
   if (!member)
     return (
       <BuyerLayout title="마이페이지">
@@ -72,7 +60,7 @@ export default function MyPage() {
         ))}
       </div>
       <div className="buyer-my-actions">
-        <BuyerButton onClick={signout}>로그아웃</BuyerButton>
+        <LogoutButton className="buyer-v2-button buyer-v2-button--secondary" />
         {member.role === 'ADMIN' && (
           <Link to="/admin/dashboard">관리자 콘솔</Link>
         )}

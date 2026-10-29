@@ -12,7 +12,12 @@ export const login = async (data) => {
 // 갱신 토큰이 있는 경우에만 서버에 로그아웃을 알립니다. 브라우저 저장소 삭제는 호출 화면이 담당합니다.
 export const logout = async () => {
   const refreshToken = localStorage.getItem('refreshToken')
-  if (refreshToken) await api.post('/auth/logout', { refreshToken })
+  if (refreshToken)
+    await api.post(
+      '/auth/logout',
+      { refreshToken },
+      { timeout: 10000, skipAuthRefresh: true },
+    )
 }
 
 export const forgotPassword = async (email) => {

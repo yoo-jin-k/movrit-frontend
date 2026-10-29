@@ -2,6 +2,8 @@
  * 주문·프로필·배송지·결제수단·설정의 디자인 예시 화면을 제공합니다.
  * 미리보기 배열과 고정 내용을 사용하며 결제 화면의 이동 버튼은 주문 생성이나 결제 승인 요청이 아닙니다.
  */
+import AccountAddressesPage from '../features/membership/AccountAddressesPage'
+
 import { Link, useParams } from 'react-router-dom'
 import MemberProfilePage from '../features/membership/MemberProfilePage'
 import BuyerLayout, {
@@ -9,11 +11,7 @@ import BuyerLayout, {
   BuyerCard,
   BuyerToggle,
 } from '../components/buyer/BuyerLayout'
-import {
-  buyerAddresses,
-  buyerOrders,
-  paymentMethods,
-} from '../preview/buyerV2Preview'
+import { buyerOrders, paymentMethods } from '../preview/buyerV2Preview'
 
 // 현재 버튼은 주문 완료 예시 경로로 이동합니다. 결제 API 호출이나 실제 주문 저장은 수행하지 않습니다.
 export function BuyerCheckoutPage() {
@@ -168,36 +166,7 @@ export function BuyerProfileEditPage() {
 }
 
 export function BuyerAddressesPage() {
-  return (
-    <BuyerLayout title="배송지 관리">
-      <p role="note">
-        예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
-        내용은 저장되지 않습니다.
-      </p>
-      <div className="buyer-stack">
-        {buyerAddresses.map((a) => (
-          <BuyerCard key={a.id} className="buyer-manage-row">
-            <div>
-              <strong>{a.name}</strong>
-              {a.primary && <em>기본</em>}
-              <p>
-                {a.receiver} · {a.phone}
-                <br />
-                {a.address}
-              </p>
-            </div>
-            <div>
-              <BuyerButton disabled>수정</BuyerButton>
-              {!a.primary && (
-                <button className="buyer-text-danger">삭제</button>
-              )}
-            </div>
-          </BuyerCard>
-        ))}
-        <BuyerButton variant="primary">+ 배송지 추가</BuyerButton>
-      </div>
-    </BuyerLayout>
-  )
+  return <AccountAddressesPage />
 }
 export function BuyerPaymentsPage() {
   return (

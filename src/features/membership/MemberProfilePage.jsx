@@ -1,5 +1,5 @@
 /**
- * 본인 회원 정보를 조회하고 회원 닉네임만 수정합니다.
+ * 본인 사진과 회원 닉네임을 수정하고 저장 결과를 공통 헤더에 반영합니다.
  * 실명·연락처는 조회된 값을 보존하고 이메일·권한·채널 프로필은 변경하지 않습니다.
  */
 import { useEffect, useRef, useState } from 'react'
@@ -8,6 +8,8 @@ import BuyerLayout, {
   BuyerCard,
 } from '../../components/buyer/BuyerLayout'
 import { getMyMemberProfile, updateMyMemberProfile } from '../../api/memberApi'
+import AvatarEditor from './AvatarEditor'
+import './accountProfile.css'
 import { normalizeMemberNickname } from './memberNickname'
 
 export default function MemberProfilePage() {
@@ -35,6 +37,21 @@ export default function MemberProfilePage() {
       active = false
     }
   }, [attempt])
+
+  useEffect(() => {
+    let active = true
+    const refresh = () =>
+      getMyMemberProfile()
+        .then((data) => {
+          if (active) setProfile(data)
+        })
+        .catch(() => {})
+    window.addEventListener('movrit:profile-updated', refresh)
+    return () => {
+      active = false
+      window.removeEventListener('movrit:profile-updated', refresh)
+    }
+  }, [])
 
   // 서버 저장에 성공한 응답만 반영하며 중복·유효성 오류 시 입력값을 남깁니다.
   const save = async (event) => {
@@ -74,6 +91,10 @@ export default function MemberProfilePage() {
   }
   return (
     <BuyerLayout title="프로필 수정">
+      <AvatarEditor
+        member={profile}
+        onReload={() => setAttempt((v) => v + 1)}
+      />
       <BuyerCard className="buyer-profile-form" title="기본 정보">
         {!profile ? (
           <>

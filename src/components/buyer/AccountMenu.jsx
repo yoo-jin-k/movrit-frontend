@@ -4,6 +4,9 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import MemberAvatar from '../../features/membership/MemberAvatar'
+import AccountActivity from '../../features/membership/AccountActivity'
+import '../../features/membership/accountProfile.css'
 import LogoutButton from '../../features/auth/LogoutButton'
 import { getMyInfo } from '../../api/authApi'
 import { getMySellerProfile } from '../../api/sellerApi'
@@ -84,9 +87,7 @@ export default function AccountMenu() {
         aria-controls="account-links"
         onClick={() => setOpen(!open)}
       >
-        <span className="main-home-header__avatar" aria-hidden="true">
-          ☺
-        </span>
+        <MemberAvatar member={member} size={28} />
         <span className="main-home-account__nickname">
           {member?.nickname || '내 계정'}
         </span>
@@ -95,27 +96,52 @@ export default function AccountMenu() {
       {open && (
         <nav
           id="account-links"
-          className="main-home-account__dropdown"
+          className="main-home-account__dropdown account-card"
           aria-label="계정 이동 메뉴"
         >
-          <Link to="/mypage" onClick={() => setOpen(false)}>
-            마이페이지 가기
-          </Link>
-          {member && approved && (
-            <Link to="/seller/dashboard" onClick={() => setOpen(false)}>
-              브랜드 관리 페이지
-            </Link>
-          )}
-          {member?.role === 'ADMIN' && (
-            <Link to="/admin/dashboard" onClick={() => setOpen(false)}>
-              관리자 페이지
-            </Link>
-          )}
+          <div className="account-card-profile">
+            <div className="account-card-avatar">
+              <MemberAvatar member={member} />
+              <Link
+                className="account-camera"
+                to="/settings#profile-photo"
+                aria-label="프로필 사진 변경"
+                onClick={() => setOpen(false)}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5h8l2 3h3v12H3V8h3z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              </Link>
+            </div>
+            <div>
+              <strong>안녕하세요.</strong>
+              <Link to="/mypage/profile" onClick={() => setOpen(false)}>
+                {member?.nickname || '내 계정'}님 <span>›</span>
+              </Link>
+            </div>
+          </div>
+          <AccountActivity onClose={() => setOpen(false)} />
           <hr />
-          <Link to="/settings" onClick={() => setOpen(false)}>
-            설정
-          </Link>
-          <LogoutButton />
+          <div className="account-card-footer">
+            <Link to="/mypage" onClick={() => setOpen(false)}>
+              마이페이지
+            </Link>
+            {member && approved && (
+              <Link to="/seller/dashboard" onClick={() => setOpen(false)}>
+                브랜드 관리 페이지
+              </Link>
+            )}
+            {member?.role === 'ADMIN' && (
+              <Link to="/admin/dashboard" onClick={() => setOpen(false)}>
+                관리자 페이지
+              </Link>
+            )}
+            <Link to="/settings" onClick={() => setOpen(false)}>
+              설정
+            </Link>
+            <LogoutButton />
+          </div>
           {failed && <p role="status">계정 정보를 확인하지 못했습니다.</p>}
         </nav>
       )}

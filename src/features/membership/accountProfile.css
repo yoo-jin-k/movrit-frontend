@@ -1,0 +1,437 @@
+/* 계정 카드·사진·설정은 공통 헤더와 기존 구매자 화면에 한정해 적용합니다. */
+.member-avatar {
+  display: inline-flex !important;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #efedf4 !important;
+  color: #77658e;
+  font-size: 22px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.member-avatar img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+.member-avatar > span {
+  background: none !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+}
+.main-home-account__dropdown.account-card {
+  width: 450px;
+  padding: 22px 20px 14px;
+  border-radius: 24px;
+  max-height: calc(100dvh - 115px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 8px 30px #211a301c;
+  line-height: 1.5;
+  color: #28262c;
+}
+.account-card .account-card-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.account-card-profile > div > strong {
+  font-size: 16px;
+}
+.account-card .account-card-profile a {
+  padding: 0;
+  margin-top: 2px;
+  font-size: 17px;
+}
+.account-card-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+.account-card .account-camera {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #eee;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+.account-camera svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+.account-card .account-card-section {
+  margin: 0 0 22px;
+}
+.account-card .account-card-heading {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  margin: 0 0 10px;
+}
+.account-card .account-channel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: #f7f7fa;
+  border-radius: 12px;
+  padding: 16px 6px;
+  gap: 2px;
+}
+.account-card .account-channel-grid > a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3px;
+  min-width: 0;
+  gap: 5px;
+  font-size: 10px;
+}
+.account-channel-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #e0dfe5;
+  color: #fff;
+  font-weight: 800;
+  font-size: 20px;
+}
+.account-channel-icon.is-recorded {
+  background: #7b53cb;
+}
+.account-channel-grid strong {
+  font-size: 10px;
+  font-weight: 500;
+}
+.account-channel-grid small {
+  font-size: 10px;
+  color: #817c88;
+}
+.account-card p.account-card-caption {
+  font-size: 10px;
+  margin: 8px 0 0;
+  color: #87828d;
+}
+.account-campaign-summary {
+  background: #f7f7fa;
+  border-radius: 12px;
+  padding: 24px 20px;
+  text-align: center;
+  font-size: 12px;
+}
+.account-card .account-campaign-summary p {
+  font-size: 12px;
+  margin: 4px 0 18px;
+  color: #918c97;
+}
+.account-card .account-card-browse {
+  background: #fff;
+  border: 1px solid #e3e1e7;
+  border-radius: 7px;
+  margin: 16px auto 0;
+  padding: 12px;
+  font-size: 13px;
+}
+.account-summary-counts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 12px;
+}
+.account-card .account-summary-counts a {
+  display: grid;
+  gap: 5px;
+  padding: 4px;
+  font-size: 12px;
+}
+.account-summary-counts strong {
+  font-size: 21px;
+  color: #6f42c2;
+}
+.account-points {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid #e4e1e8;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 12px;
+}
+.account-points strong {
+  font-size: 15px;
+  color: #7550b7;
+}
+.account-points span {
+  color: #817b89;
+}
+.account-card .account-card-shortcuts > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 0;
+  font-weight: 700;
+  font-size: 13px;
+}
+.account-card-shortcuts > a + a {
+  border-top: 1px solid #f0edf3;
+}
+.account-card-shortcuts span {
+  margin-left: auto;
+  color: #7e748c;
+}
+.account-card-shortcuts small {
+  font-size: 10px;
+  font-weight: 400;
+  color: #8c8595;
+}
+.account-card .account-card-footer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+}
+.account-card .account-card-footer > a,
+.account-card .account-card-footer > button {
+  font-size: 12px;
+  padding: 10px;
+  text-align: left;
+}
+.account-card .account-retry {
+  font-size: 12px;
+  padding: 10px;
+  border: 1px solid #e8e2ef;
+}
+.account-settings {
+  max-width: 960px !important;
+}
+.account-settings-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  border-bottom: 1px solid #dedbe3;
+  padding-bottom: 16px;
+  margin: 24px 0;
+}
+.account-settings-nav a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #675a78;
+  text-decoration: none;
+}
+.account-photo-editor,
+.account-settings-group {
+  background: #fff;
+  border: 1px solid #ebe7ee;
+  border-radius: 16px;
+  padding: 28px;
+  margin: 20px 0;
+  scroll-margin-top: 24px;
+}
+.account-photo-editor h2,
+.account-settings-group h2 {
+  font-size: 18px;
+  margin: 0 0 22px;
+}
+.account-photo-editor__body {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.account-photo-editor__body > div {
+  min-width: 0;
+}
+.account-photo-editor__body p {
+  margin: 0 0 6px;
+}
+.account-photo-editor small {
+  display: block;
+  color: #8b8395;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.account-photo-editor input[type='file'] {
+  max-width: 100%;
+  font-size: 12px;
+}
+.account-photo-preview {
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.account-photo-actions,
+.account-photo-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  align-items: center;
+}
+.account-photo-confirm p {
+  width: 100%;
+  margin: 0;
+}
+.account-photo-editor button {
+  border: 1px solid #ded5e9;
+  background: #fff;
+  border-radius: 7px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+.account-photo-editor button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.account-settings-group dl > div {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 20px;
+  padding: 12px 0;
+}
+.account-settings-group dt {
+  color: #8b8395;
+}
+.account-settings-group dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.account-settings-group > a {
+  display: flex;
+  justify-content: space-between;
+  color: #665077;
+  text-decoration: none;
+  padding: 14px 0;
+  border-top: 1px solid #f1edf4;
+  font-size: 14px;
+}
+.account-settings-group > p {
+  font-size: 12px;
+  color: #877e92;
+  line-height: 1.6;
+}
+@media (max-width: 640px) {
+  .main-home-account__dropdown.account-card {
+    position: fixed;
+    top: 92px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - 108px);
+    padding: 20px 18px;
+  }
+  .account-card .account-card-footer > a,
+  .account-card .account-card-footer > button {
+    min-height: 44px;
+  }
+  .account-photo-editor,
+  .account-settings-group {
+    padding: 22px 18px;
+  }
+  .account-photo-editor__body {
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .account-photo-editor__body input {
+    width: 100%;
+  }
+  .account-settings-nav {
+    gap: 16px;
+  }
+  .account-settings-group dl > div {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+.account-channel-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.account-channel-grid > a:nth-child(2) .is-recorded {
+  background: linear-gradient(35deg, #edb64c, #d34382, #8054bd);
+}
+.account-channel-grid > a:nth-child(3) .is-recorded {
+  background: #e95960;
+}
+.account-channel-grid > a:nth-child(1) .is-recorded {
+  background: #55a87b;
+}
+
+.account-photo-editor input[type='file']::file-selector-button {
+  border: 1px solid #ded5e9;
+  background: #faf8fd;
+  color: #645275;
+  border-radius: 7px;
+  padding: 9px 12px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.account-photo-file {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ded5e9;
+  background: #faf8fd;
+  color: #645275;
+  border-radius: 7px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 13px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+.account-photo-file:focus-within {
+  outline: 2px solid #7750b7;
+  outline-offset: 3px;
+}
+.account-photo-file[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+.account-photo-file input[type='file'] {
+  position: absolute;
+  width: 1px !important;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+  border: 0;
+}
+.account-photo-editor .account-photo-filename {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.account-shortcut-pending {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid #f0edf3;
+  font-size: 13px;
+}
+.account-shortcut-pending span {
+  font-size: 12px;
+  color: #8b8395;
+}

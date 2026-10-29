@@ -4,6 +4,8 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import MemberAvatar from '../features/membership/MemberAvatar'
+import '../features/membership/accountProfile.css'
 import LogoutButton from '../features/auth/LogoutButton'
 import { getMyInfo } from '../api/authApi'
 import BuyerLayout, { BuyerCard } from '../components/buyer/BuyerLayout'
@@ -23,11 +25,15 @@ export default function MyPage() {
   const navigate = useNavigate()
   const [member, setMember] = useState(null)
   useEffect(() => {
-    getMyInfo()
-      .then(setMember)
-      .catch(() => {
-        navigate('/login')
-      })
+    const refresh = () =>
+      getMyInfo()
+        .then(setMember)
+        .catch(() => {
+          navigate('/login')
+        })
+    refresh()
+    window.addEventListener('movrit:profile-updated', refresh)
+    return () => window.removeEventListener('movrit:profile-updated', refresh)
   }, [navigate])
   if (!member)
     return (
@@ -38,7 +44,7 @@ export default function MyPage() {
   return (
     <BuyerLayout title="마이페이지">
       <BuyerCard className="buyer-my-profile">
-        <span>{(member.nickname || 'M').slice(0, 1)}</span>
+        <MemberAvatar member={member} size={64} />
         <div>
           <h2>{member.nickname || '내 계정'}</h2>
           <p>{member.email}</p>

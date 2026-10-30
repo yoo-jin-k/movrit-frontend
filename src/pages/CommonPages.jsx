@@ -165,7 +165,7 @@ export function WithdrawalPage() {
           <p>
             • 진행중 주문/환불이 있으면 탈퇴할 수 없습니다
             <br />• 진행중 협업/정산이 있으면 먼저 종료해야 합니다
-            <br />• 법적 보관 의무 데이터는 일정 기간 보관돼
+            <br />• 법적 보관 의무 데이터는 일정 기간 보관됩니다
           </p>
         </div>
         <label className="common-field">

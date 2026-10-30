@@ -211,7 +211,7 @@ function PreorderManagePage() {
       >
         <div>
           <h1>프리오더 · 공동구매 관리</h1>
-          <p>상품의 판매 기간과 목표 수량, 실제 판매할 SKU를 설정해.</p>
+          <p>상품의 판매 기간과 목표 수량, 실제 판매할 SKU를 설정해 주세요.</p>
         </div>
         <button
           onClick={() => setShowForm((value) => !value)}
@@ -265,7 +265,8 @@ function PreorderManagePage() {
             <legend>판매할 SKU</legend>
             {productVariants.length === 0 ? (
               <p>
-                활성화된 SKU가 없어. 상품 · 재고 관리에서 SKU를 먼저 만들어줘.
+                활성화된 SKU가 없습니다. 상품 · 재고 관리에서 SKU를 먼저 만들어
+                주세요.
               </p>
             ) : (
               productVariants.map((variant) => (

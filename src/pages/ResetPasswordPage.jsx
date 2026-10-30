@@ -44,7 +44,7 @@ function ResetPasswordPage() {
       console.error(error)
       alert(
         error.response?.data?.message ||
-          '만료되었거나 사용할 수 없는 재설정 링크야.',
+          '만료되었거나 사용할 수 없는 재설정 링크입니다.',
       )
       setValidation({ token, valid: false })
     } finally {
@@ -59,7 +59,7 @@ function ResetPasswordPage() {
     return (
       <div>
         <h1>비밀번호 재설정</h1>
-        <p>만료되었거나 유효하지 않은 링크야.</p>
+        <p>만료되었거나 유효하지 않은 링크입니다.</p>
         <button onClick={() => navigate('/password/forgot')}>
           재설정 링크 다시 받기
         </button>

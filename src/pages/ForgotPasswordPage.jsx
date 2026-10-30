@@ -39,7 +39,7 @@ function ForgotPasswordPage() {
     <CommonLayout title="계정 찾기">
       <form className="common-card common-account-card" onSubmit={submit}>
         <h2>계정 찾기</h2>
-        <p>가입한 이메일로 인증해.</p>
+        <p>가입한 이메일로 인증해 주세요.</p>
         <label className="common-field">
           이메일
           <input

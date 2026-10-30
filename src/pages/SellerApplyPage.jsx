@@ -74,7 +74,7 @@ function SellerApplyPage() {
           <p>판매자 등록 신청이 반려되었습니다.</p>
         )}
         {seller.status === 'SUSPENDED' && (
-          <p>현재 판매자 활동이 정지된 상태야.</p>
+          <p>현재 판매자 활동이 정지된 상태입니다.</p>
         )}
       </div>
     )
@@ -83,7 +83,7 @@ function SellerApplyPage() {
   return (
     <div>
       <h1>브랜드 판매자 등록</h1>
-      <p>상품을 판매하려면 먼저 판매자 등록 신청이 필요해.</p>
+      <p>상품을 판매하려면 먼저 판매자 등록 신청이 필요합니다.</p>
 
       <form onSubmit={handleSubmit}>
         <div>

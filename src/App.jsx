@@ -1,50 +1,26 @@
 /**
  * 공개 탐색·로그인·개인·업체·운영 화면의 경로와 중첩 레이아웃을 구성합니다.
- * 업체 화면은 지연 로딩하고 공통 Suspense를 사용하며 토큰 진입 확인과 업체 승인 확인을 각각의 계층에 맡깁니다.
+ * 홈·탐색·로그인을 제외한 화면은 지연 로딩하고 공통 Suspense를 사용하며 토큰 진입 확인과 업체 승인 확인을 각각의 계층에 맡깁니다.
  */
-import MyRegisteredContents from './features/membership/MyRegisteredContents'
-import AccountSettingsPage from './features/membership/AccountSettingsPage'
 
 import { lazy, Suspense } from 'react'
 import MainHomeHeader from './components/buyer/MainHomeHeader'
 import AdminAccess from './components/AdminAccess'
-import MyCampaignsPage from './features/membership/MyCampaignsPage'
+import CampaignListingPage from './features/discovery/CampaignListingPage'
+import CampaignDetailPage from './features/discovery/CampaignDetailPage'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import BuyerHomePage from './pages/BuyerHomePage'
+import OAuthCallbackPage from './pages/OAuthCallbackPage'
+import LoginPage from './pages/LoginPage'
+import ProtectedRoute from './components/ProtectedRoute'
+
+// 첫 화면(홈·탐색·로그인)에 필요 없는 화면은 들어갈 때 내려받습니다(초기 다운로드 크기 감소).
+// 이름으로 내보낸 화면은 lazyNamed로 감싸 같은 방식으로 불러옵니다.
+const lazyNamed = (loader, name) =>
+  lazy(() => loader().then((module) => ({ default: module[name] })))
 const AdminCampaignParticipantsPage = lazy(
   () => import('./pages/AdminCampaignParticipantsPage'),
 )
-import CampaignListingPage from './features/discovery/CampaignListingPage'
-import CampaignDetailPage from './features/discovery/CampaignDetailPage'
-import SpecialCampaignPage from './features/discovery/SpecialCampaignPage'
-import OfferwallPage from './features/discovery/OfferwallPage'
-import CommunityPage from './features/discovery/CommunityPage'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import BuyerHomePage from './pages/BuyerHomePage'
-import MyPage from './pages/MyPage'
-import OAuthCallbackPage from './pages/OAuthCallbackPage'
-import SocialLinkCallbackPage from './pages/SocialLinkCallbackPage'
-import LoginPage from './pages/LoginPage'
-import SignupPage from './pages/SignupPage'
-import ForgotPasswordPage from './pages/ForgotPasswordPage'
-import ResetPasswordPage from './pages/ResetPasswordPage'
-import NotificationsPage from './pages/NotificationsPage'
-import InquiriesPage from './pages/InquiriesPage'
-import AdminInquiriesPage from './pages/AdminInquiriesPage'
-import SellerApplyPage from './pages/SellerApplyPage'
-import AdminSellerPage from './pages/AdminSellerPage'
-import BrandManagePage from './pages/BrandManagePage'
-import ProductManagePage from './pages/ProductManagePage'
-import PreorderManagePage from './pages/PreorderManagePage'
-import PreorderShopPage from './pages/PreorderShopPage'
-import FavoritePreordersPage from './pages/FavoritePreordersPage'
-import FavoriteCampaignsPage from './pages/FavoriteCampaignsPage'
-import MyOrdersPage from './pages/MyOrdersPage'
-import SellerOperationsPage from './pages/SellerOperationsPage'
-import CreatorPage from './pages/CreatorPage'
-import CreatorCollaborationPage from './pages/CreatorCollaborationPage'
-import CreatorApplyPage from './pages/CreatorApplyPage'
-import CreatorDashboardPage from './pages/CreatorDashboardPage'
-import SellerCollaborationPage from './pages/SellerCollaborationPage'
-import AdminDashboardPage from './pages/AdminDashboardPage'
 const BusinessShell = lazy(() => import('./features/business/BusinessShell'))
 const BusinessHome = lazy(() => import('./features/business/BusinessHome'))
 const BusinessCampaigns = lazy(() =>
@@ -67,42 +43,104 @@ const BusinessInbox = lazy(() => import('./features/business/BusinessInbox'))
 const BusinessSettings = lazy(
   () => import('./features/business/BusinessSettings'),
 )
-import ProtectedRoute from './components/ProtectedRoute'
-import {
-  BuyerAddressesPage,
-  BuyerCheckoutPage,
-  BuyerNotificationSettingsPage,
-  BuyerOrderCompletePage,
-  BuyerOrderDetailPage,
-  BuyerPaymentsPage,
-  BuyerPreorderStatePage,
-  BuyerProfileEditPage,
-} from './pages/BuyerV2Pages'
-import {
-  AdminCollaborationsPage,
-  AdminContentPage,
-  AdminCreatorDetailPage,
-  AdminCreatorsPage,
-  AdminMemberDetailPage,
-  AdminMembersPage,
-  AdminPreorderDetailPage,
-  AdminPreordersPage,
-  AdminRefundDetailPage,
-  AdminRefundsPage,
-  AdminReportsPage,
-  AdminSellerDetailPage,
-  AdminSettingsPage,
-  AdminSettlementsPage,
-} from './pages/AdminPages'
-import {
-  NoticeDetailPage,
-  NoticesPage,
-  NotFoundPage,
-  RoleSwitchPage,
-  SecurityPage,
-  TermsPage,
-  WithdrawalPage,
-} from './pages/CommonPages'
+const MyRegisteredContents = lazy(
+  () => import('./features/membership/MyRegisteredContents'),
+)
+const AccountSettingsPage = lazy(
+  () => import('./features/membership/AccountSettingsPage'),
+)
+const MyCampaignsPage = lazy(
+  () => import('./features/membership/MyCampaignsPage'),
+)
+const SpecialCampaignPage = lazy(
+  () => import('./features/discovery/SpecialCampaignPage'),
+)
+const OfferwallPage = lazy(() => import('./features/discovery/OfferwallPage'))
+const CommunityPage = lazy(() => import('./features/discovery/CommunityPage'))
+const MyPage = lazy(() => import('./pages/MyPage'))
+const SocialLinkCallbackPage = lazy(
+  () => import('./pages/SocialLinkCallbackPage'),
+)
+const SignupPage = lazy(() => import('./pages/SignupPage'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
+const InquiriesPage = lazy(() => import('./pages/InquiriesPage'))
+const AdminInquiriesPage = lazy(() => import('./pages/AdminInquiriesPage'))
+const SellerApplyPage = lazy(() => import('./pages/SellerApplyPage'))
+const AdminSellerPage = lazy(() => import('./pages/AdminSellerPage'))
+const BrandManagePage = lazy(() => import('./pages/BrandManagePage'))
+const ProductManagePage = lazy(() => import('./pages/ProductManagePage'))
+const PreorderManagePage = lazy(() => import('./pages/PreorderManagePage'))
+const PreorderShopPage = lazy(() => import('./pages/PreorderShopPage'))
+const FavoritePreordersPage = lazy(
+  () => import('./pages/FavoritePreordersPage'),
+)
+const FavoriteCampaignsPage = lazy(
+  () => import('./pages/FavoriteCampaignsPage'),
+)
+const MyOrdersPage = lazy(() => import('./pages/MyOrdersPage'))
+const SellerOperationsPage = lazy(() => import('./pages/SellerOperationsPage'))
+const CreatorPage = lazy(() => import('./pages/CreatorPage'))
+const CreatorCollaborationPage = lazy(
+  () => import('./pages/CreatorCollaborationPage'),
+)
+const CreatorApplyPage = lazy(() => import('./pages/CreatorApplyPage'))
+const CreatorDashboardPage = lazy(() => import('./pages/CreatorDashboardPage'))
+const SellerCollaborationPage = lazy(
+  () => import('./pages/SellerCollaborationPage'),
+)
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage'))
+const loadBuyerV2Pages = () => import('./pages/BuyerV2Pages')
+const BuyerAddressesPage = lazyNamed(loadBuyerV2Pages, 'BuyerAddressesPage')
+const BuyerCheckoutPage = lazyNamed(loadBuyerV2Pages, 'BuyerCheckoutPage')
+const BuyerNotificationSettingsPage = lazyNamed(
+  loadBuyerV2Pages,
+  'BuyerNotificationSettingsPage',
+)
+const BuyerOrderCompletePage = lazyNamed(
+  loadBuyerV2Pages,
+  'BuyerOrderCompletePage',
+)
+const BuyerOrderDetailPage = lazyNamed(loadBuyerV2Pages, 'BuyerOrderDetailPage')
+const BuyerPaymentsPage = lazyNamed(loadBuyerV2Pages, 'BuyerPaymentsPage')
+const BuyerPreorderStatePage = lazyNamed(
+  loadBuyerV2Pages,
+  'BuyerPreorderStatePage',
+)
+const BuyerProfileEditPage = lazyNamed(loadBuyerV2Pages, 'BuyerProfileEditPage')
+const loadAdminPages = () => import('./pages/AdminPages')
+const AdminCollaborationsPage = lazyNamed(
+  loadAdminPages,
+  'AdminCollaborationsPage',
+)
+const AdminContentPage = lazyNamed(loadAdminPages, 'AdminContentPage')
+const AdminCreatorDetailPage = lazyNamed(
+  loadAdminPages,
+  'AdminCreatorDetailPage',
+)
+const AdminCreatorsPage = lazyNamed(loadAdminPages, 'AdminCreatorsPage')
+const AdminMemberDetailPage = lazyNamed(loadAdminPages, 'AdminMemberDetailPage')
+const AdminMembersPage = lazyNamed(loadAdminPages, 'AdminMembersPage')
+const AdminPreorderDetailPage = lazyNamed(
+  loadAdminPages,
+  'AdminPreorderDetailPage',
+)
+const AdminPreordersPage = lazyNamed(loadAdminPages, 'AdminPreordersPage')
+const AdminRefundDetailPage = lazyNamed(loadAdminPages, 'AdminRefundDetailPage')
+const AdminRefundsPage = lazyNamed(loadAdminPages, 'AdminRefundsPage')
+const AdminReportsPage = lazyNamed(loadAdminPages, 'AdminReportsPage')
+const AdminSellerDetailPage = lazyNamed(loadAdminPages, 'AdminSellerDetailPage')
+const AdminSettingsPage = lazyNamed(loadAdminPages, 'AdminSettingsPage')
+const AdminSettlementsPage = lazyNamed(loadAdminPages, 'AdminSettlementsPage')
+const loadCommonPages = () => import('./pages/CommonPages')
+const NoticeDetailPage = lazyNamed(loadCommonPages, 'NoticeDetailPage')
+const NoticesPage = lazyNamed(loadCommonPages, 'NoticesPage')
+const NotFoundPage = lazyNamed(loadCommonPages, 'NotFoundPage')
+const RoleSwitchPage = lazyNamed(loadCommonPages, 'RoleSwitchPage')
+const SecurityPage = lazyNamed(loadCommonPages, 'SecurityPage')
+const TermsPage = lazyNamed(loadCommonPages, 'TermsPage')
+const WithdrawalPage = lazyNamed(loadCommonPages, 'WithdrawalPage')
 
 function RootRedirect() {
   return <Navigate to="/home" replace />

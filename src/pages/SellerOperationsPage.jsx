@@ -56,7 +56,7 @@ function SellerOperationsPage() {
         setSettlements(t)
         setReviews(r)
       })
-      .catch(() => alert('운영 정보를 불러오지 못했어.'))
+      .catch(() => alert('운영 정보를 불러오지 못했습니다.'))
   }, [])
 
   const shipmentFor = (orderId) => shipments.find((s) => s.orderId === orderId)
@@ -66,22 +66,22 @@ function SellerOperationsPage() {
       await job()
       await load()
     } catch (e) {
-      alert(e.response?.data?.message || '처리에 실패했어.')
+      alert(e.response?.data?.message || '처리에 실패했습니다.')
     }
   }
   // 택배사와 운송장 번호가 입력된 경우에만 발송 명령을 실행합니다. 실제 배송 추적 조회와는 별개입니다.
   const ship = (shipment) => {
     const courierCode = prompt(
-      '택배사 코드를 입력해줘.',
+      '택배사 코드를 입력해 주세요.',
       shipment.courierCode || 'CJ',
     )
-    const trackingNumber = courierCode && prompt('운송장 번호를 입력해줘.')
+    const trackingNumber = courierCode && prompt('운송장 번호를 입력해 주세요.')
     if (trackingNumber)
       action(() => shipShipment(shipment.id, { courierCode, trackingNumber }))
   }
   const reply = (review) => {
     const text = prompt(
-      '구매자 리뷰에 남길 답글을 입력해줘.',
+      '구매자 리뷰에 남길 답글을 입력해 주세요.',
       review.sellerReply || '',
     )
     if (text?.trim()) action(() => replyReview(review.id, text.trim()))
@@ -92,7 +92,7 @@ function SellerOperationsPage() {
       <h1>주문 · 배송 · 정산 운영</h1>
       <h2>판매 주문</h2>
       {orders.length === 0 ? (
-        <p>판매 주문이 없어.</p>
+        <p>판매 주문이 없습니다.</p>
       ) : (
         orders.map((o) => {
           const s = shipmentFor(o.id)
@@ -134,7 +134,7 @@ function SellerOperationsPage() {
       )}
       <h2>구매 리뷰</h2>
       {reviews.length === 0 ? (
-        <p>아직 등록된 리뷰가 없어.</p>
+        <p>아직 등록된 리뷰가 없습니다.</p>
       ) : (
         reviews.map((review) => (
           <section key={review.id}>
@@ -153,7 +153,7 @@ function SellerOperationsPage() {
       <h2>정산</h2>
       <p>구매 확정이 끝나면 관리자가 결제·환불 내역으로 정산액을 계산해.</p>
       {settlements.length === 0 ? (
-        <p>생성된 정산이 없어.</p>
+        <p>생성된 정산이 없습니다.</p>
       ) : (
         settlements.map((s) => (
           <section key={s.id}>

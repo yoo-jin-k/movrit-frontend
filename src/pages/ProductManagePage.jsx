@@ -68,7 +68,7 @@ function ProductManagePage() {
       })
     } catch (error) {
       console.error(error)
-      alert('브랜드 정보를 불러오지 못했어.')
+      alert('브랜드 정보를 불러오지 못했습니다.')
       setBrands([])
     }
   }
@@ -126,7 +126,7 @@ function ProductManagePage() {
     e.preventDefault()
 
     if (!productForm.brandId) {
-      alert('상품을 등록할 브랜드를 선택해줘.')
+      alert('상품을 등록할 브랜드를 선택해 주세요.')
       return
     }
 
@@ -142,7 +142,7 @@ function ProductManagePage() {
       await loadProducts()
     } catch (error) {
       console.error(error)
-      alert(error.response?.data?.message || '상품 등록에 실패했어.')
+      alert(error.response?.data?.message || '상품 등록에 실패했습니다.')
     }
   }
 
@@ -161,7 +161,7 @@ function ProductManagePage() {
       await refreshVariants(productId)
     } catch (error) {
       console.error(error)
-      alert(error.response?.data?.message || '옵션/SKU 등록에 실패했어.')
+      alert(error.response?.data?.message || '옵션/SKU 등록에 실패했습니다.')
     }
   }
 
@@ -188,8 +188,8 @@ function ProductManagePage() {
 
       {activeBrands.length === 0 ? (
         <div>
-          <p>상품을 등록할 수 있는 활성 브랜드가 없어.</p>
-          <p>먼저 브랜드를 등록하거나 브랜드 상태를 활성화해줘.</p>
+          <p>상품을 등록할 수 있는 활성 브랜드가 없습니다.</p>
+          <p>먼저 브랜드를 등록하거나 브랜드 상태를 활성화해 주세요.</p>
         </div>
       ) : (
         <form onSubmit={submitProduct}>
@@ -250,7 +250,7 @@ function ProductManagePage() {
       <hr />
 
       {products.length === 0 ? (
-        <p>등록된 상품이 없어.</p>
+        <p>등록된 상품이 없습니다.</p>
       ) : (
         products.map((product) => {
           const variantForm = variantForms[product.id] || emptyVariant
@@ -284,7 +284,7 @@ function ProductManagePage() {
                       console.error(error)
                       alert(
                         error.response?.data?.message ||
-                          '상품 이미지 업로드에 실패했어.',
+                          '상품 이미지 업로드에 실패했습니다.',
                       )
                     }
                   }}
@@ -360,7 +360,7 @@ function ProductManagePage() {
 
               <h3>재고 현황</h3>
               {productVariants.length === 0 ? (
-                <p>등록된 SKU가 없어.</p>
+                <p>등록된 SKU가 없습니다.</p>
               ) : (
                 productVariants.map((variant) => (
                   <div key={variant.id}>
@@ -383,7 +383,7 @@ function ProductManagePage() {
 
                     <button
                       onClick={async () => {
-                        const value = prompt('추가 입고 수량을 입력해줘.')
+                        const value = prompt('추가 입고 수량을 입력해 주세요.')
                         if (!value) return
 
                         try {
@@ -393,7 +393,7 @@ function ProductManagePage() {
                           console.error(error)
                           alert(
                             error.response?.data?.message ||
-                              '입고 처리에 실패했어.',
+                              '입고 처리에 실패했습니다.',
                           )
                         }
                       }}
@@ -404,7 +404,7 @@ function ProductManagePage() {
                     <button
                       onClick={async () => {
                         const value = prompt(
-                          '새 안전재고 수량을 입력해줘.',
+                          '새 안전재고 수량을 입력해 주세요.',
                           variant.safetyStockQuantity,
                         )
                         if (value === null) return
@@ -416,7 +416,7 @@ function ProductManagePage() {
                           console.error(error)
                           alert(
                             error.response?.data?.message ||
-                              '안전재고 변경에 실패했어.',
+                              '안전재고 변경에 실패했습니다.',
                           )
                         }
                       }}

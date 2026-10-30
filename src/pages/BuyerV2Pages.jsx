@@ -86,8 +86,8 @@ export function BuyerOrderCompletePage() {
       </p>
       <BuyerCard className="buyer-complete">
         <span className="buyer-complete__check">✓</span>
-        <h2>프리오더 참여가 완료됐어</h2>
-        <p>목표 달성 여부와 결제 상태를 알림으로 알려줄게.</p>
+        <h2>프리오더 참여가 완료되었습니다</h2>
+        <p>목표 달성 여부와 결제 상태를 알림으로 알려 드립니다.</p>
         <small>주문번호 MR-20260816-00421</small>
         <div>
           <Link
@@ -243,7 +243,7 @@ export function BuyerPreorderStatePage() {
         lines: [
           '송장번호로 실시간 배송 조회가 가능해요',
           '배송 중에는 주소 변경이 어려워요',
-          '문제가 있으면 고객센터로 문의해줘',
+          '문제가 있으면 고객센터로 문의해 주세요',
         ],
         button: '배송 조회하기',
       },
@@ -256,14 +256,14 @@ export function BuyerPreorderStatePage() {
         lines: [
           '배송이 완료되어 구매가 확정됐어요',
           '리뷰를 남기면 적립금을 드려요',
-          '교환/환불은 마이페이지에서 신청해줘',
+          '교환/환불은 마이페이지에서 신청해 주세요',
         ],
         button: '리뷰 작성하기',
       },
     }[state] || null
   if (!config)
     return (
-      <BuyerLayout title="상태를 찾을 수 없어">
+      <BuyerLayout title="상태를 찾을 수 없습니다">
         <p role="note">
           예시 화면입니다. 표시된 주문·주소·결제수단은 실제 내역이 아니며 입력한
           내용은 저장되지 않습니다.

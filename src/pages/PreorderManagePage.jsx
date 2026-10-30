@@ -82,7 +82,7 @@ function PreorderManagePage() {
       setPreorders(await getMyPreorders())
     } catch (error) {
       console.error('프리오더 조회 실패', error)
-      alert('프리오더 목록을 불러오지 못했어.')
+      alert('프리오더 목록을 불러오지 못했습니다.')
     } finally {
       setLoading(false)
     }
@@ -129,14 +129,14 @@ function PreorderManagePage() {
   const submit = async (e) => {
     e.preventDefault()
     if (form.variantIds.length === 0)
-      return alert('판매할 SKU를 하나 이상 선택해줘.')
+      return alert('판매할 SKU를 하나 이상 선택해 주세요.')
     if (new Date(form.startAt) >= new Date(form.endAt))
-      return alert('판매 종료일시는 시작일시보다 뒤여야 해.')
+      return alert('판매 종료일시는 시작일시보다 뒤여야 합니다.')
     if (
       form.maxQuantity &&
       Number(form.maxQuantity) < Number(form.targetQuantity)
     )
-      return alert('최대 판매 수량은 목표 수량보다 작을 수 없어.')
+      return alert('최대 판매 수량은 목표 수량보다 작을 수 없습니다.')
 
     setSubmitting(true)
     try {
@@ -166,7 +166,7 @@ function PreorderManagePage() {
       setShowForm(false)
     } catch (error) {
       console.error(error)
-      alert(error.response?.data?.message || '프리오더 생성에 실패했어.')
+      alert(error.response?.data?.message || '프리오더 생성에 실패했습니다.')
     } finally {
       setSubmitting(false)
     }
@@ -181,7 +181,9 @@ function PreorderManagePage() {
       )
     } catch (error) {
       console.error(error)
-      alert(error.response?.data?.message || '프리오더 상태 변경에 실패했어.')
+      alert(
+        error.response?.data?.message || '프리오더 상태 변경에 실패했습니다.',
+      )
     }
   }
 
@@ -193,7 +195,7 @@ function PreorderManagePage() {
       setPreorders((current) => current.filter((item) => item.id !== id))
     } catch (error) {
       console.error(error)
-      alert(error.response?.data?.message || '프리오더 삭제에 실패했어.')
+      alert(error.response?.data?.message || '프리오더 삭제에 실패했습니다.')
     }
   }
 
@@ -221,7 +223,8 @@ function PreorderManagePage() {
 
       {products.length === 0 && !loading && (
         <p>
-          등록된 상품이 없어. 먼저 상품 · 재고 관리에서 판매할 상품을 등록해줘.
+          등록된 상품이 없습니다. 먼저 상품 · 재고 관리에서 판매할 상품을 등록해
+          주세요.
         </p>
       )}
 
@@ -392,7 +395,7 @@ function PreorderManagePage() {
       {loading ? (
         <p>불러오는 중...</p>
       ) : preorders.length === 0 ? (
-        <p>등록된 프리오더가 없어.</p>
+        <p>등록된 프리오더가 없습니다.</p>
       ) : (
         preorders.map((preorder) => (
           <section key={preorder.id} style={{ marginBottom: 24 }}>
@@ -494,7 +497,7 @@ function PreorderManagePage() {
             {!['SUCCESS', 'FAILED', 'CANCELLED'].includes(preorder.status) && (
               <button
                 onClick={() => {
-                  const reason = prompt('프리오더 취소 사유를 입력해줘.')
+                  const reason = prompt('프리오더 취소 사유를 입력해 주세요.')
                   if (reason?.trim())
                     changeStatus(preorder.id, () =>
                       cancelPreorder(preorder.id, reason.trim()),

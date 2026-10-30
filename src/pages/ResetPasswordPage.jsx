@@ -25,11 +25,11 @@ function ResetPasswordPage() {
   const submit = async (e) => {
     e.preventDefault()
     if (form.newPassword.length < 8) {
-      alert('비밀번호는 8자 이상으로 입력해줘.')
+      alert('비밀번호는 8자 이상으로 입력해 주세요.')
       return
     }
     if (form.newPassword !== form.confirmPassword) {
-      alert('비밀번호 확인이 일치하지 않아.')
+      alert('비밀번호 확인이 일치하지 않습니다.')
       return
     }
 
@@ -71,7 +71,7 @@ function ResetPasswordPage() {
   return (
     <div>
       <h1>새 비밀번호 설정</h1>
-      <p>8자 이상의 새 비밀번호를 입력해줘.</p>
+      <p>8자 이상의 새 비밀번호를 입력해 주세요.</p>
       <form onSubmit={submit}>
         <label>
           새 비밀번호

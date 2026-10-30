@@ -24,7 +24,7 @@ function AdminInquiriesPage() {
       .then(setItems)
       .catch((error) => {
         console.error(error)
-        alert('문의 목록을 불러오지 못했어.')
+        alert('문의 목록을 불러오지 못했습니다.')
       })
   }, [status])
 
@@ -32,17 +32,17 @@ function AdminInquiriesPage() {
   const submitAnswer = async (id) => {
     const answer = answers[id]?.trim()
     if (!answer) {
-      alert('답변 내용을 입력해줘.')
+      alert('답변 내용을 입력해 주세요.')
       return
     }
     try {
       await answerInquiry(id, answer)
       setAnswers((current) => ({ ...current, [id]: '' }))
       await load()
-      alert('답변을 등록했어.')
+      alert('답변을 등록했습니다.')
     } catch (error) {
       console.error(error)
-      alert(error.response?.data?.message || '답변을 등록하지 못했어.')
+      alert(error.response?.data?.message || '답변을 등록하지 못했습니다.')
     }
   }
 
@@ -98,7 +98,7 @@ function AdminInquiriesPage() {
                 onChange={(e) =>
                   setAnswers({ ...answers, [item.id]: e.target.value })
                 }
-                placeholder="답변 내용을 입력해줘."
+                placeholder="답변 내용을 입력해 주세요."
                 maxLength={5000}
               />
               <AdminButton tone="primary" onClick={() => submitAnswer(item.id)}>

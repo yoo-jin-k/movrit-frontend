@@ -50,15 +50,15 @@ function SellerApplyPage() {
     try {
       const result = await applySeller(form)
       setSeller(result)
-      alert('판매자 등록 신청이 완료됐어.')
+      alert('판매자 등록 신청이 완료되었습니다.')
     } catch (error) {
       console.error(error)
-      alert('판매자 등록 신청에 실패했어.')
+      alert('판매자 등록 신청에 실패했습니다.')
     }
   }
 
   if (loading) {
-    return <p>판매자 정보를 확인하고 있어...</p>
+    return <p>판매자 정보를 확인하고 있습니다…</p>
   }
 
   if (seller) {
@@ -68,9 +68,11 @@ function SellerApplyPage() {
         <p>브랜드명: {seller.brandName}</p>
         <p>사업자명: {seller.businessName}</p>
         <p>현재 상태: {seller.status}</p>
-        {seller.status === 'PENDING' && <p>관리자 승인 심사 중이야.</p>}
-        {seller.status === 'APPROVED' && <p>판매자 등록이 승인됐어.</p>}
-        {seller.status === 'REJECTED' && <p>판매자 등록 신청이 반려됐어.</p>}
+        {seller.status === 'PENDING' && <p>관리자 승인 심사 중입니다.</p>}
+        {seller.status === 'APPROVED' && <p>판매자 등록이 승인되었습니다.</p>}
+        {seller.status === 'REJECTED' && (
+          <p>판매자 등록 신청이 반려되었습니다.</p>
+        )}
         {seller.status === 'SUSPENDED' && (
           <p>현재 판매자 활동이 정지된 상태야.</p>
         )}

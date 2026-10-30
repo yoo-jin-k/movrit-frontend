@@ -51,7 +51,7 @@ function PreorderShopPage() {
         setPreorders(list)
         setFavoriteIds(new Set(favorites.map((item) => item.preorderId)))
       })
-      .catch(() => alert('판매 중인 프리오더를 불러오지 못했어.'))
+      .catch(() => alert('판매 중인 프리오더를 불러오지 못했습니다.'))
       .finally(() => setLoading(false))
 
     if (referralCode) {
@@ -97,7 +97,7 @@ function PreorderShopPage() {
         setFavoriteIds((current) => new Set([...current, id]))
       }
     } catch (error) {
-      alert(error.response?.data?.message || '관심 상태를 변경하지 못했어.')
+      alert(error.response?.data?.message || '관심 상태를 변경하지 못했습니다.')
     }
   }
 
@@ -136,14 +136,14 @@ function PreorderShopPage() {
   // 여기의 주문 생성은 실제 결제 승인까지 완료하는 동작이 아닙니다.
   const order = async (preorder) => {
     const form = forms[preorder.id]
-    if (!form?.productVariantId) return alert('주문할 옵션을 선택해줘.')
+    if (!form?.productVariantId) return alert('주문할 옵션을 선택해 주세요.')
     if (!form.receiverName || !form.receiverPhone || !form.address1)
-      return alert('배송 정보를 입력해줘.')
+      return alert('배송 정보를 입력해 주세요.')
     if (
       preorder.maxOrderQuantityPerMember &&
       Number(form.quantity) > preorder.maxOrderQuantityPerMember
     )
-      return alert('회원별 최대 주문 수량을 확인해줘.')
+      return alert('회원별 최대 주문 수량을 확인해 주세요.')
     try {
       const created = await createOrder({
         ...form,
@@ -155,10 +155,10 @@ function PreorderShopPage() {
         referralCode,
       })
       alert(
-        `주문 ${created.orderNumber}이 생성됐어. 내 주문에서 결제를 진행해줘.`,
+        `주문 ${created.orderNumber}이 생성되었습니다. 내 주문에서 결제를 진행해 주세요.`,
       )
     } catch (error) {
-      alert(error.response?.data?.message || '주문 생성에 실패했어.')
+      alert(error.response?.data?.message || '주문 생성에 실패했습니다.')
     }
   }
 
@@ -179,7 +179,7 @@ function PreorderShopPage() {
         <div className="page-shell">
           <AppHeader />
           <main className="movrit-container page-section">
-            <p>프리오더를 찾을 수 없어.</p>
+            <p>프리오더를 찾을 수 없습니다.</p>
             <Link to="/preorders">
               <Button>목록으로</Button>
             </Link>
@@ -273,7 +273,7 @@ function PreorderShopPage() {
                   <h2 className="section-title">옵션 선택</h2>
                   <div className="option-list">
                     {selectedVariants.length === 0 ? (
-                      <p className="muted">현재 주문 가능한 옵션이 없어.</p>
+                      <p className="muted">현재 주문 가능한 옵션이 없습니다.</p>
                     ) : (
                       selectedVariants.map((variant) => (
                         <label className="option-item" key={variant.id}>
@@ -348,7 +348,7 @@ function PreorderShopPage() {
                   </Button>
                 ) : (
                   <Button block disabled>
-                    현재 구매할 수 없어
+                    현재 구매할 수 없습니다
                   </Button>
                 )}
                 <Button
@@ -364,7 +364,7 @@ function PreorderShopPage() {
           <section className="description-card">
             <h2 className="section-title">상품 소개</h2>
             <p className="muted">
-              {selected.description || '상품 상세 설명이 준비 중이야.'}
+              {selected.description || '상품 상세 설명이 준비 중입니다.'}
             </p>
           </section>
         </main>
@@ -412,7 +412,7 @@ function PreorderShopPage() {
         </form>
         {preorders.length === 0 ? (
           <div className="info-card">
-            <p className="muted">현재 공개된 프리오더가 없어.</p>
+            <p className="muted">현재 공개된 프리오더가 없습니다.</p>
           </div>
         ) : (
           <div className="preorder-grid">

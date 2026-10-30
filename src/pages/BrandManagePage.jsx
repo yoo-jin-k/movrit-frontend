@@ -38,9 +38,9 @@ function BrandManagePage() {
     } catch (error) {
       console.error(error)
       if (error.response?.status === 403) {
-        alert('승인된 판매자만 브랜드를 관리할 수 있어.')
+        alert('승인된 판매자만 브랜드를 관리할 수 있습니다.')
       } else {
-        alert('브랜드 정보를 불러오지 못했어.')
+        alert('브랜드 정보를 불러오지 못했습니다.')
       }
     } finally {
       setLoading(false)
@@ -90,7 +90,7 @@ function BrandManagePage() {
       await loadBrands()
     } catch (error) {
       console.error(error)
-      alert(error.response?.data?.message || '브랜드 저장에 실패했어.')
+      alert(error.response?.data?.message || '브랜드 저장에 실패했습니다.')
     } finally {
       setSaving(false)
     }
@@ -109,7 +109,7 @@ function BrandManagePage() {
       console.error(error)
       alert(
         error.response?.data?.message ||
-          '이미지 업로드에 실패했어. JPG, PNG, WEBP / 5MB 이하인지 확인해줘.',
+          '이미지 업로드에 실패했습니다. JPG, PNG, WEBP / 5MB 이하인지 확인해 주세요.',
       )
     }
   }
@@ -140,7 +140,9 @@ function BrandManagePage() {
       >
         <div>
           <h1>내 브랜드 관리</h1>
-          <p>승인된 판매자는 브랜드를 등록하고 상품 판매를 준비할 수 있어.</p>
+          <p>
+            승인된 판매자는 브랜드를 등록하고 상품 판매를 준비할 수 있습니다.
+          </p>
         </div>
 
         {!showForm && (
@@ -234,8 +236,8 @@ function BrandManagePage() {
 
         {brands.length === 0 ? (
           <div style={{ padding: '40px 0', textAlign: 'center' }}>
-            <p>아직 등록된 브랜드가 없어.</p>
-            <p>첫 브랜드를 등록하고 상품 판매를 시작해봐.</p>
+            <p>아직 등록된 브랜드가 없습니다.</p>
+            <p>첫 브랜드를 등록하고 상품 판매를 시작해 보세요.</p>
             {!showForm && (
               <button type="button" onClick={() => setShowForm(true)}>
                 브랜드 등록
@@ -254,7 +256,7 @@ function BrandManagePage() {
               }}
             >
               <h3>{brand.name}</h3>
-              <p>{brand.description || '등록된 브랜드 소개가 없어.'}</p>
+              <p>{brand.description || '등록된 브랜드 소개가 없습니다.'}</p>
               <p>상태: {brand.status === 'ACTIVE' ? '운영 중' : '비활성'}</p>
 
               <div
@@ -322,7 +324,7 @@ function BrandManagePage() {
                       await loadBrands()
                     } catch (error) {
                       console.error(error)
-                      alert('브랜드 상태 변경에 실패했어.')
+                      alert('브랜드 상태 변경에 실패했습니다.')
                     }
                   }}
                 >

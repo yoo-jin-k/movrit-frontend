@@ -159,13 +159,13 @@ export function WithdrawalPage() {
       </p>
       <section className="common-card common-card--withdraw">
         <h2>계정 탈퇴</h2>
-        <p>탈퇴 전 아래 내용을 확인해줘.</p>
+        <p>탈퇴 전 아래 내용을 확인해 주세요.</p>
         <div className="withdraw-warning">
-          <strong>탈퇴하면 복구할 수 없어</strong>
+          <strong>탈퇴하면 복구할 수 없습니다</strong>
           <p>
-            • 진행중 주문/환불이 있으면 탈퇴할 수 없어
-            <br />• 진행중 협업/정산이 있으면 먼저 종료해야 해<br />• 법적 보관
-            의무 데이터는 일정 기간 보관돼
+            • 진행중 주문/환불이 있으면 탈퇴할 수 없습니다
+            <br />• 진행중 협업/정산이 있으면 먼저 종료해야 합니다
+            <br />• 법적 보관 의무 데이터는 일정 기간 보관돼
           </p>
         </div>
         <label className="common-field">
@@ -183,11 +183,11 @@ export function WithdrawalPage() {
 export function NotFoundPage() {
   const navigate = useNavigate()
   return (
-    <CommonLayout title="페이지를 찾을 수 없어">
+    <CommonLayout title="페이지를 찾을 수 없습니다">
       <section className="common-card common-card--empty">
         <strong>404</strong>
-        <h2>페이지를 찾을 수 없어</h2>
-        <p>주소가 바뀌었거나 삭제된 페이지일 수 있어.</p>
+        <h2>페이지를 찾을 수 없습니다</h2>
+        <p>주소가 바뀌었거나 삭제된 페이지일 수 있습니다.</p>
         <button className="common-button" onClick={() => navigate('/home')}>
           홈으로 돌아가기
         </button>

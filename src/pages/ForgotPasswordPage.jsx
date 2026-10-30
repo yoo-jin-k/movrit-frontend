@@ -28,7 +28,7 @@ function ForgotPasswordPage() {
     } catch (error) {
       console.error(error)
       setMessage(
-        '비밀번호 재설정 요청을 처리하지 못했어. 잠시 후 다시 시도해줘.',
+        '비밀번호 재설정 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.',
       )
     } finally {
       setLoading(false)
@@ -57,7 +57,7 @@ function ForgotPasswordPage() {
 
         {devToken && (
           <div>
-            <p>로컬 개발 모드라 재설정 링크를 바로 테스트할 수 있어.</p>
+            <p>로컬 개발 모드라 재설정 링크를 바로 테스트할 수 있습니다.</p>
             <button
               className="common-button"
               onClick={() =>

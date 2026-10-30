@@ -16,7 +16,7 @@ function DiscoveryHero() {
         <p>
           MOVRIT에서 열린 공구부터 크리에이터의 SNS 공구까지
           <br />
-          관심 있는 공구를 빠르게 발견해봐.
+          관심 있는 공동구매를 빠르게 찾아보세요.
         </p>
         <Link to="/preorders" className="discovery-hero__cta">
           지금 프리오더 →

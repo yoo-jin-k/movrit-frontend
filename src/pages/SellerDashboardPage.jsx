@@ -12,7 +12,7 @@ export default function SellerDashboardPage() {
   useEffect(() => {
     getSellerDashboard()
       .then(setData)
-      .catch(() => alert('판매자 현황을 불러오지 못했어.'))
+      .catch(() => alert('판매자 현황을 불러오지 못했습니다.'))
   }, [])
   if (!data) return <p>불러오는 중...</p>
   const { summary } = data
@@ -30,12 +30,12 @@ export default function SellerDashboardPage() {
         </p>
         <p>
           예상 정산액 <b>{money(summary.estimatedSettlement)}원</b>{' '}
-          <small>(기본 수수료 반영, 실제 확정액과 다를 수 있어.)</small>
+          <small>(기본 수수료 반영, 실제 확정액과 다를 수 있습니다.)</small>
         </p>
       </section>
       <h2>프로젝트별 현황</h2>
       {data.projects.length === 0 ? (
-        <p>등록한 프로젝트가 없어.</p>
+        <p>등록한 프로젝트가 없습니다.</p>
       ) : (
         data.projects.map((project) => (
           <section key={project.id}>

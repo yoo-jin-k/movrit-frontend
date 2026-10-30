@@ -7,12 +7,58 @@
  * 수정 화면에서는 두 값을 바꿀 수 없습니다(신청·선정 기록의 소속이 바뀌지 않도록).
  *
  * 캠페인 종류·지역·콘텐츠 채널: 사용자 탐색 메뉴(제품·지역·기자단, 지역 필터, 미디어 필터)에 쓰입니다.
+ * 세부 일정·참여 안내(선택): 사용자 캠페인 상세와 '내 캠페인'의 참여 일정·미션 안내에 그대로 표시됩니다.
  */
 import {
   LOCAL_CATEGORIES,
   PRODUCT_CATEGORIES,
   REGIONS,
 } from '../discovery/catalog.js'
+
+// 세부 일정 입력 항목(서버 필드, 화면 이름)입니다. 비워 두면 사용자 화면에 '미정'으로 표시됩니다.
+const SCHEDULE_INPUTS = [
+  ['selectionAnnouncedAt', '선정 발표'],
+  ['experienceStartAt', '체험 시작'],
+  ['experienceEndAt', '체험 종료'],
+  ['contentSubmissionStartAt', '콘텐츠 등록 시작'],
+  ['contentSubmissionEndAt', '콘텐츠 등록 마감'],
+  ['resultsAnnouncedAt', '결과 발표'],
+]
+// 참여 안내 입력 항목(서버 필드, 화면 이름, 입력 예시, 최대 글자 수)입니다.
+const GUIDE_INPUTS = [
+  [
+    'mission',
+    '요청사항 · 미션',
+    '예) 제품을 2주간 사용한 뒤 사용 전후 사진과 함께 후기를 올려 주세요.',
+    10000,
+  ],
+  [
+    'submissionRequirement',
+    '제출 요구사항',
+    '예) 사진 5장 이상, 본문 1,000자 이상, #MOVRIT 해시태그 필수',
+    5000,
+  ],
+  [
+    'channelGuide',
+    '채널별 작성 안내',
+    '예) 인스타그램은 피드 게시물로 올리고 브랜드 계정을 태그해 주세요.',
+    5000,
+  ],
+  ['deliveryGuide', '배송 안내', '예) 선정 발표 후 3일 안에 발송합니다.', 5000],
+  [
+    'visitGuide',
+    '방문 안내',
+    '예) 평일 11시~20시, 방문 전 전화로 예약해 주세요.',
+    5000,
+  ],
+  [
+    'scheduleGuide',
+    '일정 추가 안내',
+    '예) 콘텐츠 마감일이 지나면 수정 요청이 어렵습니다.',
+    5000,
+  ],
+  ['caution', '주의사항', '예) 제공 제품은 재판매할 수 없습니다.', 5000],
+]
 
 // 서버 코드와 화면 이름의 짝입니다.
 const CAMPAIGN_TYPES = [
@@ -28,6 +74,11 @@ const CONTENT_CHANNELS = [
   ['CLIP', '클립'],
   ['OTHER', '기타'],
 ]
+
+// 서버 시각(초 포함 가능)을 datetime-local 입력 형식(YYYY-MM-DDTHH:mm)으로 맞춥니다.
+function toLocalInput(value) {
+  return typeof value === 'string' ? value.slice(0, 16) : ''
+}
 
 export default function CampaignFields({
   value,
@@ -229,6 +280,39 @@ export default function CampaignFields({
             onChange={(e) => change('endAt', e.target.value)}
           />
         </label>
+      </fieldset>
+      <fieldset className="seller-campaign-fields" disabled={disabled}>
+        <legend>세부 일정 (선택)</legend>
+        <p>
+          모집 이후 일정을 정해 두면 참여자 화면의 일정과 달력에 표시됩니다.
+          순서는 모집 종료 → 선정 발표 → 체험 → 콘텐츠 등록 → 결과 발표입니다.
+        </p>
+        {SCHEDULE_INPUTS.map(([field, label]) => (
+          <label key={field}>
+            {label} (한국시간)
+            <input
+              type="datetime-local"
+              value={toLocalInput(value[field])}
+              onChange={(e) => change(field, e.target.value)}
+            />
+          </label>
+        ))}
+      </fieldset>
+      <fieldset className="seller-campaign-fields" disabled={disabled}>
+        <legend>참여 안내 (선택)</legend>
+        <p>참여자가 체험·콘텐츠 작성 전에 확인할 내용을 적어 주세요.</p>
+        {GUIDE_INPUTS.map(([field, label, placeholder, max]) => (
+          <label key={field}>
+            {label}
+            <textarea
+              rows={3}
+              maxLength={max}
+              placeholder={placeholder}
+              value={value[field] || ''}
+              onChange={(e) => change(field, e.target.value)}
+            />
+          </label>
+        ))}
       </fieldset>
     </>
   )

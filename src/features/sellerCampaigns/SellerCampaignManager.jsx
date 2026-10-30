@@ -257,6 +257,17 @@ export default function SellerCampaignManager({
           : '캠페인·참여 조건·신청서를 저장하고 다시 확인했습니다.',
       )
     } catch (failure) {
+      // 400은 입력 검사에서 거절되어 아무것도 저장되지 않은 경우입니다(등록·수정은 전부 저장되거나 전부 취소됩니다).
+      // 서버 안내 문구를 그대로 보여주고, 입력을 고쳐 다시 저장할 수 있도록 화면을 잠그지 않습니다.
+      if (failure.response?.status === 400) {
+        setError(
+          // 서버는 ProblemDetail 형식으로 안내 문구를 detail에 담아 보냅니다.
+          failure.response?.data?.detail ||
+            failure.response?.data?.message ||
+            '입력 내용을 확인해 주세요. 저장되지 않았습니다.',
+        )
+        return
+      }
       setMustReload(true)
       setError(
         failure.response?.status === 409

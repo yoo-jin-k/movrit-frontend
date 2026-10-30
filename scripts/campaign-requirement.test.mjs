@@ -180,3 +180,48 @@ test('캠페인 종류·지역·채널을 보내고 지역 캠페인은 지역�
   assert.equal(local.campaign.region, '서울')
   assert.equal(local.campaign.contentChannel, 'INSTAGRAM')
 })
+
+test('세부 일정·참여 안내는 화면 값으로 저장하고 순서가 틀리면 막습니다', async () => {
+  const { configuredCampaignPayload, emptyCampaign } = await import(
+    '../src/features/sellerCampaigns/campaignEditorModel.js'
+  )
+  const form = {
+    ...emptyCampaign(),
+    title: '세럼 체험단',
+    recruitmentCount: '3',
+    startAt: '2026-11-01T09:00',
+    endAt: '2026-11-14T18:00',
+    mission: '2주 사용 후 후기를 올려 주세요.',
+    selectionAnnouncedAt: '2026-11-16T10:00',
+    contentSubmissionEndAt: '2026-12-10T23:59',
+    resultsAnnouncedAt: '2026-12-12T10:00',
+  }
+  // 새 캠페인은 details로 보내고, 빈 칸은 null(미정)입니다.
+  const created = configuredCampaignPayload(form, emptyRequirement())
+  assert.equal(
+    created.campaign.details.mission,
+    '2주 사용 후 후기를 올려 주세요.',
+  )
+  assert.equal(created.campaign.details.caution, null)
+  assert.equal(
+    created.campaign.details.selectionAnnouncedAt,
+    '2026-11-16T10:00',
+  )
+  // 수정은 화면에서 고친 값이 기존 값보다 우선합니다.
+  const updated = configuredCampaignPayload(
+    { ...form, mission: '고친 미션' },
+    emptyRequirement(),
+    { scheduleVersion: 3, mission: '기존 미션' },
+  )
+  assert.equal(updated.campaign.mission, '고친 미션')
+  assert.equal(updated.campaign.details, undefined)
+  // 선정 발표가 모집 종료보다 빠르면 저장 전에 안내합니다.
+  assert.throws(
+    () =>
+      configuredCampaignPayload(
+        { ...form, selectionAnnouncedAt: '2026-11-10T10:00' },
+        emptyRequirement(),
+      ),
+    /선정 발표일/,
+  )
+})

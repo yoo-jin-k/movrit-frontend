@@ -34,3 +34,10 @@ npm run build
 | 사용자 | `/home`, `/category/:section`, `/campaign/:id`, `/mypage`, `/mypage/campaigns`, `/settings` |
 | 업체 | `/seller/dashboard`, `/seller/campaigns`, `/seller/participants`, `/seller/contents` |
 | 운영자 | `/admin/dashboard`, `/admin/campaign-participants`, `/admin/content` |
+
+## 포트폴리오 문서
+
+구조 설명과 시연 시나리오는 백엔드 저장소(movrit)의 `docs/portfolio/` 에 있습니다.
+
+- `architecture.md`: 시스템 구성, 기능 단위 구조, 신청 상태 흐름, 설계 결정
+- `demo-scenario.md`: 캠페인 등록부터 최종 승인까지 10분 시연 순서

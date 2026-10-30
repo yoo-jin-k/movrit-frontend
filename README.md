@@ -1,16 +1,36 @@
-# React + Vite
+# MOVRIT 프론트엔드
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+브랜드 캠페인 탐색·신청·콘텐츠 제출(사용자), 캠페인 운영(업체), 검수(운영자) 화면을 제공하는 React·Vite 앱입니다.
 
-Currently, two official plugins are available:
+- React 19 · React Router 7 · Vite 8 · Axios · Sass
+- Node 24.18.1 (`.nvmrc`) — `nvm use` 로 맞춥니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 실행
 
-## React Compiler
+```bash
+nvm use
+npm ci
+npm run dev:integration   # http://localhost:5174 → 백엔드 http://localhost:18080 (실제 서버 데이터)
+npm run dev               # 기본 개발 서버 → 백엔드 http://localhost:8080
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 통합 실행 설정은 `.env.integration` 에 있습니다(비밀값 없음).
+- 백엔드는 movrit 저장소의 `scripts/integration.sh start` 로 먼저 실행합니다.
+- 소셜 로그인 확인은 Chrome 같은 일반 브라우저에서 합니다.
 
-## Expanding the ESLint configuration
+## 검증
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm test             # 단위 테스트(scripts/*.test.mjs)
+npm run lint
+npm run format:check
+npm run build
+```
+
+## 주요 경로
+
+| 대상 | 경로 |
+|---|---|
+| 사용자 | `/home`, `/category/:section`, `/campaign/:id`, `/mypage`, `/mypage/campaigns`, `/settings` |
+| 업체 | `/seller/dashboard`, `/seller/campaigns`, `/seller/participants`, `/seller/contents` |
+| 운영자 | `/admin/dashboard`, `/admin/campaign-participants`, `/admin/content` |

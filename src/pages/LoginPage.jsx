@@ -12,7 +12,15 @@ import { loginError } from '../features/auth/loginError'
 function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [errorMessage, setErrorMessage] = useState('')
+  // 서버가 소셜 로그인 실패 시 /login?socialError=KAKAO|GOOGLE 로 돌려보냅니다. 상세 오류 대신 안내 문구만 보여줍니다.
+  const socialError = new URLSearchParams(location.search).get('socialError')
+  const [errorMessage, setErrorMessage] = useState(() =>
+    socialError === 'KAKAO'
+      ? '카카오 로그인을 완료하지 못했습니다. 잠시 후 다시 시도하거나 이메일로 로그인해 주세요.'
+      : socialError === 'GOOGLE'
+        ? 'Google 로그인을 완료하지 못했습니다. 잠시 후 다시 시도하거나 이메일로 로그인해 주세요.'
+        : '',
+  )
   const [busy, setBusy] = useState(false)
   const [form, setForm] = useState({ email: '', password: '' })
 

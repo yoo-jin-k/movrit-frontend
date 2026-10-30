@@ -24,6 +24,22 @@ test('캠페인 ID를 프리오더 ID와 구분하고 미제공 필드를 추측
   assert.equal(item.applicants, null)
   assert.equal(item.daysLeft, null)
 })
+test('서버가 집계한 신청 수만 카드 신청 인원으로 사용합니다', () => {
+  const item = adaptCampaignSummary({
+    id: 3,
+    title: '경쟁률 표시',
+    recruitmentCount: 10,
+    applicationCount: 7,
+  })
+  assert.equal(item.applicants, 7)
+  assert.equal(item.capacity, 10)
+  // 숫자가 아닌 값은 신청 인원으로 추측하지 않습니다.
+  assert.equal(
+    adaptCampaignSummary({ id: 4, title: '형식 오류', applicationCount: '7' })
+      .applicants,
+    null,
+  )
+})
 test('빈 목록은 빈 목록으로 유지하고 잘못된 envelope를 거부합니다', () => {
   assert.deepEqual(adaptCampaignList([]), [])
   assert.throws(() => adaptCampaignList({ data: [] }))

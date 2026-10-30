@@ -1,6 +1,7 @@
 /**
  * 이메일 로그인과 소셜 로그인 시작을 처리합니다.
  * 이메일 로그인 성공 후 토큰을 저장하고 안전한 내부 복귀 경로를 선택하며 상태 코드별 실패 문구를 표시합니다.
+ * 성공 시 브라우저 기본 알림창을 띄우지 않고 바로 이동해 화면 흐름이 끊기지 않도록 합니다.
  */
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -47,7 +48,6 @@ function LoginPage() {
       const result = await login(form)
       sessionStorage.setItem('accessToken', result.accessToken)
       localStorage.setItem('refreshToken', result.refreshToken)
-      alert(`${result.name}님 로그인 성공!`)
       // 로그인 후에는 요청했던 캠페인 상세로 돌아가도록 합니다.
       const destination = location.state?.returnTo
       navigate(
@@ -64,13 +64,13 @@ function LoginPage() {
   }
 
   return (
-    <CommonLayout title="로그인" className="common-auth-page">
+    <CommonLayout title="로그인" className="common-auth-page" hideTitle>
       <form className="common-card common-auth-card" onSubmit={handleSubmit}>
         <h2>MOVRIT에 로그인</h2>
         {location.state?.sessionNotice && (
           <p role="status">{location.state.sessionNotice}</p>
         )}
-        <p>프리오더와 협업을 한 곳에서 관리하세요.</p>
+        <p>캠페인 신청부터 콘텐츠 제출까지 한 곳에서 관리하세요.</p>
         <label className="common-field">
           이메일
           <input
@@ -105,20 +105,21 @@ function LoginPage() {
         >
           비밀번호를 잊으셨나요?
         </button>
-        <hr />
+        {/* 소셜 로그인은 서비스별 색 구분을 유지해 이메일 로그인과 구별합니다. */}
+        <div className="common-auth-card__divider">또는</div>
         <button
-          className="common-button"
+          className="common-button common-auth-card__social"
           type="button"
           onClick={handleGoogleLogin}
         >
           Google로 계속
         </button>
         <button
-          className="common-button"
+          className="common-button common-auth-card__social common-auth-card__social--kakao"
           type="button"
           onClick={handleKakaoLogin}
         >
-          Kakao로 계속
+          카카오로 계속
         </button>
         <button
           className="common-auth-card__signup"

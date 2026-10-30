@@ -29,7 +29,10 @@ export function adaptCampaignSummary(dto, now = new Date()) {
     media: null,
     kind: null,
     capacity: dto.recruitmentCount ?? null,
-    applicants: null,
+    // 서버가 집계한 유효 신청 수(취소 제외)만 표시합니다. 값이 없으면 추측하지 않고 null로 둡니다.
+    applicants: Number.isFinite(dto.applicationCount)
+      ? dto.applicationCount
+      : null,
     ...campaignTiming(
       {
         recruitmentStartsAt: seoulInstant(

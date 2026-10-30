@@ -4,8 +4,9 @@
  */
 import { useEffect } from 'react'
 import { useCampaignPreview } from './useCampaignCatalog'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import MainHomeHeader from '../../components/buyer/MainHomeHeader'
+import SiteFooter from '../../components/layout/SiteFooter'
 import '../../styles/pages/_main-home.scss'
 
 export default function DiscoveryLayout({ children, notice, onCloseNotice }) {
@@ -18,31 +19,7 @@ export default function DiscoveryLayout({ children, notice, onCloseNotice }) {
     <div className="main-home">
       <MainHomeHeader key={pathname} />
       {children}
-      <footer className="discovery-footer">
-        <div className="discovery-width discovery-footer__main">
-          <div>
-            <Link to="/home" className="discovery-footer__logo">
-              MOVRIT
-            </Link>
-            <p>브랜드와 크리에이터를 잇는 새로운 경험</p>
-            <p>좋아하는 브랜드와 나만의 이야기를 만들어보세요.</p>
-            <strong>© MOVRIT. All Rights Reserved.</strong>
-          </div>
-          <div>
-            <h2>광고 및 서비스 문의</h2>
-            <Link to="/support">문의하기 →</Link>
-          </div>
-        </div>
-        <div className="discovery-footer__bottom">
-          <div className="discovery-width">
-            <Link to="/community/guide">서비스 가이드</Link>
-            <Link to="/notices">공지사항</Link>
-            <Link to="/settings/terms">이용약관 및 개인정보 안내</Link>
-            <Link to="/support">고객센터</Link>
-            <span>대한민국 ⌃</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
       {import.meta.env.DEV && (
         <div className="discovery-demo-label">
           {previewMode ? '개발 미리보기 · 캠페인 예시' : '캠페인 서버 연동'}

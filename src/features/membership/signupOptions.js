@@ -7,13 +7,13 @@ export const SIGNUP_OPTIONS = [
   {
     id: 'USER',
     title: '사용자',
-    description: '상품을 둘러보고 관심 있는 캠페인에 참여하세요.',
-    detail: '캠페인 · 주문 · 찜 · 알림',
+    description: '관심 있는 캠페인을 둘러보고 체험에 참여하세요.',
+    detail: '캠페인 신청 · 찜 · 알림',
   },
   {
     id: 'SELLER',
     title: '업체',
-    description: '상품과 캠페인을 운영하고 사용자와 협업하세요.',
+    description: '브랜드 캠페인을 등록하고 참여자와 협업하세요.',
     detail: '가입 후 업체 정보 등록 및 심사',
   },
 ]

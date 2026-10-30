@@ -55,12 +55,14 @@ function SignupPage() {
     try {
       await signup({ ...form, nickname })
 
-      alert('회원가입이 완료되었습니다. 로그인해주세요.')
-
       // 회원가입 후 로그인하며 업체 선택은 권한 부여가 아닌 업체 신청 화면 안내로 사용합니다.
+      // 완료 안내는 브라우저 알림창 대신 로그인 카드 상단 안내 문구(sessionNotice)로 전달합니다.
       navigate('/login', {
         replace: true,
-        state: { returnTo: signupDestination(role) },
+        state: {
+          returnTo: signupDestination(role),
+          sessionNotice: '회원가입이 완료되었습니다. 로그인해 주세요.',
+        },
       })
     } catch (error) {
       setSubmitError(
@@ -74,7 +76,7 @@ function SignupPage() {
   }
 
   return (
-    <CommonLayout title="회원가입">
+    <CommonLayout title="회원가입" className="common-signup-page">
       <h2 className="common-role-heading">어떻게 MOVRIT을 사용하실래요?</h2>
       <section
         className="common-role-grid common-role-grid--membership"

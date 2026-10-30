@@ -148,7 +148,12 @@ export default function MyCampaignsPage() {
   const [params, setParams] = useSearchParams()
   const targetApplication = params.get('applicationId')
   const targetContent = params.get('contentId')
-  const [filter, setFilter] = useState('')
+  // 마이페이지 요약 카드에서 ?status=로 들어오면 해당 상태로 목록을 먼저 좁혀 보여줍니다.
+  const [filter, setFilter] = useState(() =>
+    Object.hasOwn(APPLICATION_STATUS, params.get('status') || '')
+      ? params.get('status')
+      : '',
+  )
   const reload = () => {
     setState((old) => ({ ...old, loading: true }))
     setAttempt((v) => v + 1)

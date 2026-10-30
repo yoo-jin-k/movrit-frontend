@@ -9,6 +9,13 @@ import CampaignGrid from './CampaignGrid'
 import { LOCAL_CATEGORIES, MEDIA, PRODUCT_CATEGORIES, REGIONS } from './catalog'
 import { useCampaignCatalog } from './useCampaignCatalog'
 
+// 모집 인원 대비 신청 수(경쟁률)입니다. 신청 0건은 가장 선정 확률이 높은 0으로 계산하고,
+// 신청 수나 모집 인원을 알 수 없는 캠페인만 정렬 맨 뒤(Infinity)로 보냅니다.
+function competition(item) {
+  if (item.applicants == null || !(item.capacity > 0)) return Infinity
+  return item.applicants / item.capacity
+}
+
 export default function CampaignListingPage({ search = false }) {
   const { section = '제품' } = useParams()
   const [params, setParams] = useSearchParams()
@@ -81,8 +88,7 @@ export default function CampaignListingPage({ search = false }) {
         : sort === 'popular'
           ? (b.applicants || 0) - (a.applicants || 0)
           : sort === 'chance'
-            ? (a.applicants / a.capacity || Infinity) -
-              (b.applicants / b.capacity || Infinity)
+            ? competition(a) - competition(b)
             : 0,
     )
   const pages = Math.max(1, Math.ceil(filtered.length / 20))

@@ -1,8 +1,9 @@
 /**
- * 구매자 화면의 공통 헤더·본문·카드·버튼·토글 모양을 제공합니다.
+ * 구매자 화면의 공통 헤더·본문·푸터·카드·버튼·토글 모양을 제공합니다.
  * 토글은 기본 체크 상태만 가지며 서버 알림 설정 저장과 연결되어 있지 않습니다.
  */
 import AppHeader from '../layout/AppHeader'
+import SiteFooter from '../layout/SiteFooter'
 
 export default function BuyerLayout({ title, children, className = '' }) {
   return (
@@ -12,6 +13,7 @@ export default function BuyerLayout({ title, children, className = '' }) {
         <h1 className="buyer-v2__title">{title}</h1>
         {children}
       </main>
+      <SiteFooter />
     </div>
   )
 }

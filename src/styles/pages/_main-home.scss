@@ -131,10 +131,72 @@
   color: #73558b;
   font-size: 13px;
 }
+// 개발 서버에서만 보이는 데이터 출처 표시입니다. 본문 카드·제목을 가리지 않도록 왼쪽 아래에 둡니다.
+// 모바일 전용 하단 신청 바는 기본적으로 숨기고 640px 이하에서만 표시합니다.
+.discovery-detail__mobile-cta {
+  display: none;
+}
+
+// 태블릿 이하 폭에서는 개발용 데이터 출처 표시를 숨겨 카드·필터와 겹치지 않게 합니다.
+@media (max-width: 900px) {
+  .discovery-demo-label {
+    display: none;
+  }
+}
+
+// 모바일 하단 탭 바입니다. 640px 이하에서만 보이며 데스크톱은 상단 헤더 메뉴를 사용합니다.
+.mobile-tabbar {
+  display: none;
+}
+@media (max-width: 640px) {
+  .mobile-tabbar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 45;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid #ececf1;
+    background: rgba(255, 255, 255, 0.97);
+
+    a {
+      display: grid;
+      justify-items: center;
+      gap: 3px;
+      padding: 8px 0 7px;
+      color: #8c8c94;
+      font-size: 11px;
+
+      &.is-active {
+        color: #17171b;
+        font-weight: 700;
+      }
+      &:focus-visible {
+        outline: 2px solid #6b38db;
+        outline-offset: -4px;
+      }
+    }
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+  // 고정 탭 바가 푸터 마지막 줄을 가리지 않도록 아래 여백을 확보합니다.
+  .discovery-footer {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+  // 캠페인 상세는 하단 신청 바가 같은 자리를 쓰므로 탭 바를 숨겨 겹침을 막습니다.
+  body:has(.discovery-detail__mobile-cta) .mobile-tabbar {
+    display: none;
+  }
+}
 .discovery-demo-label {
   position: fixed;
-  bottom: 6px;
-  right: 12px;
+  bottom: 8px;
+  left: 8px;
+  opacity: 0.85;
   z-index: 60;
   padding: 3px 8px;
   border: 1px solid #e8e4ef;
@@ -628,6 +690,17 @@
       font-weight: 600;
       padding-right: 8px;
       border-right: 1px solid #ddd;
+
+      // 신청 인원 표시가 없을 때는 구분선을 남기지 않습니다.
+      &:last-child {
+        padding-right: 0;
+        border-right: 0;
+      }
+
+      // 마감 3일 이내 캠페인은 경고색으로 강조합니다.
+      &.is-closing {
+        color: #e5484d;
+      }
     }
     > span {
       color: #777;
@@ -661,6 +734,8 @@
 .discovery-footer {
   margin-top: 100px;
   border-top: 1px solid #ddd;
+  // 회색 배경을 쓰는 계정·안내 화면에서도 메인과 같은 흰 푸터로 보이게 합니다.
+  background: #fff;
   &__main {
     display: flex;
     justify-content: space-between;
@@ -1868,10 +1943,60 @@
     flex-direction: column;
     gap: 30px;
   }
+  // 모바일은 본문(제목·이미지·안내)을 먼저 읽고, 신청 영역은 하단 고정 바로 이동합니다.
+  .discovery-detail {
+    padding-bottom: 96px;
+  }
   .discovery-detail__summary {
     position: static;
-    order: -1;
     width: 100%;
+    scroll-margin-top: 16px;
+
+    // 본문 제목과 같은 문구가 반복되지 않도록 요약 영역 제목은 숨깁니다.
+    > h2:first-child {
+      display: none;
+    }
+  }
+  .discovery-detail__mobile-cta {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid #ececf1;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 -6px 18px rgba(23, 23, 27, 0.06);
+
+    span {
+      display: grid;
+      gap: 2px;
+      color: #70707a;
+      font-size: 12px;
+    }
+    strong {
+      color: #6b38db;
+      font-size: 14px;
+    }
+    button {
+      min-width: 140px;
+      min-height: 46px;
+      border: 0;
+      border-radius: 12px;
+      color: #fff;
+      background: #17171b;
+      font-weight: 700;
+      font-size: 15px;
+
+      &:disabled {
+        background: #c9c9d1;
+        cursor: not-allowed;
+      }
+    }
   }
   .discovery-detail__schedule {
     padding: 20px;

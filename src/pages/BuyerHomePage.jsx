@@ -1,6 +1,8 @@
 /**
  * 공통 캠페인 조회 훅의 항목을 카테고리별로 걸러 홈 섹션에 배치합니다.
- * 선정 확률 등 예시 지표 기반 섹션은 previewMode에서만 구성합니다.
+ * '마감 임박'과 '선정 확률 높은' 큐레이션 섹션을 제공합니다.
+ * 실제 서버 모드에서는 서버가 집계한 신청 수가 있는 캠페인만 확률 계산에 사용하고,
+ * 프리미어처럼 서버에 구분 정보가 없는 섹션은 previewMode에서만 구성합니다.
  */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -21,40 +23,53 @@ export default function BuyerHomePage() {
         (category === '육아' && item.category === '유아동'),
     )
     .slice(0, 10)
+  // 모집이 끝나지 않은 캠페인을 마감일이 가까운 순서로 정렬합니다.
   const closing = [...items]
-    .filter((item) => item.daysLeft != null)
+    .filter(
+      (item) =>
+        item.daysLeft != null && item.daysLeft >= 0 && !item.recruitmentEnded,
+    )
     .sort((a, b) => a.daysLeft - b.daysLeft)
     .slice(0, 10)
-  const sections = previewMode
-    ? [
-        [
-          <>
-            신청 <em>마감임박</em> 캠페인
-          </>,
-          closing,
-          '/category/제품?sort=closing',
-        ],
-        [
-          <>
-            <em>선정확률 높은</em> 캠페인
-          </>,
-          items
-            .filter((item) => item.preview)
-            .sort(
-              (a, b) => a.applicants / a.capacity - b.applicants / b.capacity,
-            )
-            .slice(0, 10),
-          '/category/제품?sort=chance',
-        ],
-        [
-          <>
-            <em>프리미어</em> 캠페인
-          </>,
-          items.filter((item) => item.premier).slice(0, 10),
-          '/category/프리미어',
-        ],
-      ]
-    : []
+  // 모집 인원 대비 신청 수(경쟁률)가 낮을수록 선정 확률이 높다고 보고 오름차순으로 정렬합니다.
+  // 신청 수 또는 모집 인원이 없는 캠페인은 계산할 수 없으므로 제외합니다.
+  const chance = items
+    .filter(
+      (item) =>
+        item.applicants != null &&
+        item.capacity > 0 &&
+        !item.recruitmentEnded &&
+        (previewMode || !item.preview),
+    )
+    .sort((a, b) => a.applicants / a.capacity - b.applicants / b.capacity)
+    .slice(0, 10)
+  const sections = [
+    [
+      <>
+        신청 <em>마감임박</em> 캠페인
+      </>,
+      closing,
+      '/category/제품?sort=closing',
+    ],
+    [
+      <>
+        <em>선정확률 높은</em> 캠페인
+      </>,
+      chance,
+      '/category/제품?sort=chance',
+    ],
+    ...(previewMode
+      ? [
+          [
+            <>
+              <em>프리미어</em> 캠페인
+            </>,
+            items.filter((item) => item.premier).slice(0, 10),
+            '/category/프리미어',
+          ],
+        ]
+      : []),
+  ].filter(([, cards]) => loading || error || cards.length > 0)
   return (
     <DiscoveryLayout>
       <main>

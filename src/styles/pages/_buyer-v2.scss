@@ -4,8 +4,9 @@
   min-height: 100vh;
   background: #f7f7f9;
 }
+// 계정·마이페이지 본문도 메인 헤더와 같은 콘텐츠 폭을 사용합니다.
 .buyer-v2__main {
-  width: min(1200px, calc(100% - 48px));
+  width: $content-width;
   margin: 0 auto;
   padding: 48px 0 80px;
 }
@@ -39,8 +40,8 @@
   font-weight: 700;
 }
 .buyer-v2-button--primary {
-  background: #3182f6;
-  border-color: #3182f6;
+  background: $color-primary;
+  border-color: $color-primary;
   color: #fff;
 }
 .buyer-checkout__grid {
@@ -247,7 +248,7 @@
 }
 .buyer-order-steps li.is-active i,
 .buyer-order-steps li.is-active:before {
-  background: #3182f6;
+  background: $color-primary;
 }
 .buyer-detail-list {
   margin: 0;
@@ -309,7 +310,7 @@
 .buyer-manage-row em {
   font-style: normal;
   font-size: 10px;
-  color: #3182f6;
+  color: $color-primary;
   margin-left: 10px;
 }
 .buyer-manage-row p {
@@ -379,7 +380,7 @@
   transition: 0.2s;
 }
 .buyer-toggle input:checked + i {
-  background: #3182f6;
+  background: $color-primary;
 }
 .buyer-toggle input:checked + i:after {
   transform: translateX(20px);
@@ -411,6 +412,85 @@
 .buyer-my-profile > a {
   margin-left: auto;
 }
+// 마이페이지 '나의 캠페인' 단계 요약입니다. 네 단계를 같은 폭으로 나누고 숫자를 크게 보여줍니다.
+.buyer-campaign-summary {
+  margin-bottom: 28px;
+  padding: 22px 24px;
+  border: 1px solid $color-border;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: $shadow-card;
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+
+    h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+    a {
+      color: $color-muted;
+      font-size: 13px;
+    }
+  }
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li + li {
+    border-left: 1px solid $color-border;
+  }
+  li a {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 10px 0;
+    border-radius: 12px;
+
+    &:hover {
+      background: $color-brand-accent-soft;
+    }
+    &:focus-visible {
+      outline: 3px solid rgba($color-brand-accent, 0.25);
+    }
+  }
+  strong {
+    color: $color-brand-accent;
+    font-size: 26px;
+    line-height: 1;
+  }
+  span {
+    color: $color-muted;
+    font-size: 13px;
+  }
+  p button {
+    border: 0;
+    background: none;
+    color: $color-brand-accent;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+}
+
+// 마이페이지 메뉴 묶음 제목입니다.
+.buyer-my-group {
+  margin-bottom: 26px;
+
+  > h2 {
+    margin: 0 0 12px;
+    color: $color-muted;
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
+
 .buyer-my-menu {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -487,7 +567,7 @@
   background: #e33f49;
 }
 .buyer-state__status .is-primary {
-  background: #3182f6;
+  background: $color-primary;
 }
 .buyer-state__status .is-success {
   background: #12945a;
@@ -505,7 +585,7 @@
   display: block;
   width: 78%;
   height: 100%;
-  background: #3182f6;
+  background: $color-primary;
   border-radius: inherit;
 }
 .buyer-state .buyer-v2-card {
@@ -541,7 +621,7 @@
 }
 @media (max-width: 640px) {
   .buyer-v2__main {
-    width: calc(100% - 32px);
+    width: $content-width-mobile;
     padding: 30px 0 60px;
   }
   .buyer-v2__title {

@@ -1,10 +1,22 @@
 /**
  * 실제 캠페인·프리오더와 미리보기 항목의 상세 경로를 구분합니다.
  * 미리보기 찜만 세션 상태를 변경하며 실제 캠페인 카드에 가짜 신청 인원이나 찜 저장 성공을 추가하지 않습니다.
+ * 신청 인원은 서버가 집계한 값이 있을 때만 "신청 N / 모집 M명"으로 표시하고,
+ * 마감 3일 이내 캠페인은 '마감 임박'으로 강조합니다.
  */
 import { usePreviewFavorite } from '../../features/discovery/usePreviewFavorite'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+
+// 모집 종료 전이면서 마감까지 3일 이하로 남은 캠페인을 '마감 임박'으로 판단합니다.
+function closingSoon(item) {
+  return (
+    !item.recruitmentEnded &&
+    item.daysLeft != null &&
+    item.daysLeft > 0 &&
+    item.daysLeft <= 3
+  )
+}
 
 // 카드 이동과 미리보기 찜을 분리하여 중첩 링크와 상태 불일치를 방지합니다.
 export default function CampaignCard({ item }) {
@@ -86,15 +98,17 @@ export default function CampaignCard({ item }) {
       )}
       <div className="main-campaign-card__meta">
         {item.daysLeft != null && (
-          <strong>
+          <strong className={closingSoon(item) ? 'is-closing' : undefined}>
             {item.recruitmentEnded || item.daysLeft < 0
               ? '모집 마감'
               : item.daysLeft === 0
                 ? '오늘 마감'
-                : `${item.daysLeft}일 남음`}
+                : closingSoon(item)
+                  ? `마감 임박 · ${item.daysLeft}일`
+                  : `${item.daysLeft}일 남음`}
           </strong>
         )}
-        {item.preview && (
+        {item.applicants != null && item.capacity != null && (
           <span>
             신청 {item.applicants.toLocaleString()} <em>/ {item.capacity}명</em>
           </span>

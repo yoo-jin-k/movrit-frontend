@@ -1,7 +1,15 @@
 // MOVRIT Figma V2 tokens
-$color-primary: #3182f6;
-$color-primary-hover: #1f6fe5;
-$color-primary-soft: #eef5ff;
+// 사용자·업체 화면의 주요 행동색은 메인 화면과 같은 MOVRIT 블랙으로 맞춥니다.
+// 관리자 화면은 별도 색상을 직접 지정하므로 이 토큰 변경의 영향을 받지 않습니다.
+$color-primary: #17171b;
+$color-primary-hover: #000000;
+$color-primary-soft: #f0edf8;
+// 링크·강조 문구에 쓰는 MOVRIT 보라 포인트 색상입니다.
+$color-brand-accent: #6b38db;
+$color-brand-accent-soft: #f6f3fb;
+// 메인 헤더·푸터와 본문 좌우 여백을 맞추기 위한 공통 콘텐츠 폭입니다.
+$content-width: min(1280px, calc(100% - 48px));
+$content-width-mobile: calc(100% - 32px);
 $color-accent: #f06449;
 $color-accent-soft: #fff0ec;
 $color-text: #17171b;

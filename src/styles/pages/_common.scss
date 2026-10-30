@@ -41,10 +41,11 @@
   }
 }
 
+// 본문 폭을 메인 헤더·푸터와 같은 콘텐츠 폭에 맞춰 제목과 로고의 왼쪽 선을 일치시킵니다.
 .common-page__main {
-  max-width: 1312px;
-  min-height: 968px;
-  margin: auto;
+  width: $content-width;
+  min-height: 640px;
+  margin: 0 auto;
   padding: 34px 0 90px;
 
   > h1 {
@@ -106,7 +107,7 @@
     text-align: center;
 
     > strong {
-      color: #6d5dfb;
+      color: $color-brand-accent;
       font-size: 52px;
     }
 
@@ -166,9 +167,8 @@
 }
 
 .common-auth-card {
-  width: 520px;
-  min-height: 620px;
-  margin: 38px auto 0;
+  width: min(460px, 100%);
+  margin: 24px auto 0;
   display: grid;
   align-content: start;
   gap: 22px;
@@ -187,12 +187,44 @@
     border-top: 1px solid #e8e8ed;
   }
 
+  // 소셜 로그인 버튼은 각 서비스의 일반적인 색 구분을 따라 이메일 로그인 버튼과 구분합니다.
+  &__social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid #e3e3e8;
+    color: $color-text;
+    background: white;
+
+    &--kakao {
+      border-color: #fee500;
+      color: #191919;
+      background: #fee500;
+    }
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $color-muted;
+    font-size: 12px;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid #e8e8ed;
+    }
+  }
+
   &__forgot,
   &__signup {
     width: max-content;
     padding: 0;
     border: 0;
-    color: #6d5dfb;
+    color: $color-brand-accent;
     background: none;
     font-size: 12px;
     font-weight: 700;
@@ -241,7 +273,7 @@
 
     strong {
       margin-top: 24px;
-      color: #6d5dfb;
+      color: $color-brand-accent;
       font-size: 12px;
     }
 
@@ -274,8 +306,31 @@
   }
 }
 
+// 회원가입은 유형 선택·안내·입력 폼을 한 열로 모아 가운데 정렬합니다.
+.common-signup-page .common-page__main {
+  width: min(720px, calc(100% - 48px));
+
+  .common-role-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0;
+  }
+
+  .common-role-note {
+    margin: 24px 0 0;
+  }
+
+  @media (max-width: 640px) {
+    width: calc(100% - 32px);
+
+    .common-role-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
 .common-signup-form {
-  width: 600px;
+  width: 100%;
   margin: 48px auto 0;
   display: grid;
   gap: 20px;
@@ -538,7 +593,7 @@
 
 @include tablet {
   .common-page__main {
-    padding-inline: 32px;
+    padding-inline: 0;
   }
   .common-role-grid {
     grid-template-columns: 1fr;
@@ -565,8 +620,9 @@
     }
   }
   .common-page__main {
+    width: $content-width-mobile;
     min-height: 0;
-    padding: 28px 16px 60px;
+    padding: 28px 0 60px;
 
     > h1 {
       font-size: 24px;

@@ -34,3 +34,14 @@ export function campaignTiming(schedule, now = new Date()) {
     today: start != null && start === today,
   }
 }
+
+// 상세 화면 하단 바에 보여줄 모집 마감 문구입니다. 카드의 남은 일수 표기와 같은 규칙을 사용합니다.
+// 3일 이하로 남으면 '마감 임박'을 앞에 붙여 신청을 서두를 수 있게 안내합니다.
+export function recruitmentDeadlineLabel(detail, now = new Date()) {
+  if (!detail?.open) return '모집 종료'
+  const { daysLeft } = campaignTiming({ recruitmentEndsAt: detail.endAt }, now)
+  if (daysLeft == null) return '모집 중'
+  if (daysLeft < 0) return '모집 종료'
+  if (daysLeft === 0) return '오늘 마감'
+  return daysLeft <= 3 ? `마감 임박 · ${daysLeft}일 남음` : `${daysLeft}일 남음`
+}

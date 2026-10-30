@@ -1,6 +1,7 @@
 /**
  * 공개 본문과 신청 폼을 각각 조회하여 한쪽 실패가 다른쪽 결과를 숨기지 않게 합니다.
  * 실제 미디어 조회와 신청 영역을 연결하고 새로고침 시 최신 데이터로 다시 구성합니다.
+ * 모바일에서는 본문을 먼저 보여주고 하단 고정 바로 신청 영역에 바로 이동할 수 있게 합니다.
  */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -14,6 +15,18 @@ import { liveCampaignSchedule } from './scheduleModel'
 import DiscoveryLayout from './DiscoveryLayout'
 import CampaignParticipation from './CampaignParticipation'
 import CampaignPublicMedia from './CampaignPublicMedia'
+import { recruitmentDeadlineLabel } from './campaignDates'
+
+// 신청 영역으로 부드럽게 이동합니다. 동작 줄이기 설정을 켠 사용자는 즉시 이동합니다.
+function scrollToApply() {
+  const target = document.getElementById('campaign-apply')
+  if (!target) return
+  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  target.scrollIntoView({
+    behavior: reduce ? 'auto' : 'smooth',
+    block: 'start',
+  })
+}
 
 // 실제 상세와 신청 폼은 별도로 읽습니다. 폼 조회 실패가 공개 상세까지 숨기지 않도록 합니다.
 export default function LiveCampaignDetailPage({ campaignId }) {
@@ -102,7 +115,7 @@ export default function LiveCampaignDetailPage({ campaignId }) {
                 ))}
               </dl>
             </div>
-            <aside className="discovery-detail__summary">
+            <aside className="discovery-detail__summary" id="campaign-apply">
               <h2>{detail.title}</h2>
               <CampaignSchedule
                 key={detail.scheduleVersion}
@@ -200,6 +213,22 @@ export default function LiveCampaignDetailPage({ campaignId }) {
                 )}
               </section>
             </aside>
+          </div>
+        )}
+        {/* 모바일 전용 하단 고정 신청 바입니다. 데스크톱에서는 CSS로 숨깁니다. */}
+        {detail && !state.loading && !state.error && (
+          <div className="discovery-detail__mobile-cta">
+            <span>
+              <strong>{recruitmentDeadlineLabel(detail)}</strong>
+              모집 {detail.recruitmentCount ?? '-'}명
+            </span>
+            <button
+              type="button"
+              onClick={scrollToApply}
+              disabled={!detail.open}
+            >
+              {detail.open ? '신청하기' : '모집 종료'}
+            </button>
           </div>
         )}
       </main>

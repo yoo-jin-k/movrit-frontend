@@ -10,10 +10,23 @@ import {
   periodEndInstant,
 } from './scheduleModel.js'
 
+// 서버의 캠페인 종류 코드를 탐색 메뉴 이름(제품·지역·기자단)으로 바꿉니다.
+const KIND_LABELS = { PRODUCT: '제품', LOCAL: '지역', REPORTER: '기자단' }
+
+// 서버의 콘텐츠 채널 코드를 미디어 필터 이름으로 바꿉니다.
+const MEDIA_LABELS = {
+  BLOG: '블로그',
+  INSTAGRAM: '인스타그램',
+  YOUTUBE: '유튜브',
+  CLIP: '클립',
+  OTHER: '기타',
+}
+
 // 대표 이미지는 해당 캠페인의 공개 DTO 값만 사용합니다. 미제공 채널·지역·종류는 예시 값으로 보완하지 않습니다.
 export function adaptCampaignSummary(dto, now = new Date()) {
   if (!dto || dto.id == null || typeof dto.title !== 'string')
     throw new Error('캠페인 응답 형식이 올바르지 않습니다.')
+  const kind = KIND_LABELS[dto.campaignType] ?? null
   return {
     id: String(dto.id),
     campaign: true,
@@ -26,8 +39,11 @@ export function adaptCampaignSummary(dto, now = new Date()) {
       dto.representativeImageUrl.trim()
         ? dto.representativeImageUrl
         : null,
-    media: null,
-    kind: null,
+    // 지역 캠페인은 업종(맛집·숙박 등)을 지역 카테고리로도 사용합니다.
+    localCategory: kind === '지역' ? dto.category || '' : null,
+    region: kind === '지역' ? dto.region || null : null,
+    media: MEDIA_LABELS[dto.contentChannel] ?? null,
+    kind,
     capacity: dto.recruitmentCount ?? null,
     // 서버가 집계한 유효 신청 수(취소 제외)만 표시합니다. 값이 없으면 추측하지 않고 null로 둡니다.
     applicants: Number.isFinite(dto.applicationCount)
@@ -48,7 +64,7 @@ export function adaptCampaignSummary(dto, now = new Date()) {
       liveCampaignSchedule(dto).recruitmentEndsAt,
       now,
     ),
-    premier: false,
+    premier: dto.premier === true,
     shoppingreview: false,
     source: dto,
   }

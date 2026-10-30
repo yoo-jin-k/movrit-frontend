@@ -141,3 +141,32 @@ test('해당 캠페인의 대표 이미지가 있을 때만 카드 사진으로 
     )
   }
 })
+
+test('서버 분류 코드를 탐색 메뉴·지역·미디어 이름으로 바꿉니다', () => {
+  const local = adaptCampaignSummary({
+    id: 1,
+    title: '성수 카페',
+    category: '맛집',
+    campaignType: 'LOCAL',
+    region: '서울',
+    contentChannel: 'INSTAGRAM',
+    premier: true,
+  })
+  assert.equal(local.kind, '지역')
+  assert.equal(local.localCategory, '맛집')
+  assert.equal(local.region, '서울')
+  assert.equal(local.media, '인스타그램')
+  assert.equal(local.premier, true)
+  const product = adaptCampaignSummary({
+    id: 2,
+    title: '세럼',
+    campaignType: 'PRODUCT',
+    region: '서울',
+    contentChannel: 'UNKNOWN',
+  })
+  assert.equal(product.kind, '제품')
+  assert.equal(product.region, null)
+  assert.equal(product.localCategory, null)
+  assert.equal(product.media, null)
+  assert.equal(product.premier, false)
+})

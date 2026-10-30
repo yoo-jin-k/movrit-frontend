@@ -5,7 +5,30 @@
  * 운영 브랜드: 캠페인이 속할 브랜드입니다. 브랜드가 여러 개일 때만 선택이 필수입니다.
  * 함께 판매할 프리오더: 선택 항목입니다. 비워 두면 프리오더 없이 체험단만 운영합니다.
  * 수정 화면에서는 두 값을 바꿀 수 없습니다(신청·선정 기록의 소속이 바뀌지 않도록).
+ *
+ * 캠페인 종류·지역·콘텐츠 채널: 사용자 탐색 메뉴(제품·지역·기자단, 지역 필터, 미디어 필터)에 쓰입니다.
  */
+import {
+  LOCAL_CATEGORIES,
+  PRODUCT_CATEGORIES,
+  REGIONS,
+} from '../discovery/catalog.js'
+
+// 서버 코드와 화면 이름의 짝입니다.
+const CAMPAIGN_TYPES = [
+  ['PRODUCT', '제품 (배송형 체험)'],
+  ['LOCAL', '지역 (방문형 체험)'],
+  ['REPORTER', '기자단 (취재·소개형)'],
+]
+const CONTENT_CHANNELS = [
+  ['', '지정하지 않음'],
+  ['BLOG', '블로그'],
+  ['INSTAGRAM', '인스타그램'],
+  ['YOUTUBE', '유튜브'],
+  ['CLIP', '클립'],
+  ['OTHER', '기타'],
+]
+
 export default function CampaignFields({
   value,
   onChange,
@@ -19,6 +42,10 @@ export default function CampaignFields({
   const changeBrand = (next) =>
     onChange({ ...value, brandId: next, preorderId: '' })
   // 고른 브랜드의 프리오더만 보여줍니다. 브랜드를 아직 고르지 않았으면 전체를 보여줍니다.
+  // 종류에 맞는 카테고리 추천 목록입니다. 직접 입력도 할 수 있습니다.
+  const categoryOptions = (
+    value.campaignType === 'LOCAL' ? LOCAL_CATEGORIES : PRODUCT_CATEGORIES
+  ).slice(1)
   const brandPreorders = value.brandId
     ? preorders.filter((item) => String(item.brandId) === String(value.brandId))
     : preorders
@@ -97,11 +124,67 @@ export default function CampaignFields({
           />
         </label>
         <label>
+          캠페인 종류
+          <select
+            value={value.campaignType || 'PRODUCT'}
+            onChange={(e) =>
+              // 지역 캠페인이 아니게 되면 고른 지역은 비웁니다.
+              onChange({
+                ...value,
+                campaignType: e.target.value,
+                region: e.target.value === 'LOCAL' ? value.region : '',
+              })
+            }
+          >
+            {CAMPAIGN_TYPES.map(([code, label]) => (
+              <option key={code} value={code}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        {value.campaignType === 'LOCAL' && (
+          <label>
+            방문 지역
+            <select
+              required
+              value={value.region || ''}
+              onChange={(e) => change('region', e.target.value)}
+            >
+              <option value="">선택해 주세요</option>
+              {REGIONS.slice(1).map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        <label>
+          콘텐츠 채널
+          <select
+            value={value.contentChannel || ''}
+            onChange={(e) => change('contentChannel', e.target.value)}
+          >
+            {CONTENT_CHANNELS.map(([code, label]) => (
+              <option key={code} value={code}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
           카테고리
           <input
+            list="seller-campaign-category-options"
             value={value.category || ''}
             onChange={(e) => change('category', e.target.value)}
           />
+          <datalist id="seller-campaign-category-options">
+            {categoryOptions.map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
         </label>
         <label>
           제공 내역

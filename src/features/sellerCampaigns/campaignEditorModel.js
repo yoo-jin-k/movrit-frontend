@@ -12,6 +12,10 @@ export const emptyCampaign = () => ({
   title: '',
   description: '',
   category: '',
+  // 탐색 메뉴 분류: 종류(제품·지역·기자단), 지역(지역 캠페인만), 콘텐츠 채널입니다.
+  campaignType: 'PRODUCT',
+  region: '',
+  contentChannel: '',
   recruitmentCount: '',
   rewardDescription: '',
   startAt: '',
@@ -42,11 +46,17 @@ export function configuredCampaignPayload(form, condition, original = null) {
     form.startAt >= form.endAt
   )
     throw new Error('모집 시작보다 늦은 종료일을 입력해 주세요.')
+  if (form.campaignType === 'LOCAL' && !form.region)
+    throw new Error('지역 캠페인은 방문 지역을 선택해 주세요.')
   const campaign = {
     ...selectionModeField(form, original),
     title: form.title.trim(),
     description: form.description,
     category: form.category,
+    // 지역 캠페인이 아니면 지역 값을 보내지 않습니다. 빈 채널은 null(미지정)로 보냅니다.
+    campaignType: form.campaignType || 'PRODUCT',
+    region: form.campaignType === 'LOCAL' ? form.region || null : null,
+    contentChannel: form.contentChannel || null,
     recruitmentCount: Number(form.recruitmentCount),
     rewardDescription: form.rewardDescription,
     startAt: form.startAt,

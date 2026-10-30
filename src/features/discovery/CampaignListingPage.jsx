@@ -20,7 +20,7 @@ export default function CampaignListingPage({ search = false }) {
   const { section = '제품' } = useParams()
   const [params, setParams] = useSearchParams()
   const [regionOpen, setRegionOpen] = useState(false)
-  const { items, loading, error, previewMode } = useCampaignCatalog()
+  const { items, loading, error } = useCampaignCatalog()
   const category = params.get('category') || '전체'
   const media = params.get('media') || '미디어 전체'
   const region = params.get('region') || '전국'
@@ -50,15 +50,9 @@ export default function CampaignListingPage({ search = false }) {
               '네이버 인플루언서',
             ]
           : []
-  const unsupported = !previewMode && !search && section !== '제품'
+  // 예시 데이터와 실제 서버 데이터 모두 같은 분류 필드(kind·localCategory·region·media·premier·today)로 거릅니다.
   const filtered = items
     .filter((item) => {
-      if (unsupported) return false
-      if (!previewMode)
-        return (
-          (!search || item.title.toLocaleLowerCase().includes(query)) &&
-          (category === '전체' || item.category === category)
-        )
       if (search) return item.title.toLocaleLowerCase().includes(query)
       if (section === '오늘오픈' && !item.today) return false
       if (section === '프리미어' && !item.premier) return false
@@ -107,11 +101,9 @@ export default function CampaignListingPage({ search = false }) {
               <h1>
                 {search
                   ? `‘${params.get('q') || ''}’ 검색 결과`
-                  : !previewMode && section === '제품'
-                    ? '모집 중인 캠페인'
-                    : `${section} 캠페인`}
+                  : `${section} 캠페인`}
               </h1>
-              {section === '지역' && !search && previewMode && (
+              {section === '지역' && !search && (
                 <div className="discovery-region">
                   <button
                     type="button"
@@ -170,7 +162,7 @@ export default function CampaignListingPage({ search = false }) {
               </nav>
             )}
             <div className="discovery-filter-bar">
-              {section !== '프리미어' && !search && previewMode && (
+              {section !== '프리미어' && !search && (
                 <div className="discovery-media" aria-label="미디어 선택">
                   {MEDIA.map((name) => (
                     <button
@@ -188,24 +180,15 @@ export default function CampaignListingPage({ search = false }) {
               {search && <span>캠페인 {filtered.length}개</span>}
               <select
                 aria-label="캠페인 정렬"
-                disabled={!previewMode}
-                value={previewMode ? sort : 'server'}
+                value={sort}
                 onChange={(event) => update('sort', event.target.value)}
               >
-                {!previewMode && <option value="server">서버 제공 순서</option>}
                 <option value="latest">최신순 ↓</option>
                 <option value="popular">인기순</option>
                 <option value="closing">마감임박순</option>
                 <option value="chance">선정확률순</option>
               </select>
             </div>
-            {!previewMode && (
-              <p className="discovery-info">
-                {unsupported
-                  ? '이 메뉴의 캠페인 구분 정보는 아직 서버에서 제공하지 않습니다.'
-                  : '공개 모집 목록을 조회합니다. 종류·지역·채널·인기 정렬은 연동 준비 중이며 최신순과 일치한다고 보장하지 않습니다.'}
-              </p>
-            )}
             <CampaignGrid
               items={filtered.slice((currentPage - 1) * 20, currentPage * 20)}
               loading={loading}

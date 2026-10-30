@@ -1887,6 +1887,8 @@
     padding: 4px;
     margin-left: -4px;
     button {
+      // 가로 스크롤 줄에서 칩이 줄어들어 글자가 잘리지 않도록 고정 폭을 유지합니다.
+      flex-shrink: 0;
       height: 36px;
       font-size: 13px;
     }

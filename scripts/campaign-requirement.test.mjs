@@ -140,3 +140,43 @@ test('새 캠페인은 프리오더 없이 운영 브랜드만으로 만들 수 
     ),
   )
 })
+
+test('캠페인 종류·지역·채널을 보내고 지역 캠페인은 지역을 요구합니다', async () => {
+  const { configuredCampaignPayload, emptyCampaign } = await import(
+    '../src/features/sellerCampaigns/campaignEditorModel.js'
+  )
+  const form = {
+    ...emptyCampaign(),
+    title: '성수 카페 방문 체험',
+    recruitmentCount: '3',
+    startAt: '2026-11-01T09:00',
+    endAt: '2026-11-30T18:00',
+  }
+  const product = configuredCampaignPayload(
+    { ...form, region: '서울' },
+    emptyRequirement(),
+  )
+  assert.equal(product.campaign.campaignType, 'PRODUCT')
+  // 제품 캠페인은 지역을 보내지 않습니다.
+  assert.equal(product.campaign.region, null)
+  assert.equal(product.campaign.contentChannel, null)
+  assert.throws(
+    () =>
+      configuredCampaignPayload(
+        { ...form, campaignType: 'LOCAL' },
+        emptyRequirement(),
+      ),
+    /방문 지역/,
+  )
+  const local = configuredCampaignPayload(
+    {
+      ...form,
+      campaignType: 'LOCAL',
+      region: '서울',
+      contentChannel: 'INSTAGRAM',
+    },
+    emptyRequirement(),
+  )
+  assert.equal(local.campaign.region, '서울')
+  assert.equal(local.campaign.contentChannel, 'INSTAGRAM')
+})

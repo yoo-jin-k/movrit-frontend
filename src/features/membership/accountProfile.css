@@ -435,3 +435,57 @@
   font-size: 12px;
   color: #8b8395;
 }
+
+/* 설정 > 로그인 연결: 제공자별 연결 상태와 연결 버튼을 한 줄씩 보여줍니다. */
+.account-social-list {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.account-social-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #ececf1;
+  border-radius: 12px;
+}
+.account-social-list span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.account-social-list small {
+  overflow: hidden;
+  color: #8c8c94;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-social-list em {
+  color: #6b38db;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+}
+.account-social-list button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  background: #17171b;
+  font-weight: 700;
+}
+.account-social-list button:disabled {
+  background: #c9c9d1;
+}
+/* 연결 결과 안내: 성공은 보라, 실패는 빨강으로 구분합니다. */
+.account-social-notice.is-ok {
+  color: #6b38db;
+}
+.account-social-notice.is-error {
+  color: #c53b31;
+}

@@ -1,17 +1,23 @@
-/** 사진과 기본 정보, 보안, 배송지를 명확한 그룹으로 구분합니다. */
-import { Link } from 'react-router-dom'
+/**
+ * 사진과 기본 정보, 로그인 연결, 보안, 배송지를 명확한 그룹으로 구분합니다.
+ * 소셜 계정 연결 콜백에서 돌아오면 location.state.linkNotice로 결과 안내를 받아 로그인 연결 영역에 표시합니다.
+ */
+import { Link, useLocation } from 'react-router-dom'
 import BuyerLayout from '../../components/buyer/BuyerLayout'
 import LogoutButton from '../auth/LogoutButton'
 import useMemberAccount from './useMemberAccount'
 import AvatarEditor from './AvatarEditor'
+import SocialLoginLinks from './SocialLoginLinks'
 import './accountProfile.css'
 export default function AccountSettingsPage() {
   const state = useMemberAccount()
+  const location = useLocation()
   return (
     <BuyerLayout title="내 정보 · 계정 설정" className="account-settings">
       <nav className="account-settings-nav" aria-label="계정 설정 항목">
         <a href="#profile-photo">프로필 사진</a>
         <a href="#account-basic">기본 정보</a>
+        <a href="#social-login">로그인 연결</a>
         <Link to="/settings/security">비밀번호</Link>
         <Link to="/mypage/addresses">배송지</Link>
       </nav>
@@ -38,6 +44,7 @@ export default function AccountSettingsPage() {
         <Link to="/mypage/profile">닉네임 수정 ›</Link>
         <Link to="/creator/profile">활동 프로필·채널 정보 관리 ›</Link>
       </section>
+      <SocialLoginLinks notice={location.state?.linkNotice} />
       <section className="account-settings-group">
         <h2>로그인 및 배송 정보</h2>
         <Link to="/settings/security">

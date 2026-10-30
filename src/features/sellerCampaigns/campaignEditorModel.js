@@ -5,6 +5,8 @@
 import { requirementPayload } from './requirementModel.js'
 import { selectionModeField } from '../business/selectionModeModel.js'
 export const emptyCampaign = () => ({
+  // 캠페인은 브랜드에 직접 속합니다. 프리오더는 함께 판매할 때만 고르는 선택 항목입니다.
+  brandId: '',
   preorderId: '',
   selectionMode: 'BRAND_DIRECT',
   title: '',
@@ -15,6 +17,15 @@ export const emptyCampaign = () => ({
   startAt: '',
   endAt: '',
 })
+// 빈 값은 null(선택 안 함)로, 값이 있으면 1 이상의 정수 ID인지 확인합니다.
+function optionalId(value, message) {
+  if (value === '' || value == null) return null
+  const id = Number(value)
+  if (!/^\d+$/.test(String(value)) || !Number.isSafeInteger(id) || id < 1)
+    throw new Error(message)
+  return id
+}
+
 export function configuredCampaignPayload(form, condition, original = null) {
   if (!form.title?.trim()) throw new Error('모집 제목을 입력해 주세요.')
   if (
@@ -64,13 +75,16 @@ export function configuredCampaignPayload(form, condition, original = null) {
     ])
       campaign[field] = original[field] ?? null
   } else {
-    if (
-      !/^\d+$/.test(String(form.preorderId)) ||
-      !Number.isSafeInteger(Number(form.preorderId)) ||
-      Number(form.preorderId) < 1
+    // 새 캠페인: 운영 브랜드와 (선택) 프리오더를 숫자 ID로 보냅니다.
+    // 브랜드를 비워 두면 서버가 운영 중인 브랜드가 하나일 때 그 브랜드로 정하고, 여러 개면 선택을 요청합니다.
+    campaign.brandId = optionalId(
+      form.brandId,
+      '운영 브랜드를 다시 선택해 주세요.',
     )
-      throw new Error('프리오더를 선택해 주세요.')
-    campaign.preorderId = Number(form.preorderId)
+    campaign.preorderId = optionalId(
+      form.preorderId,
+      '함께 판매할 프리오더를 다시 선택해 주세요.',
+    )
   }
   const requirement = requirementPayload(condition)
   return {

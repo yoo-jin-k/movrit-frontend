@@ -111,3 +111,32 @@ test('수정 시 숨겨진 기존 캠페인 필드와 일정 버전을 보존합
   assert.equal(created.requirementMode, 'NONE')
   assert.equal(created.requirement, null)
 })
+
+test('새 캠페인은 프리오더 없이 운영 브랜드만으로 만들 수 있습니다', async () => {
+  const { configuredCampaignPayload, emptyCampaign } = await import(
+    '../src/features/sellerCampaigns/campaignEditorModel.js'
+  )
+  const form = {
+    ...emptyCampaign(),
+    brandId: '5',
+    title: '브랜드 단독 체험단',
+    recruitmentCount: '3',
+    startAt: '2026-11-01T09:00',
+    endAt: '2026-11-30T18:00',
+  }
+  const payload = configuredCampaignPayload(form, emptyRequirement())
+  assert.equal(payload.campaign.brandId, 5)
+  assert.equal(payload.campaign.preorderId, null)
+  // 브랜드도 비워 두면 서버가 운영 브랜드를 정하도록 null로 보냅니다.
+  const auto = configuredCampaignPayload(
+    { ...form, brandId: '' },
+    emptyRequirement(),
+  )
+  assert.equal(auto.campaign.brandId, null)
+  assert.throws(() =>
+    configuredCampaignPayload(
+      { ...form, preorderId: 'abc' },
+      emptyRequirement(),
+    ),
+  )
+})

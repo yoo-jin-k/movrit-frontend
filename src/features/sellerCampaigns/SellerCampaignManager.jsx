@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getSellerCampaigns } from '../../api/collaborationApi'
 import { getMyPreorders } from '../../api/preorderApi'
+import { getMyBrands } from '../../api/brandApi'
 import { getMySellerProfile } from '../../api/sellerApi'
 import { readCampaign, readCampaignForm } from '../../api/campaignReadApi'
 import { readCampaignRequirement } from '../../api/campaignRequirementApi'
@@ -62,6 +63,7 @@ export default function SellerCampaignManager({
   const [state, setState] = useState({
     loading: true,
     campaigns: [],
+    brands: [],
     preorders: [],
     error: '',
   })
@@ -84,9 +86,18 @@ export default function SellerCampaignManager({
       .then((profile) => {
         if (profile.status !== 'APPROVED')
           throw new Error('승인된 업체만 캠페인을 관리할 수 있습니다.')
-        return Promise.all([getSellerCampaigns(), getMyPreorders()])
+        return Promise.all([
+          getSellerCampaigns(),
+          getMyPreorders(),
+          getMyBrands(),
+        ])
       })
-      .then(async ([campaigns, preorders]) => {
+      .then(async ([campaigns, preorders, brands]) => {
+        // 운영 중인 브랜드가 하나뿐이면 새 캠페인의 운영 브랜드로 미리 선택해 둡니다.
+        if (!initialCampaignId && brands.length === 1 && active)
+          setForm((current) =>
+            current.brandId ? current : { ...current, brandId: brands[0].id },
+          )
         // URL의 ID만으로 편집하지 않고 판매자 소유 목록과 먼저 대조합니다.
         if (initialCampaignId) {
           if (
@@ -113,13 +124,14 @@ export default function SellerCampaignManager({
           setActiveRequirement(requirement)
         }
         if (active)
-          setState({ loading: false, campaigns, preorders, error: '' })
+          setState({ loading: false, campaigns, preorders, brands, error: '' })
       })
       .catch(() => {
         if (active)
           setState({
             loading: false,
             campaigns: [],
+            brands: [],
             preorders: [],
             error:
               '캠페인 관리 정보를 불러오지 못했습니다. 업체 승인 상태와 접근 권한을 확인해 주세요.',
@@ -280,6 +292,7 @@ export default function SellerCampaignManager({
               <CampaignFields
                 value={form}
                 onChange={setForm}
+                brands={state.brands}
                 preorders={state.preorders.filter(
                   (item) =>
                     original ||

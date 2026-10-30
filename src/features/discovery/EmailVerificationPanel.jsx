@@ -1,6 +1,7 @@
 /**
  * 인증번호 발송과 확인, 만료까지 남은 시간을 화면 상태로 관리합니다.
  * 발송 요청 ID와 번호를 확인 요청에 묶고 완료 후 부모가 최신 인증 상태를 다시 읽도록 합니다.
+ * 로컬 시연 모드(서버 응답에 localPreviewCode가 있을 때)에는 메일 대신 화면에 인증번호를 보여줍니다.
  */
 import { participationError } from './participationError'
 import { useEffect, useState } from 'react'
@@ -101,9 +102,30 @@ export default function EmailVerificationPanel({
           </button>
           {challenge && (
             <form onSubmit={confirm} className="application-fieldset">
-              <p role="status">
-                {challenge.maskedEmail}로 인증번호를 전송했습니다.
-              </p>
+              {challenge.localPreviewCode ? (
+                // 로컬 시연 모드: 서버가 실제 메일 대신 화면 표시용 코드를 돌려준 경우에만 보입니다.
+                <div className="email-local-preview" role="status">
+                  <strong>로컬 시연 모드</strong>
+                  <p>
+                    실제 메일은 보내지 않았습니다. 아래 인증번호를 입력해
+                    주세요.
+                  </p>
+                  <span>
+                    <b>{challenge.localPreviewCode}</b>
+                    <button
+                      type="button"
+                      onClick={() => setCode(challenge.localPreviewCode)}
+                      disabled={busy || remaining === 0}
+                    >
+                      입력란에 채우기
+                    </button>
+                  </span>
+                </div>
+              ) : (
+                <p role="status">
+                  {challenge.maskedEmail}로 인증번호를 전송했습니다.
+                </p>
+              )}
               <p>
                 {remaining === 0
                   ? '인증번호가 만료되었습니다. 재발송해 주세요.'

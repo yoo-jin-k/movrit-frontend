@@ -15,6 +15,7 @@ import BuyerLayout, { BuyerCard } from '../components/buyer/BuyerLayout'
 // 경로는 기존 화면을 그대로 사용하며 설명 문구만 각 메뉴의 실제 용도로 구체화했습니다.
 const campaignLinks = [
   ['내 캠페인', '신청·선정·콘텐츠 제출 진행 확인', '/mypage/campaigns'],
+  ['찜한 캠페인', '관심 있는 캠페인 모아 보기', '/favorites'],
   ['등록 콘텐츠', '제출한 게시물 링크와 검토 결과', '/mypage/contents'],
   ['활동 프로필', '캠페인 참여에 사용할 채널 정보 관리', '/creator/profile'],
   ['알림', '선정·검토 결과 등 받은 알림 확인', '/notifications'],
@@ -27,7 +28,7 @@ const accountLinks = [
 ]
 const shoppingLinks = [
   ['주문 내역', '프리오더 주문·배송 확인', '/orders'],
-  ['찜한 프리오더', '관심 등록한 프리오더 모음', '/favorites'],
+  ['찜한 프리오더', '관심 등록한 프리오더 모음', '/favorites/preorders'],
   ['결제수단 관리', '등록한 결제수단 확인', '/mypage/payments'],
 ]
 

@@ -36,6 +36,7 @@ import ProductManagePage from './pages/ProductManagePage'
 import PreorderManagePage from './pages/PreorderManagePage'
 import PreorderShopPage from './pages/PreorderShopPage'
 import FavoritePreordersPage from './pages/FavoritePreordersPage'
+import FavoriteCampaignsPage from './pages/FavoriteCampaignsPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import SellerOperationsPage from './pages/SellerOperationsPage'
 import CreatorPage from './pages/CreatorPage'
@@ -241,8 +242,17 @@ function App() {
               </ProtectedPage>
             }
           />
+          {/* 찜 목록: 기본은 캠페인 찜이며, 기존 프리오더 찜 화면은 하위 경로로 유지합니다. */}
           <Route
             path="/favorites"
+            element={
+              <ProtectedPage>
+                <FavoriteCampaignsPage />
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/favorites/preorders"
             element={
               <ProtectedPage>
                 <FavoritePreordersPage />

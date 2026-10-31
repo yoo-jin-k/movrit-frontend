@@ -21,6 +21,9 @@ const lazyNamed = (loader, name) =>
 const AdminCampaignParticipantsPage = lazy(
   () => import('./pages/AdminCampaignParticipantsPage'),
 )
+const AdminContentReviewsPage = lazy(
+  () => import('./pages/AdminContentReviewsPage'),
+)
 const BusinessShell = lazy(() => import('./features/business/BusinessShell'))
 const BusinessHome = lazy(() => import('./features/business/BusinessHome'))
 const BusinessCampaigns = lazy(() =>
@@ -468,6 +471,16 @@ function App() {
               element={<SellerCollaborationPage />}
             />
           </Route>
+          <Route
+            path="/admin/content-reviews"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminContentReviewsPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
           <Route
             path="/admin/campaign-participants"
             element={

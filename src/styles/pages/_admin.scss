@@ -684,3 +684,52 @@
     width: 100%;
   }
 }
+
+// 필터 줄의 버튼(새로고침 등)이 좁은 칸에서 세로로 접히지 않게 합니다.
+.admin-filters > button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.admin-filters select {
+  height: 42px;
+  border: 1px solid #e5e5eb;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+// 콘텐츠 최종 승인 처리 입력: 처리 방법·의견·버튼을 위아래로 정리합니다.
+.admin-review-form {
+  display: grid;
+  gap: 14px;
+  max-width: 640px;
+  margin: 18px 0;
+
+  label {
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid #e5e5eb;
+    border-radius: 10px;
+    background: #fff;
+    padding: 10px 12px;
+    font: inherit;
+    font-weight: 400;
+  }
+
+  select {
+    height: 42px;
+  }
+
+  button {
+    justify-self: start;
+  }
+}

@@ -1,6 +1,7 @@
 /**
  * 운영 화면의 메뉴·제목·카드·상태·버튼 표현을 공통으로 제공합니다.
  * 이 레이아웃 자체는 권한 조회를 수행하지 않으며 사이드바의 사용자명은 현재 고정 표시값입니다.
+ * 메뉴의 모든 화면은 실제 서버 데이터를 씁니다.
  */
 import { NavLink } from 'react-router-dom'
 
@@ -11,7 +12,7 @@ const menu = [
   ['회원', '/admin/members'],
   ['업체', '/admin/sellers'],
   ['인플루언서', '/admin/creators'],
-  ['프리오더 심사', '/admin/preorders'],
+  ['프리오더 현황', '/admin/preorders'],
   ['주문/환불', '/admin/refunds'],
   ['협업/계약', '/admin/collaborations'],
   ['정산', '/admin/settlements'],

@@ -108,6 +108,9 @@
 .admin-page-head__actions {
   display: flex;
   gap: 8px;
+  // 제목 줄 높이만큼 버튼이 늘어나지 않도록 가운데 정렬합니다.
+  align-items: center;
+  align-self: center;
 }
 
 .admin-card {
@@ -731,5 +734,78 @@
 
   button {
     justify-self: start;
+  }
+}
+
+// 불러오기 오류 안내와 다시 시도 버튼입니다.
+.admin-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #c0392b;
+}
+
+// 공지 작성 입력칸(제목)·수수료율 입력과 체크 항목입니다.
+.admin-notice-form input:not([type='checkbox']),
+.admin-review-form input[type='number'] {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #e5e5eb;
+  border-radius: 10px;
+  padding: 0 12px;
+  font: inherit;
+  font-weight: 400;
+}
+
+.admin-review-form .admin-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// 표 안의 처리 버튼이 붙지 않도록 간격을 둡니다.
+.admin-table td .admin-button + .admin-button {
+  margin-left: 6px;
+}
+
+// 리포트의 상태별 건수 막대입니다.
+.admin-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+
+  li {
+    display: grid;
+    grid-template-columns: 110px 1fr 40px;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  strong {
+    text-align: right;
+  }
+}
+
+.admin-bars__track {
+  height: 8px;
+  border-radius: 999px;
+  background: #f0f0f5;
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    background: #3182f6;
+    border-radius: inherit;
   }
 }

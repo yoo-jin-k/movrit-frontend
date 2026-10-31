@@ -4,17 +4,14 @@
  */
 import AccountPasswordPage from '../features/membership/AccountPasswordPage'
 
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'
-
-const notices = [
-  ['8월 정산 일정 안내', '2026.08.16'],
-  ['서비스 점검 안내', '2026.08.14'],
-  ['프리오더 이용 정책 변경', '2026.08.10'],
-  ['신규 기능: 역할 전환', '2026.08.05'],
-  ['개인정보 처리방침 개정', '2026.08.01'],
-  ['협업 계약 전자서명 안내', '2026.07.28'],
-]
+import useAdminResource from '../features/admin/useAdminResource'
+import {
+  NOTICE_CATEGORY_LABELS,
+  dateOnly,
+} from '../features/admin/adminConsoleModel'
 
 // 사용자 참여와 업체 운영의 진입 경로만 안내하며 권한은 서버에서 확인합니다.
 export function RoleSwitchPage() {
@@ -48,50 +45,83 @@ export function RoleSwitchPage() {
   )
 }
 
+// 운영자가 게시한 공지 목록입니다(GET /api/notices, 로그인 없이 조회). 고정 공지가 먼저 나오고 제목으로 검색할 수 있습니다.
 export function NoticesPage() {
+  const state = useAdminResource('/notices', [])
+  const [search, setSearch] = useState('')
+  const query = search.trim().toLowerCase()
+  const items = (state.data || []).filter((notice) =>
+    notice.title.toLowerCase().includes(query),
+  )
   return (
     <CommonLayout title="공지사항">
-      <p role="note">
-        공지 화면 예시입니다. 아래 일정과 정책은 실제 운영 공지가 아닙니다.
-      </p>
       <section className="common-list-wrap">
         <label className="common-field common-field--search">
           검색
-          <input placeholder="공지 제목 검색" />
+          <input
+            placeholder="공지 제목 검색"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
         </label>
-        <div className="common-notice-list">
-          {notices.map(([title, date], index) => (
-            <Link to={`/notices/${index + 1}`} key={title}>
-              <div>
-                <strong>{title}</strong>
-                <small>{date}</small>
-              </div>
-              <span>›</span>
-            </Link>
-          ))}
-        </div>
+        {state.loading ? (
+          <p role="status">공지를 불러오고 있습니다.</p>
+        ) : state.error ? (
+          <p role="alert">
+            공지를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+          </p>
+        ) : !items.length ? (
+          <p>
+            {search ? '검색한 공지가 없습니다.' : '등록된 공지가 없습니다.'}
+          </p>
+        ) : (
+          <div className="common-notice-list">
+            {items.map((notice) => (
+              <Link to={`/notices/${notice.id}`} key={notice.id}>
+                <div>
+                  <strong>
+                    {notice.pinned ? '[고정] ' : ''}[
+                    {NOTICE_CATEGORY_LABELS[notice.category]}] {notice.title}
+                  </strong>
+                  <small>{dateOnly(notice.publishedAt)}</small>
+                </div>
+                <span>›</span>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </CommonLayout>
   )
 }
 
+// 게시된 공지 한 건입니다(GET /api/notices/{id}). 게시 전이거나 없는 공지는 안내 문구를 보여줍니다.
 export function NoticeDetailPage() {
+  const { noticeId } = useParams()
+  const state = useAdminResource(`/notices/${noticeId}`)
+  const notice = state.data
   return (
     <CommonLayout title="공지 상세">
-      <p role="note">
-        공지 내용 예시입니다. 실제 운영 일정이나 정책을 안내하는 내용이
-        아닙니다.
-      </p>
       <article className="common-card common-card--wide notice-detail-card">
-        <h2>8월 정산 일정 안내</h2>
-        <small>2026.08.16 · 운영팀</small>
-        <hr />
-        <p>안녕하세요, MOVRIT입니다.</p>
-        <p>
-          8월 업체/크리에이터 정산은 8월 31일 기준으로 확정되며, 검증 완료 후
-          등록된 계좌로 순차 지급됩니다.
-        </p>
-        <p>정산 내역은 각 역할의 정산 관리 화면에서 확인할 수 있습니다.</p>
+        {state.loading ? (
+          <p role="status">공지를 불러오고 있습니다.</p>
+        ) : state.error || !notice ? (
+          <p role="alert">공지를 찾을 수 없습니다.</p>
+        ) : (
+          <>
+            <h2>{notice.title}</h2>
+            <small>
+              {dateOnly(notice.publishedAt)} ·{' '}
+              {NOTICE_CATEGORY_LABELS[notice.category]} · 운영팀
+            </small>
+            <hr />
+            {notice.body.split(/\n{2,}/).map((paragraph, index) => (
+              <p key={index} style={{ whiteSpace: 'pre-wrap' }}>
+                {paragraph}
+              </p>
+            ))}
+          </>
+        )}
         <Link className="common-button common-button--secondary" to="/notices">
           목록으로
         </Link>

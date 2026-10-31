@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 자동 점검 실행 결과(스크린샷·임시 ID)
+qa/e2e/e2e/
+qa/e2e/shots/

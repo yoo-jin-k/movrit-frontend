@@ -490,14 +490,51 @@
   color: #c53b31;
 }
 
-/* SNS 채널 연결: 연결 상태 표시와 연결·다시 연결·해제 버튼입니다. */
+/* SNS 채널 연결: 연결 상태 배지, 로그인 연결·직접 등록·해제 버튼, 직접 등록 입력 영역입니다. */
+.account-channel-list li {
+  display: block;
+}
+.account-channel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
 .account-channel-list small a {
   color: #6b38db;
   text-decoration: underline;
 }
+.account-channel-list small {
+  white-space: normal;
+}
+.account-social-list .account-channel-badge {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #f1f1f4;
+  color: #5b5470;
+}
+.account-social-list .account-channel-badge.is-ok {
+  background: #efe8fd;
+  color: #6b38db;
+}
+.account-social-list .account-channel-badge.is-pending {
+  background: #fff4dc;
+  color: #8a5a00;
+}
+.account-social-list .account-channel-badge.is-error {
+  background: #fdecec;
+  color: #c9302c;
+}
+.account-channel-note {
+  color: #c9302c !important;
+}
 .account-channel-actions {
   display: flex;
   flex-shrink: 0;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
@@ -505,14 +542,45 @@
   color: #17171b;
   background: #f1f1f4;
 }
-.account-social-list em.is-muted {
-  color: #8c8c94;
+.account-channel-tip {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #5b5470;
+}
+.account-channel-tip summary {
+  cursor: pointer;
+  color: #6b38db;
+}
+.account-channel-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #faf9fc;
+  font-size: 14px;
+}
+.account-channel-form p {
+  margin: 0;
+  color: #5b5470;
+  font-size: 13px;
+}
+.account-channel-form label {
+  display: grid;
+  gap: 4px;
+  font-weight: 600;
+}
+.account-channel-form input[type='url'],
+.account-channel-form input[type='text'] {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dedbe5;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 400;
 }
 @media (max-width: 640px) {
-  .account-channel-list li {
+  .account-channel-row {
     flex-wrap: wrap;
-  }
-  .account-channel-list small {
-    white-space: normal;
   }
 }

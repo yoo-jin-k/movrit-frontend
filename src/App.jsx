@@ -24,6 +24,9 @@ const AdminCampaignParticipantsPage = lazy(
 const AdminContentReviewsPage = lazy(
   () => import('./pages/AdminContentReviewsPage'),
 )
+const AdminChannelVerificationsPage = lazy(
+  () => import('./pages/AdminChannelVerificationsPage'),
+)
 const BusinessShell = lazy(() => import('./features/business/BusinessShell'))
 const BusinessHome = lazy(() => import('./features/business/BusinessHome'))
 const BusinessCampaigns = lazy(() =>
@@ -489,6 +492,16 @@ function App() {
               <ProtectedPage>
                 <AdminAccess>
                   <AdminContentReviewsPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/channel-verifications"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminChannelVerificationsPage />
                 </AdminAccess>
               </ProtectedPage>
             }

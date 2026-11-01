@@ -809,3 +809,19 @@
     border-radius: inherit;
   }
 }
+
+// 채널 확인: 회원이 올린 프로필 캡처와 확인·반려 버튼 줄입니다.
+.admin-channel-evidence {
+  display: block;
+  max-width: min(100%, 420px);
+  max-height: 560px;
+  margin: 14px 0;
+  border: 1px solid #ececf1;
+  border-radius: 12px;
+  object-fit: contain;
+}
+.admin-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

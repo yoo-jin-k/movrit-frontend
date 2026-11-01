@@ -14,6 +14,8 @@ export function notificationPath(item, business = false) {
         CAMPAIGN_CONTENT: `/mypage/campaigns?contentId=${id}`,
         INQUIRY: '/inquiries',
         PREORDER: `/preorders/${id}`,
+        // 채널 확인 결과(확인·반려)는 설정의 SNS 채널 연결 영역으로 이동합니다.
+        MEMBER_CHANNEL_CONNECTION: '/settings#channel-connect',
       }
   return paths[item.targetType] || null
 }

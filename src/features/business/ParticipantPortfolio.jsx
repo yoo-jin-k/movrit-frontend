@@ -9,6 +9,47 @@ import { metricVerificationLabel } from '../membership/channelProfileModel'
 import { myContentLink } from '../membership/myContentModel'
 import { workspaceTime } from '../membership/campaignWorkspaceModel'
 import { campaignRequirementSummary } from '../discovery/eligibilityModel'
+import {
+  connectionBadge,
+  followerText,
+} from '../membership/channelConnectModel'
+
+// 참여자가 연결·등록한 SNS 채널입니다. 로그인 연결·운영자 확인 여부를 배지로 함께 보여줍니다(반려된 채널은 서버가 빼고 보냅니다).
+function LinkedChannels({ channels }) {
+  if (!Array.isArray(channels) || !channels.length)
+    return <p>연결한 SNS 채널이 없습니다.</p>
+  return (
+    <ul className="participant-linked-channels">
+      {channels.map((channel) => {
+        const badge = connectionBadge(channel)
+        const url = myContentLink(channel.profileUrl)
+        return (
+          <li key={channel.provider}>
+            <strong>{channel.label}</strong>
+            {url ? (
+              <a
+                className="business-link"
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {channel.accountName} ↗
+              </a>
+            ) : (
+              <span>{channel.accountName}</span>
+            )}
+            <span>{followerText(channel.provider, channel.followerCount)}</span>
+            {badge && (
+              <em className={`participant-channel-badge ${badge.tone}`}>
+                {badge.text}
+              </em>
+            )}
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
 export function ParticipantMetrics({ metrics, compact = false }) {
   if (!Array.isArray(metrics)) return <span>채널·지표 확인 필요</span>
   if (!metrics.length) return <span>등록된 채널 지표가 없습니다.</span>
@@ -43,6 +84,7 @@ export default function ParticipantPortfolio({ data }) {
     requirementEvaluation: evaluation,
     completedCampaignCount,
     completedCampaigns,
+    linkedChannels,
   } = data
   const channelUrl = myContentLink(profile.channelUrl)
   return (
@@ -84,6 +126,10 @@ export default function ParticipantPortfolio({ data }) {
         ) : (
           <p>열 수 있는 활동 채널 주소가 없습니다.</p>
         )}
+      </section>
+      <section aria-label="연결한 SNS 채널">
+        <h3>연결한 SNS 채널</h3>
+        <LinkedChannels channels={linkedChannels} />
       </section>
       <section aria-label="채널 지표">
         <h3>채널·지표</h3>

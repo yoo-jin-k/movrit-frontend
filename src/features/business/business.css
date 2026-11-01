@@ -1161,3 +1161,38 @@
     padding: 6px 2px;
   }
 }
+
+/* 참여자 상세: 연결한 SNS 채널(링크·수치·확인 상태 배지) */
+.participant-linked-channels {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.participant-linked-channels li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid #ececf1;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.participant-channel-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-style: normal;
+  background: #f1f1f4;
+  color: #5b5470;
+}
+.participant-channel-badge.is-ok {
+  background: #efe8fd;
+  color: #6b38db;
+}
+.participant-channel-badge.is-pending {
+  background: #fff4dc;
+  color: #8a5a00;
+}

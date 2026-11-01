@@ -10,6 +10,7 @@ const menu = [
   ['캠페인 참여자', '/admin/campaign-participants'],
   ['콘텐츠 최종 승인', '/admin/content-reviews'],
   ['채널 확인', '/admin/channel-verifications'],
+  ['메시지', '/admin/messages'],
   ['회원', '/admin/members'],
   ['업체', '/admin/sellers'],
   ['인플루언서', '/admin/creators'],

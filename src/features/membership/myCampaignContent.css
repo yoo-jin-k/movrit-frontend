@@ -125,3 +125,31 @@
   font-size: 13px;
   line-height: 1.6;
 }
+
+/* 신청별 브랜드 채팅 버튼입니다. */
+.my-campaign-content__chat {
+  margin-top: 12px;
+}
+.my-campaign-content__chat button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #6b38db;
+  border-radius: 10px;
+  background: #fff;
+  color: #6b38db;
+  font-weight: 700;
+}
+
+/* 신청별 브랜드 채팅 버튼입니다. */
+.my-campaign-content__chat {
+  margin-top: 12px;
+}
+.my-campaign-content__chat button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #6b38db;
+  border-radius: 10px;
+  background: #fff;
+  color: #6b38db;
+  font-weight: 700;
+}

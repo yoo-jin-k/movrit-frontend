@@ -7,15 +7,19 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { getMySellerProfile } from '../../api/sellerApi'
 import './business.css'
 import BusinessIcon from './BusinessIcon'
+import useChatUnread from '../chat/useChatUnread'
 const menus = [
   ['dashboard', '홈'],
   ['campaigns', '캠페인'],
   ['participants', '참여자'],
   ['contents', '콘텐츠'],
   ['inbox', '알림·문의'],
+  ['messages', '메시지'],
   ['settings', '업체 설정'],
 ]
 export default function BusinessShell() {
+  // 메시지 메뉴에 안 읽은 채팅 수를 배지로 보여줍니다.
+  const chatUnread = useChatUnread()
   const [profile, setProfile] = useState(null),
     [error, setError] = useState(''),
     [attempt, setAttempt] = useState(0)
@@ -86,6 +90,14 @@ export default function BusinessShell() {
               <NavLink key={path} to={`/seller/${path}`}>
                 <BusinessIcon name={path} />
                 {label}
+                {path === 'messages' && chatUnread > 0 && (
+                  <em
+                    className="chat-nav-badge"
+                    aria-label={`안 읽은 메시지 ${chatUnread}개`}
+                  >
+                    {chatUnread > 99 ? '99+' : chatUnread}
+                  </em>
+                )}
               </NavLink>
             ))}
           </nav>

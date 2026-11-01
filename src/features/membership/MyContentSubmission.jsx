@@ -23,6 +23,7 @@ import {
   submissionWindowMessage,
 } from './campaignWorkspaceModel'
 import { showsCancellationHelp } from './campaignCancellationModel'
+import OpenChatButton from '../chat/OpenChatButton'
 import './myCampaignContent.css'
 
 // 서버 상태와 최신 version을 함께 사용합니다. 저장 결과가 불명확하면 자동 재전송하지 않습니다.
@@ -321,13 +322,22 @@ export default function MyContentSubmission({
           취소 사유: {application.cancellationReason || '기록 없음'}
         </p>
       )}
-      {/* 신청한 캠페인은 본인이 취소할 수 없습니다. 사정이 생기면 업체에 문의하도록 안내합니다. */}
+      {/* 신청한 캠페인은 본인이 취소할 수 없습니다. 사정이 생기면 브랜드와 채팅으로 이야기하도록 안내합니다. */}
       {showsCancellationHelp(application) && (
         <p className="my-campaign-content__cancel-help">
           신청한 캠페인은 직접 취소할 수 없습니다. 참여가 어려운 사정이 생기면
-          업체 담당자에게 문의해 주세요. 업체가 확인 후 참여 취소를 처리합니다.
+          브랜드에 채팅으로 알려 주세요. 브랜드가 확인 후 참여 취소를
+          처리합니다.
         </p>
       )}
+      {/* 이 신청에 대해 브랜드와 대화합니다(운영자도 함께 볼 수 있습니다). */}
+      <div className="my-campaign-content__chat">
+        <OpenChatButton
+          applicationId={application.id}
+          basePath="/messages"
+          label="브랜드와 채팅하기"
+        />
+      </div>
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
       <button type="button" disabled={busy} onClick={onReload}>

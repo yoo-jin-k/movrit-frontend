@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react'
 import AccountMenu from './AccountMenu'
 import useUnreadNotifications from '../../features/notifications/useUnreadNotifications'
+import useChatUnread from '../../features/chat/useChatUnread'
 import { unreadBadgeText } from '../../features/notifications/notificationBadge'
 import '../../styles/pages/_main-home.scss'
 import {
@@ -32,6 +33,8 @@ function HeaderContent() {
   const [menuOpen, setMenuOpen] = useState(false)
   const unread = useUnreadNotifications()
   const badge = unreadBadgeText(unread)
+  // 메시지 아이콘의 안 읽은 채팅 수입니다.
+  const chatBadge = unreadBadgeText(useChatUnread())
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState(() =>
     Boolean(sessionStorage.getItem('accessToken')),
@@ -92,6 +95,37 @@ function HeaderContent() {
             ) : (
               <Link className="main-home-header__login" to="/login">
                 로그인
+              </Link>
+            )}
+            {/* 메시지(브랜드·운영자 채팅). 안 읽은 메시지가 있으면 개수 배지를 띄웁니다. */}
+            {loggedIn && (
+              <Link
+                to="/messages"
+                className="main-home-header__bell"
+                aria-label={
+                  chatBadge ? `메시지, 안 읽은 메시지 ${chatBadge}개` : '메시지'
+                }
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 5h16v11H9l-5 4zM8 9h8M8 12h5"
+                    stroke="#1F1F24"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                {chatBadge && (
+                  <span className="main-home-header__badge" aria-hidden="true">
+                    {chatBadge}
+                  </span>
+                )}
               </Link>
             )}
             {/* 읽지 않은 알림이 있으면 종 아이콘 위에 개수 배지를 띄웁니다(수정 요청·선정 결과 등). */}

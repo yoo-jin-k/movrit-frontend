@@ -74,6 +74,11 @@ const SignupPage = lazy(() => import('./pages/SignupPage'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
+const MessagesPage = lazy(() => import('./pages/MessagesPage'))
+const AdminMessagesPage = lazy(() => import('./pages/AdminMessagesPage'))
+const BusinessMessages = lazy(
+  () => import('./features/business/BusinessMessages'),
+)
 const InquiriesPage = lazy(() => import('./pages/InquiriesPage'))
 const AdminInquiriesPage = lazy(() => import('./pages/AdminInquiriesPage'))
 const SellerApplyPage = lazy(() => import('./pages/SellerApplyPage'))
@@ -395,6 +400,15 @@ function App() {
               </ProtectedPage>
             }
           />
+          {/* 참여자 메시지(브랜드 대화·운영자 문의) */}
+          <Route
+            path="/messages"
+            element={
+              <ProtectedPage>
+                <MessagesPage />
+              </ProtectedPage>
+            }
+          />
           <Route
             path="/notifications"
             element={
@@ -476,6 +490,7 @@ function App() {
             <Route path="participants" element={<BusinessParticipants />} />
             <Route path="contents" element={<BusinessContents />} />
             <Route path="inbox" element={<BusinessInbox />} />
+            <Route path="messages" element={<BusinessMessages />} />
             <Route path="settings" element={<BusinessSettings />} />
             <Route path="brands" element={<BrandManagePage />} />
             <Route path="products" element={<ProductManagePage />} />
@@ -492,6 +507,16 @@ function App() {
               <ProtectedPage>
                 <AdminAccess>
                   <AdminContentReviewsPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/messages"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminMessagesPage />
                 </AdminAccess>
               </ProtectedPage>
             }

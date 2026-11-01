@@ -1196,3 +1196,11 @@
   background: #fff4dc;
   color: #8a5a00;
 }
+
+/* 업체 메뉴의 메시지 배지와 참여자 상세의 채팅 버튼 위치입니다. */
+.business-shell .business-sidebar nav a .chat-nav-badge {
+  margin-left: auto;
+}
+.participant-chat {
+  margin: 16px 0;
+}

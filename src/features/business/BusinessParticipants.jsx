@@ -14,6 +14,7 @@ import useBusinessList from './useBusinessList'
 import { actOnApplication, manageApplication } from './businessApi'
 import { DetailDialog, ListState, PageHeader, StatusBadge } from './BusinessUi'
 import { dateLabel, statusNames } from './businessModel'
+import OpenChatButton from '../chat/OpenChatButton'
 import ParticipantPortfolio, {
   ParticipantMetrics,
 } from './ParticipantPortfolio'
@@ -462,6 +463,14 @@ export default function BusinessParticipants() {
           ) : portfolio.data ? (
             <ParticipantPortfolio data={portfolio.data} />
           ) : null}
+          {/* 이 신청의 참여자와 대화합니다(운영자도 함께 볼 수 있습니다). */}
+          <div className="business-actions participant-chat">
+            <OpenChatButton
+              applicationId={current.id}
+              basePath="/seller/messages"
+              label="참여자와 채팅하기"
+            />
+          </div>
           {!portfolio.loading &&
             !portfolio.error &&
             portfolio.data &&

@@ -30,6 +30,16 @@ export async function readCampaign(id, signal) {
   adaptCampaignSummary(data)
   return data
 }
+// 모집 현황(신청·선정·수락 인원)을 가볍게 다시 불러옵니다. 상세 화면이 주기적으로 호출합니다.
+export async function readCampaignRecruitment(id, signal) {
+  const { data } = await publicApi.get(
+    `/collaborations/campaigns/${encodeURIComponent(id)}/recruitment`,
+    { signal },
+  )
+  if (!data || typeof data.applicationCount !== 'number')
+    throw new Error('모집 현황 응답 형식이 올바르지 않습니다.')
+  return data
+}
 // 서버가 정의한 참여 방식·질문·동의 문서 구조를 검사한 뒤 실제 신청 화면에 전달합니다.
 export async function readCampaignForm(id, signal) {
   const { data } = await publicApi.get(

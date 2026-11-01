@@ -15,6 +15,12 @@ export async function actOnApplication(id, action) {
     throw new Error('지원하지 않는 처리입니다.')
   return (await api.patch(`/campaigns/applications/${id}/${action}`)).data
 }
+// 업체의 선정 편집(선정 취소·미선정 되돌리기·참여 취소)을 요청합니다.
+export async function manageApplication(id, payload) {
+  if (!['unselect', 'restore', 'cancel'].includes(payload.action))
+    throw new Error('지원하지 않는 선정 편집입니다.')
+  return (await api.patch(`/campaigns/applications/${id}/manage`, payload)).data
+}
 export async function reviewContent(id, action, payload) {
   if (!['approve', 'request-revision'].includes(action))
     throw new Error('지원하지 않는 검토입니다.')

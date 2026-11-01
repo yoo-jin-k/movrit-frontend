@@ -2678,3 +2678,51 @@
     right: -60px;
   }
 }
+
+// 캠페인 상세의 모집 현황(신청 1 / 모집 2명)입니다.
+.recruitment-progress {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 1px solid #ececf0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.recruitment-progress__count {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 0 8px;
+
+  strong {
+    font-size: 16px;
+    color: #17171b;
+  }
+
+  span {
+    font-size: 12px;
+    color: #6b38db;
+    font-weight: 700;
+  }
+}
+
+.recruitment-progress__bar {
+  height: 6px;
+  border-radius: 999px;
+  background: #f0f0f4;
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    background: #6b38db;
+    border-radius: inherit;
+    transition: width 0.3s ease;
+  }
+}
+
+.recruitment-progress__detail {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #77777f;
+}

@@ -4,6 +4,7 @@
  * 모바일에서는 본문을 먼저 보여주고 하단 고정 바로 신청 영역에 바로 이동할 수 있게 합니다.
  */
 import { useEffect, useState } from 'react'
+import RecruitmentProgress from './RecruitmentProgress'
 import { Link } from 'react-router-dom'
 import {
   readCampaign,
@@ -128,10 +129,12 @@ export default function LiveCampaignDetailPage({ campaignId }) {
               >
                 정보 새로고침
               </button>
-              <p>
-                모집 인원 {detail.recruitmentCount ?? '미구성'}명 ·{' '}
-                {detail.open ? '모집 중' : '모집 종료'}
-              </p>
+              {/* 신청·선정 인원을 주기적으로 다시 불러와 '신청 1 / 모집 2명'처럼 보여줍니다. */}
+              <RecruitmentProgress
+                campaignId={campaignId}
+                recruitmentCount={detail.recruitmentCount}
+                open={detail.open}
+              />
               <section aria-label="서버 신청 조건">
                 <h3>신청 조건</h3>
                 {state.formError ? (

@@ -58,8 +58,8 @@ export const STATUS_LABELS = {
 // 같은 코드라도 기능마다 뜻이 달라 따로 둡니다(예: ACTIVE는 회원 '정상', 신청 '참여 중').
 export const APPLICATION_STATUS_LABELS = {
   ...STATUS_LABELS,
-  ACTIVE: '참여 중',
-  SELECTED: '선정 · 수락 대기',
+  ACTIVE: '수락 완료 · 참여 중',
+  SELECTED: '선정 · 참여자 수락 대기',
   REJECTED: '미선정',
 }
 export const CONTENT_STATUS_LABELS = {

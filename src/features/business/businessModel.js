@@ -5,9 +5,9 @@
 // 서버가 제공한 상태만 번역합니다. 알 수 없는 상태를 완료로 취급하지 않습니다.
 export const statusNames = {
   SUBMITTED: '접수',
-  SELECTED: '선정 · 수락 대기',
+  SELECTED: '선정 · 참여자 수락 대기',
   REJECTED: '미선정',
-  ACTIVE: '참여 중',
+  ACTIVE: '수락 완료 · 참여 중',
   CONTENT_SUBMITTED: '콘텐츠 제출',
   REVISION_REQUESTED: '수정 요청',
   BRAND_APPROVED: '업체 검토 완료 · 최종 승인 대기',

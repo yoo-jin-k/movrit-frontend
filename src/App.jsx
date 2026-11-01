@@ -52,6 +52,9 @@ const MyRegisteredContents = lazy(
 const AccountSettingsPage = lazy(
   () => import('./features/membership/AccountSettingsPage'),
 )
+const ChannelConnectCallbackPage = lazy(
+  () => import('./features/membership/ChannelConnectCallbackPage'),
+)
 const MyCampaignsPage = lazy(
   () => import('./features/membership/MyCampaignsPage'),
 )
@@ -240,6 +243,15 @@ function App() {
             element={
               <ProtectedPage>
                 <AccountSettingsPage />
+              </ProtectedPage>
+            }
+          />
+          {/* SNS 채널 연결(인스타그램·유튜브·네이버 블로그) 로그인 후 돌아오는 주소입니다. */}
+          <Route
+            path="/channel-connect/callback/:provider"
+            element={
+              <ProtectedPage>
+                <ChannelConnectCallbackPage />
               </ProtectedPage>
             }
           />

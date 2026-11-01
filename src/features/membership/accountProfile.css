@@ -489,3 +489,30 @@
 .account-social-notice.is-error {
   color: #c53b31;
 }
+
+/* SNS 채널 연결: 연결 상태 표시와 연결·다시 연결·해제 버튼입니다. */
+.account-channel-list small a {
+  color: #6b38db;
+  text-decoration: underline;
+}
+.account-channel-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+}
+.account-social-list .account-channel-actions button.is-secondary {
+  color: #17171b;
+  background: #f1f1f4;
+}
+.account-social-list em.is-muted {
+  color: #8c8c94;
+}
+@media (max-width: 640px) {
+  .account-channel-list li {
+    flex-wrap: wrap;
+  }
+  .account-channel-list small {
+    white-space: normal;
+  }
+}

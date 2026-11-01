@@ -8,6 +8,7 @@ import LogoutButton from '../auth/LogoutButton'
 import useMemberAccount from './useMemberAccount'
 import AvatarEditor from './AvatarEditor'
 import SocialLoginLinks from './SocialLoginLinks'
+import ChannelConnections from './ChannelConnections'
 import './accountProfile.css'
 export default function AccountSettingsPage() {
   const state = useMemberAccount()
@@ -18,6 +19,7 @@ export default function AccountSettingsPage() {
         <a href="#profile-photo">프로필 사진</a>
         <a href="#account-basic">기본 정보</a>
         <a href="#social-login">로그인 연결</a>
+        <a href="#channel-connect">SNS 채널 연결</a>
         <Link to="/settings/security">비밀번호</Link>
         <Link to="/mypage/addresses">배송지</Link>
       </nav>
@@ -45,6 +47,7 @@ export default function AccountSettingsPage() {
         <Link to="/creator/profile">활동 프로필·채널 정보 관리 ›</Link>
       </section>
       <SocialLoginLinks notice={location.state?.linkNotice} />
+      <ChannelConnections notice={location.state?.channelNotice} />
       <section className="account-settings-group">
         <h2>로그인 및 배송 정보</h2>
         <Link to="/settings/security">

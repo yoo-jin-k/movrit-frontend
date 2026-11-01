@@ -20,10 +20,10 @@ export default function BusinessHome() {
       (c) => c.status === 'SUBMITTED',
     ],
     [
-      '참여 수락 대기',
+      '참여 중인 참여자',
       applicants,
       'participants',
-      (c) => c.status === 'SELECTED',
+      (c) => c.status === 'ACTIVE' || c.status === 'SELECTED',
     ],
     ['검토할 콘텐츠', contents, 'contents', (c) => c.status === 'SUBMITTED'],
   ]

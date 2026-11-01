@@ -1,5 +1,5 @@
 /**
- * 본인 콘텐츠 목록·제출과 참여 수락·체험 확인 명령을 제공합니다.
+ * 본인 콘텐츠 목록·제출과 체험 확인(이전 방식 신청은 참여 시작) 명령을 제공합니다.
  * 제출 응답은 신청 ID와 버전을 확인하고, 참여 명령은 허용한 두 동작만 전송합니다.
  */
 import api from './axios'
@@ -28,7 +28,7 @@ export async function submitMyCampaignContent(applicationId, payload) {
   return data
 }
 
-// 허용된 참여 수락·체험 확인 외의 동작 이름은 네트워크 요청 전에 차단합니다.
+// 허용된 참여 시작·체험 확인 외의 동작 이름은 네트워크 요청 전에 차단합니다.
 export async function updateMyParticipation(applicationId, action) {
   if (!['activate', 'experience-confirm'].includes(action))
     throw new Error('지원하지 않는 참여 처리입니다.')
@@ -39,17 +39,5 @@ export async function updateMyParticipation(applicationId, action) {
   )
   if (!data || String(data.id) !== String(applicationId))
     throw new Error('참여 처리 결과를 확인할 수 없습니다.')
-  return data
-}
-
-// 캠페인 참여 취소만 수행하며 주문·결제 취소 API와 분리합니다.
-export async function cancelMyCampaignApplication(applicationId, payload) {
-  const { data } = await api.patch(
-    `/campaigns/applications/${encodeURIComponent(applicationId)}/cancel`,
-    payload,
-    { timeout: 15000 },
-  )
-  if (String(data?.id) !== String(applicationId) || data.status !== 'CANCELLED')
-    throw new Error('취소 결과를 확인할 수 없습니다.')
   return data
 }

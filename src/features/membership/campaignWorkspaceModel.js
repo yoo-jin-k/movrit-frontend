@@ -2,9 +2,9 @@
 import { seoulInstant } from '../discovery/scheduleModel.js'
 export const APPLICATION_STATUS = {
   SUBMITTED: '신청 접수',
-  SELECTED: '선정 · 참여 수락 대기',
+  SELECTED: '선정 · 참여 시작 필요',
   REJECTED: '미선정',
-  ACTIVE: '참여 중',
+  ACTIVE: '선정 · 참여 중',
   CONTENT_SUBMITTED: '콘텐츠 검토 중',
   REVISION_REQUESTED: '수정 요청',
   COMPLETED: '완료',

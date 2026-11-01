@@ -65,7 +65,8 @@ export function myContentLink(value) {
   }
 }
 
-// SELECTED에서는 참여 수락, 확인 전 ACTIVE에서는 체험 확인만 노출합니다. 그 외 상태에는 명령을 만들지 않습니다.
+// 확인 전 ACTIVE에서는 체험 확인만 노출합니다. 선정되면 바로 참여 중이 되므로 참여 수락 단계는 없습니다.
+// 다만 이전 방식으로 선정(SELECTED)에 머문 기존 신청은 '참여 시작'으로 이어서 진행할 수 있게 합니다.
 export function myParticipationAction(application) {
   if (application?.status === 'SELECTED') return 'activate'
   if (application?.status === 'ACTIVE' && !application.experienceConfirmedAt)

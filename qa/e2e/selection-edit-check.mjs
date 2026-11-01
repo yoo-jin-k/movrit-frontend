@@ -1,4 +1,4 @@
-// 모집 현황 표시·업체 화면 자동 갱신·선정 편집(선정 취소·참여 취소·미선정 되돌리기)을 실제 화면으로 확인합니다.
+// 모집 현황 표시·선정 즉시 참여 시작·선정 편집(선정 취소·참여 취소·미선정 되돌리기)을 실제 화면으로 확인합니다.
 // 준비: RECRUIT=2 로 e2e-brand-create → 두 사용자 e2e-apply(qa-app-a, qa-app-b) 를 먼저 실행합니다.
 import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
@@ -55,22 +55,23 @@ check(
   summary.replace(/\n/g, ' '),
 )
 
-// 3) 사용자 A가 다른 곳에서 수락 → 업체 화면을 새로고침하지 않아도 갱신
-await call(userA, 'PATCH', `/campaigns/applications/${appA}/activate`)
+// 3) 선정과 동시에 참여 중이 되고(참여 수락 단계 없음), 사용자 상세 모집 현황도 새로고침 없이 갱신됩니다.
 const rowA = page.locator('tr', {
   has: page.getByRole('button', { name: new RegExp(`신청 ${appA} 상세 보기`) }),
 })
-const updated = await rowA
-  .getByText('수락 완료 · 참여 중')
-  .waitFor({ timeout: 25000 })
-  .then(() => true)
-  .catch(() => false)
-check('참여자 수락이 업체 화면에 자동 반영(새로고침 없이)', updated)
+check(
+  '선정 즉시 참여 중으로 표시',
+  await rowA
+    .getByText('선정 · 참여 중')
+    .waitFor({ timeout: 10000 })
+    .then(() => true)
+    .catch(() => false),
+)
 await guest.waitForTimeout(16000)
 check(
   '사용자 상세 모집 현황 자동 갱신',
   (await guest.locator('.recruitment-progress').innerText()).includes(
-    '참여 수락 1명',
+    '선정 1명',
   ),
 )
 

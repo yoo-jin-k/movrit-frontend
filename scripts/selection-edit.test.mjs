@@ -14,6 +14,13 @@ test('상태별로 할 수 있는 선정 편집만 보여줍니다', () => {
   )
   assert.deepEqual(
     manageActionsFor('ACTIVE').map((a) => a.action),
+    ['unselect', 'cancel'],
+  )
+  // 체험 완료를 확인한 참여자는 선정 취소 대신 참여 취소만 할 수 있습니다.
+  assert.deepEqual(
+    manageActionsFor('ACTIVE', { experienceConfirmed: true }).map(
+      (a) => a.action,
+    ),
     ['cancel'],
   )
   assert.deepEqual(
@@ -38,7 +45,7 @@ test('참여 취소는 사유가 필요합니다', () => {
   })
 })
 
-test('모집 현황: 선정·수락·신청 인원과 남은 자리를 셉니다', () => {
+test('모집 현황: 선정·신청 인원과 남은 자리를 셉니다', () => {
   const apps = [
     { status: 'SELECTED' },
     { status: 'ACTIVE' },
@@ -49,14 +56,14 @@ test('모집 현황: 선정·수락·신청 인원과 남은 자리를 셉니다
   assert.deepEqual(recruitmentSummary(apps, 3), {
     applied: 4,
     selected: 2,
-    accepted: 1,
     capacity: 3,
     remaining: 1,
   })
 })
 
-test('진행 단계: 수락 대기는 2단계째, 미선정·취소는 종료 안내', () => {
+test('진행 단계: 선정되면 바로 참여 중 단계, 미선정·취소는 종료 안내', () => {
+  assert.equal(progressOf('ACTIVE').index, 1)
   assert.equal(progressOf('SELECTED').index, 1)
-  assert.equal(progressOf('REVISION_REQUESTED').index, 3)
+  assert.equal(progressOf('REVISION_REQUESTED').index, 2)
   assert.match(progressOf('CANCELLED').ended, /취소/)
 })

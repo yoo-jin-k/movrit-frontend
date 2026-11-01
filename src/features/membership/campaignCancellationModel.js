@@ -1,21 +1,9 @@
 /**
- * 참여자 본인의 신청 취소 규칙입니다. 주문 취소와 분리됩니다.
- * - 선정 전(접수 SUBMITTED)에만 본인이 신청을 취소할 수 있습니다.
- * - 선정된 뒤(선정·참여 중)에는 본인이 취소할 수 없고, 사정이 생기면 업체에 문의해 업체가 '참여 취소'로 처리합니다.
+ * 참여자 본인의 캠페인 취소 규칙입니다.
+ * - 캠페인 신청은 한 번 하면 본인이 취소할 수 없습니다(서버도 409로 거절합니다).
+ * - 참여가 어려운 사정이 생기면 업체에 문의하고, 업체가 선정 편집의 '참여 취소'로 처리합니다.
+ * 이 함수는 취소 버튼 대신 '업체에 문의해 주세요' 안내를 보여줄 상태인지 판단합니다.
  */
-export function canCancelCampaign(application) {
-  return application?.status === 'SUBMITTED'
-}
-
-// 선정 후 참여 중인 신청은 취소 버튼 대신 업체 문의 안내를 보여줍니다.
-export function needsBrandForCancellation(application) {
-  return ['SELECTED', 'ACTIVE'].includes(application?.status)
-}
-
-export function cancellationPayload(application, reason) {
-  if (!canCancelCampaign(application))
-    throw new Error('선정 전 접수 상태에서만 신청을 취소할 수 있습니다.')
-  const value = String(reason || '').trim()
-  if (!value) throw new Error('취소 사유를 입력해 주세요.')
-  return { reason: value }
+export function showsCancellationHelp(application) {
+  return ['SUBMITTED', 'SELECTED', 'ACTIVE'].includes(application?.status)
 }

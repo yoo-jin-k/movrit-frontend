@@ -28,11 +28,13 @@ function CampaignCounts({ campaignId, applications }) {
   return (
     <>
       <strong>
-        {items.filter((item) => item.status === 'SELECTED').length} ·{' '}
-        {items.filter((item) => item.status === 'ACTIVE').length} ·{' '}
-        {items.filter((item) => item.status === 'CONTENT_SUBMITTED').length}
+        {
+          items.filter((item) => ['SELECTED', 'ACTIVE'].includes(item.status))
+            .length
+        }{' '}
+        · {items.filter((item) => item.status === 'CONTENT_SUBMITTED').length}
       </strong>
-      <small>수락 대기 · 참여 중 · 제출 상태</small>
+      <small>참여 중 · 제출 상태</small>
     </>
   )
 }
@@ -101,8 +103,8 @@ function CampaignDetail({ campaign, applications, onClose }) {
         </div>
       </dl>
       <p className="business-info">
-        선정과 참여 수락은 별도입니다. 콘텐츠의 업체 검토 완료도 운영자 최종
-        승인과 구분됩니다.
+        선정하면 참여자의 수락 없이 바로 참여가 시작됩니다. 콘텐츠의 업체 검토
+        완료는 운영자 최종 승인과 구분됩니다.
       </p>
       <div className="business-actions">
         <Link

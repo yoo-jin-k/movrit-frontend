@@ -1,4 +1,4 @@
-// E2E 3~8단계: 업체 선정 → 참여 수락 → 체험 완료 확인 → 콘텐츠 제출 → 업체 검토 완료(화면) → 운영자 최종 승인(API)
+// E2E 3~8단계: 업체 선정(즉시 참여 중) → 체험 완료 확인 → 콘텐츠 제출 → 업체 검토 완료(화면) → 운영자 최종 승인(API)
 import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
@@ -36,7 +36,7 @@ await step('업체 선정', async () => {
 })
 await status('선정 후')
 
-// 4~6) 사용자가 내 캠페인 화면에서 참여 수락 → 체험 완료 확인 → 콘텐츠 제출
+// 4~6) 사용자가 내 캠페인 화면에서 체험 완료 확인 → 콘텐츠 제출(선정되면 참여 수락 없이 바로 참여 중입니다)
 const u = await pageAs(browser, user)
 const openMine = async () => {
   await u.goto(`${base}/mypage/campaigns`, { waitUntil: 'networkidle' })
@@ -47,13 +47,7 @@ const openMine = async () => {
     .click()
   return u.getByRole('region', { name: `신청 ${appId} 콘텐츠` })
 }
-await step('참여 수락', async () => {
-  const sec = await openMine()
-  await sec.getByRole('button', { name: '참여 수락' }).click()
-  await sec.getByRole('button', { name: '확인하여 반영' }).click()
-  await u.waitForTimeout(1500)
-})
-await status('참여 수락 후')
+await status('선정 직후(참여 중이어야 합니다)')
 await step('체험 완료 확인', async () => {
   const sec = await openMine()
   await sec.getByRole('button', { name: '체험 완료 확인' }).click()

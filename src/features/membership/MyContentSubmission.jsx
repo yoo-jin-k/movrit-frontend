@@ -1,12 +1,12 @@
 /**
- * 서버 신청 상태에 따라 참여 수락·체험 확인·최초 제출·재제출 동작을 구분합니다.
+ * 서버 신청 상태에 따라 체험 확인·최초 제출·재제출 동작을 구분합니다.
+ * 선정되면 바로 참여 중이 되며, 신청한 캠페인은 본인이 취소할 수 없습니다(업체 문의 안내만 표시).
  * 진행 중 요청을 ref로 중복 방지하고 성공 또는 불명확한 결과 뒤에는 최신 내역 조회를 요구합니다.
  */
 import { useRef, useState } from 'react'
 import {
   submitMyCampaignContent,
   updateMyParticipation,
-  cancelMyCampaignApplication,
 } from '../../api/myCampaignContentApi'
 import {
   contentSubmissionAllowed,
@@ -22,11 +22,7 @@ import {
   workspaceTime,
   submissionWindowMessage,
 } from './campaignWorkspaceModel'
-import {
-  canCancelCampaign,
-  needsBrandForCancellation,
-  cancellationPayload,
-} from './campaignCancellationModel'
+import { showsCancellationHelp } from './campaignCancellationModel'
 import './myCampaignContent.css'
 
 // 서버 상태와 최신 version을 함께 사용합니다. 저장 결과가 불명확하면 자동 재전송하지 않습니다.
@@ -55,8 +51,6 @@ export default function MyContentSubmission({
     [notice, setNotice] = useState('')
   const [confirmAction, setConfirmAction] = useState(false)
   const inFlight = useRef(false)
-  const [cancelling, setCancelling] = useState(false)
-  const [reason, setReason] = useState('')
   const participationAction = myParticipationAction(application)
   const windowNotice = submissionWindowMessage(campaign, submission)
   const eligible =
@@ -102,7 +96,7 @@ export default function MyContentSubmission({
       setBusy(false)
     }
   }
-  // 참여 수락과 체험 확인은 화면의 확인 단계 후 실행합니다.
+  // 체험 확인(이전 방식 신청은 참여 시작)은 화면의 확인 단계 후 실행합니다.
   // 응답 후 로컬에서 다음 업무 상태를 추측하지 않고 최신 내역을 다시 확인하도록 합니다.
   const confirmParticipation = async () => {
     if (!participationAction || !confirmAction || inFlight.current || locked)
@@ -115,7 +109,7 @@ export default function MyContentSubmission({
       setLocked(true)
       setNotice(
         participationAction === 'activate'
-          ? '참여 수락이 반영되었습니다. 최신 내역을 확인해 주세요.'
+          ? '참여가 시작되었습니다. 최신 내역을 확인해 주세요.'
           : '체험 완료 확인이 반영되었습니다. 최신 내역에서 콘텐츠 제출을 진행해 주세요.',
       )
     } catch (failure) {
@@ -124,34 +118,6 @@ export default function MyContentSubmission({
         failure.response?.status === 409
           ? '참여 상태가 변경되었습니다. 최신 내역을 확인해 주세요.'
           : '처리 결과를 확인하지 못했습니다. 다시 실행하기 전에 최신 내역을 확인해 주세요.',
-      )
-    } finally {
-      inFlight.current = false
-      setBusy(false)
-    }
-  }
-  // 확인된 취소 결과도 서버 재조회 후 반영하며 응답 불명확 시 같은 취소를 재전송하지 않습니다.
-  const cancel = async (event) => {
-    event.preventDefault()
-    if (inFlight.current || locked || !cancelling) return
-    let payload
-    try {
-      payload = cancellationPayload(application, reason)
-    } catch (failure) {
-      setError(failure.message)
-      return
-    }
-    inFlight.current = true
-    setBusy(true)
-    setError('')
-    try {
-      await cancelMyCampaignApplication(application.id, payload)
-      setLocked(true)
-      setNotice('캠페인 신청을 취소했습니다. 최신 내역을 확인해 주세요.')
-    } catch {
-      setLocked(true)
-      setError(
-        '취소 결과를 확인하지 못했습니다. 최신 내역에서 상태를 확인해 주세요.',
       )
     } finally {
       inFlight.current = false
@@ -168,7 +134,7 @@ export default function MyContentSubmission({
         <div className="my-campaign-content__review">
           <p>
             {participationAction === 'activate'
-              ? '선정되었습니다. 참여 여부를 직접 확인해 주세요.'
+              ? '선정된 캠페인입니다. 참여 시작을 눌러 진행해 주세요.'
               : '배송 상품을 실제 수령했거나 방문 체험을 완료한 후 확인해 주세요.'}
           </p>
           <button
@@ -177,7 +143,7 @@ export default function MyContentSubmission({
             onClick={() => setConfirmAction(true)}
           >
             {participationAction === 'activate'
-              ? '참여 수락'
+              ? '참여 시작'
               : '체험 완료 확인'}
           </button>
           {confirmAction && (
@@ -355,51 +321,12 @@ export default function MyContentSubmission({
           취소 사유: {application.cancellationReason || '기록 없음'}
         </p>
       )}
-      {/* 선정된 뒤에는 본인이 취소할 수 없습니다. 사정이 생기면 업체에 문의하도록 안내합니다. */}
-      {needsBrandForCancellation(application) && (
+      {/* 신청한 캠페인은 본인이 취소할 수 없습니다. 사정이 생기면 업체에 문의하도록 안내합니다. */}
+      {showsCancellationHelp(application) && (
         <p className="my-campaign-content__cancel-help">
-          선정된 캠페인은 직접 취소할 수 없습니다. 참여가 어려운 사정이 생기면
+          신청한 캠페인은 직접 취소할 수 없습니다. 참여가 어려운 사정이 생기면
           업체 담당자에게 문의해 주세요. 업체가 확인 후 참여 취소를 처리합니다.
         </p>
-      )}
-      {/* 선정 전(접수 상태)에만 신청을 취소할 수 있습니다. */}
-      {canCancelCampaign(application) && (
-        <div className="my-campaign-content__review">
-          <button
-            type="button"
-            disabled={busy || locked}
-            onClick={() => setCancelling((value) => !value)}
-          >
-            신청 취소
-          </button>
-          {cancelling && (
-            <form onSubmit={cancel}>
-              <p>
-                이 캠페인 신청을 취소하시겠습니까? 상품 주문·결제 취소는 별도로
-                처리됩니다.
-              </p>
-              <label>
-                취소 사유
-                <textarea
-                  required
-                  value={reason}
-                  disabled={busy || locked}
-                  onChange={(event) => setReason(event.target.value)}
-                />
-              </label>
-              <button type="submit" disabled={busy || locked}>
-                신청 취소 확정
-              </button>
-              <button
-                type="button"
-                disabled={busy || locked}
-                onClick={() => setCancelling(false)}
-              >
-                신청 유지
-              </button>
-            </form>
-          )}
-        </div>
       )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}

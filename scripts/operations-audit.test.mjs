@@ -4,10 +4,7 @@ import {
   notificationPath,
   filterNotifications,
 } from '../src/features/business/notificationModel.js'
-import {
-  canCancelCampaign,
-  cancellationPayload,
-} from '../src/features/membership/campaignCancellationModel.js'
+import { showsCancellationHelp } from '../src/features/membership/campaignCancellationModel.js'
 test('알림 대상의 신청ID와 콘텐츠ID를 혼동하지 않고 화면별 경로를 구분합니다', () => {
   assert.equal(
     notificationPath({ targetType: 'CAMPAIGN_CONTENT', targetId: 12 }),
@@ -39,27 +36,17 @@ test('읽지않음·캠페인·문의 필터는 실제 알림만 분류합니다
   assert.equal(filterNotifications(items, 'campaign').length, 2)
   assert.equal(filterNotifications(items, 'INQUIRY').length, 1)
 })
-test('참여자 본인은 선정 전 접수 상태에서만 신청을 취소할 수 있습니다', () => {
-  assert.equal(canCancelCampaign({ status: 'SUBMITTED' }), true)
+test('신청 후에는 본인 취소 대신 업체 문의 안내를 보여줍니다', () => {
+  for (const status of ['SUBMITTED', 'SELECTED', 'ACTIVE'])
+    assert.equal(showsCancellationHelp({ status }), true)
   for (const status of [
-    'SELECTED',
-    'ACTIVE',
     'REJECTED',
     'CANCELLED',
     'CONTENT_SUBMITTED',
-    'REVISION_REQUESTED',
     'COMPLETED',
     null,
   ])
-    assert.equal(canCancelCampaign({ status }), false)
-  assert.deepEqual(
-    cancellationPayload({ status: 'SUBMITTED' }, ' 일정 변경 '),
-    {
-      reason: '일정 변경',
-    },
-  )
-  assert.throws(() => cancellationPayload({ status: 'SUBMITTED' }, '  '))
-  assert.throws(() => cancellationPayload({ status: 'ACTIVE' }, '일정 변경'))
+    assert.equal(showsCancellationHelp({ status }), false)
 })
 
 import {

@@ -64,7 +64,7 @@ export default function RecruitmentProgress({
       </div>
       {status && (
         <p className="recruitment-progress__detail">
-          선정 {status.selectedCount}명 · 참여 수락 {status.acceptedCount}명
+          선정 {status.selectedCount}명
           {capacity != null &&
             applied > capacity &&
             ` · 경쟁률 ${(applied / capacity).toFixed(1)} : 1`}

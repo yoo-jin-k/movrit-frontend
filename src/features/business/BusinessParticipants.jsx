@@ -4,7 +4,7 @@
  *
  * - 목록은 15초마다, 그리고 창으로 돌아올 때 조용히 새로 불러와 참여자의 수락·취소가 곧 반영됩니다.
  * - 캠페인을 고르면 '선정 1 / 모집 2명' 같은 모집 현황을 보여줍니다.
- * - 상세에서 진행 단계(신청→선정→참여 수락→콘텐츠 제출→완료)와 선정 편집(선정 취소·미선정 되돌리기·참여 취소)을 제공합니다.
+ * - 상세에서 진행 단계(신청→선정·참여 중→콘텐츠 제출→완료)와 선정 편집(선정 취소·미선정 되돌리기·참여 취소)을 제공합니다.
  */
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
@@ -235,7 +235,6 @@ export default function BusinessParticipants() {
           <strong>
             선정 {summary.selected} / 모집 {summary.capacity ?? '-'}명
           </strong>
-          <span>참여 수락 {summary.accepted}명</span>
           <span>전체 신청 {summary.applied}명</span>
           {summary.remaining != null && (
             <span>
@@ -257,7 +256,7 @@ export default function BusinessParticipants() {
             참여자 확인{' '}
             <span>{state.loading || state.error ? '—' : shown.length}</span>
           </h2>
-          <small>선정과 참여 수락은 별도입니다.</small>
+          <small>선정하면 참여자의 수락 없이 바로 참여가 시작됩니다.</small>
         </div>
         <ListState state={state}>
           {shown.length ? (
@@ -500,11 +499,15 @@ export default function BusinessParticipants() {
               </>
             )}
           {selectionMode(current) === 'BRAND_DIRECT' &&
-            manageActionsFor(current.status).length > 0 && (
+            manageActionsFor(current.status, {
+              experienceConfirmed: Boolean(current.experienceConfirmedAt),
+            }).length > 0 && (
               <section className="participant-edit" aria-label="선정 편집">
                 <h3>선정 편집</h3>
                 <div className="business-actions">
-                  {manageActionsFor(current.status).map((item) => (
+                  {manageActionsFor(current.status, {
+                    experienceConfirmed: Boolean(current.experienceConfirmedAt),
+                  }).map((item) => (
                     <button
                       key={item.action}
                       disabled={busy || locked}

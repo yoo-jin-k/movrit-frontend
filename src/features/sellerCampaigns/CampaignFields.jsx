@@ -248,8 +248,8 @@ export default function CampaignFields({
       <fieldset className="seller-campaign-fields" disabled={disabled}>
         <legend>모집 일정과 인원</legend>
         <p>
-          모든 일정은 한국 시간(KST) 기준입니다. 선정과 참여 수락은 별도
-          단계입니다.
+          모든 일정은 한국 시간(KST) 기준입니다. 선정하면 참여자의 수락 없이
+          바로 참여가 시작됩니다.
         </p>
         <label>
           모집 인원

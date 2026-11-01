@@ -2,7 +2,7 @@
  * 설정 화면의 'SNS 채널 연결' 영역입니다.
  * - 로그인 연결: 인스타그램(크리에이터·비즈니스)·유튜브·네이버 계정으로 로그인해 바로 '확인됨'이 됩니다.
  * - 직접 등록: 로그인 연결이 안 되는 계정(개인 인스타그램 등)은 주소·팔로워 수·프로필 캡처를 올리고, 운영자가 확인합니다.
- * - 서버에 연동 키가 없는 서비스는 로그인 연결 버튼 없이 직접 등록만 보여줍니다.
+ * - 지금은 로그인 연결을 꺼 두어(서버 설정) 직접 등록 → 운영자 확인만 씁니다. 로그인 연결을 켜면(row.available) 버튼과 안내가 함께 나타납니다.
  */
 import { useEffect, useState } from 'react'
 import {
@@ -119,8 +119,9 @@ export default function ChannelConnections({ notice }) {
     <section id="channel-connect" className="account-settings-group">
       <h2>SNS 채널 연결</h2>
       <p>
-        활동 중인 채널을 연결하면 브랜드가 신청자의 채널과 팔로워 수를 바로
-        확인할 수 있습니다. 비밀번호와 접근 권한은 MOVRIT에 저장되지 않습니다.
+        활동 중인 채널을 등록해 주세요. 운영자가 캡처와 실제 채널을 확인하면
+        &lsquo;확인됨&rsquo;으로 바뀌고, 브랜드가 신청자의 채널과 팔로워 수를 볼
+        수 있습니다.
       </p>
       {notice && (
         <p
@@ -167,7 +168,9 @@ export default function ChannelConnections({ notice }) {
                         · {followerText(row.provider, linked.followerCount)}
                       </small>
                     ) : (
-                      <small>{info.hint}</small>
+                      <small>
+                        {row.available ? info.hint : info.manualHint}
+                      </small>
                     )}
                     {badge && (
                       <em className={`account-channel-badge ${badge.tone}`}>
@@ -218,7 +221,7 @@ export default function ChannelConnections({ notice }) {
                     )}
                   </div>
                 </div>
-                {row.provider === 'instagram' && !linked && (
+                {row.provider === 'instagram' && row.available && !linked && (
                   <details className="account-channel-tip">
                     <summary>
                       개인 계정인데 팔로워 수를 자동으로 확인받고 싶다면?
@@ -226,10 +229,8 @@ export default function ChannelConnections({ notice }) {
                     <p>
                       인스타그램 앱 → 설정 → 계정 유형 및 도구 → 프로페셔널
                       계정으로 전환 → 크리에이터를 고르면 됩니다. 무료이며
-                      사진·팔로워는 그대로이고 언제든 되돌릴 수 있습니다.
-                      {row.available
-                        ? ' 전환 후 로그인 연결을 눌러 주세요.'
-                        : ' 로그인 연결이 열리면 바로 연결할 수 있습니다.'}
+                      사진·팔로워는 그대로이고 언제든 되돌릴 수 있습니다. 전환
+                      후 로그인 연결을 눌러 주세요.
                     </p>
                   </details>
                 )}

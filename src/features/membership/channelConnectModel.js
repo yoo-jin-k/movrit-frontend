@@ -7,6 +7,8 @@ export const CHANNEL_PROVIDERS = {
   instagram: {
     label: '인스타그램',
     hint: '크리에이터·비즈니스 계정은 로그인 연결로 팔로워 수가 바로 확인됩니다. 개인 계정은 직접 등록해 주세요.',
+    manualHint:
+      '프로필 주소와 팔로워 수, 프로필 화면 캡처를 등록하면 운영자가 확인합니다.',
     example: 'https://www.instagram.com/아이디',
     countLabel: '팔로워 수',
     countRequired: true,
@@ -14,6 +16,8 @@ export const CHANNEL_PROVIDERS = {
   youtube: {
     label: '유튜브',
     hint: '유튜브 채널이 있는 Google 계정으로 연결하면 구독자 수가 바로 확인됩니다.',
+    manualHint:
+      '채널 주소와 구독자 수, 채널 화면 캡처를 등록하면 운영자가 확인합니다.',
     example: 'https://www.youtube.com/@핸들',
     countLabel: '구독자 수',
     countRequired: true,
@@ -21,6 +25,8 @@ export const CHANNEL_PROVIDERS = {
   'naver-blog': {
     label: '네이버 블로그',
     hint: '네이버 아이디로 로그인해 블로그를 확인합니다. 이웃 수는 네이버가 제공하지 않아 가져오지 않습니다.',
+    manualHint:
+      '블로그 주소와 블로그 화면 캡처를 등록하면 운영자가 확인합니다. 이웃 수는 선택입니다.',
     example: 'https://blog.naver.com/아이디',
     countLabel: '이웃 수(선택)',
     countRequired: false,

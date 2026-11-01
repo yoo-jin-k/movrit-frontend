@@ -16,7 +16,7 @@ import { liveCampaignSchedule } from './scheduleModel'
 import DiscoveryLayout from './DiscoveryLayout'
 import CampaignParticipation from './CampaignParticipation'
 import CampaignPublicMedia from './CampaignPublicMedia'
-import { recruitmentDeadlineLabel } from './campaignDates'
+import { isRecruiting, recruitmentDeadlineLabel } from './campaignDates'
 
 // 신청 영역으로 부드럽게 이동합니다. 동작 줄이기 설정을 켠 사용자는 즉시 이동합니다.
 function scrollToApply() {
@@ -133,7 +133,7 @@ export default function LiveCampaignDetailPage({ campaignId }) {
               <RecruitmentProgress
                 campaignId={campaignId}
                 recruitmentCount={detail.recruitmentCount}
-                open={detail.open}
+                open={isRecruiting(detail)}
               />
               <section aria-label="서버 신청 조건">
                 <h3>신청 조건</h3>
@@ -228,9 +228,9 @@ export default function LiveCampaignDetailPage({ campaignId }) {
             <button
               type="button"
               onClick={scrollToApply}
-              disabled={!detail.open}
+              disabled={!isRecruiting(detail)}
             >
-              {detail.open ? '신청하기' : '모집 종료'}
+              {isRecruiting(detail) ? '신청하기' : '모집 종료'}
             </button>
           </div>
         )}

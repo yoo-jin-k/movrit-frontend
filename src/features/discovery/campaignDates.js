@@ -2,6 +2,8 @@
  * 날짜를 서울 달력 기준 일수로 바꾸어 모집 시작·마감과 남은 날짜를 계산합니다.
  * 브라우저 시간대 차이가 카드의 일수 표시를 바꾸지 않도록 합니다.
  */
+import { periodHasEnded } from './scheduleModel.js'
+
 const DAY_MS = 86_400_000
 const koreanDate = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Asia/Seoul',
@@ -37,8 +39,14 @@ export function campaignTiming(schedule, now = new Date()) {
 
 // 상세 화면 하단 바에 보여줄 모집 마감 문구입니다. 카드의 남은 일수 표기와 같은 규칙을 사용합니다.
 // 3일 이하로 남으면 '마감 임박'을 앞에 붙여 신청을 서두를 수 있게 안내합니다.
+// 지금 신청을 받을 수 있는 캠페인인지 판단합니다. 공개 상태여도 모집 종료 시각이 지났으면 신청을 받지 않습니다.
+// 종료된 캠페인도 목록·상세에서 사라지지 않고 '모집 종료'로 보입니다.
+export function isRecruiting(detail, now = new Date()) {
+  return Boolean(detail?.open) && !periodHasEnded(detail?.endAt, now)
+}
+
 export function recruitmentDeadlineLabel(detail, now = new Date()) {
-  if (!detail?.open) return '모집 종료'
+  if (!isRecruiting(detail, now)) return '모집 종료'
   const { daysLeft } = campaignTiming({ recruitmentEndsAt: detail.endAt }, now)
   if (daysLeft == null) return '모집 중'
   if (daysLeft < 0) return '모집 종료'

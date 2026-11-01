@@ -40,7 +40,10 @@ check(
 const sellerApps = (
   await call(brand, 'GET', '/campaigns/applications/seller')
 ).data.filter((a) => String(a.campaignId) === campaignId)
-const selected = sellerApps.filter((a) => a.status === 'SELECTED').length
+// 선정하면 바로 참여 중(ACTIVE)이 되므로 두 상태를 함께 셉니다.
+const selected = sellerApps.filter((a) =>
+  ['SELECTED', 'ACTIVE'].includes(a.status),
+).length
 check(
   '선정 인원이 모집 인원(1명)을 넘지 않음',
   selected === 1,

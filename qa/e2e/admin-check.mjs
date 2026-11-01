@@ -82,6 +82,22 @@ await guest.screenshot({
   fullPage: true,
 })
 
+// 점검용 공지는 사용자에게 계속 보이지 않도록 바로 게시 해제하고 제목에 [점검용]을 붙입니다(삭제는 하지 않습니다).
+{
+  const created = (await call(admin, 'GET', '/admin/notices')).data.find(
+    (notice) => notice.title === title,
+  )
+  if (created)
+    await call(admin, 'PUT', `/admin/notices/${created.id}`, {
+      title: `[점검용] ${created.title}`.slice(0, 200),
+      body: created.body,
+      category: created.category,
+      pinned: false,
+      published: false,
+    })
+  console.log('점검용 공지 게시 해제:', Boolean(created))
+}
+
 // 회원 정지 → 해제 (점검용 사용자 계정)
 await page.goto(`${base}/admin/members/76`, { waitUntil: 'networkidle' })
 await page.getByRole('button', { name: '계정 정지' }).click()

@@ -114,3 +114,14 @@
   font: inherit;
   background: white;
 }
+
+/* 선정 후에는 본인 취소 대신 업체 문의를 안내합니다. */
+.my-campaign-content__cancel-help {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f6f4fb;
+  color: #5b5470;
+  font-size: 13px;
+  line-height: 1.6;
+}

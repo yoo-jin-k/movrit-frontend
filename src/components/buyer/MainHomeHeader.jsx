@@ -4,6 +4,8 @@
  */
 import { useEffect, useState } from 'react'
 import AccountMenu from './AccountMenu'
+import useUnreadNotifications from '../../features/notifications/useUnreadNotifications'
+import { unreadBadgeText } from '../../features/notifications/notificationBadge'
 import '../../styles/pages/_main-home.scss'
 import {
   Link,
@@ -28,6 +30,8 @@ function HeaderContent() {
   const [params] = useSearchParams()
   const [query, setQuery] = useState(params.get('q') || '')
   const [menuOpen, setMenuOpen] = useState(false)
+  const unread = useUnreadNotifications()
+  const badge = unreadBadgeText(unread)
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState(() =>
     Boolean(sessionStorage.getItem('accessToken')),
@@ -90,8 +94,18 @@ function HeaderContent() {
                 로그인
               </Link>
             )}
-            <Link to="/notifications" aria-label="알림">
+            {/* 읽지 않은 알림이 있으면 종 아이콘 위에 개수 배지를 띄웁니다(수정 요청·선정 결과 등). */}
+            <Link
+              to="/notifications"
+              className="main-home-header__bell"
+              aria-label={badge ? `알림, 읽지 않은 알림 ${unread}개` : '알림'}
+            >
               <img src="/assets/main-home/bell.svg" alt="" />
+              {badge && (
+                <span className="main-home-header__badge" aria-hidden="true">
+                  {badge}
+                </span>
+              )}
             </Link>
             <Link to="/favorites" aria-label="찜">
               <img src="/assets/main-home/heart.svg" alt="" />

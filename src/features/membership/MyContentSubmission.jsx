@@ -24,6 +24,7 @@ import {
 } from './campaignWorkspaceModel'
 import {
   canCancelCampaign,
+  needsBrandForCancellation,
   cancellationPayload,
 } from './campaignCancellationModel'
 import './myCampaignContent.css'
@@ -146,7 +147,7 @@ export default function MyContentSubmission({
     try {
       await cancelMyCampaignApplication(application.id, payload)
       setLocked(true)
-      setNotice('캠페인 참여를 취소했습니다. 최신 내역을 확인해 주세요.')
+      setNotice('캠페인 신청을 취소했습니다. 최신 내역을 확인해 주세요.')
     } catch {
       setLocked(true)
       setError(
@@ -354,6 +355,14 @@ export default function MyContentSubmission({
           취소 사유: {application.cancellationReason || '기록 없음'}
         </p>
       )}
+      {/* 선정된 뒤에는 본인이 취소할 수 없습니다. 사정이 생기면 업체에 문의하도록 안내합니다. */}
+      {needsBrandForCancellation(application) && (
+        <p className="my-campaign-content__cancel-help">
+          선정된 캠페인은 직접 취소할 수 없습니다. 참여가 어려운 사정이 생기면
+          업체 담당자에게 문의해 주세요. 업체가 확인 후 참여 취소를 처리합니다.
+        </p>
+      )}
+      {/* 선정 전(접수 상태)에만 신청을 취소할 수 있습니다. */}
       {canCancelCampaign(application) && (
         <div className="my-campaign-content__review">
           <button
@@ -361,12 +370,12 @@ export default function MyContentSubmission({
             disabled={busy || locked}
             onClick={() => setCancelling((value) => !value)}
           >
-            캠페인 참여 취소
+            신청 취소
           </button>
           {cancelling && (
             <form onSubmit={cancel}>
               <p>
-                이 캠페인 참여를 취소하시겠습니까? 상품 주문·결제 취소는 별도로
+                이 캠페인 신청을 취소하시겠습니까? 상품 주문·결제 취소는 별도로
                 처리됩니다.
               </p>
               <label>
@@ -379,14 +388,14 @@ export default function MyContentSubmission({
                 />
               </label>
               <button type="submit" disabled={busy || locked}>
-                참여 취소 확정
+                신청 취소 확정
               </button>
               <button
                 type="button"
                 disabled={busy || locked}
                 onClick={() => setCancelling(false)}
               >
-                참여 유지
+                신청 유지
               </button>
             </form>
           )}

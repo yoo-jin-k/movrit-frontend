@@ -4,6 +4,13 @@
  */
 import api from './axios'
 
+// 읽음 처리가 끝나면 헤더·하단 탭의 미확인 알림 표시가 바로 줄어들도록 화면 전체에 알립니다.
+export const NOTIFICATIONS_CHANGED = 'movrit:notifications-changed'
+const announceChange = () => {
+  if (typeof window !== 'undefined')
+    window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED))
+}
+
 export const getNotifications = async () => {
   const response = await api.get('/notifications')
   return response.data
@@ -16,10 +23,12 @@ export const getUnreadNotificationCount = async () => {
 
 export const markNotificationRead = async (id) => {
   const response = await api.patch(`/notifications/${id}/read`)
+  announceChange()
   return response.data
 }
 
 // 응답 본문을 쓰지 않는 명령입니다. 완료 후 화면의 목록·건수 갱신은 호출부에서 수행합니다.
 export const markAllNotificationsRead = async () => {
   await api.patch('/notifications/read-all')
+  announceChange()
 }

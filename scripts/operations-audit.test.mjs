@@ -39,10 +39,11 @@ test('읽지않음·캠페인·문의 필터는 실제 알림만 분류합니다
   assert.equal(filterNotifications(items, 'campaign').length, 2)
   assert.equal(filterNotifications(items, 'INQUIRY').length, 1)
 })
-test('접수·선정·진행만 취소 가능하며 빈 사유와 완료상태 요청을 막습니다', () => {
-  for (const status of ['SUBMITTED', 'SELECTED', 'ACTIVE'])
-    assert.equal(canCancelCampaign({ status }), true)
+test('참여자 본인은 선정 전 접수 상태에서만 신청을 취소할 수 있습니다', () => {
+  assert.equal(canCancelCampaign({ status: 'SUBMITTED' }), true)
   for (const status of [
+    'SELECTED',
+    'ACTIVE',
     'REJECTED',
     'CANCELLED',
     'CONTENT_SUBMITTED',
@@ -51,11 +52,14 @@ test('접수·선정·진행만 취소 가능하며 빈 사유와 완료상태 �
     null,
   ])
     assert.equal(canCancelCampaign({ status }), false)
-  assert.deepEqual(cancellationPayload({ status: 'ACTIVE' }, ' 일정 변경 '), {
-    reason: '일정 변경',
-  })
-  assert.throws(() => cancellationPayload({ status: 'ACTIVE' }, '  '))
-  assert.throws(() => cancellationPayload({ status: 'COMPLETED' }, '일정 변경'))
+  assert.deepEqual(
+    cancellationPayload({ status: 'SUBMITTED' }, ' 일정 변경 '),
+    {
+      reason: '일정 변경',
+    },
+  )
+  assert.throws(() => cancellationPayload({ status: 'SUBMITTED' }, '  '))
+  assert.throws(() => cancellationPayload({ status: 'ACTIVE' }, '일정 변경'))
 })
 
 import {

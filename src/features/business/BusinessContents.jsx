@@ -2,6 +2,7 @@
  * 업체 소유 콘텐츠의 승인·수정 요청을 서버 버전과 함께 처리합니다.
  * 처리 결과가 불명확하거나 충돌하면 명령을 잠그고 최신 목록 확인을 요구하며 업체 승인을 운영자 최종 승인과 구분합니다.
  */
+import ReportButton from '../participation/ReportButton'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { contentLinks, CONTENT_CHANNELS } from '../membership/myContentModel'
@@ -169,6 +170,8 @@ export default function BusinessContents() {
             {selected.creatorNickname} · 버전 {selected.version ?? '미확인'}
           </p>
           <StatusBadge status={selected.status} />
+          {/* 부적절한 콘텐츠는 운영자에게 신고할 수 있습니다(경고·이용 정지 검토). */}
+          <ReportButton targetType="CAMPAIGN_CONTENT" targetId={selected.id} />
           {contentLinks(selected).map((link, index) => (
             <p key={index}>
               {CONTENT_CHANNELS[link.channelType] || '기존 제출'} ·{' '}

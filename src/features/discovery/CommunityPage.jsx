@@ -4,6 +4,7 @@
  * - 로그인한 회원은 MOVRIT 톡톡·우리 친구할까요? 게시판에 글을 쓰고, 댓글을 달 수 있습니다(소식·이벤트는 운영자만 작성).
  * - 내가 쓴 글·댓글은 고치거나 지울 수 있습니다. 쓰던 글은 이 기기에 임시저장되어 다시 열면 이어 쓸 수 있습니다.
  */
+import ReportButton from '../participation/ReportButton'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'
@@ -378,6 +379,13 @@ export default function CommunityPage() {
                     <div className="discovery-post__body">
                       {detail.data.body}
                     </div>
+                    {/* 다른 회원의 글은 신고할 수 있습니다(운영자가 확인 후 가리기·이용 정지 등 처리). */}
+                    {loggedIn() && !detail.data.mine && (
+                      <ReportButton
+                        targetType="COMMUNITY_POST"
+                        targetId={detail.data.id}
+                      />
+                    )}
                     {(detail.data.mine || detail.data.deletable) && (
                       <div className="discovery-post__actions">
                         {detail.data.mine && (
@@ -414,6 +422,13 @@ export default function CommunityPage() {
                               >
                                 지우기
                               </button>
+                            )}
+                            {loggedIn() && !item.deletable && (
+                              <ReportButton
+                                targetType="COMMUNITY_COMMENT"
+                                targetId={item.id}
+                                compact
+                              />
                             )}
                           </li>
                         ))}

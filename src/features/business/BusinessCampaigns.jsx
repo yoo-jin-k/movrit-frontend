@@ -4,7 +4,7 @@
  */
 import { liveCampaignMediaApi } from '../../api/liveCampaignMediaApi'
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import useBusinessList from './useBusinessList'
 import { DetailDialog, ListState, PageHeader } from './BusinessUi'
 import { dateLabel } from './businessModel'
@@ -112,6 +112,10 @@ function CampaignDetail({ campaign, applications, onClose }) {
           to={`/seller/campaigns/${campaign.id}`}
         >
           정보 수정
+        </Link>
+        {/* 같은 조건으로 새 캠페인을 만들 때 씁니다. 기간·일정만 새로 입력하면 됩니다. */}
+        <Link to={`/seller/campaigns/new?copy=${campaign.id}`}>
+          캠페인 복제
         </Link>
         <Link to={`/seller/participants?campaignId=${campaign.id}`}>
           참여자 확인 →
@@ -278,10 +282,15 @@ export function BusinessCampaigns() {
 }
 export function BusinessCampaignEditor() {
   const { campaignId } = useParams()
+  // ?copy=원본ID 로 들어오면 원본 캠페인을 복사한 새 캠페인 작성 화면이 됩니다.
+  const [params] = useSearchParams()
+  const copyFrom = campaignId ? null : params.get('copy')
   return (
     <>
       <PageHeader
-        title={campaignId ? '캠페인 수정' : '캠페인 작성'}
+        title={
+          campaignId ? '캠페인 수정' : copyFrom ? '캠페인 복제' : '캠페인 작성'
+        }
         description="캠페인 정보와 신청 폼을 함께 확인해 주세요."
       >
         <Link className="business-secondary" to="/seller/campaigns">
@@ -296,8 +305,9 @@ export function BusinessCampaignEditor() {
       </div>
       <SellerCampaignManager
         mediaApi={liveCampaignMediaApi}
-        key={campaignId || 'new'}
+        key={campaignId || (copyFrom ? `copy-${copyFrom}` : 'new')}
         initialCampaignId={campaignId}
+        copyFromId={copyFrom}
         dashboard
       />
     </>

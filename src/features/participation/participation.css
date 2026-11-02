@@ -1,0 +1,264 @@
+/* 참여 운영: 방문 예약 · 활동 등급 · 평가 · 패널티 · 신고 · 일괄 처리 · 신청 수정 */
+.visit-reservation,
+.participant-activity,
+.application-edit {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.visit-reservation h3,
+.participant-activity h3,
+.visit-reservation p,
+.participant-activity p {
+  margin: 0;
+}
+.visit-reservation__form,
+.application-edit__form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+.application-edit__form {
+  grid-template-columns: 1fr;
+}
+.visit-reservation__form label,
+.application-edit__form label,
+.participant-activity label,
+.visit-reservation__reject-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.visit-reservation__wide,
+.visit-reservation__form .visit-reservation__actions {
+  grid-column: 1 / -1;
+}
+.visit-reservation__actions,
+.application-edit__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+}
+.visit-reservation__reject-form {
+  display: flex;
+  flex: 1 1 100%;
+  gap: 8px;
+  align-items: flex-end;
+}
+.visit-reservation__reject-form label {
+  flex: 1;
+}
+.visit-reservation__reject {
+  color: #b2402f;
+}
+.application-edit__message {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f6f4fa;
+  white-space: pre-line;
+}
+@media (max-width: 640px) {
+  .visit-reservation__form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 상태 배지 */
+.participation-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.participation-badge.is-requested,
+.participation-badge.is-open {
+  background: #fff3d6;
+  color: #9a6400;
+}
+.participation-badge.is-confirmed,
+.participation-badge.is-resolved {
+  background: #dff3e7;
+  color: #2f8f5b;
+}
+.participation-badge.is-rejected,
+.participation-badge.is-dismissed {
+  background: #f1eff4;
+  color: #6b6575;
+}
+
+/* 활동 등급 배지 */
+.grade-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.grade-badge.is-sprout {
+  background: #e6f5e9;
+  color: #2f7a43;
+}
+.grade-badge.is-bronze {
+  background: #f6e7da;
+  color: #8a5326;
+}
+.grade-badge.is-silver {
+  background: #eceef2;
+  color: #4d5563;
+}
+.grade-badge.is-gold {
+  background: #fff1c7;
+  color: #8a6400;
+}
+.grade-badge.is-diamond {
+  background: #e3ecff;
+  color: #2b4fb5;
+}
+.participant-activity__warn {
+  color: #b2402f;
+}
+.participant-activity__rating,
+.participant-activity__penalty {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #ebe7ee;
+  border-radius: 10px;
+}
+.participant-activity__rating > button,
+.participant-activity__penalty > button,
+.visit-reservation > button,
+.application-edit > button {
+  justify-self: start;
+}
+.rating-stars {
+  display: flex;
+  gap: 4px;
+}
+.rating-stars button {
+  border: 0;
+  background: none;
+  color: #d8d2e3;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.rating-stars button.is-on {
+  color: #f5b301;
+}
+
+/* 내 활동 등급 카드 */
+.my-activity {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid #ebe7ee;
+  border-radius: 12px;
+  background: #fff;
+}
+.my-activity__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.my-activity__head div {
+  display: grid;
+}
+.my-activity__head small,
+.my-activity__rule {
+  color: #8c8c94;
+}
+.my-activity ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+/* 신고 */
+.report-button {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.report-button__toggle {
+  border: 0;
+  background: none;
+  color: #8c8c94;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.report-form {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid #ebe7ee;
+  border-radius: 8px;
+  background: #fff;
+}
+.report-form select,
+.report-form input {
+  min-height: 30px;
+  font-size: 13px;
+}
+.report-form em {
+  color: #b2402f;
+  font-size: 12px;
+  font-style: normal;
+}
+.report-done {
+  color: #8c8c94;
+  font-size: 12px;
+}
+
+/* 업체 참여자 일괄 처리 */
+.bulk-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #efe8fd;
+}
+.bulk-bar strong {
+  margin-right: auto;
+}
+
+/* 운영자 신고 상세 */
+.admin-report-detail {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 8px 12px;
+  margin: 0 0 12px;
+}
+.admin-report-detail dt {
+  color: #8c8c94;
+}
+.admin-report-detail dd {
+  margin: 0;
+}
+.admin-report-snapshot {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f6f4fa;
+  white-space: pre-line;
+  word-break: break-word;
+}
+.admin-report-note {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.admin-report-actions,
+.admin-inline-form {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

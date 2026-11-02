@@ -12,6 +12,7 @@ const menus = [
   ['dashboard', '홈'],
   ['campaigns', '캠페인'],
   ['participants', '참여자'],
+  ['paybacks', '환급'],
   ['contents', '콘텐츠'],
   ['inbox', '알림·문의'],
   ['messages', '메시지'],

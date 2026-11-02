@@ -24,6 +24,13 @@ const AdminCampaignParticipantsPage = lazy(
 const AdminContentReviewsPage = lazy(
   () => import('./pages/AdminContentReviewsPage'),
 )
+const AdminModerationPage = lazy(() => import('./pages/AdminModerationPage'))
+const AdminParticipationPage = lazy(
+  () => import('./pages/AdminParticipationPage'),
+)
+const BusinessPaybacks = lazy(
+  () => import('./features/business/BusinessPaybacks'),
+)
 const AdminChannelVerificationsPage = lazy(
   () => import('./pages/AdminChannelVerificationsPage'),
 )
@@ -484,6 +491,7 @@ function App() {
               element={<BusinessCampaignEditor />}
             />
             <Route path="participants" element={<BusinessParticipants />} />
+            <Route path="paybacks" element={<BusinessPaybacks />} />
             <Route path="contents" element={<BusinessContents />} />
             <Route path="inbox" element={<BusinessInbox />} />
             <Route path="messages" element={<BusinessMessages />} />
@@ -523,6 +531,26 @@ function App() {
               <ProtectedPage>
                 <AdminAccess>
                   <AdminMessagesPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/moderation"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminModerationPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/participation"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminParticipationPage />
                 </AdminAccess>
               </ProtectedPage>
             }

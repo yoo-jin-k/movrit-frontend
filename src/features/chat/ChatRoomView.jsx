@@ -39,6 +39,7 @@ import {
   typingLabel,
 } from './chatModel'
 import { CHAT_EVENT, isChatStreamConnected } from './chatStream'
+import ReportButton from '../participation/ReportButton'
 
 const POLL_FAST_MS = 3000
 const POLL_SLOW_MS = 15000
@@ -306,6 +307,19 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
           TYPING_SHOW_MS,
         )
       }
+      // 운영자가 신고 처리로 메시지를 가리면 화면의 그 메시지도 바로 안내 문구로 바꿉니다.
+      if (type === 'hidden' && sameRoom)
+        setMessages((current) =>
+          current.map((m) =>
+            m.id === Number(data.messageId)
+              ? {
+                  ...m,
+                  body: '운영 정책에 따라 운영자가 가린 메시지입니다.',
+                  attachment: null,
+                }
+              : m,
+          ),
+        )
       if (type === 'connected') poll()
     }
     window.addEventListener(CHAT_EVENT, onEvent)
@@ -576,6 +590,14 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
               </div>
             )}
             {message.body && <p>{message.body}</p>}
+            {/* 상대 메시지는 신고할 수 있습니다(운영자가 가리기·이용 정지 등 처리). */}
+            {!message.mine && (
+              <ReportButton
+                targetType="CHAT_MESSAGE"
+                targetId={message.id}
+                compact
+              />
+            )}
             <time dateTime={message.createdAt}>
               {isReadByOthers(message, othersRead) && (
                 <span className="chat-read">읽음 · </span>

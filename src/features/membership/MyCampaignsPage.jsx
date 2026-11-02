@@ -9,6 +9,8 @@ import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import MyContentSubmission from './MyContentSubmission'
 import PurchaseInfoCard from '../purchaseReview/PurchaseInfoCard'
+import ApplicationEditPanel from '../participation/ApplicationEditPanel'
+import VisitReservationPanel from '../participation/VisitReservationPanel'
 import PurchaseProofPanel from '../purchaseReview/PurchaseProofPanel'
 import {
   APPLICATION_STATUS,
@@ -50,6 +52,14 @@ function Workspace({ item, onReload, attempt }) {
       <p className="campaign-workspace__next" role="status">
         {nextCampaignAction(application, content)}
       </p>
+      {/* 선정 전(접수)에는 신청 메시지·배송지·질문 답변을 고칠 수 있습니다. */}
+      {application.status === 'SUBMITTED' && (
+        <ApplicationEditPanel
+          key={`edit-${application.id}`}
+          application={application}
+          onSaved={onReload}
+        />
+      )}
       <section className="campaign-workspace__section">
         <h2>참여 일정</h2>
         <p className="campaign-workspace__deadline">
@@ -81,6 +91,19 @@ function Workspace({ item, onReload, attempt }) {
                 .filter(Boolean)
                 .join(' · ')}
             />
+            {/* 선정된 방문형 참여자는 방문 희망 일시를 예약 요청합니다. */}
+            {[
+              'ACTIVE',
+              'CONTENT_SUBMITTED',
+              'REVISION_REQUESTED',
+              'COMPLETED',
+            ].includes(application.status) && (
+              <VisitReservationPanel
+                key={`reservation-${application.id}-${attempt}`}
+                application={application}
+                mode="participant"
+              />
+            )}
             <VisitEvidence
               key={`visit-${application.id}-${attempt}`}
               api={liveCampaignVisitEvidenceApi}

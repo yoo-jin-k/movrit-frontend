@@ -28,6 +28,12 @@ import './sellerCampaigns.css'
 import CampaignFormPreview from './CampaignFormPreview'
 import CampaignMediaFields from './CampaignMediaFields'
 import { emptyCampaignMediaDraft } from './campaignMediaDraft'
+import {
+  copiedApplicationForm,
+  copiedCampaignForm,
+  copiedMediaDraft,
+  imageFileFromUrl,
+} from './campaignCopy'
 import { readPurchaseInfo, savePurchaseInfo } from '../../api/purchaseReviewApi'
 import {
   fulfillmentForType,
@@ -61,6 +67,7 @@ async function readOptionalForm(id) {
 }
 export default function SellerCampaignManager({
   initialCampaignId,
+  copyFromId = null,
   dashboard = false,
   mediaApi = null,
 }) {
@@ -113,6 +120,47 @@ export default function SellerCampaignManager({
           setForm((current) =>
             current.brandId ? current : { ...current, brandId: brands[0].id },
           )
+        // 캠페인 복제: 내 캠페인인지 확인한 뒤 원본 내용을 새 캠페인 입력값으로 채웁니다(기간·일정은 비움).
+        if (!initialCampaignId && copyFromId) {
+          if (!campaigns.some((item) => String(item.id) === String(copyFromId)))
+            throw new Error('이 캠페인을 복제할 권한이 없습니다.')
+          const [detail, requirement, sourceForm, media] = await Promise.all([
+            readCampaign(copyFromId),
+            readCampaignRequirement(copyFromId),
+            readOptionalForm(copyFromId),
+            mediaRead(copyFromId),
+          ])
+          const source = await withPurchaseInfo(detail)
+          let draft = copiedMediaDraft(media?.draft)
+          // 예전 방식(주소만 있는) 대표 이미지는 파일로 받아 새로 올립니다.
+          if (!draft.representative) {
+            const file = await imageFileFromUrl(detail.representativeImageUrl)
+            if (file)
+              draft = {
+                ...draft,
+                representative: {
+                  key: crypto.randomUUID(),
+                  file,
+                  altText: '',
+                  status: 'pending',
+                },
+              }
+          }
+          if (!active) return
+          setMediaSession({ managed: null, draft })
+          setForm({
+            ...copiedCampaignForm(detail, brands),
+            purchaseReview: source.purchaseReview,
+          })
+          const copiedForm = copiedApplicationForm(sourceForm)
+          if (copiedForm) setApplicationForm(copiedForm)
+          setFormDirty(true)
+          setFormConfigured(false)
+          setCondition(requirementForm(requirement))
+          setNotice(
+            `'${detail.title}' 캠페인을 복사했습니다. 모집 기간과 세부 일정을 새로 입력한 뒤 등록해 주세요.`,
+          )
+        }
         // URL의 ID만으로 편집하지 않고 판매자 소유 목록과 먼저 대조합니다.
         if (initialCampaignId) {
           if (
@@ -156,7 +204,7 @@ export default function SellerCampaignManager({
     return () => {
       active = false
     }
-  }, [attempt, initialCampaignId, mediaRead])
+  }, [attempt, initialCampaignId, copyFromId, mediaRead])
   // 본문·조건·신청 폼·미디어를 모두 읽은 뒤 편집 상태를 교체합니다.
   // 어느 조회든 실패하면 최신 상태를 확보한 것으로 간주하지 않습니다.
   const edit = async (campaignId) => {

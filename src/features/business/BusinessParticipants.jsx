@@ -5,6 +5,8 @@
  * - 목록은 15초마다, 그리고 창으로 돌아올 때 조용히 새로 불러와 참여자의 수락·취소가 곧 반영됩니다.
  * - 캠페인을 고르면 '선정 1 / 모집 2명' 같은 모집 현황을 보여줍니다.
  * - 상세에서 진행 단계(신청→선정·참여 중→콘텐츠 제출→완료)와 선정 편집(선정 취소·미선정 되돌리기·참여 취소)을 제공합니다.
+ * - 접수된 신청을 체크해 여러 명을 한 번에 선정·미선정할 수 있습니다(건별 결과와 실패 사유 안내).
+ * - 상세에서 방문 예약 확정·반려(방문형), 참여자 활동 등급·평가 평균, 완료 참여자 평가·메모, 미제출·노쇼 패널티 기록을 제공합니다.
  */
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
@@ -20,6 +22,13 @@ import ParticipantPortfolio, {
 } from './ParticipantPortfolio'
 import useParticipantDetail from './useParticipantDetail'
 import PurchasePaybackPanel from '../purchaseReview/PurchasePaybackPanel'
+import VisitReservationPanel from '../participation/VisitReservationPanel'
+import ParticipantActivityPanel from '../participation/ParticipantActivityPanel'
+import { bulkApplications } from '../../api/participationApi'
+import {
+  bulkSelectable,
+  bulkSummary,
+} from '../participation/participationModel'
 import { readParticipantPortfolio } from '../../api/participantPortfolioApi'
 import { myContentLink } from '../membership/myContentModel'
 import { completedCountLabel } from './participantPortfolioModel'
@@ -54,7 +63,10 @@ export default function BusinessParticipants() {
     [busy, setBusy] = useState(false),
     [locked, setLocked] = useState(false),
     [editing, setEditing] = useState(null),
-    [reason, setReason] = useState('')
+    [reason, setReason] = useState(''),
+    // 일괄 처리: 체크한 신청 ID와 확인 중인 동작(select·reject)
+    [checked, setChecked] = useState(() => new Set()),
+    [bulkAction, setBulkAction] = useState('')
   // 상세는 자동 새로고침된 최신 목록의 같은 신청을 보여줍니다(목록에서 사라졌으면 열었던 값을 유지).
   const current =
     (selected && state.data.find((item) => item.id === selected.id)) || selected
@@ -85,6 +97,51 @@ export default function BusinessParticipants() {
     setReason('')
     setError('')
     setLocked(false)
+  }
+  // 체크할 수 있는 신청(브랜드 직접 선정 캠페인의 접수 신청)과 지금 체크된 신청입니다.
+  const selectable = shown.filter((item) =>
+    bulkSelectable(item, selectionMode(item)),
+  )
+  const checkedIds = selectable
+    .filter((item) => checked.has(item.id))
+    .map((item) => item.id)
+  const toggle = (id) =>
+    setChecked((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  const toggleAll = () =>
+    setChecked(
+      checkedIds.length === selectable.length
+        ? new Set()
+        : new Set(selectable.map((item) => item.id)),
+    )
+  // 체크한 신청을 한 번에 선정·미선정합니다. 건별로 처리되어 일부가 실패해도 나머지는 반영됩니다.
+  const submitBulk = async () => {
+    if (!bulkAction || !checkedIds.length || inFlight.current) return
+    inFlight.current = true
+    setBusy(true)
+    setError('')
+    try {
+      const result = await bulkApplications(checkedIds, bulkAction)
+      setNotice(
+        bulkSummary(result, bulkAction === 'select' ? '선정' : '미선정'),
+      )
+      setChecked(new Set())
+      setBulkAction('')
+      state.reload()
+    } catch (failure) {
+      setError(
+        failure.response?.data?.detail ||
+          '일괄 처리 결과를 확인하지 못했습니다. 목록을 새로 불러와 확인해 주세요.',
+      )
+      state.reload()
+    } finally {
+      inFlight.current = false
+      setBusy(false)
+    }
   }
   // 고른 캠페인의 모집 현황(선정·수락·신청 인원)입니다.
   const selectedCampaign = campaigns.data.find(
@@ -169,8 +226,9 @@ export default function BusinessParticipants() {
       />
       <p className="business-info">
         브랜드 직접 선정 캠페인만 여기에서 선정할 수 있습니다. 운영자 선정은
-        관리자에게 배정됩니다. 선정과 참여자의 수락은 별도 단계이며, 참여자가
-        수락한 뒤 배송 연락처를 확인하실 수 있습니다.
+        관리자에게 배정됩니다. 선정하면 바로 참여가 시작되고 배송 연락처를
+        확인하실 수 있습니다. 접수된 신청을 체크하면 여러 명을 한 번에
+        선정하거나 미선정할 수 있습니다.
       </p>
       {applicationId && (
         <p className="business-info">
@@ -252,6 +310,40 @@ export default function BusinessParticipants() {
           {notice}
         </p>
       )}
+      {checkedIds.length > 0 && (
+        <div className="bulk-bar" role="region" aria-label="일괄 처리">
+          <strong>{checkedIds.length}명 선택됨</strong>
+          {bulkAction ? (
+            <>
+              <span>
+                {checkedIds.length}명을{' '}
+                {bulkAction === 'select' ? '선정' : '미선정 처리'}할까요?
+                {bulkAction === 'select' &&
+                  ' 모집 인원을 넘는 신청은 처리되지 않습니다.'}
+              </span>
+              <button disabled={busy} onClick={submitBulk}>
+                {busy ? '처리 중…' : '확정'}
+              </button>
+              <button disabled={busy} onClick={() => setBulkAction('')}>
+                돌아가기
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setBulkAction('select')}>일괄 선정</button>
+              <button onClick={() => setBulkAction('reject')}>
+                일괄 미선정
+              </button>
+              <button onClick={() => setChecked(new Set())}>선택 해제</button>
+            </>
+          )}
+        </div>
+      )}
+      {error && !current && (
+        <p role="alert" className="business-info">
+          {error}
+        </p>
+      )}
       <section className="business-panel">
         <div className="business-panel-heading">
           <h2>
@@ -266,6 +358,18 @@ export default function BusinessParticipants() {
               <table className="participants-table">
                 <thead>
                   <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        aria-label="접수된 신청 모두 선택"
+                        disabled={!selectable.length || busy}
+                        checked={
+                          selectable.length > 0 &&
+                          checkedIds.length === selectable.length
+                        }
+                        onChange={toggleAll}
+                      />
+                    </th>
                     <th>참여자</th>
                     <th>캠페인</th>
                     <th>채널·지표</th>
@@ -278,6 +382,17 @@ export default function BusinessParticipants() {
                 <tbody>
                   {shown.map((item) => (
                     <tr key={item.id}>
+                      <td data-label="선택">
+                        {bulkSelectable(item, selectionMode(item)) && (
+                          <input
+                            type="checkbox"
+                            aria-label={`${item.creatorNickname || '참여자'} 신청 ${item.id} 선택`}
+                            checked={checked.has(item.id)}
+                            disabled={busy}
+                            onChange={() => toggle(item.id)}
+                          />
+                        )}
+                      </td>
                       <td data-label="참여자">
                         <div className="business-cell-media">
                           <span className="business-avatar" aria-hidden="true">
@@ -406,6 +521,26 @@ export default function BusinessParticipants() {
               이 참여자의 제출 콘텐츠 확인 →
             </Link>
           </p>
+          {/* 방문형: 참여자가 요청한 방문 일시를 확정하거나 반려합니다. */}
+          {current.fulfillmentType === 'VISIT' &&
+            [
+              'ACTIVE',
+              'CONTENT_SUBMITTED',
+              'REVISION_REQUESTED',
+              'COMPLETED',
+            ].includes(current.status) && (
+              <VisitReservationPanel
+                key={`reservation-${current.id}`}
+                application={current}
+                mode="seller"
+              />
+            )}
+          {/* 활동 등급·평가 평균, 완료 참여자 평가·메모, 미제출·노쇼 패널티 */}
+          <ParticipantActivityPanel
+            key={`activity-${current.id}-${current.status}`}
+            application={current}
+            onChanged={state.reload}
+          />
           {/* 구매평 캠페인: 참여자의 구매 인증을 확인하고, 완료 후 환급 완료를 기록합니다. */}
           {current.fulfillmentType === 'PURCHASE' && (
             <PurchasePaybackPanel

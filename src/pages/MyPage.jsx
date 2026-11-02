@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import MemberAvatar from '../features/membership/MemberAvatar'
 import MyCampaignSummary from '../features/membership/MyCampaignSummary'
+import MyActivityCard from '../features/participation/MyActivityCard'
 import '../features/membership/accountProfile.css'
 import LogoutButton from '../features/auth/LogoutButton'
 import { getMyInfo } from '../api/authApi'
@@ -84,6 +85,8 @@ export default function MyPage() {
           프로필 수정
         </Link>
       </BuyerCard>
+      {/* 활동 등급(완료 횟수 기준)과 미제출·노쇼 패널티·신청 제한 안내 */}
+      <MyActivityCard />
       <MyCampaignSummary />
       <MenuGroup title="캠페인 활동" links={campaignLinks} />
       <MenuGroup title="계정" links={accountLinks} />

@@ -21,6 +21,8 @@ export function notificationPath(item, business = false) {
         // 채널 확인 결과(확인·반려)는 설정의 SNS 채널 연결 영역으로 이동합니다.
         MEMBER_CHANNEL_CONNECTION: '/settings#channel-connect',
         CHAT_ROOM: `/messages?room=${id}`,
+        // 운영자에게 온 새 신고 알림은 '신고·제재' 화면으로 이동합니다.
+        ADMIN_REPORT: '/admin/moderation',
       }
   return paths[item.targetType] || null
 }

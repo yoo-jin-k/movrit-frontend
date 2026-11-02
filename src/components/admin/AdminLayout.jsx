@@ -11,6 +11,7 @@ const menu = [
   ['캠페인 참여자', '/admin/campaign-participants'],
   ['콘텐츠 최종 승인', '/admin/content-reviews'],
   ['채널 확인', '/admin/channel-verifications'],
+  ['패널티·마감 알림', '/admin/participation'],
   ['메시지', '/admin/messages'],
   ['회원', '/admin/members'],
   ['업체', '/admin/sellers'],
@@ -20,7 +21,8 @@ const menu = [
   ['협업/계약', '/admin/collaborations'],
   ['정산', '/admin/settlements'],
   ['공지/콘텐츠', '/admin/content'],
-  ['신고/문의', '/admin/inquiries'],
+  ['신고·제재', '/admin/moderation'],
+  ['문의', '/admin/inquiries'],
   ['리포트', '/admin/reports'],
   ['설정', '/admin/settings'],
 ]

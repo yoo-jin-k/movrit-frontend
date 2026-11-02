@@ -8,6 +8,8 @@ export function notificationPath(item, business = false) {
         CAMPAIGN_CONTENT: `/seller/contents?contentId=${id}`,
         // 운영자가 캠페인을 숨기거나 다시 공개하면 해당 캠페인 편집 화면으로 이동합니다.
         CAMPAIGN: `/seller/campaigns/${id}`,
+        // 새 채팅 메시지 알림은 해당 대화방으로 이동합니다.
+        CHAT_ROOM: `/seller/messages?room=${id}`,
         INQUIRY: '/seller/inbox?tab=inquiries',
         PREORDER: `/preorders/${id}`,
       }
@@ -18,6 +20,7 @@ export function notificationPath(item, business = false) {
         PREORDER: `/preorders/${id}`,
         // 채널 확인 결과(확인·반려)는 설정의 SNS 채널 연결 영역으로 이동합니다.
         MEMBER_CHANNEL_CONNECTION: '/settings#channel-connect',
+        CHAT_ROOM: `/messages?room=${id}`,
       }
   return paths[item.targetType] || null
 }

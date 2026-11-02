@@ -260,3 +260,103 @@
     min-height: 70vh;
   }
 }
+
+/* 이전 메시지 더 보기 */
+.chat-more {
+  align-self: center;
+}
+.chat-more button {
+  padding: 6px 14px;
+  border: 1px solid #dedbe5;
+  border-radius: 999px;
+  background: #fff;
+  color: #5b5470;
+  font-size: 13px;
+}
+/* 내 메시지의 '읽음' 표시 */
+.chat-read {
+  color: #6b38db;
+  font-weight: 700;
+}
+/* 첨부: 사진은 말풍선 안에 작게, PDF는 받기 버튼으로 */
+.chat-attachment__image {
+  display: block;
+  max-width: min(260px, 100%);
+  max-height: 260px;
+  border-radius: 12px;
+  border: 1px solid #ebe7ee;
+  object-fit: cover;
+}
+.chat-attachment__file {
+  padding: 10px 12px;
+  border: 1px solid #ebe7ee;
+  border-radius: 12px;
+  background: #fff;
+  color: #17171b;
+  font-size: 13px;
+  text-align: left;
+}
+.chat-attachment__file small {
+  color: #8c8c94;
+}
+.chat-attachment__loading,
+.chat-attachment__error {
+  color: #8c8c94;
+  font-size: 12px;
+}
+/* 첨부 버튼과 선택한 파일 표시 */
+.chat-input {
+  align-items: flex-end;
+}
+.chat-attach {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #dedbe5;
+  border-radius: 10px;
+  color: #6b38db;
+  font-size: 22px;
+  cursor: pointer;
+}
+.chat-attach input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.chat-input__body {
+  display: grid;
+  flex: 1;
+  gap: 6px;
+  min-width: 0;
+}
+.chat-input__body textarea {
+  width: 100%;
+}
+.chat-input__file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  max-width: 100%;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #efe8fd;
+  color: #5b5470;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-input__file button {
+  border: 0;
+  background: none;
+  color: #6b38db;
+  font-size: 16px;
+  line-height: 1;
+}
+.chat-input > button {
+  min-height: 44px;
+}

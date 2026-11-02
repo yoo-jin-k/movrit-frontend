@@ -1,11 +1,14 @@
 /**
  * 안 읽은 채팅 메시지 수를 가져옵니다(헤더·업체 메뉴·운영자 메뉴 배지용).
- * - 30초마다, 화면으로 돌아왔을 때, 페이지를 옮겼을 때, 채팅을 읽었을 때 다시 가져옵니다.
+ * - 실시간 이벤트(새 메시지)를 받을 때, 30초마다, 화면으로 돌아왔을 때, 페이지를 옮겼을 때, 채팅을 읽었을 때 다시 가져옵니다.
+ * - 로그인 상태면 실시간 이벤트 연결(chatStream)을 함께 열어 둡니다.
  * - 로그인하지 않았거나 화면이 가려져 있으면 요청하지 않고, 실패하면 직전 값을 그대로 둡니다.
  */
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { CHATS_CHANGED, readChatUnreadCount } from '../../api/chatApi'
+import { NOTIFICATIONS_CHANGED } from '../../api/notificationApi'
+import { CHAT_EVENT, acquireChatStream } from './chatStream'
 
 const REFRESH_MS = 30000
 
@@ -28,12 +31,24 @@ export default function useChatUnread() {
       }
     }
     load()
+    const release = sessionStorage.getItem('accessToken')
+      ? acquireChatStream()
+      : () => {}
+    // 새 메시지가 오면 채팅 배지와 알림 배지(새 메시지 알림)를 함께 갱신합니다.
+    const onEvent = (event) => {
+      if (event.detail?.type !== 'message') return
+      load()
+      window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED))
+    }
+    window.addEventListener(CHAT_EVENT, onEvent)
     const timer = setInterval(load, REFRESH_MS)
     window.addEventListener('focus', load)
     window.addEventListener(CHATS_CHANGED, load)
     document.addEventListener('visibilitychange', load)
     return () => {
       alive = false
+      release()
+      window.removeEventListener(CHAT_EVENT, onEvent)
       clearInterval(timer)
       window.removeEventListener('focus', load)
       window.removeEventListener(CHATS_CHANGED, load)

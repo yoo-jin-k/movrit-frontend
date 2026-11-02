@@ -45,3 +45,32 @@ export function chatTime(value, now = new Date()) {
 export function roomTypeLabel(type) {
   return type === 'SUPPORT' ? '운영자 문의' : '캠페인 대화'
 }
+
+// 첨부 파일 선택을 확인합니다. 사진(JPG·PNG)과 PDF만, 5MB까지 보낼 수 있습니다.
+export const CHAT_ATTACHMENT_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'application/pdf',
+]
+export function chatAttachmentError(file) {
+  if (!file) return '첨부할 파일을 선택해 주세요.'
+  if (!CHAT_ATTACHMENT_TYPES.includes(file.type))
+    return '사진(JPG·PNG) 또는 PDF만 보낼 수 있습니다.'
+  if (file.size > 5 * 1024 * 1024)
+    return '첨부 파일은 5MB 이하만 보낼 수 있습니다.'
+  return ''
+}
+
+// 파일 크기 표시입니다(예: 1.2MB, 340KB).
+export function fileSizeLabel(bytes) {
+  const value = Number(bytes) || 0
+  if (value >= 1024 * 1024) return `${(value / 1024 / 1024).toFixed(1)}MB`
+  return `${Math.max(1, Math.round(value / 1024))}KB`
+}
+
+// 내 메시지에 '읽음'을 붙일지입니다. 다른 참여자가 이 메시지 번호까지 읽었으면 읽음입니다.
+export function isReadByOthers(message, othersLastReadId) {
+  return (
+    Boolean(message?.mine) && Number(othersLastReadId) >= Number(message.id)
+  )
+}

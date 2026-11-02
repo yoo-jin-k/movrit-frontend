@@ -47,6 +47,37 @@ export async function readChatMessages(roomId, after, signal) {
   return data
 }
 
+// before보다 이전 메시지 50개를 받습니다('이전 메시지 더 보기'). 읽음 위치는 바꾸지 않습니다.
+export async function readOlderChatMessages(roomId, before) {
+  const { data } = await api.get(
+    `/chats/${encodeURIComponent(roomId)}/messages`,
+    { params: { before }, timeout: 15000 },
+  )
+  return data
+}
+
+// 사진(JPG·PNG)이나 PDF를 첨부해 보냅니다. 함께 쓴 글은 선택입니다.
+export async function sendChatAttachment(roomId, file, body) {
+  const form = new FormData()
+  form.append('file', file)
+  if (body) form.append('body', body)
+  const { data } = await api.post(
+    `/chats/${encodeURIComponent(roomId)}/attachments`,
+    form,
+    { headers: { 'Content-Type': undefined }, timeout: 30000 },
+  )
+  return data
+}
+
+// 첨부 파일은 공개 주소가 없어 로그인 요청으로 받아 화면에서 임시 주소로 보여줍니다.
+export async function readChatAttachment(roomId, messageId, signal) {
+  const { data } = await api.get(
+    `/chats/${encodeURIComponent(roomId)}/attachments/${encodeURIComponent(messageId)}`,
+    { responseType: 'blob', signal, timeout: 30000 },
+  )
+  return data
+}
+
 export async function sendChatMessage(roomId, body) {
   const { data } = await api.post(
     `/chats/${encodeURIComponent(roomId)}/messages`,

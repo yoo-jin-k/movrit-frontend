@@ -26,9 +26,9 @@ function ForgotPasswordPage() {
       setMessage(result.message)
       setDevToken(result.devResetToken || null)
     } catch (error) {
-      console.error(error)
       setMessage(
-        '비밀번호 재설정 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        error.response?.data?.detail ||
+          '비밀번호 재설정 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.',
       )
     } finally {
       setLoading(false)
@@ -36,10 +36,13 @@ function ForgotPasswordPage() {
   }
 
   return (
-    <CommonLayout title="계정 찾기">
+    <CommonLayout title="비밀번호 찾기">
       <form className="common-card common-account-card" onSubmit={submit}>
-        <h2>계정 찾기</h2>
-        <p>가입한 이메일로 인증해 주세요.</p>
+        <h2>비밀번호 찾기</h2>
+        <p>
+          가입한 이메일을 입력하면 비밀번호 재설정 링크를 보내 드립니다. 링크는
+          30분 동안 한 번만 쓸 수 있습니다.
+        </p>
         <label className="common-field">
           이메일
           <input
@@ -53,20 +56,23 @@ function ForgotPasswordPage() {
         <button className="common-button" type="submit" disabled={loading}>
           {loading ? '요청 중...' : '재설정 메일 받기'}
         </button>
-        {message && <p>{message}</p>}
+        {message && <p role="status">{message}</p>}
 
         {devToken && (
           <div>
-            <p>로컬 개발 모드라 재설정 링크를 바로 테스트할 수 있습니다.</p>
+            <p>
+              로컬 시연 모드라 메일 대신 이 화면에서 바로 재설정할 수 있습니다.
+            </p>
             <button
               className="common-button"
+              type="button"
               onClick={() =>
                 navigate(
                   `/password/reset?token=${encodeURIComponent(devToken)}`,
                 )
               }
             >
-              비밀번호 재설정 테스트
+              비밀번호 재설정하기
             </button>
           </div>
         )}

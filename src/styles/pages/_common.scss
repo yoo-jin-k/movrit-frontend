@@ -700,3 +700,20 @@
     outline-offset: 3px;
   }
 }
+
+// 탈퇴할 수 없을 때 이유 목록입니다.
+.withdraw-blocked {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fdecec;
+  color: #8a2c2c;
+  ul {
+    margin: 8px 0;
+    padding-left: 18px;
+  }
+  a {
+    color: #6b38db;
+    font-weight: 700;
+  }
+}

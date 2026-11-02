@@ -43,10 +43,20 @@ export default function BuyerHomePage() {
     )
     .sort((a, b) => a.applicants / a.capacity - b.applicants / b.capacity)
     .slice(0, 10)
+  // 오늘(한국 날짜) 모집이 끝나는 캠페인 수입니다. 실제 목록에서 셉니다(고정값이 아닙니다).
+  const closingToday = items.filter(
+    (item) => item.daysLeft === 0 && !item.recruitmentEnded,
+  ).length
   const sections = [
     [
       <>
         신청 <em>마감임박</em> 캠페인
+        {closingToday > 0 && (
+          <small className="main-home__today">
+            {' '}
+            · 오늘 마감 {closingToday}개
+          </small>
+        )}
       </>,
       closing,
       '/category/제품?sort=closing',

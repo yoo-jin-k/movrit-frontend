@@ -38,7 +38,14 @@ export async function openBrowser() {
   return chromium.launch({ channel: 'chrome', headless: true })
 }
 
-export async function pageAs(browser, auth, width = 1280) {
+// stream: 채팅 실시간 연결(/api/chats/stream)을 열지 여부입니다. 기본은 막습니다.
+// 이 연결은 계속 열려 있어 'networkidle'(네트워크 조용함) 대기가 끝나지 않으므로, 실시간을 확인하는 화면에서만 켭니다.
+export async function pageAs(
+  browser,
+  auth,
+  width = 1280,
+  { stream = false } = {},
+) {
   const ctx = await browser.newContext({ viewport: { width, height: 900 } })
   if (auth)
     await ctx.addInitScript(
@@ -48,6 +55,7 @@ export async function pageAs(browser, auth, width = 1280) {
       },
       [auth.accessToken, auth.refreshToken],
     )
+  if (!stream) await ctx.route('**/api/chats/stream', (route) => route.abort())
   const page = await ctx.newPage()
   page.errors = []
   page.on('pageerror', (e) => page.errors.push(e.message))

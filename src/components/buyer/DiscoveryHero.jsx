@@ -1,10 +1,10 @@
 /**
  * 공동구매 탐색 안내와 프리오더 진입 링크를 표시합니다.
- * 오늘 마감 숫자는 고정 디자인 값이며 서버 통계 조회 결과가 아닙니다.
+ * '오늘 마감' 숫자는 부르는 쪽이 실제 목록에서 센 값(closingToday)을 넘겨야 보입니다. 값이 없으면 숫자 영역을 숨깁니다.
  */
 import { Link } from 'react-router-dom'
 
-function DiscoveryHero() {
+function DiscoveryHero({ closingToday = null }) {
   return (
     <section className="discovery-hero">
       <div className="discovery-hero__copy">
@@ -22,12 +22,14 @@ function DiscoveryHero() {
           지금 프리오더 →
         </Link>
       </div>
-      <aside className="discovery-hero__summary">
-        <span>오늘 마감</span>
-        <strong>12</strong>
-        <p>개의 공구가 곧 끝나요</p>
-        <Link to="/preorders">마감 전에 확인하기 →</Link>
-      </aside>
+      {closingToday != null && (
+        <aside className="discovery-hero__summary">
+          <span>오늘 마감</span>
+          <strong>{closingToday}</strong>
+          <p>개의 공구가 곧 끝나요</p>
+          <Link to="/preorders">마감 전에 확인하기 →</Link>
+        </aside>
+      )}
     </section>
   )
 }

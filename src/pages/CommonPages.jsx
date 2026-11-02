@@ -4,9 +4,14 @@
  */
 import AccountPasswordPage from '../features/membership/AccountPasswordPage'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'
+import {
+  WITHDRAW_CONFIRM_TEXT,
+  readWithdrawalEligibility,
+  withdrawMember,
+} from '../api/memberWithdrawalApi'
 import useAdminResource from '../features/admin/useAdminResource'
 import {
   NOTICE_CATEGORY_LABELS,
@@ -180,31 +185,103 @@ export function TermsPage() {
   )
 }
 
+// 회원 탈퇴 화면입니다. 탈퇴 가능 여부(진행 중인 캠페인 등)를 먼저 보여주고, 확인 문구 '탈퇴합니다'를 입력해야 탈퇴됩니다.
+// 탈퇴하면 로그인 정보를 지우고 홈으로 이동합니다. 캠페인·주문 기록은 '탈퇴한 회원'으로 남습니다.
 export function WithdrawalPage() {
+  const navigate = useNavigate()
+  const [check, setCheck] = useState({ loading: true, data: null, error: '' })
+  const [confirmText, setConfirmText] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    readWithdrawalEligibility()
+      .then((data) => setCheck({ loading: false, data, error: '' }))
+      .catch(() =>
+        setCheck({
+          loading: false,
+          data: null,
+          error: '탈퇴 가능 여부를 확인하지 못했습니다.',
+        }),
+      )
+  }, [])
+
+  const submit = async (event) => {
+    event.preventDefault()
+    if (confirmText.trim() !== WITHDRAW_CONFIRM_TEXT) {
+      setError(`확인 문구 '${WITHDRAW_CONFIRM_TEXT}'를 정확히 입력해 주세요.`)
+      return
+    }
+    setBusy(true)
+    setError('')
+    try {
+      await withdrawMember(confirmText.trim())
+      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      navigate('/home', { replace: true, state: { withdrawn: true } })
+    } catch (failure) {
+      setError(
+        failure.response?.data?.detail ||
+          '탈퇴를 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const blocked = check.data && !check.data.allowed
   return (
     <CommonLayout title="계정 탈퇴">
-      <p role="note">
-        탈퇴 신청은 아직 연결되지 않았습니다.{' '}
-        <Link to="/inquiries">고객센터에 문의해 주세요.</Link>
-      </p>
       <section className="common-card common-card--withdraw">
         <h2>계정 탈퇴</h2>
         <p>탈퇴 전 아래 내용을 확인해 주세요.</p>
         <div className="withdraw-warning">
           <strong>탈퇴하면 복구할 수 없습니다</strong>
           <p>
-            • 진행중 주문/환불이 있으면 탈퇴할 수 없습니다
-            <br />• 진행중 협업/정산이 있으면 먼저 종료해야 합니다
-            <br />• 법적 보관 의무 데이터는 일정 기간 보관됩니다
+            • 이메일·닉네임·연락처·프로필 사진이 지워지고 다시 로그인할 수
+            없습니다
+            <br />• 진행 중인 캠페인(선정·참여 중·콘텐츠 검토)이 있으면 탈퇴할
+            수 없습니다
+            <br />• 업체는 공개 중인 캠페인을 마감한 뒤 탈퇴할 수 있습니다
+            <br />• 캠페인·주문 기록은 정산과 법적 보관을 위해 &lsquo;탈퇴한
+            회원&rsquo;으로 남습니다
           </p>
         </div>
-        <label className="common-field">
-          확인 문구
-          <input placeholder="탈퇴합니다" />
-        </label>
-        <button className="common-button" disabled>
-          계정 탈퇴 요청 (준비 중)
-        </button>
+        {check.loading ? (
+          <p role="status">탈퇴 가능 여부를 확인하고 있습니다.</p>
+        ) : check.error ? (
+          <p role="alert">{check.error}</p>
+        ) : blocked ? (
+          <div role="alert" className="withdraw-blocked">
+            <strong>지금은 탈퇴할 수 없습니다.</strong>
+            <ul>
+              {check.data.reasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+            <Link to="/mypage/campaigns">내 캠페인 확인하기 →</Link>
+          </div>
+        ) : (
+          <form onSubmit={submit}>
+            <label className="common-field">
+              확인 문구 (&lsquo;{WITHDRAW_CONFIRM_TEXT}&rsquo;를 입력해 주세요)
+              <input
+                value={confirmText}
+                onChange={(event) => setConfirmText(event.target.value)}
+                placeholder={WITHDRAW_CONFIRM_TEXT}
+                autoComplete="off"
+              />
+            </label>
+            {error && <p role="alert">{error}</p>}
+            <button
+              className="common-button"
+              type="submit"
+              disabled={busy || confirmText.trim() !== WITHDRAW_CONFIRM_TEXT}
+            >
+              {busy ? '처리 중...' : '계정 탈퇴'}
+            </button>
+          </form>
+        )}
       </section>
     </CommonLayout>
   )

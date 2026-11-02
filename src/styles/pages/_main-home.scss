@@ -2766,3 +2766,92 @@
   font-size: 12px;
   color: #77777f;
 }
+
+// 커뮤니티: 고정 안내 글, 댓글 수, 본문 줄바꿈, 수정·삭제 버튼, 댓글, 페이지 이동입니다.
+.discovery-post-list > a.is-pinned {
+  background: #faf8ff;
+}
+.discovery-post-list__count {
+  color: #6b38db;
+  font-style: normal;
+  font-size: 14px;
+}
+.discovery-post__body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+.discovery-post__actions {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+.discovery-comments {
+  margin: 28px 0;
+  ul {
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    position: relative;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    strong {
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    span {
+      color: #8c8c94;
+      font-size: 12px;
+    }
+    p {
+      margin: 6px 0 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    button {
+      position: absolute;
+      top: 12px;
+      right: 0;
+      border: 0;
+      background: none;
+      color: #8c8c94;
+      font-size: 12px;
+    }
+  }
+  form {
+    display: grid;
+    gap: 8px;
+    textarea {
+      min-height: 80px;
+      padding: 10px 12px;
+      border: 1px solid #dedbe5;
+      border-radius: 10px;
+      font: inherit;
+    }
+    button {
+      justify-self: end;
+    }
+  }
+}
+.discovery-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 24px 0;
+  button {
+    padding: 6px 14px;
+    border: 1px solid #dedbe5;
+    border-radius: 8px;
+    background: #fff;
+  }
+}
+
+// 메인 '마감임박' 제목 옆의 오늘 마감 개수입니다.
+.main-home__today {
+  color: #e5484d;
+  font-size: 15px;
+  font-weight: 700;
+}

@@ -1,8 +1,11 @@
 /**
  * 업체 소유 콘텐츠의 승인·수정 요청을 서버 버전과 함께 처리합니다.
  * 처리 결과가 불명확하거나 충돌하면 명령을 잠그고 최신 목록 확인을 요구하며 업체 승인을 운영자 최종 승인과 구분합니다.
+ * 위쪽에는 캠페인별 콘텐츠 성과 요약을, 검토 창에는 게시물별 성과 기록을 함께 보여 줍니다.
  */
 import ReportButton from '../participation/ReportButton'
+import ContentMetricPanel from '../contentMetric/ContentMetricPanel'
+import CampaignPerformanceCard from '../contentMetric/CampaignPerformanceCard'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { contentLinks, CONTENT_CHANNELS } from '../membership/myContentModel'
@@ -118,6 +121,7 @@ export default function BusinessContents() {
         경우에도 미제출로 변경하지 않습니다.
       </p>
       {notice && <p role="status">{notice}</p>}
+      <CampaignPerformanceCard />
       <section className="business-panel">
         <ListState state={state}>
           {shown.length ? (
@@ -190,6 +194,8 @@ export default function BusinessContents() {
             </p>
           ))}
           <p>{selected.note || '제출 메모가 없습니다.'}</p>
+          {/* 업체도 게시물에서 확인한 성과를 기록할 수 있습니다. */}
+          <ContentMetricPanel submissionId={selected.id} />
           <h3>최근 검토 의견</h3>
           <p>{selected.reviewComment || '아직 검토 의견이 없습니다.'}</p>
           {selected.status === 'SUBMITTED' && (

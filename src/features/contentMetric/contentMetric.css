@@ -1,0 +1,151 @@
+/* 콘텐츠 성과: 참여자 내 캠페인·업체 콘텐츠 검토 창·업체 캠페인 요약 */
+
+.content-metric {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #ece9f1;
+}
+.content-metric h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+.content-metric__help {
+  margin: 0 0 12px;
+  color: #8a8494;
+  font-size: 13px;
+}
+
+.content-metric__link {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid #ece9f1;
+  border-radius: 12px;
+  background: #fff;
+}
+.content-metric__link header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.content-metric__link header a {
+  font-size: 13px;
+  color: #6c3cf0;
+}
+
+.content-metric__numbers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.content-metric__numbers.is-summary {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+.content-metric__numbers > div {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f7f6f9;
+}
+.content-metric__numbers dt {
+  font-size: 12px;
+  color: #8a8494;
+}
+.content-metric__numbers dd {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.content-metric__numbers small {
+  font-size: 12px;
+  color: #8a8494;
+}
+.content-metric__numbers small.is-up {
+  color: #2f8f5b;
+}
+.content-metric__numbers small.is-down {
+  color: #c53b31;
+}
+
+.content-metric__meta,
+.content-metric__empty {
+  color: #8a8494;
+  font-size: 12px;
+  margin: 0;
+}
+
+.content-metric__open {
+  justify-self: start;
+}
+
+.content-metric__form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  align-items: end;
+}
+.content-metric__form label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: #6b6575;
+}
+.content-metric__form input {
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #e5e5eb;
+  border-radius: 8px;
+}
+.content-metric__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+}
+
+.content-metric__history summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: #6b6575;
+}
+.content-metric__history table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.content-metric__history th,
+.content-metric__history td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f0eef3;
+  text-align: right;
+}
+.content-metric__history th:first-child,
+.content-metric__history td:first-child {
+  text-align: left;
+}
+
+.content-metric-summary header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.content-metric-summary header h3 {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .content-metric__numbers,
+  .content-metric__numbers.is-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .content-metric__form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

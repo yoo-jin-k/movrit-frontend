@@ -24,6 +24,7 @@ import {
 } from './campaignWorkspaceModel'
 import { showsCancellationHelp } from './campaignCancellationModel'
 import OpenChatButton from '../chat/OpenChatButton'
+import ContentMetricPanel from '../contentMetric/ContentMetricPanel'
 import './myCampaignContent.css'
 
 // 서버 상태와 최신 version을 함께 사용합니다. 저장 결과가 불명확하면 자동 재전송하지 않습니다.
@@ -217,6 +218,8 @@ export default function MyContentSubmission({
               <p>{submission.reviewComment}</p>
             </div>
           )}
+          {/* 게시물별 조회수·좋아요·댓글을 날짜별로 기록합니다. */}
+          <ContentMetricPanel submissionId={submission.id} />
         </>
       ) : (
         <p>아직 제출한 콘텐츠가 없습니다.</p>

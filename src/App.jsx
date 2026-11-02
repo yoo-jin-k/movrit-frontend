@@ -25,6 +25,7 @@ const AdminContentReviewsPage = lazy(
   () => import('./pages/AdminContentReviewsPage'),
 )
 const AdminModerationPage = lazy(() => import('./pages/AdminModerationPage'))
+const AdminCommunityPage = lazy(() => import('./pages/AdminCommunityPage'))
 const AdminParticipationPage = lazy(
   () => import('./pages/AdminParticipationPage'),
 )
@@ -535,6 +536,16 @@ function App() {
               <ProtectedPage>
                 <AdminAccess>
                   <AdminMessagesPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/community"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminCommunityPage />
                 </AdminAccess>
               </ProtectedPage>
             }

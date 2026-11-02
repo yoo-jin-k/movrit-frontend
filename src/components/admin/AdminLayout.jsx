@@ -21,6 +21,7 @@ const menu = [
   ['협업/계약', '/admin/collaborations'],
   ['정산', '/admin/settlements'],
   ['공지/콘텐츠', '/admin/content'],
+  ['커뮤니티 관리', '/admin/community'],
   ['신고·제재', '/admin/moderation'],
   ['문의', '/admin/inquiries'],
   ['리포트', '/admin/reports'],

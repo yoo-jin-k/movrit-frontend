@@ -410,7 +410,10 @@ export default function CommunityPage() {
                       <h3>댓글 {detail.data.comments.length}</h3>
                       <ul>
                         {detail.data.comments.map((item) => (
-                          <li key={item.id}>
+                          <li
+                            key={item.id}
+                            className={item.hidden ? 'is-hidden' : undefined}
+                          >
                             <strong>{item.authorName}</strong>
                             <span>{postDate(item.createdAt)}</span>
                             <p>{item.body}</p>
@@ -423,7 +426,8 @@ export default function CommunityPage() {
                                 지우기
                               </button>
                             )}
-                            {loggedIn() && !item.deletable && (
+                            {/* 운영자가 가린 댓글은 안내 문구만 보이고 다시 신고할 수 없습니다. */}
+                            {loggedIn() && !item.deletable && !item.hidden && (
                               <ReportButton
                                 targetType="COMMUNITY_COMMENT"
                                 targetId={item.id}

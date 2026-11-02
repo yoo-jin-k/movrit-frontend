@@ -89,6 +89,10 @@ export const AUDIT_ACTION_LABELS = {
   INQUIRY_CREATED: '문의 등록',
   INQUIRY_ANSWERED: '문의 답변',
   INQUIRY_CLOSED: '문의 종료',
+  COMMUNITY_HIDE: '커뮤니티 가리기',
+  COMMUNITY_UNHIDE: '커뮤니티 다시 보이기',
+  ADMIN_REPORT_EXPORTED: '운영 리포트 엑셀 내려받기',
+  CAMPAIGN_SHIPPING_EXPORTED: '배송지 엑셀 내려받기',
 }
 export const AUDIT_TARGET_LABELS = {
   CAMPAIGN: '캠페인',
@@ -100,6 +104,9 @@ export const AUDIT_TARGET_LABELS = {
   PAYMENT: '결제',
   PREORDER: '프리오더',
   SETTLEMENT: '정산',
+  COMMUNITY_POST: '커뮤니티 글',
+  COMMUNITY_COMMENT: '커뮤니티 댓글',
+  ADMIN_REPORT: '운영 리포트',
 }
 
 export const ROLE_LABELS = { USER: '일반', ADMIN: '운영자' }

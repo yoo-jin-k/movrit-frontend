@@ -2797,6 +2797,11 @@
     position: relative;
     padding: 12px 0;
     border-bottom: 1px solid #eee;
+    // 운영자가 가린 댓글: 자리만 남기고 안내 문구를 흐리게 보여 줍니다.
+    &.is-hidden p {
+      color: #9a95a3;
+      font-style: italic;
+    }
     strong {
       margin-right: 8px;
       font-size: 14px;

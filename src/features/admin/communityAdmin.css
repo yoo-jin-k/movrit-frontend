@@ -1,0 +1,106 @@
+/* 운영자 커뮤니티 관리 화면(/admin/community) */
+
+.community-admin-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.community-admin-badge.is-visible {
+  background: #dff3e7;
+  color: #2f8f5b;
+}
+.community-admin-badge.is-hidden {
+  background: #fff3d6;
+  color: #9a6400;
+}
+.community-admin-badge.is-deleted {
+  background: #f1eff4;
+  color: #6b6575;
+}
+
+.community-admin-meta {
+  display: block;
+  margin-top: 2px;
+  color: #8a8494;
+}
+
+.admin-table tr.is-selected td {
+  background: #f6f2ff;
+}
+
+.community-admin-pages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.community-admin-post header {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.community-admin-post h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.community-admin-post small {
+  color: #8a8494;
+}
+.community-admin-body {
+  white-space: pre-wrap;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #f7f6f9;
+  line-height: 1.6;
+}
+
+.community-admin-subtitle {
+  margin: 24px 0 8px;
+  font-size: 15px;
+}
+
+.community-admin-comments {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.community-admin-comments li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid #ece9f1;
+  border-radius: 10px;
+}
+.community-admin-comments li > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.community-admin-comments li small {
+  color: #8a8494;
+}
+.community-admin-comments li p {
+  grid-column: 1;
+  margin: 0;
+  white-space: pre-wrap;
+}
+.community-admin-comments li button {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+.community-admin-comments li.is-hidden {
+  background: #fffaf0;
+}
+.community-admin-comments li.is-deleted {
+  opacity: 0.6;
+}

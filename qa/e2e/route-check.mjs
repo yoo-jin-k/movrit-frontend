@@ -71,6 +71,7 @@ const ROUTES = {
     '/admin/settlements',
     '/admin/content',
     '/admin/inquiries',
+    '/admin/community',
     '/admin/moderation',
     '/admin/participation',
     '/admin/reports',

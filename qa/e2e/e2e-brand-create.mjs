@@ -33,6 +33,8 @@ await ctx.addInitScript(
   },
   [auth.accessToken, auth.refreshToken],
 )
+// 채팅 실시간 연결은 계속 열려 있어 'networkidle' 대기가 끝나지 않으므로 막습니다(e2e-lib의 pageAs와 같은 방식).
+await ctx.route('**/api/chats/stream', (route) => route.abort())
 const page = await ctx.newPage()
 const errors = []
 page.on('pageerror', (e) => errors.push(e.message))

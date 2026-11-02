@@ -6,16 +6,17 @@ import { createCampaignDetails } from './campaignDetails'
 import { campaignTiming } from './campaignDates'
 import { periodHasEnded } from './scheduleModel'
 
+// 헤더 주요 메뉴입니다. 체험 종류(제품·지역·기자단) → 모집 상태(오늘오픈·프리미어) → 참여 방식(구매평·클립) → 부가 서비스 순서입니다.
 export const MENU_ITEMS = [
   ['홈', '/home'],
   ['제품', '/category/제품'],
   ['지역', '/category/지역'],
   ['기자단', '/category/기자단'],
-  ['저금통', '/offerwall'],
   ['오늘오픈', '/category/오늘오픈'],
   ['프리미어', '/category/프리미어'],
   ['구매평', '/special/shoppingreview'],
   ['클립', '/special/clip'],
+  ['저금통', '/offerwall'],
   ['커뮤니티', '/community/free'],
 ]
 export const PRODUCT_CATEGORIES = [
@@ -64,21 +65,6 @@ export const REGIONS = [
   '경상',
   '제주',
 ]
-export const SHORTCUTS = [
-  ['오늘오픈', 'calendar', '/category/오늘오픈'],
-  ['저금통', 'pig', '/offerwall'],
-  ['맛집', 'dining', '/category/지역?category=맛집'],
-  ['뷰티', 'beauty', '/category/제품?category=뷰티'],
-  ['여행', 'travel', '/category/지역?category=숙박'],
-  ['문화', 'culture', '/category/지역?category=문화'],
-  ['식품', 'food', '/category/제품?category=식품'],
-  ['생활', 'living', '/category/제품?category=생활'],
-  ['디지털', 'digital', '/category/제품?category=디지털'],
-  ['커뮤니티', 'community', '/community/free'],
-  ['이용가이드', 'guide', '/community/guide'],
-  ['광고문의', 'biz', '/support'],
-]
-
 // 실제 모집 정보가 아닌 개발용 화면 샘플입니다. 운영 빌드에서는 노출하지 않습니다.
 const SAMPLES = [
   ['[미리보기] 동네 다이닝 체험', '식사 체험권 예시', '맛집', 'dining'],

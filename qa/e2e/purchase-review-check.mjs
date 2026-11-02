@@ -110,9 +110,12 @@ check(
     .then(() => true)
     .catch(() => false),
 )
+// 상세 요약 카드 윗줄(브랜드 · 종류 · 참여 방식)에 '직접 구매'가 보여야 합니다.
 check(
-  '상세 체험 유형 직접 구매',
-  (await guest.getByText(/체험 유형: 직접 구매/).count()) > 0,
+  '상세 참여 방식 직접 구매',
+  /직접 구매/.test(
+    await guest.getByRole('region', { name: '캠페인 요약' }).innerText(),
+  ),
 )
 await guest.screenshot({ path: `${out}/purchase_2_detail.png`, fullPage: true })
 await guest.goto(`${base}/special/shoppingreview`, { waitUntil: 'networkidle' })

@@ -48,7 +48,7 @@ function PreviewCampaignDetailPage() {
           <Link to="/category/제품">캠페인 목록으로 돌아가기</Link>
         </main>
       ) : (
-        <main className="discovery-width discovery-detail">
+        <main className="discovery-width campaign-detail">
           <aside className="discovery-info" aria-label="예시 캠페인 안내">
             <p>
               이 페이지는 화면 확인용 예시 캠페인입니다. 실제 신청은 접수되지
@@ -56,27 +56,23 @@ function PreviewCampaignDetailPage() {
             </p>
             <Link to={LIVE_CAMPAIGN_LIST}>실제 모집 중인 캠페인 보기 →</Link>
           </aside>
-          <div className="discovery-detail__layout">
-            <div className="discovery-detail__body">
-              <div
-                className={`discovery-detail__visual ${expanded ? 'is-expanded' : ''}`}
-              >
+          <div className="campaign-detail__layout">
+            <div className="campaign-detail__main">
+              <figure className="campaign-detail__cover">
                 <img src={item.image} alt={item.title} />
-                <div className="discovery-detail__visual-copy">
-                  <span>MOVRIT CAMPAIGN</span>
-                  <h2>{item.title}</h2>
-                  <p>{item.description}</p>
-                </div>
-              </div>
+              </figure>
               <button
-                className="discovery-detail__expand"
+                className="campaign-detail__expand"
                 type="button"
                 aria-expanded={expanded}
                 onClick={() => setExpanded(!expanded)}
               >
                 {expanded ? '상세이미지 접기 ⌃' : '상세이미지 더보기 ⌄'}
               </button>
-              <dl className="discovery-detail__information">
+              {expanded && (
+                <p className="campaign-detail__lead">{item.description}</p>
+              )}
+              <dl className="campaign-detail__rows">
                 <InformationSection title="제공 내역" lines={detail.provided} />
                 <InformationSection
                   title={detail.fulfillment?.title || '참여 및 이행안내'}
@@ -126,48 +122,50 @@ function PreviewCampaignDetailPage() {
                 />
               </dl>
             </div>
-            <aside className="discovery-detail__summary">
-              <h1>{item.title}</h1>
-              <div className="discovery-detail__tags">
-                <span>{item.media}</span>
-                <span>
-                  {detail.experienceType === 'DELIVERY'
-                    ? '배송형'
-                    : detail.experienceType === 'VISIT'
-                      ? '방문형'
-                      : '이행 유형 미구성'}
-                </span>
-                <span>개발 미리보기</span>
-              </div>
-              <CampaignSchedule schedule={schedule} />
-              <p>
-                신청 {item.applicants.toLocaleString()} / {item.capacity}명
-              </p>
-              <small>
-                모집·일정·조건은 화면 검수용 예시이며 실제 모집이 아닙니다.
-              </small>
-              {detail.blockingReason && (
-                <p className="discovery-info">{detail.blockingReason}</p>
-              )}
-              <button
-                className="discovery-primary-button"
-                type="button"
-                disabled={Boolean(detail.blockingReason)}
-                onClick={() => dialog.current?.showModal()}
-              >
-                {detail.blockingReason
-                  ? '신청 조건 준비 중'
-                  : '신청 폼 미리보기'}
-              </button>
-              {detail.blockingReason && import.meta.env.DEV && (
+            <aside className="campaign-detail__side">
+              <section className="campaign-detail__summary">
+                <h1>{item.title}</h1>
+                <div className="campaign-detail__tags">
+                  <span>{item.media}</span>
+                  <span>
+                    {detail.experienceType === 'DELIVERY'
+                      ? '배송형'
+                      : detail.experienceType === 'VISIT'
+                        ? '방문형'
+                        : '이행 유형 미구성'}
+                  </span>
+                  <span>개발 미리보기</span>
+                </div>
+                <CampaignSchedule schedule={schedule} />
+                <p>
+                  신청 {item.applicants.toLocaleString()} / {item.capacity}명
+                </p>
+                <small>
+                  모집·일정·조건은 화면 검수용 예시이며 실제 모집이 아닙니다.
+                </small>
+                {detail.blockingReason && (
+                  <p className="discovery-info">{detail.blockingReason}</p>
+                )}
                 <button
-                  className="discovery-outline-button"
+                  className="discovery-primary-button"
                   type="button"
+                  disabled={Boolean(detail.blockingReason)}
                   onClick={() => dialog.current?.showModal()}
                 >
-                  신청 폼 미리보기
+                  {detail.blockingReason
+                    ? '신청 조건 준비 중'
+                    : '신청 폼 미리보기'}
                 </button>
-              )}
+                {detail.blockingReason && import.meta.env.DEV && (
+                  <button
+                    className="discovery-outline-button"
+                    type="button"
+                    onClick={() => dialog.current?.showModal()}
+                  >
+                    신청 폼 미리보기
+                  </button>
+                )}
+              </section>
             </aside>
           </div>
           <section className="main-campaign-section">

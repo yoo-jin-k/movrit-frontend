@@ -6,6 +6,7 @@
 import { useParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'
 import CampaignGrid from './CampaignGrid'
+import ChannelIcon from './ChannelIcon'
 import { useCampaignCatalog } from './useCampaignCatalog'
 
 export default function SpecialCampaignPage() {
@@ -19,24 +20,22 @@ export default function SpecialCampaignPage() {
   return (
     <DiscoveryLayout>
       <main className="discovery-width discovery-special">
+        {/* 소개 상자: 메뉴 성격을 한두 줄로 설명합니다. 클립은 채널 아이콘을 함께 보여 줍니다. */}
         <section
-          className={`discovery-special__banner ${clip ? 'is-clip' : ''}`}
+          className="discovery-special__banner"
           aria-label={`${title} 캠페인 소개`}
         >
-          <img
-            src={`/assets/discovery/banners/${clip ? 'clip' : 'review'}.png`}
-            alt=""
-          />
-          <div className="discovery-special__copy">
-            <h1>{title} 캠페인이란?</h1>
-            <p>
-              {clip
-                ? '체험한 순간을 짧은 영상으로 기록하고'
-                : '직접 경험한 제품과 서비스를 살펴보고'}
-              <br />
-              나만의 이야기를 MOVRIT에서 나누어보세요.
-            </p>
-          </div>
+          <h1>
+            {clip && <ChannelIcon channel="CLIP" showLabel={false} />}
+            {title} 캠페인이란?
+          </h1>
+          <p>
+            {clip
+              ? '체험한 순간을 짧은 영상으로 기록하고'
+              : '직접 경험한 제품과 서비스를 살펴보고'}
+            <br />
+            나만의 이야기를 MOVRIT에서 나누어 보세요.
+          </p>
         </section>
         <section className="main-campaign-section">
           <div className="main-campaign-section__heading">

@@ -1,120 +1,190 @@
 /**
- * 공통 캠페인 조회 훅의 항목을 카테고리별로 걸러 홈 섹션에 배치합니다.
- * '마감 임박'과 '선정 확률 높은' 큐레이션 섹션을 제공합니다.
- * 실제 서버 모드에서는 서버가 집계한 신청 수가 있는 캠페인만 확률 계산에 사용하고,
- * 프리미어처럼 서버에 구분 정보가 없는 섹션은 previewMode에서만 구성합니다.
+ * 참여자 홈 화면입니다.
+ *
+ * 구성(위에서 아래로)
+ * 1. 상단 배너: 이번 주 모집 현황 · 소개 문구 · 둘러보기/신청 방법 버튼, 오른쪽에 '많이 신청한 캠페인' 2개씩 넘겨 보기
+ * 2. 체험 방식 바로가기 4개(배송 체험·방문 체험·구매 후 리뷰·숏폼 영상)와 각 모집 수
+ * 3. 캠페인 묶음: 모집 중(카테고리 버튼) · 마감이 가까운 · 선정 확률이 높은 · (개발 미리보기) 프리미어
+ *
+ * 목록·개수는 모두 공통 캠페인 조회 결과(useCampaignCatalog)에서 계산합니다(homeModel.js).
+ * 실제 서버 모드에서는 서버가 집계한 신청 수가 있는 캠페인만 확률 계산에 씁니다.
  */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import DiscoveryLayout from '../features/discovery/DiscoveryLayout'
-import BannerCarousel from '../features/discovery/BannerCarousel'
 import CampaignGrid from '../features/discovery/CampaignGrid'
-import { SHORTCUTS } from '../features/discovery/catalog'
+import ChannelIcon from '../features/discovery/ChannelIcon'
 import { useCampaignCatalog } from '../features/discovery/useCampaignCatalog'
+import {
+  HOME_CATEGORIES,
+  HOME_SECTION_SIZE,
+  categoryItems,
+  closingItems,
+  experienceCounts,
+  featuredPages,
+  highChanceItems,
+  recruitingItems,
+  weekLabel,
+} from '../features/discovery/homeModel'
+
+// 체험 방식 바로가기입니다. [제목, 설명, 개수 키, 이동 주소]
+const EXPERIENCE_TILES = [
+  ['배송 체험', '집에서 받아 써 보기', 'delivery', '/category/제품'],
+  ['방문 체험', '매장·숙소 방문하기', 'visit', '/category/지역'],
+  ['구매 후 리뷰', '구매하고 환급받기', 'purchase', '/special/shoppingreview'],
+  ['숏폼 영상', '클립·릴스로 올리기', 'shortform', '/special/clip'],
+]
+
+// 배너 오른쪽의 가로형 캠페인 카드입니다.
+function FeaturedCard({ item }) {
+  const brand = item.source?.brandName || item.category
+  const reward = item.source?.rewardDescription || item.description
+  return (
+    <Link className="home-hero__feature" to={`/campaign/${item.id}`}>
+      <span className="home-hero__feature-image">
+        {item.image && <img src={item.image} alt="" loading="lazy" />}
+      </span>
+      <span className="home-hero__feature-text">
+        <small>
+          {[brand, item.kind].filter(Boolean).join(' · ')}
+          {item.media && (
+            <ChannelIcon channel={item.media} size="sm" showLabel={false} />
+          )}
+        </small>
+        <strong>{item.title}</strong>
+        {reward && <span>{reward}</span>}
+        {item.daysLeft != null && (
+          <em>
+            {item.daysLeft === 0 ? '오늘 마감' : `${item.daysLeft}일 남음`}
+          </em>
+        )}
+      </span>
+    </Link>
+  )
+}
+
+// 상단 배너입니다. 오른쪽 추천 묶음은 ‹ › 버튼으로 넘깁니다.
+function HomeHero({ items, loading }) {
+  const pages = featuredPages(items)
+  const [page, setPage] = useState(0)
+  const current = pages[Math.min(page, Math.max(0, pages.length - 1))] || []
+  const openCount = recruitingItems(items).length
+  const move = (delta) =>
+    setPage((value) => (value + delta + pages.length) % pages.length)
+  return (
+    <section className="home-hero" aria-labelledby="home-hero-title">
+      <div className="home-hero__intro">
+        <p className="home-hero__eyebrow">
+          {weekLabel()}
+          {!loading && ` · 모집 중 ${openCount}개`}
+        </p>
+        <h1 id="home-hero-title">
+          이번 주엔 어떤 걸
+          <br />써 보고 기록할까요?
+        </h1>
+        <p>
+          제품 체험부터 매장 방문, 구매 후 리뷰까지.
+          <br />
+          조건과 일정을 확인하고 바로 신청하세요.
+        </p>
+        <div className="home-hero__actions">
+          <Link className="home-button home-button--dark" to="/category/제품">
+            캠페인 둘러보기
+          </Link>
+          <Link className="home-button" to="/community/guide">
+            신청 방법 보기
+          </Link>
+        </div>
+      </div>
+      {current.length > 0 && (
+        <div className="home-hero__featured" aria-label="많이 신청한 캠페인">
+          <div className="home-hero__featured-head">
+            <h2>많이 신청한 캠페인</h2>
+            {pages.length > 1 && (
+              <div className="home-hero__pager">
+                <button
+                  type="button"
+                  aria-label="이전 추천"
+                  onClick={() => move(-1)}
+                >
+                  ‹
+                </button>
+                <span aria-live="polite">
+                  {page + 1} / {pages.length}
+                </span>
+                <button
+                  type="button"
+                  aria-label="다음 추천"
+                  onClick={() => move(1)}
+                >
+                  ›
+                </button>
+              </div>
+            )}
+          </div>
+          {current.map((item) => (
+            <FeaturedCard key={item.id} item={item} />
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+// 캠페인 묶음 하나(제목·설명·전체보기·카드 목록)입니다.
+function HomeSection({ title, description, to, children }) {
+  return (
+    <section className="main-campaign-section">
+      <div className="main-campaign-section__heading">
+        <div>
+          <h2>{title}</h2>
+          {description && <p>{description}</p>}
+        </div>
+        {to && <Link to={to}>전체보기 →</Link>}
+      </div>
+      {children}
+    </section>
+  )
+}
 
 export default function BuyerHomePage() {
   const { items, loading, error, previewMode } = useCampaignCatalog()
   const [category, setCategory] = useState('전체')
-  const popular = items
-    .filter(
-      (item) =>
-        category === '전체' ||
-        item.category === category ||
-        (category === '육아' && item.category === '유아동'),
-    )
-    .slice(0, 10)
-  // 모집이 끝나지 않은 캠페인을 마감일이 가까운 순서로 정렬합니다.
-  const closing = [...items]
-    .filter(
-      (item) =>
-        item.daysLeft != null && item.daysLeft >= 0 && !item.recruitmentEnded,
-    )
-    .sort((a, b) => a.daysLeft - b.daysLeft)
-    .slice(0, 10)
-  // 모집 인원 대비 신청 수(경쟁률)가 낮을수록 선정 확률이 높다고 보고 오름차순으로 정렬합니다.
-  // 신청 수 또는 모집 인원이 없는 캠페인은 계산할 수 없으므로 제외합니다.
-  const chance = items
-    .filter(
-      (item) =>
-        item.applicants != null &&
-        item.capacity > 0 &&
-        !item.recruitmentEnded &&
-        (previewMode || !item.preview),
-    )
-    .sort((a, b) => a.applicants / a.capacity - b.applicants / b.capacity)
-    .slice(0, 10)
-  // 오늘(한국 날짜) 모집이 끝나는 캠페인 수입니다. 실제 목록에서 셉니다(고정값이 아닙니다).
-  const closingToday = items.filter(
-    (item) => item.daysLeft === 0 && !item.recruitmentEnded,
-  ).length
-  const sections = [
-    [
-      <>
-        신청 <em>마감임박</em> 캠페인
-        {closingToday > 0 && (
-          <small className="main-home__today">
-            {' '}
-            · 오늘 마감 {closingToday}개
-          </small>
-        )}
-      </>,
-      closing,
-      '/category/제품?sort=closing',
-    ],
-    [
-      <>
-        <em>선정확률 높은</em> 캠페인
-      </>,
-      chance,
-      '/category/제품?sort=chance',
-    ],
-    ...(previewMode
-      ? [
-          [
-            <>
-              <em>프리미어</em> 캠페인
-            </>,
-            items.filter((item) => item.premier).slice(0, 10),
-            '/category/프리미어',
-          ],
-        ]
-      : []),
-  ].filter(([, cards]) => loading || error || cards.length > 0)
+  const counts = experienceCounts(items)
+  const closing = closingItems(items)
+  const chance = highChanceItems(items, previewMode)
+  // 오늘(한국 날짜) 모집이 끝나는 캠페인 수입니다. 실제 목록에서 셉니다.
+  const closingToday = closing.filter((item) => item.daysLeft === 0).length
+  // 묶음에 보일 캠페인이 없으면 묶음 자체를 숨깁니다(불러오는 중·오류일 때는 상태 안내를 보여 줍니다).
+  const visible = (cards) => loading || error || cards.length > 0
+
   return (
     <DiscoveryLayout>
-      <main>
-        <BannerCarousel />
-        <nav
-          className="discovery-width discovery-shortcuts"
-          aria-label="캠페인 바로가기"
-        >
-          {SHORTCUTS.map(([label, icon, to]) => (
-            <Link key={label} to={to}>
-              <span aria-hidden="true">
-                <img src={`/assets/discovery/icons/${icon}.svg`} alt="" />
+      <main className="discovery-width home-page">
+        <HomeHero items={items} loading={loading} />
+
+        <nav className="home-tiles" aria-label="체험 방식 바로가기">
+          {EXPERIENCE_TILES.map(([title, description, key, to]) => (
+            <Link key={key} to={to}>
+              <span>
+                <strong>{title}</strong>
+                <small>{description}</small>
               </span>
-              {label}
+              {!loading && <em>{counts[key]}</em>}
             </Link>
           ))}
         </nav>
-        <div className="discovery-width main-home__sections">
-          <section className="main-campaign-section">
-            <div className="main-campaign-section__heading">
-              <h2>
-                {previewMode ? (
-                  <>
-                    지금 <em>신청 급상승🔥</em> 중인 캠페인
-                  </>
-                ) : (
-                  '모집 중인 캠페인'
-                )}
-              </h2>
-            </div>
+
+        <div className="home-page__sections">
+          <HomeSection
+            title="모집 중인 캠페인"
+            description="관심 있는 분야를 골라 보세요"
+          >
             <nav
               className="main-home-categories"
-              aria-label="인기 캠페인 카테고리"
+              aria-label="모집 중인 캠페인 카테고리"
             >
-              {['전체', '맛집', '뷰티', '육아', '식품'].map((filter) => (
+              {HOME_CATEGORIES.map((filter) => (
                 <button
                   type="button"
                   key={filter}
@@ -125,32 +195,52 @@ export default function BuyerHomePage() {
                 </button>
               ))}
             </nav>
-            <CampaignGrid items={popular} loading={loading} error={error} />
-          </section>
-          <Link className="discovery-promo" to="/community/guide">
-            <span>새로운 기회를 놓치지 마세요</span>
-            <strong>MOVRIT 소식과 캠페인 참여 가이드</strong>
-            <b>확인하기 →</b>
-          </Link>
-          {sections.map(([title, cards, to], i) => (
-            <section className="main-campaign-section" key={to}>
-              <div className="main-campaign-section__heading">
-                <h2>{title}</h2>
-                <Link to={to}>전체보기 →</Link>
-              </div>
-              <CampaignGrid items={cards} loading={loading} error={error} />
-              {i === 1 && (
-                <Link
-                  to="/support"
-                  className="discovery-promo discovery-promo--purple"
-                >
-                  <span>브랜드의 이야기를 들려주세요</span>
-                  <strong>광고주이신가요?</strong>
-                  <b>캠페인 문의하기 →</b>
-                </Link>
-              )}
-            </section>
-          ))}
+            <CampaignGrid
+              items={categoryItems(items, category)}
+              loading={loading}
+              error={error}
+            />
+          </HomeSection>
+
+          {visible(closing) && (
+            <HomeSection
+              title={
+                <>
+                  마감이 가까운 캠페인
+                  {closingToday > 0 && (
+                    <small className="main-home__today">
+                      오늘 마감 {closingToday}개
+                    </small>
+                  )}
+                </>
+              }
+              description="놓치기 전에 확인해 보세요"
+              to="/category/제품?sort=closing"
+            >
+              <CampaignGrid items={closing} loading={loading} error={error} />
+            </HomeSection>
+          )}
+
+          {visible(chance) && (
+            <HomeSection
+              title="선정 확률이 높은 캠페인"
+              description="모집 인원에 비해 신청이 적은 캠페인이에요"
+              to="/category/제품?sort=chance"
+            >
+              <CampaignGrid items={chance} loading={loading} error={error} />
+            </HomeSection>
+          )}
+
+          {/* 프리미어 구분은 서버에 아직 없어 개발 미리보기에서만 보여 줍니다. */}
+          {previewMode && (
+            <HomeSection title="프리미어 캠페인" to="/category/프리미어">
+              <CampaignGrid
+                items={items
+                  .filter((item) => item.premier)
+                  .slice(0, HOME_SECTION_SIZE)}
+              />
+            </HomeSection>
+          )}
         </div>
       </main>
     </DiscoveryLayout>

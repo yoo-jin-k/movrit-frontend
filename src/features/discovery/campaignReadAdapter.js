@@ -18,6 +18,11 @@ const KIND_LABELS = {
   PURCHASE_REVIEW: '구매평',
 }
 
+/** 서버의 캠페인 종류 코드(PRODUCT 등)를 화면 이름(제품 등)으로 바꿉니다. 모르는 코드는 빈 문자열입니다. */
+export function campaignKindLabel(type) {
+  return KIND_LABELS[type] ?? ''
+}
+
 // 서버의 콘텐츠 채널 코드를 미디어 필터 이름으로 바꿉니다.
 const MEDIA_LABELS = {
   BLOG: '블로그',

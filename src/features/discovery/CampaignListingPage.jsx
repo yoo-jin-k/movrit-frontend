@@ -1,4 +1,7 @@
 /**
+ * 캠페인 목록 화면입니다(제품·지역·기자단·오늘오픈·프리미어, 검색 결과).
+ *
+ * 화면 구성: 제목(+지역 선택) → 조건 상자(카테고리·채널) → 개수·정렬 → 카드 4열 → 페이지 이동
  * URL 쿼리를 카테고리·미디어·지역·정렬·페이지 상태로 사용합니다.
  * 실제 데이터는 서버 검색(/api/collaborations/campaigns/search)이 조건·정렬·페이지를 적용하고,
  * 개발 미리보기만 예시 데이터에 같은 조건을 화면에서 적용합니다(campaignSearchModel).
@@ -6,6 +9,7 @@
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'
+import ChannelIcon from './ChannelIcon'
 import CampaignGrid from './CampaignGrid'
 import { LOCAL_CATEGORIES, MEDIA, PRODUCT_CATEGORIES, REGIONS } from './catalog'
 import { useCampaignSearch } from './useCampaignCatalog'
@@ -77,7 +81,7 @@ export default function CampaignListingPage({ search = false }) {
                     aria-expanded={regionOpen}
                     onClick={() => setRegionOpen(!regionOpen)}
                   >
-                    ⌖ {region} ⌄
+                    {region} ▾
                   </button>
                   {regionOpen && (
                     <div
@@ -102,22 +106,53 @@ export default function CampaignListingPage({ search = false }) {
                 </div>
               )}
             </div>
-            {!search && categories.length > 0 && (
-              <nav
-                className="discovery-filter-chips"
-                aria-label="세부 카테고리"
+            {/* 조건 상자: 카테고리와 콘텐츠 채널을 한곳에서 고릅니다. */}
+            {!search && (categories.length > 0 || section !== '프리미어') && (
+              <section
+                className="discovery-filter-panel"
+                aria-label="캠페인 조건"
               >
-                {categories.map((name) => (
-                  <button
-                    type="button"
-                    key={name}
-                    aria-pressed={category === name}
-                    onClick={() => update('category', name)}
-                  >
-                    {name === '전체' ? 'ⓐ ' : ''}
-                    {name}
-                  </button>
-                ))}
+                {categories.length > 0 && (
+                  <div className="discovery-filter-panel__row">
+                    <h2>카테고리</h2>
+                    <nav
+                      className="discovery-filter-chips"
+                      aria-label="세부 카테고리"
+                    >
+                      {categories.map((name) => (
+                        <button
+                          type="button"
+                          key={name}
+                          aria-pressed={category === name}
+                          onClick={() => update('category', name)}
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </nav>
+                  </div>
+                )}
+                {section !== '프리미어' && (
+                  <div className="discovery-filter-panel__row">
+                    <h2>채널</h2>
+                    <div className="discovery-media" aria-label="미디어 선택">
+                      {MEDIA.map((name) => (
+                        <button
+                          type="button"
+                          key={name}
+                          aria-pressed={media === name}
+                          onClick={() => update('media', name)}
+                        >
+                          {name === '미디어 전체' ? (
+                            '전체'
+                          ) : (
+                            <ChannelIcon channel={name} size="sm" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {section === '프리미어' && (
                   <Link
                     to="/community/guide"
@@ -126,31 +161,17 @@ export default function CampaignListingPage({ search = false }) {
                     더 많은 프리미어 자격을 원한다면?
                   </Link>
                 )}
-              </nav>
+              </section>
             )}
+            {/* 개수와 정렬 */}
             <div className="discovery-filter-bar">
-              {section !== '프리미어' && !search && (
-                <div className="discovery-media" aria-label="미디어 선택">
-                  {MEDIA.map((name) => (
-                    <button
-                      type="button"
-                      key={name}
-                      aria-pressed={media === name}
-                      onClick={() => update('media', name)}
-                    >
-                      <span aria-hidden="true">✓</span>
-                      {name}
-                    </button>
-                  ))}
-                </div>
-              )}
               {!loading && !error && <span>캠페인 {total}개</span>}
               <select
                 aria-label="캠페인 정렬"
                 value={sort}
                 onChange={(event) => update('sort', event.target.value)}
               >
-                <option value="latest">최신순 ↓</option>
+                <option value="latest">최신순</option>
                 <option value="popular">인기순</option>
                 <option value="closing">마감임박순</option>
                 <option value="chance">선정확률순</option>

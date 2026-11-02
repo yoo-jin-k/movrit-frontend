@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
 const id = fs.readFileSync('./e2e/campaign-id.txt', 'utf8').trim()
-const email = process.env.EMAIL || 'claude-e2e-user@movrit.local'
+const email = process.env.EMAIL || 'demo-user@movrit.local'
 const user = await login(email)
 const browser = await openBrowser()
 const page = await pageAs(browser, user)

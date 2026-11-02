@@ -7,10 +7,10 @@ import fs from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { api, base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
-const brand = await login('claude-design-brand@movrit.local')
-const userA = await login('claude-e2e-user@movrit.local')
-let userB = await login('claude-design-user@movrit.local')
-const admin = await login('claude-e2e-admin@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const userA = await login('demo-user@movrit.local')
+let userB = await login('demo-creator@movrit.local')
+const admin = await login('demo-admin@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push(ok)
@@ -619,7 +619,7 @@ const loginBlocked = await fetch(`${api}/auth/login`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    email: 'claude-design-user@movrit.local',
+    email: 'demo-creator@movrit.local',
     password: process.env.MOVRIT_QA_PASSWORD,
   }),
 })
@@ -632,7 +632,7 @@ await call(
   'PATCH',
   `/members/admin/${suspend.data.targetMemberId}/status?status=ACTIVE`,
 )
-userB = await login('claude-design-user@movrit.local')
+userB = await login('demo-creator@movrit.local')
 check('운영자가 정지 해제 → 다시 로그인', !!userB.accessToken)
 // 점검용 글은 지웁니다(가린 글 포함, 작성자 삭제).
 await call(userA, 'DELETE', `/community/posts/${post2.id}`)

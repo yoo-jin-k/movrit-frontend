@@ -1,13 +1,13 @@
 // 브랜드·참여자·운영자 채팅을 실제 화면으로 확인합니다.
-// 준비: claude-design-user 가 claude-design-brand 캠페인에 신청한 상태(./e2e/qa-app-b.txt)가 필요합니다.
+// 준비: demo-creator 가 demo-brand 캠페인에 신청한 상태(./e2e/qa-app-b.txt)가 필요합니다.
 import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
 const appB = fs.readFileSync('./e2e/qa-app-b.txt', 'utf8').trim()
-const user = await login('claude-design-user@movrit.local')
-const brand = await login('claude-design-brand@movrit.local')
-const admin = await login('claude-e2e-admin@movrit.local')
-const stranger = await login('claude-e2e-user@movrit.local')
+const user = await login('demo-creator@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const admin = await login('demo-admin@movrit.local')
+const stranger = await login('demo-user@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push(ok)

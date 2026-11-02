@@ -17,9 +17,9 @@ import {
 const campaignId = fs.readFileSync('./e2e/campaign-id.txt', 'utf8').trim()
 const appA = fs.readFileSync('./e2e/qa-app-a.txt', 'utf8').trim()
 const appB = fs.readFileSync('./e2e/qa-app-b.txt', 'utf8').trim()
-const brand = await login('claude-design-brand@movrit.local')
-const admin = await login('claude-e2e-admin@movrit.local')
-const userA = await login('claude-e2e-user@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const admin = await login('demo-admin@movrit.local')
+const userA = await login('demo-user@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push([name, ok])
@@ -67,14 +67,14 @@ await fetch(`${api}/members/signup`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    email: 'claude-e2e-brand2@movrit.local',
+    email: 'demo-brand2@movrit.local',
     password,
     name: '타브랜드점검',
     nickname: '타브랜드점검',
     phone: '',
   }),
 })
-let brand2 = await login('claude-e2e-brand2@movrit.local')
+let brand2 = await login('demo-brand2@movrit.local')
 await call(brand2, 'POST', '/sellers/apply', {
   businessName: 'QA 타브랜드',
   brandName: 'QA OTHER',
@@ -85,7 +85,7 @@ const sellers = (await call(admin, 'GET', '/admin/sellers')).data
 const seller2 = sellers.find((s) => s.businessName === 'QA 타브랜드')
 if (seller2?.status === 'PENDING')
   await call(admin, 'PATCH', `/admin/sellers/${seller2.id}/approve`)
-brand2 = await login('claude-e2e-brand2@movrit.local')
+brand2 = await login('demo-brand2@movrit.local')
 if (!(await call(brand2, 'GET', '/brands/mine')).data?.length)
   await call(brand2, 'POST', '/brands', {
     name: 'QA OTHER',

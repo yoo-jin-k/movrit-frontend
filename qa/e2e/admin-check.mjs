@@ -2,7 +2,7 @@
 // 공지 작성 → 사용자 공지 화면 표시, 회원 정지·해제, 검색 필터 동작을 확인합니다.
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
-const admin = await login('claude-e2e-admin@movrit.local')
+const admin = await login('demo-admin@movrit.local')
 const browser = await openBrowser()
 const page = await pageAs(browser, admin)
 const shot = async (name) =>
@@ -41,7 +41,7 @@ for (const [route, name] of routes) {
 
 // 검색 필터: 회원 목록에서 이메일로 검색하면 한 명만 남는지
 await page.goto(`${base}/admin/members`, { waitUntil: 'networkidle' })
-await page.getByPlaceholder('이름, 닉네임, 이메일 검색').fill('claude-e2e-user')
+await page.getByPlaceholder('이름, 닉네임, 이메일 검색').fill('demo-user')
 console.log('회원 검색 결과 행:', await page.locator('table tbody tr').count())
 
 // 공지 작성 → 사용자 화면 표시

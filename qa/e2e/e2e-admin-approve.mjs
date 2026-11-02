@@ -3,8 +3,8 @@ import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
 const appId = fs.readFileSync('./e2e/application-id.txt', 'utf8').trim()
-const admin = await login('claude-e2e-admin@movrit.local')
-const user = await login('claude-e2e-user@movrit.local')
+const admin = await login('demo-admin@movrit.local')
+const user = await login('demo-user@movrit.local')
 const list = (await call(admin, 'GET', '/admin/campaign-contents')).data
 const target = list.find((s) => String(s.applicationId) === appId)
 console.log('대상 콘텐츠:', target && { id: target.id, status: target.status })

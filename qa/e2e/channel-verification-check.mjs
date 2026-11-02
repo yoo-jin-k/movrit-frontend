@@ -1,13 +1,13 @@
 // 개인 계정 채널 '직접 등록' → 운영자 확인 → 업체 참여자 상세 표시까지 실제 화면으로 확인합니다.
-// 준비: selection-edit-check 처럼 claude-design-user 가 업체(claude-design-brand) 캠페인에 신청한 상태(./e2e/qa-app-b.txt)가 필요합니다.
+// 준비: selection-edit-check 처럼 demo-creator 가 업체(demo-brand) 캠페인에 신청한 상태(./e2e/qa-app-b.txt)가 필요합니다.
 // 사용자 팔로워 수는 기존 확인값(1500)과 같게 등록해 다른 점검 흐름의 참여 조건에 영향을 주지 않습니다.
 import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
 const appB = fs.readFileSync('./e2e/qa-app-b.txt', 'utf8').trim()
-const user = await login('claude-design-user@movrit.local')
-const admin = await login('claude-e2e-admin@movrit.local')
-const brand = await login('claude-design-brand@movrit.local')
+const user = await login('demo-creator@movrit.local')
+const admin = await login('demo-admin@movrit.local')
+const brand = await login('demo-brand@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push(ok)

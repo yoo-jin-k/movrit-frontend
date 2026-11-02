@@ -6,8 +6,8 @@ import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 const campaignId = fs.readFileSync('./e2e/campaign-id.txt', 'utf8').trim()
 const appA = fs.readFileSync('./e2e/qa-app-a.txt', 'utf8').trim()
 const appB = fs.readFileSync('./e2e/qa-app-b.txt', 'utf8').trim()
-const brand = await login('claude-design-brand@movrit.local')
-const userA = await login('claude-e2e-user@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const userA = await login('demo-user@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push(ok)

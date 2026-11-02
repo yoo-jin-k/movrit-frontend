@@ -3,9 +3,9 @@ import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
 const appId = fs.readFileSync('./e2e/application-id.txt', 'utf8').trim()
-const brand = await login('claude-design-brand@movrit.local')
-const user = await login('claude-e2e-user@movrit.local')
-const admin = await login('claude-e2e-admin@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const user = await login('demo-user@movrit.local')
+const admin = await login('demo-admin@movrit.local')
 const browser = await openBrowser()
 const status = async (label) => {
   const mine = await call(user, 'GET', '/campaigns/applications/mine')

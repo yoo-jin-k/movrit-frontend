@@ -6,9 +6,9 @@ import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
 const out = './e2e'
 fs.mkdirSync(out, { recursive: true })
-const brand = await login('claude-design-brand@movrit.local')
-const user = await login('claude-e2e-user@movrit.local')
-const admin = await login('claude-e2e-admin@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const user = await login('demo-user@movrit.local')
+const admin = await login('demo-admin@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push(ok)
@@ -321,7 +321,7 @@ check(
 await u.screenshot({ path: `${out}/purchase_5_user_paid.png`, fullPage: true })
 
 // 10) 권한: 다른 회원은 구매 인증을 볼 수 없음(404)
-const other = await login('claude-design-user@movrit.local').catch(() => null)
+const other = await login('demo-creator@movrit.local').catch(() => null)
 if (other)
   check(
     '다른 회원은 구매 인증 조회 불가',

@@ -28,7 +28,6 @@
 | PreorderManagePage 2.jsx | 정식 코드의 SKU 선택 및 상태 처리 이전 버전 |
 | AdminSellerPage 2.jsx | 구형 승인·반려 버튼 포함. 현재 관리자 화면을 바꾸지 않도록 통합하지 않고 백업 보존 |
 
-백업: `/Users/yoo-jinkim/.codex/.chatgpt-projects/g-p-6a7f2a9e25d8819183f472500c63ba26/deliverables/frontend-comments-20261019/`
 
 백업 내 `src/` 원본과 `copies.sha256.json`으로 복구 및 검증 가능합니다. experience, 참조 이미지, 기존 문서와 QA 문서의 선행 수정은 그대로 보존했습니다.
 

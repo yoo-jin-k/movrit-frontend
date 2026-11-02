@@ -11,7 +11,7 @@ const auth = await (
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: 'claude-design-brand@movrit.local',
+      email: 'demo-brand@movrit.local',
       password,
     }),
   })

@@ -78,9 +78,9 @@ const ROUTES = {
   ],
 }
 const ACCOUNTS = {
-  user: 'claude-design-user@movrit.local',
-  brand: 'claude-design-brand@movrit.local',
-  admin: 'claude-e2e-admin@movrit.local',
+  user: 'demo-creator@movrit.local',
+  brand: 'demo-brand@movrit.local',
+  admin: 'demo-admin@movrit.local',
 }
 const browser = await openBrowser()
 let problems = 0

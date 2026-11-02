@@ -1,13 +1,13 @@
 // 커뮤니티 글·댓글, 채팅 첨부·읽음·이전 메시지·실시간 이벤트·알림, 회원 탈퇴를 실제 화면으로 확인합니다.
-// 준비: claude-design-user 가 claude-design-brand 캠페인에 신청한 상태(./e2e/qa-app-b.txt)가 필요합니다.
+// 준비: demo-creator 가 demo-brand 캠페인에 신청한 상태(./e2e/qa-app-b.txt)가 필요합니다.
 // 탈퇴 점검은 매번 새로 가입한 임시 계정(qa-withdraw-…@movrit.local)으로만 합니다.
 import fs from 'node:fs'
 import { api, base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 
 const appB = fs.readFileSync('./e2e/qa-app-b.txt', 'utf8').trim()
-const user = await login('claude-design-user@movrit.local')
-const brand = await login('claude-design-brand@movrit.local')
-const other = await login('claude-e2e-user@movrit.local')
+const user = await login('demo-creator@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const other = await login('demo-user@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push(ok)

@@ -4,9 +4,9 @@ import fs from 'node:fs'
 import { base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
 import { applyDelivery, createCampaign, local } from './fixtures.mjs'
 
-const brand = await login('claude-design-brand@movrit.local')
-const userA = await login('claude-e2e-user@movrit.local')
-const userB = await login('claude-design-user@movrit.local')
+const brand = await login('demo-brand@movrit.local')
+const userA = await login('demo-user@movrit.local')
+const userB = await login('demo-creator@movrit.local')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push(ok)

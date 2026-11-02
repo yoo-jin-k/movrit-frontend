@@ -140,7 +140,7 @@ export default function CampaignCard({ item }) {
       ) : (
         <Link
           className="main-campaign-card__favorite"
-          to="/favorites/preorders"
+          to="/favorites"
           aria-label="찜 목록 보기"
         >
           <img src="/assets/main-home/card-heart.svg" alt="" />

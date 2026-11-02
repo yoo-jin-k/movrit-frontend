@@ -50,9 +50,12 @@ function PreorderCard({ item, favorite, onToggleFavorite }) {
           <Link to={`/preorders/${item.id}`}>
             <Button>상세 보기</Button>
           </Link>
-          <Button variant="ghost" onClick={() => onToggleFavorite(item.id)}>
-            {favorite ? '♥ 관심 해제' : '♡ 관심 등록'}
-          </Button>
+          {/* 관심 등록은 찜 기능이 켜졌을 때(onToggleFavorite 전달)만 보여줍니다. */}
+          {onToggleFavorite && (
+            <Button variant="ghost" onClick={() => onToggleFavorite(item.id)}>
+              {favorite ? '♥ 관심 해제' : '♡ 관심 등록'}
+            </Button>
+          )}
         </div>
       </div>
     </article>

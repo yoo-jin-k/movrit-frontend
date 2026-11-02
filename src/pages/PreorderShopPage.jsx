@@ -18,6 +18,9 @@ import {
 } from '../api/favoriteApi'
 import AppHeader from '../components/layout/AppHeader'
 import PreorderCard from '../components/preorder/PreorderCard'
+
+// 프리오더 찜은 서버 API가 아직 없어 꺼 둡니다(프리오더 신규 기능은 후순위). 켜면 관심 등록 버튼과 찜 목록 조회가 다시 동작합니다.
+const PREORDER_FAVORITES_ENABLED = false
 import Button from '../components/ui/Button'
 import ProgressBar from '../components/ui/ProgressBar'
 import StatusBadge from '../components/ui/StatusBadge'
@@ -46,7 +49,10 @@ function PreorderShopPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([getOpenPreorders(), getFavoritePreorders()])
+    Promise.all([
+      getOpenPreorders(),
+      PREORDER_FAVORITES_ENABLED ? getFavoritePreorders() : Promise.resolve([]),
+    ])
       .then(([list, favorites]) => {
         setPreorders(list)
         setFavoriteIds(new Set(favorites.map((item) => item.preorderId)))
@@ -198,9 +204,14 @@ function PreorderShopPage() {
             <Link to="/preorders" className="muted">
               ← 프리오더
             </Link>
-            <Button variant="ghost" onClick={() => toggleFavorite(selected.id)}>
-              {favoriteIds.has(selected.id) ? '♥ 관심 해제' : '♡ 관심 등록'}
-            </Button>
+            {PREORDER_FAVORITES_ENABLED && (
+              <Button
+                variant="ghost"
+                onClick={() => toggleFavorite(selected.id)}
+              >
+                {favoriteIds.has(selected.id) ? '♥ 관심 해제' : '♡ 관심 등록'}
+              </Button>
+            )}
           </div>
 
           <div className="preorder-detail__grid">
@@ -351,12 +362,14 @@ function PreorderShopPage() {
                     현재 구매할 수 없습니다
                   </Button>
                 )}
-                <Button
-                  variant="secondary"
-                  onClick={() => toggleFavorite(selected.id)}
-                >
-                  {favoriteIds.has(selected.id) ? '♥' : '♡'}
-                </Button>
+                {PREORDER_FAVORITES_ENABLED && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => toggleFavorite(selected.id)}
+                  >
+                    {favoriteIds.has(selected.id) ? '♥' : '♡'}
+                  </Button>
+                )}
               </div>
             </section>
           </div>
@@ -421,7 +434,9 @@ function PreorderShopPage() {
                 key={item.id}
                 item={item}
                 favorite={favoriteIds.has(item.id)}
-                onToggleFavorite={toggleFavorite}
+                onToggleFavorite={
+                  PREORDER_FAVORITES_ENABLED ? toggleFavorite : undefined
+                }
               />
             ))}
           </div>

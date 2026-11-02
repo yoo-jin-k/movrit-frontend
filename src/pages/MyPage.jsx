@@ -28,7 +28,7 @@ const accountLinks = [
 ]
 const shoppingLinks = [
   ['주문 내역', '프리오더 주문·배송 확인', '/orders'],
-  ['찜한 프리오더', '관심 등록한 프리오더 모음', '/favorites/preorders'],
+  // '찜한 프리오더'는 서버 API가 준비될 때까지 메뉴에서 숨깁니다.
   ['결제수단 관리', '등록한 결제수단 확인', '/mypage/payments'],
 ]
 

@@ -76,6 +76,7 @@ const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const MessagesPage = lazy(() => import('./pages/MessagesPage'))
 const AdminMessagesPage = lazy(() => import('./pages/AdminMessagesPage'))
+const AdminCampaignsPage = lazy(() => import('./pages/AdminCampaignsPage'))
 const BusinessMessages = lazy(
   () => import('./features/business/BusinessMessages'),
 )
@@ -87,9 +88,7 @@ const BrandManagePage = lazy(() => import('./pages/BrandManagePage'))
 const ProductManagePage = lazy(() => import('./pages/ProductManagePage'))
 const PreorderManagePage = lazy(() => import('./pages/PreorderManagePage'))
 const PreorderShopPage = lazy(() => import('./pages/PreorderShopPage'))
-const FavoritePreordersPage = lazy(
-  () => import('./pages/FavoritePreordersPage'),
-)
+// 찜한 프리오더 화면(pages/FavoritePreordersPage)은 서버 API 준비 후 다시 연결합니다.
 const FavoriteCampaignsPage = lazy(
   () => import('./pages/FavoriteCampaignsPage'),
 )
@@ -312,13 +311,10 @@ function App() {
               </ProtectedPage>
             }
           />
+          {/* 찜한 프리오더는 서버 API가 준비될 때까지 숨기고, 예전 주소로 들어오면 찜한 캠페인으로 보냅니다. */}
           <Route
             path="/favorites/preorders"
-            element={
-              <ProtectedPage>
-                <FavoritePreordersPage />
-              </ProtectedPage>
-            }
+            element={<Navigate to="/favorites" replace />}
           />
           <Route
             path="/mypage"
@@ -507,6 +503,16 @@ function App() {
               <ProtectedPage>
                 <AdminAccess>
                   <AdminContentReviewsPage />
+                </AdminAccess>
+              </ProtectedPage>
+            }
+          />
+          <Route
+            path="/admin/campaigns"
+            element={
+              <ProtectedPage>
+                <AdminAccess>
+                  <AdminCampaignsPage />
                 </AdminAccess>
               </ProtectedPage>
             }

@@ -46,18 +46,84 @@ export function roomTypeLabel(type) {
   return type === 'SUPPORT' ? '운영자 문의' : '캠페인 대화'
 }
 
-// 첨부 파일 선택을 확인합니다. 사진(JPG·PNG)과 PDF만, 5MB까지 보낼 수 있습니다.
+// 첨부 파일 선택을 확인합니다. 사진(JPG·PNG)·PDF는 5MB, 영상(MP4·MOV·WebM)은 20MB까지 보낼 수 있습니다.
+export const CHAT_IMAGE_TYPES = ['image/jpeg', 'image/png']
+export const CHAT_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm']
 export const CHAT_ATTACHMENT_TYPES = [
-  'image/jpeg',
-  'image/png',
+  ...CHAT_IMAGE_TYPES,
   'application/pdf',
+  ...CHAT_VIDEO_TYPES,
 ]
+export const MAX_CHAT_FILES = 10
+const MB = 1024 * 1024
+
 export function chatAttachmentError(file) {
   if (!file) return '첨부할 파일을 선택해 주세요.'
   if (!CHAT_ATTACHMENT_TYPES.includes(file.type))
-    return '사진(JPG·PNG) 또는 PDF만 보낼 수 있습니다.'
-  if (file.size > 5 * 1024 * 1024)
-    return '첨부 파일은 5MB 이하만 보낼 수 있습니다.'
+    return '사진(JPG·PNG), PDF, 영상(MP4·MOV·WebM)만 보낼 수 있습니다.'
+  if (CHAT_VIDEO_TYPES.includes(file.type)) {
+    if (file.size > 20 * MB) return '영상은 20MB 이하만 보낼 수 있습니다.'
+  } else if (file.size > 5 * MB)
+    return '사진·PDF는 5MB 이하만 보낼 수 있습니다.'
+  return ''
+}
+
+// 여러 파일을 한 번에 고를 때 확인합니다. 최대 10개이며, 하나라도 맞지 않으면 그 파일 이름과 이유를 알려 줍니다.
+export function chatFilesError(files) {
+  const list = Array.from(files || [])
+  if (list.length > MAX_CHAT_FILES)
+    return `한 번에 ${MAX_CHAT_FILES}개까지 보낼 수 있습니다.`
+  for (const file of list) {
+    const problem = chatAttachmentError(file)
+    if (problem) return `${file.name}: ${problem}`
+  }
+  return ''
+}
+
+// 서버가 내려준 첨부 정보가 영상인지입니다.
+export function isVideoAttachment(attachment) {
+  return String(attachment?.contentType || '').startsWith('video/')
+}
+
+// '입력 중' 신호: 입력하는 동안 3초에 한 번만 보내고, 받은 쪽은 5초 동안 새 신호가 없으면 지웁니다.
+export const TYPING_SEND_MS = 3000
+export const TYPING_SHOW_MS = 5000
+
+// 입력 중인 사람 이름 목록을 한 줄 안내로 바꿉니다.
+export function typingLabel(names) {
+  const list = [...new Set((names || []).filter(Boolean))]
+  if (!list.length) return ''
+  if (list.length === 1) return `${list[0]}님이 입력 중`
+  return `${list[0]}님 외 ${list.length - 1}명이 입력 중`
+}
+
+// 검색 결과에서 검색어 부분을 강조하기 위해 글을 [일반, 일치, 일반, …] 조각으로 나눕니다(대소문자 무시).
+export function highlightParts(text, query) {
+  const value = String(text || '')
+  const keyword = String(query || '').trim()
+  if (!keyword) return [{ text: value, match: false }]
+  const lower = value.toLowerCase()
+  const needle = keyword.toLowerCase()
+  const parts = []
+  let index = 0
+  for (;;) {
+    const found = lower.indexOf(needle, index)
+    if (found < 0) break
+    if (found > index)
+      parts.push({ text: value.slice(index, found), match: false })
+    parts.push({ text: value.slice(found, found + needle.length), match: true })
+    index = found + needle.length
+  }
+  if (index < value.length)
+    parts.push({ text: value.slice(index), match: false })
+  return parts
+}
+
+// 검색어 확인: 앞뒤 공백을 뺀 1~50자입니다.
+export function chatSearchError(query) {
+  const keyword = String(query || '').trim()
+  if (!keyword) return '검색어를 입력해 주세요.'
+  if (keyword.length > 50) return '검색어는 50자 이내로 입력해 주세요.'
   return ''
 }
 

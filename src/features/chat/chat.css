@@ -360,3 +360,176 @@
 .chat-input > button {
   min-height: 44px;
 }
+
+/* ── 검색 · 입력 중 · 여러 파일 · 영상 (2026-11-02) ── */
+/* 머리글 오른쪽 '검색' 버튼 */
+.chat-room__head > div {
+  flex: 1;
+}
+.chat-search-toggle {
+  flex: none;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid #ddd5f0;
+  border-radius: 999px;
+  background: #fff;
+  color: #5b5470;
+  font-size: 13px;
+}
+.chat-search-toggle[aria-expanded='true'] {
+  border-color: #6b38db;
+  color: #6b38db;
+}
+/* 검색창과 결과 목록(대화 위에 펼쳐짐) */
+.chat-search {
+  display: grid;
+  gap: 8px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #ebe7ee;
+  background: #faf8fd;
+}
+.chat-search form {
+  display: flex;
+  gap: 8px;
+}
+.chat-search input {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid #ddd5f0;
+  border-radius: 8px;
+}
+.chat-search form button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #6b38db;
+  color: #fff;
+}
+.chat-search__results {
+  display: grid;
+  gap: 4px;
+  max-height: 220px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.chat-search__results button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: #fff;
+  text-align: left;
+}
+.chat-search__results button:hover,
+.chat-search__results button:focus-visible {
+  background: #efe8fd;
+}
+.chat-search__results span {
+  color: #8c8c94;
+  font-size: 12px;
+}
+.chat-search__results p {
+  margin: 0;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-search__results mark {
+  padding: 0 1px;
+  border-radius: 3px;
+  background: #ffe58a;
+  color: inherit;
+}
+.chat-search__empty {
+  padding: 8px 10px;
+  color: #8c8c94;
+  font-size: 13px;
+}
+/* 검색으로 이동한 메시지를 잠깐 강조합니다. */
+.chat-message.is-focused > p,
+.chat-message.is-focused > .chat-attachment {
+  outline: 2px solid #ffc94a;
+  outline-offset: 2px;
+}
+/* 과거 위치를 볼 때 나오는 '최신 메시지로' 버튼 */
+.chat-latest {
+  justify-self: center;
+  margin: 6px auto 0;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #6b38db;
+  color: #fff;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(107, 56, 219, 0.25);
+}
+/* '○○님이 입력 중…' (점 3개가 차례로 움직임) */
+.chat-room > .chat-typing {
+  min-height: 20px;
+  margin: 0;
+  padding: 2px 18px;
+  color: #8c8c94;
+  font-size: 12px;
+}
+.chat-typing__dots {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.chat-typing__dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #8c8c94;
+  animation: chat-typing-dot 1.2s infinite ease-in-out;
+}
+.chat-typing__dots i:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.chat-typing__dots i:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes chat-typing-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-typing__dots i {
+    animation: none;
+  }
+}
+/* 보낼 파일 여러 개 */
+.chat-input__files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* 영상 첨부 */
+.chat-attachment__video {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  max-height: 360px;
+  border-radius: 10px;
+  background: #000;
+}

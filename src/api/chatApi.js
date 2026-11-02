@@ -56,7 +56,7 @@ export async function readOlderChatMessages(roomId, before) {
   return data
 }
 
-// 사진(JPG·PNG)이나 PDF를 첨부해 보냅니다. 함께 쓴 글은 선택입니다.
+// 사진(JPG·PNG)·PDF·영상(MP4·MOV·WebM)을 첨부해 보냅니다. 함께 쓴 글은 선택입니다. 영상은 크기가 커서 넉넉히 기다립니다.
 export async function sendChatAttachment(roomId, file, body) {
   const form = new FormData()
   form.append('file', file)
@@ -64,16 +64,33 @@ export async function sendChatAttachment(roomId, file, body) {
   const { data } = await api.post(
     `/chats/${encodeURIComponent(roomId)}/attachments`,
     form,
-    { headers: { 'Content-Type': undefined }, timeout: 30000 },
+    { headers: { 'Content-Type': undefined }, timeout: 120000 },
   )
   return data
+}
+
+// 방 안 메시지를 검색합니다(글 내용·첨부 파일 이름, 최신순 30개).
+export async function searchChatMessages(roomId, query, signal) {
+  const { data } = await api.get(
+    `/chats/${encodeURIComponent(roomId)}/search`,
+    { params: { q: query }, signal, timeout: 15000 },
+  )
+  if (!Array.isArray(data)) throw new Error('검색 결과를 확인할 수 없습니다.')
+  return data
+}
+
+// '입력 중' 신호를 보냅니다. 실패해도 대화에는 영향이 없어 화면에서 무시합니다.
+export async function sendChatTyping(roomId) {
+  await api.post(`/chats/${encodeURIComponent(roomId)}/typing`, undefined, {
+    timeout: 5000,
+  })
 }
 
 // 첨부 파일은 공개 주소가 없어 로그인 요청으로 받아 화면에서 임시 주소로 보여줍니다.
 export async function readChatAttachment(roomId, messageId, signal) {
   const { data } = await api.get(
     `/chats/${encodeURIComponent(roomId)}/attachments/${encodeURIComponent(messageId)}`,
-    { responseType: 'blob', signal, timeout: 30000 },
+    { responseType: 'blob', signal, timeout: 120000 },
   )
   return data
 }

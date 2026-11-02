@@ -20,10 +20,9 @@ export default function DiscoveryLayout({ children, notice, onCloseNotice }) {
       <MainHomeHeader key={pathname} />
       {children}
       <SiteFooter />
-      {import.meta.env.DEV && (
-        <div className="discovery-demo-label">
-          {previewMode ? '개발 미리보기 · 캠페인 예시' : '캠페인 서버 연동'}
-        </div>
+      {/* 서버 대신 예시 캠페인을 보여 줄 때만 표시합니다. 실제 연동 화면에는 띄우지 않습니다. */}
+      {import.meta.env.DEV && previewMode && (
+        <div className="discovery-demo-label">개발 미리보기 · 캠페인 예시</div>
       )}
       {notice && (
         <div className="main-home__notice" role="status">

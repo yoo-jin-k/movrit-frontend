@@ -3,7 +3,8 @@
  *
  * - 공지/콘텐츠(/admin/content): GET·POST /api/admin/notices, PUT·DELETE /api/admin/notices/{id}
  *   공지를 쓰고 고치고 게시·내리고 지웁니다. 게시한 공지는 사용자 '공지사항' 화면에 바로 나옵니다.
- * - 리포트(/admin/reports): GET /api/admin/reports + 최근 운영 기록 GET /api/admin/audit-logs
+ * - 리포트(/admin/reports): GET /api/admin/reports?from=&to= (기간·날짜별 추이) + 엑셀 GET /api/admin/reports/export
+ *   + 최근 운영 기록 GET /api/admin/audit-logs. 기본은 최근 30일, '전체 기간'은 날짜별 추이 없이 누적만 봅니다.
  * - 설정(/admin/settings): GET /api/admin/settings — 실행 환경 현황(읽기 전용, 비밀값 없음)
  */
 import { useState } from 'react'
@@ -31,6 +32,15 @@ import {
   money,
 } from '../../features/admin/adminConsoleModel'
 import useAdminResource from '../../features/admin/useAdminResource'
+import {
+  REPORT_PRESETS,
+  dailyTotals,
+  presetRange,
+  rangeError,
+  rangeLabel,
+  reportPath,
+} from '../../features/admin/reportPeriodModel'
+import { downloadFile } from '../../api/downloadFile'
 
 // ───────── 공지/콘텐츠 ─────────
 
@@ -300,28 +310,134 @@ function CountBars({ title, counts, labels }) {
 }
 
 export function AdminReportsPage() {
-  const state = useAdminResource('/admin/reports')
+  const [preset, setPreset] = useState('30d')
+  const [custom, setCustom] = useState(() => presetRange('30d'))
+  const [range, setRange] = useState(() => presetRange('30d'))
+  const [download, setDownload] = useState({ busy: false, message: '' })
+  const state = useAdminResource(reportPath(range))
   const logs = useAdminResource('/admin/audit-logs', [])
   const r = state.data
+  const customError = preset === 'custom' ? rangeError(custom) : ''
+  const totals = dailyTotals(r?.daily)
+
+  const choosePreset = (value) => {
+    setPreset(value)
+    if (value !== 'custom') {
+      const next = presetRange(value)
+      setRange(next)
+      setCustom(next)
+    }
+  }
+
+  const downloadExcel = async () => {
+    if (download.busy) return
+    setDownload({ busy: true, message: '' })
+    try {
+      const name = await downloadFile('/admin/reports/export', {
+        params: {
+          ...(range.from ? { from: range.from } : {}),
+          ...(range.to ? { to: range.to } : {}),
+        },
+        fallbackName: 'MOVRIT_운영리포트.xlsx',
+      })
+      setDownload({ busy: false, message: `${name} 파일을 내려받았습니다.` })
+    } catch (error) {
+      setDownload({
+        busy: false,
+        message:
+          error.response?.status === 400
+            ? '기간을 다시 확인해 주세요.'
+            : '엑셀을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      })
+    }
+  }
+
   return (
     <AdminLayout
       title="운영 리포트"
-      actions={<AdminButton onClick={state.reload}>새로고침</AdminButton>}
+      actions={
+        <>
+          <AdminButton onClick={state.reload}>새로고침</AdminButton>
+          <AdminButton onClick={downloadExcel} disabled={download.busy}>
+            {download.busy ? '엑셀 만드는 중' : '엑셀 내려받기'}
+          </AdminButton>
+        </>
+      }
     >
+      <div className="admin-filters admin-report-period">
+        <div className="admin-chips" role="group" aria-label="리포트 기간">
+          {REPORT_PRESETS.map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              className={preset === value ? 'is-active' : ''}
+              aria-pressed={preset === value}
+              onClick={() => choosePreset(value)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {preset === 'custom' && (
+          <form
+            className="admin-report-custom"
+            onSubmit={(event) => {
+              event.preventDefault()
+              if (!customError) setRange(custom)
+            }}
+          >
+            <input
+              type="date"
+              aria-label="시작일"
+              value={custom.from}
+              onChange={(e) => setCustom({ ...custom, from: e.target.value })}
+            />
+            <span>~</span>
+            <input
+              type="date"
+              aria-label="종료일"
+              value={custom.to}
+              onChange={(e) => setCustom({ ...custom, to: e.target.value })}
+            />
+            <AdminButton type="submit" disabled={Boolean(customError)}>
+              적용
+            </AdminButton>
+            {customError && <small role="alert">{customError}</small>}
+          </form>
+        )}
+      </div>
+      {download.message && <p role="status">{download.message}</p>}
       <ResourceGate state={state}>
         {r && (
           <>
             <p className="admin-muted">
-              기준 시각 {dateTime(r.generatedAt)} · 실제 DB 집계입니다.
+              {rangeLabel(r)} · 기준 시각 {dateTime(r.generatedAt)} · 실제 DB
+              집계입니다.
             </p>
             <div className="admin-kpis">
               <article>
-                <span>모집 중 캠페인</span>
-                <strong>{r.openCampaigns}</strong>
+                <span>새 회원</span>
+                <strong>{r.newMembers}</strong>
+              </article>
+              <article>
+                <span>새 캠페인</span>
+                <strong>{r.newCampaigns}</strong>
+              </article>
+              <article>
+                <span>새 신청</span>
+                <strong>{r.newApplications}</strong>
+              </article>
+              <article>
+                <span>완료(최종 승인)</span>
+                <strong>{r.completedApplications}</strong>
               </article>
               <article>
                 <span>선정 후 완료율</span>
                 <strong>{r.completionRate}%</strong>
+              </article>
+              <article>
+                <span>지금 모집 중 캠페인</span>
+                <strong>{r.openCampaigns}</strong>
               </article>
               <article>
                 <span>결제 완료 금액</span>
@@ -332,6 +448,43 @@ export function AdminReportsPage() {
                 <strong>{money(r.refundedAmount)}</strong>
               </article>
             </div>
+            {r.daily?.length > 0 && (
+              <AdminCard title="날짜별 추이">
+                <div className="admin-table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>날짜</th>
+                        <th>가입</th>
+                        <th>신청</th>
+                        <th>콘텐츠 제출</th>
+                        <th>완료</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...r.daily].reverse().map((row) => (
+                        <tr key={row.date}>
+                          <td>{row.date}</td>
+                          <td>{row.signups}</td>
+                          <td>{row.applications}</td>
+                          <td>{row.contents}</td>
+                          <td>{row.completed}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>합계</th>
+                        <th>{totals.signups}</th>
+                        <th>{totals.applications}</th>
+                        <th>{totals.contents}</th>
+                        <th>{totals.completed}</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </AdminCard>
+            )}
             <div className="admin-detail-grid">
               <CountBars
                 title="캠페인 신청 상태"

@@ -834,3 +834,21 @@
   font-size: 13px;
   white-space: nowrap;
 }
+
+/* 운영 리포트 기간 선택: 프리셋 칩과 직접 고르기 날짜 */
+.admin-report-period {
+  flex-wrap: wrap;
+  align-items: center;
+}
+.admin-report-custom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.admin-report-custom small {
+  color: #d64545;
+}
+.admin-filters .admin-report-custom input {
+  width: 160px;
+}

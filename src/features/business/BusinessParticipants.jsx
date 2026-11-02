@@ -23,6 +23,7 @@ import ParticipantPortfolio, {
 import useParticipantDetail from './useParticipantDetail'
 import PurchasePaybackPanel from '../purchaseReview/PurchasePaybackPanel'
 import VisitReservationPanel from '../participation/VisitReservationPanel'
+import ShipmentCard from '../shipping/ShipmentCard'
 import ParticipantActivityPanel from '../participation/ParticipantActivityPanel'
 import { bulkApplications } from '../../api/participationApi'
 import {
@@ -555,6 +556,21 @@ export default function BusinessParticipants() {
               applicationId={current.id}
             />
           )}
+          {/* 배송형: 송장 입력 여부와 수령 확인 상태 */}
+          {current.fulfillmentType === 'DELIVERY' &&
+            [
+              'SELECTED',
+              'ACTIVE',
+              'CONTENT_SUBMITTED',
+              'REVISION_REQUESTED',
+              'COMPLETED',
+            ].includes(current.status) && (
+              <ShipmentCard
+                key={`shipment-${current.id}`}
+                application={current}
+                seller
+              />
+            )}
           {current.fulfillmentType === 'DELIVERY' && (
             <section>
               <h3>배송 연락처</h3>

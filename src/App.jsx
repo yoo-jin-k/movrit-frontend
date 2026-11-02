@@ -28,6 +28,9 @@ const AdminModerationPage = lazy(() => import('./pages/AdminModerationPage'))
 const AdminParticipationPage = lazy(
   () => import('./pages/AdminParticipationPage'),
 )
+const BusinessShipping = lazy(
+  () => import('./features/business/BusinessShipping'),
+)
 const BusinessPaybacks = lazy(
   () => import('./features/business/BusinessPaybacks'),
 )
@@ -492,6 +495,7 @@ function App() {
             />
             <Route path="participants" element={<BusinessParticipants />} />
             <Route path="paybacks" element={<BusinessPaybacks />} />
+            <Route path="shipping" element={<BusinessShipping />} />
             <Route path="contents" element={<BusinessContents />} />
             <Route path="inbox" element={<BusinessInbox />} />
             <Route path="messages" element={<BusinessMessages />} />

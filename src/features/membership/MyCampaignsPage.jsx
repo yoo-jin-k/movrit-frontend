@@ -11,6 +11,7 @@ import MyContentSubmission from './MyContentSubmission'
 import PurchaseInfoCard from '../purchaseReview/PurchaseInfoCard'
 import ApplicationEditPanel from '../participation/ApplicationEditPanel'
 import VisitReservationPanel from '../participation/VisitReservationPanel'
+import ShipmentCard from '../shipping/ShipmentCard'
 import PurchaseProofPanel from '../purchaseReview/PurchaseProofPanel'
 import {
   APPLICATION_STATUS,
@@ -82,6 +83,20 @@ function Workspace({ item, onReload, attempt }) {
         {application.fulfillmentType === 'DELIVERY' && (
           <Guide title="배송 안내" value={campaign.deliveryGuide} />
         )}
+        {/* 선정된 배송형 참여자는 발송 여부와 송장번호를 확인합니다. */}
+        {application.fulfillmentType === 'DELIVERY' &&
+          [
+            'SELECTED',
+            'ACTIVE',
+            'CONTENT_SUBMITTED',
+            'REVISION_REQUESTED',
+            'COMPLETED',
+          ].includes(application.status) && (
+            <ShipmentCard
+              key={`shipment-${application.id}-${attempt}`}
+              application={application}
+            />
+          )}
         {application.fulfillmentType === 'VISIT' && (
           <>
             <Guide title="방문 안내" value={campaign.visitGuide} />

@@ -24,7 +24,7 @@
 | 신청서 | 내 캠페인 |
 |---|---|
 | ![신청서](docs/screenshots/03-apply-form.png) | ![내 캠페인](docs/screenshots/04-my-campaign-workspace.png) |
-| 캠페인마다 다른 참여 방식·질문·동의 항목 | 일정표, 미션, 송장번호, 콘텐츠 제출을 한 화면에서 |
+| 캠페인마다 다른 참여 방식·질문·동의 항목 | 일정표, 미션, 송장번호, 콘텐츠 제출과 성과 기록을 한 화면에서 |
 
 | 마이페이지 | 채팅 | 커뮤니티 |
 |---|---|---|
@@ -47,12 +47,22 @@
 | ![배송 관리](docs/screenshots/14-seller-shipping.png) | ![환급](docs/screenshots/15-seller-paybacks.png) |
 | 택배사·송장번호 입력, 배송지 엑셀 내려받기 | 구매 인증 확인 후 환급 처리 |
 
+| 콘텐츠 성과 |
+|---|
+| ![콘텐츠 성과](docs/screenshots/16-seller-content-performance.png) |
+| 캠페인을 고르면 참여자 게시물의 최근 조회수·좋아요·댓글 합계와 평균 참여율을 보여 줍니다 |
+
 ### 운영자
 
 | 콘텐츠 최종 승인 | 신고·제재 |
 |---|---|
 | ![최종 승인](docs/screenshots/20-admin-content-reviews.png) | ![신고 처리](docs/screenshots/21-admin-moderation.png) |
 | 업체 검토가 끝난 콘텐츠만 모아 승인 | 신고 당시 내용, 같은 대상 신고 수, 기각·경고·가리기·이용 정지 |
+
+| 커뮤니티 관리 | 운영 리포트 |
+|---|---|
+| ![커뮤니티 관리](docs/screenshots/22-admin-community.png) | ![운영 리포트](docs/screenshots/23-admin-reports.png) |
+| 신고 없이도 글·댓글을 바로 가리고 다시 보이게 함 | 기간 선택, 날짜별 추이, 엑셀(요약·날짜별·상태별) |
 
 ### 모바일
 
@@ -77,17 +87,18 @@ npm run dev               # 기본 개발 서버 → 백엔드 8080
 
 ```
 src/
-  api/         서버 호출(기능별 파일, axios.js 한곳에서 토큰 갱신 처리)
+  api/         서버 호출(기능별 파일, axios.js 한곳에서 토큰 갱신, downloadFile.js로 엑셀 저장)
   features/    기능 단위 화면과 모델
-    discovery/        캠페인 탐색·상세·신청, 커뮤니티
+    discovery/        캠페인 탐색(서버 검색·페이지)·상세·신청, 커뮤니티
     membership/       마이페이지, 내 캠페인 작업 공간, 콘텐츠 제출
     business/         업체 화면(참여자·배송·환급·콘텐츠)
     sellerCampaigns/  캠페인 등록·수정·복제
     purchaseReview/   구매 정보·구매 인증·환급
     shipping/         송장·배송 상태
+    contentMetric/    게시물 성과 기록, 캠페인 성과 요약
     participation/    등급·패널티·방문 예약·평가·신고
     chat/             채팅방, 첨부, 검색, 입력 중 표시
-    admin/            운영자 화면 모델
+    admin/            운영자 화면 모델(커뮤니티 관리, 리포트 기간)
   pages/       경로에 바로 연결되는 화면
   components/  공통 레이아웃·헤더
 qa/
@@ -100,18 +111,18 @@ scripts/       node:test 단위 테스트
 
 ## 주요 경로
 
-경로는 91개이고, 첫 화면을 빼고는 지연 로딩합니다.
+경로는 92개이고, 첫 화면을 빼고는 지연 로딩합니다.
 
 | 대상 | 경로 |
 |---|---|
 | 참여자 | `/home`, `/category/:section`, `/campaign/:campaignId`, `/mypage`, `/mypage/campaigns`, `/messages`, `/community/:board`, `/settings` |
 | 업체 | `/seller/dashboard`, `/seller/campaigns`, `/seller/participants`, `/seller/shipping`, `/seller/paybacks`, `/seller/contents`, `/seller/messages` |
-| 운영자 | `/admin/dashboard`, `/admin/content-reviews`, `/admin/moderation`, `/admin/participation`, `/admin/campaign-participants`, `/admin/members` |
+| 운영자 | `/admin/dashboard`, `/admin/content-reviews`, `/admin/community`, `/admin/moderation`, `/admin/reports`, `/admin/participation`, `/admin/members` |
 
 ## 테스트와 점검
 
 ```bash
-npm test               # 단위 테스트 175개 (scripts/*.test.mjs)
+npm test               # 단위 테스트 188개 (scripts/*.test.mjs)
 npm run lint
 npm run format:check
 npm run build
@@ -122,6 +133,7 @@ npm run build
 - `e2e-flow.mjs`: 캠페인 등록 → 신청 → 선정 → 콘텐츠 제출 → 업체 검토 → 운영자 최종 승인
 - `qa-checks.mjs`: 동시 선정 시 정원 초과 여부, 다른 브랜드 권한, 신청 내용 보존
 - `purchase-review-check.mjs`, `shipping-check.mjs`, `participation-check.mjs`, `chat-extras-check.mjs`: 구매평, 배송, 패널티·예약·평가, 채팅 첨부·검색
+- `ops-extras-check.mjs`: 커뮤니티 가리기·다시 보이기, 리포트 기간·엑셀, 콘텐츠 성과 기록, 캠페인 서버 검색·페이지
 - `route-check.mjs`: 역할별로 전체 경로를 열어 오류·빈 화면 확인
 
 자세한 실행 방법은 [qa/e2e/README.md](qa/e2e/README.md)에 있습니다.

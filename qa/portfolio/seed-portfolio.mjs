@@ -475,6 +475,35 @@ if ((await statusOf(haneul, aHaneul)) === 'COMPLETED')
     memo: '마감 3일 전 제출, 비교 사진 품질이 좋음. 다음 신제품 때 우선 연락',
   })
 
+// 콘텐츠 성과: 하늘은 이틀치(전날·오늘), 민지는 오늘 하루치를 기록해 둡니다.
+// 같은 날짜는 고쳐 쓰므로 여러 번 실행해도 결과가 같습니다. 제출일보다 이른 날짜는 서버가 거절하므로 건너뜁니다.
+const dayIso = (offset) => at(offset).slice(0, 10)
+async function metric(user, submissionId, url, offset, views, likes, comments) {
+  await call(user, 'PUT', `/campaign-contents/${submissionId}/metrics`, {
+    contentUrl: url,
+    viewCount: views,
+    likeCount: likes,
+    commentCount: comments,
+    measuredOn: dayIso(offset),
+  })
+}
+if (haneulContent) {
+  const url = 'https://www.instagram.com/p/HaneulCica14/'
+  await metric(haneul, haneulContent.id, url, -1, 1840, 126, 14)
+  await metric(haneul, haneulContent.id, url, 0, 2630, 171, 19)
+}
+if (minjiContent) {
+  await metric(
+    studio,
+    minjiContent.id,
+    'https://www.instagram.com/p/MinjiDailyCica/',
+    0,
+    940,
+    58,
+    7,
+  )
+}
+
 // 디너: 하늘 선정 → 방문 예약 확정, 준호 접수 대기
 const vHaneul = await apply(haneul, dinner, 'VISIT', {
   message:

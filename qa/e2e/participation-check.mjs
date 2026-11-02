@@ -486,10 +486,11 @@ check(
   reminderNotes.some((n) => JSON.stringify(n).includes('QA-OPS-R')),
 )
 await call(admin, 'POST', '/admin/deadline-reminders/run')
+// 이전 점검에서 만든 QA-OPS-R 캠페인 알림과 섞이지 않도록 이번 점검 캠페인 이름(시각 포함)으로 셉니다.
 const again = (await notes(userB)).filter(
   (n) =>
     JSON.stringify(n).includes('[D-3]') &&
-    JSON.stringify(n).includes('QA-OPS-R'),
+    JSON.stringify(n).includes(`마감 알림 점검 ${stamp}`),
 )
 check('같은 알림은 한 번만', again.length === 1, String(again.length))
 

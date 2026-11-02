@@ -165,6 +165,16 @@ if (want('15-seller-paybacks')) {
   await shot('15-seller-paybacks', page)
 }
 
+if (want('16-seller-content-performance')) {
+  const page = await open('studio', '/seller/contents')
+  await page
+    .getByLabel('성과를 볼 캠페인')
+    .selectOption({ label: '시카 수분 앰플 2주 사용 후기 체험단' })
+  await page.getByText('조회수 합계').waitFor()
+  await page.waitForTimeout(400)
+  await shot('16-seller-content-performance', page)
+}
+
 // ── 운영자 ──
 // 운영자 화면은 통합 DB의 점검용 데이터와 섞여 있어, 시연 데이터만 보이도록 좁혀서 찍습니다.
 if (want('20-admin-content-reviews')) {
@@ -181,6 +191,30 @@ if (want('21-admin-moderation')) {
   await page.getByRole('button', { name: '보기' }).first().click()
   await page.waitForTimeout(800)
   await shot('21-admin-moderation', page)
+}
+
+if (want('22-admin-community')) {
+  const page = await open('admin', '/admin/community')
+  await page.getByLabel('검색어').fill('체험단 처음이신 분들')
+  await page.getByRole('button', { name: '검색' }).click()
+  await page.waitForTimeout(800)
+  await page
+    .getByRole('button', { name: /^글 \d+ 보기$/ })
+    .first()
+    .click()
+  await page.getByText(/^댓글 \d+개$/).waitFor()
+  await page.evaluate(() => document.activeElement?.blur())
+  // 글 본문 아래 댓글 목록(가리기 버튼)이 화면에 함께 들어오도록 올립니다.
+  await page.getByText(/^글 #\d+ · /).evaluate((el) => {
+    window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 24)
+  })
+  await page.waitForTimeout(400)
+  await shot('22-admin-community', page)
+}
+if (want('23-admin-reports')) {
+  const page = await open('admin', '/admin/reports')
+  await page.getByText('날짜별 추이').waitFor()
+  await shot('23-admin-reports', page)
 }
 
 // ── 모바일 ──

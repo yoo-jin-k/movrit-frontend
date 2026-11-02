@@ -69,6 +69,8 @@ export function myContentLink(value) {
 // 다만 이전 방식으로 선정(SELECTED)에 머문 기존 신청은 '참여 시작'으로 이어서 진행할 수 있게 합니다.
 export function myParticipationAction(application) {
   if (application?.status === 'SELECTED') return 'activate'
+  // 구매평 캠페인은 '체험 완료 확인' 대신 구매 인증(주문번호·캡처)을 제출합니다(PurchaseProofPanel).
+  if (application?.fulfillmentType === 'PURCHASE') return null
   if (application?.status === 'ACTIVE' && !application.experienceConfirmedAt)
     return 'experience-confirm'
   return null

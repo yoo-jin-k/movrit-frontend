@@ -1,3 +1,7 @@
+import {
+  fulfillmentLabel,
+  fulfillmentOptions,
+} from '../purchaseReview/purchaseReviewModel'
 /**
  * 참여 방식·추가 질문·동의 문서의 편집값을 부모 폼으로 전달합니다.
  * 행별 변경은 새 배열로 반영하며 저장 요청과 버전 검증은 상위 편집기에 맡깁니다.
@@ -6,6 +10,7 @@ export default function ApplicationFormFields({
   value,
   onChange,
   disabled = false,
+  campaignType = 'PRODUCT',
 }) {
   // 변경한 질문 행만 새 객체로 바꾸고 다른 질문과 동의 문서는 유지합니다.
   const updateQuestion = (index, patch) =>
@@ -32,7 +37,8 @@ export default function ApplicationFormFields({
       </p>
       <div className="seller-form-full">
         <h4>참여 방식</h4>
-        {['DELIVERY', 'VISIT'].map((type) => (
+        {/* 구매평 캠페인은 '직접 구매'만, 다른 캠페인은 배송형·방문형 중에서 고릅니다. */}
+        {fulfillmentOptions(campaignType).map((type) => (
           <label className="seller-checkbox" key={type}>
             <input
               type="checkbox"
@@ -46,7 +52,7 @@ export default function ApplicationFormFields({
                 })
               }
             />
-            {type === 'DELIVERY' ? '배송형' : '방문형'}
+            {fulfillmentLabel(type)}
           </label>
         ))}
       </div>

@@ -5,6 +5,8 @@
  */
 import { useEffect, useState } from 'react'
 import RecruitmentProgress from './RecruitmentProgress'
+import PurchaseInfoCard from '../purchaseReview/PurchaseInfoCard'
+import { fulfillmentLabel } from '../purchaseReview/purchaseReviewModel'
 import { Link } from 'react-router-dom'
 import {
   readCampaign,
@@ -135,6 +137,10 @@ export default function LiveCampaignDetailPage({ campaignId }) {
                 recruitmentCount={detail.recruitmentCount}
                 open={isRecruiting(detail)}
               />
+              {/* 구매평 캠페인은 구매처·판매가·환급액 안내를 먼저 보여줍니다. */}
+              {detail.campaignType === 'PURCHASE_REVIEW' && (
+                <PurchaseInfoCard campaignId={campaignId} />
+              )}
               <section aria-label="서버 신청 조건">
                 <h3>신청 조건</h3>
                 {state.formError ? (
@@ -145,13 +151,7 @@ export default function LiveCampaignDetailPage({ campaignId }) {
                     <p>
                       체험 유형:{' '}
                       {(form.allowedFulfillmentTypes || [])
-                        .map((type) =>
-                          type === 'DELIVERY'
-                            ? '배송형'
-                            : type === 'VISIT'
-                              ? '방문형'
-                              : '미지원 유형',
-                        )
+                        .map(fulfillmentLabel)
                         .join(', ')}
                     </p>
                     <ul>

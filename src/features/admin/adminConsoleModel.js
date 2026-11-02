@@ -107,6 +107,7 @@ export const CAMPAIGN_TYPE_LABELS = {
   PRODUCT: '제품',
   LOCAL: '지역',
   REPORTER: '기자단',
+  PURCHASE_REVIEW: '구매평',
 }
 export const NOTICE_CATEGORY_LABELS = {
   NOTICE: '공지',

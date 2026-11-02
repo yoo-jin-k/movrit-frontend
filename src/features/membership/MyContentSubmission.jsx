@@ -311,7 +311,9 @@ export default function MyContentSubmission({
       {available && !eligible && !submission && (
         <p>
           {application.status === 'ACTIVE' && !application.experienceConfirmedAt
-            ? '체험 완료 확인 후 콘텐츠를 제출하실 수 있습니다.'
+            ? application.fulfillmentType === 'PURCHASE'
+              ? '구매 인증을 제출하신 뒤 구매평 주소를 제출하실 수 있습니다.'
+              : '체험 완료 확인 후 콘텐츠를 제출하실 수 있습니다.'
             : '참여 진행 상태에 따라 콘텐츠 제출이 열립니다.'}
         </p>
       )}

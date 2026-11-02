@@ -28,6 +28,13 @@ import './sellerCampaigns.css'
 import CampaignFormPreview from './CampaignFormPreview'
 import CampaignMediaFields from './CampaignMediaFields'
 import { emptyCampaignMediaDraft } from './campaignMediaDraft'
+import { readPurchaseInfo, savePurchaseInfo } from '../../api/purchaseReviewApi'
+import {
+  fulfillmentForType,
+  purchaseInfoError,
+  purchaseInfoForm,
+  purchaseInfoRequest,
+} from '../purchaseReview/purchaseReviewModel'
 import {
   changeMediaFulfillment,
   validateManagedPresentation,
@@ -36,6 +43,14 @@ import {
 import { readMediaSession, prepareMediaSave } from './campaignMediaWorkflow'
 
 // 신청 폼 조회의 404만 미구성으로 취급합니다. 권한 오류나 통신 장애는 정상 빈 폼으로 바꾸지 않습니다.
+// 구매평 캠페인이면 구매 안내를 읽어 편집 값(form.purchaseReview)에 붙입니다.
+async function withPurchaseInfo(detail) {
+  if (detail?.campaignType !== 'PURCHASE_REVIEW') return detail
+  return {
+    ...detail,
+    purchaseReview: purchaseInfoForm(await readPurchaseInfo(detail.id)),
+  }
+}
 async function readOptionalForm(id) {
   try {
     return await readCampaignForm(id)
@@ -112,10 +127,11 @@ export default function SellerCampaignManager({
             readOptionalForm(initialCampaignId),
             mediaRead(initialCampaignId),
           ])
+          const editable = await withPurchaseInfo(detail)
           if (!active) return
           if (media) setMediaSession(media)
           setOriginal(detail)
-          setForm(detail)
+          setForm(editable)
           setSavedForm(existingForm)
           setApplicationForm(existingForm || emptyApplicationForm())
           setFormConfigured(Boolean(existingForm))
@@ -154,9 +170,10 @@ export default function SellerCampaignManager({
         readOptionalForm(campaignId),
         mediaRead(campaignId),
       ])
+      const editable = await withPurchaseInfo(detail)
       if (media) setMediaSession(media)
       setOriginal(detail)
-      setForm(detail)
+      setForm(editable)
       setSavedForm(existingForm)
       setApplicationForm(existingForm || emptyApplicationForm())
       setFormConfigured(Boolean(existingForm))
@@ -203,6 +220,11 @@ export default function SellerCampaignManager({
           originalVisitLocation: mediaSession.managed?.visitLocation,
           fulfillmentTypes: applicationForm.allowedFulfillmentTypes,
         })
+      // 구매평 캠페인은 구매 안내도 함께 확인합니다(저장 요청 전에 막아 캠페인만 저장되는 일을 줄입니다).
+      if (form.campaignType === 'PURCHASE_REVIEW') {
+        const purchaseProblem = purchaseInfoError(form.purchaseReview)
+        if (purchaseProblem) throw new Error(purchaseProblem)
+      }
       payload = configuredCampaignPayload(form, condition, original)
       if (formDirty || !original) {
         payload.applicationForm = applicationFormRequest(applicationForm)
@@ -233,6 +255,12 @@ export default function SellerCampaignManager({
       // 서버 저장 응답만으로 화면의 최신값을 확정하지 않고 관련 조회가 모두 성공한 뒤 완료 안내를 표시합니다.
       const result = await saveConfiguredCampaign(payload, original?.id)
       if (mediaApi) validateManagedPresentation(result.presentation)
+      // 구매 안내는 캠페인을 저장한 뒤 따로 저장합니다(캠페인 ID가 있어야 하므로).
+      if (form.campaignType === 'PURCHASE_REVIEW')
+        await savePurchaseInfo(
+          result.campaign.id,
+          purchaseInfoRequest(form.purchaseReview),
+        )
       const [detail, requirement, campaigns, confirmedForm, media] =
         await Promise.all([
           readCampaign(result.campaign.id),
@@ -241,9 +269,10 @@ export default function SellerCampaignManager({
           readCampaignForm(result.campaign.id),
           mediaRead(result.campaign.id),
         ])
+      const editable = await withPurchaseInfo(detail)
       if (media) setMediaSession(media)
       setOriginal(detail)
-      setForm(detail)
+      setForm(editable)
       setCondition(requirementForm(requirement))
       setActiveRequirement(requirement)
       setSavedForm(confirmedForm)
@@ -281,6 +310,20 @@ export default function SellerCampaignManager({
       setBusy(false)
     }
   }
+  // 신청서 편집값을 바꿉니다. 참여 방식이 바뀌면 방문 정보 등 미디어 초안도 함께 맞춥니다.
+  const changeApplicationForm = (value) => {
+    if (mediaApi)
+      setMediaSession((current) => ({
+        ...current,
+        draft: changeMediaFulfillment(
+          current.draft,
+          applicationForm.allowedFulfillmentTypes,
+          value.allowedFulfillmentTypes,
+        ),
+      }))
+    setApplicationForm(value)
+    setFormDirty(true)
+  }
   return (
     <section
       className={`seller-campaign-manager${dashboard ? ' business-editor' : ''}`}
@@ -302,7 +345,21 @@ export default function SellerCampaignManager({
               </h3>
               <CampaignFields
                 value={form}
-                onChange={setForm}
+                onChange={(next) => {
+                  // 캠페인 종류가 구매평으로(또는 구매평에서) 바뀌면 신청서 참여 방식도 그 종류에 맞춥니다.
+                  if (
+                    (next.campaignType || 'PRODUCT') !==
+                    (form.campaignType || 'PRODUCT')
+                  )
+                    changeApplicationForm({
+                      ...applicationForm,
+                      allowedFulfillmentTypes: fulfillmentForType(
+                        next.campaignType,
+                        applicationForm.allowedFulfillmentTypes,
+                      ),
+                    })
+                  setForm(next)
+                }}
                 brands={state.brands}
                 preorders={state.preorders.filter(
                   (item) =>
@@ -326,19 +383,8 @@ export default function SellerCampaignManager({
               </p>
               <ApplicationFormFields
                 value={applicationForm}
-                onChange={(value) => {
-                  if (mediaApi)
-                    setMediaSession((current) => ({
-                      ...current,
-                      draft: changeMediaFulfillment(
-                        current.draft,
-                        applicationForm.allowedFulfillmentTypes,
-                        value.allowedFulfillmentTypes,
-                      ),
-                    }))
-                  setApplicationForm(value)
-                  setFormDirty(true)
-                }}
+                campaignType={form.campaignType || 'PRODUCT'}
+                onChange={changeApplicationForm}
                 disabled={busy || mustReload}
               />
               {mediaApi && (

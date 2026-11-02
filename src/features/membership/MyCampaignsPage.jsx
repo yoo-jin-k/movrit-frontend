@@ -8,6 +8,8 @@ import { liveCampaignSchedule } from '../discovery/scheduleModel'
 import VisitEvidence from '../sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import MyContentSubmission from './MyContentSubmission'
+import PurchaseInfoCard from '../purchaseReview/PurchaseInfoCard'
+import PurchaseProofPanel from '../purchaseReview/PurchaseProofPanel'
 import {
   APPLICATION_STATUS,
   nextCampaignAction,
@@ -87,6 +89,17 @@ function Workspace({ item, onReload, attempt }) {
           </>
         )}
       </section>
+      {/* 구매평 캠페인: 구매 안내와 구매 인증·환급 상태 */}
+      {application.fulfillmentType === 'PURCHASE' && (
+        <>
+          <PurchaseInfoCard campaignId={application.campaignId} />
+          <PurchaseProofPanel
+            key={`purchase-${application.id}`}
+            application={application}
+            onReload={onReload}
+          />
+        </>
+      )}
       <section className="campaign-workspace__section">
         <h2>연락처 확인</h2>
         <div className="campaign-workspace__contacts">

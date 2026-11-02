@@ -6,7 +6,8 @@
  * 함께 판매할 프리오더: 선택 항목입니다. 비워 두면 프리오더 없이 체험단만 운영합니다.
  * 수정 화면에서는 두 값을 바꿀 수 없습니다(신청·선정 기록의 소속이 바뀌지 않도록).
  *
- * 캠페인 종류·지역·콘텐츠 채널: 사용자 탐색 메뉴(제품·지역·기자단, 지역 필터, 미디어 필터)에 쓰입니다.
+ * 캠페인 종류·지역·콘텐츠 채널: 사용자 탐색 메뉴(제품·지역·기자단·구매평, 지역 필터, 미디어 필터)에 쓰입니다.
+ * 구매평 종류를 고르면 구매처·상품 주소·판매가·환급액 입력 칸이 함께 나옵니다.
  * 세부 일정·참여 안내(선택): 사용자 캠페인 상세와 '내 캠페인'의 참여 일정·미션 안내에 그대로 표시됩니다.
  */
 import {
@@ -14,6 +15,8 @@ import {
   PRODUCT_CATEGORIES,
   REGIONS,
 } from '../discovery/catalog.js'
+import PurchaseInfoFields from '../purchaseReview/PurchaseInfoFields'
+import { emptyPurchaseInfo } from '../purchaseReview/purchaseReviewModel'
 
 // 세부 일정 입력 항목(서버 필드, 화면 이름)입니다. 비워 두면 사용자 화면에 '미정'으로 표시됩니다.
 const SCHEDULE_INPUTS = [
@@ -65,6 +68,7 @@ const CAMPAIGN_TYPES = [
   ['PRODUCT', '제품 (배송형 체험)'],
   ['LOCAL', '지역 (방문형 체험)'],
   ['REPORTER', '기자단 (취재·소개형)'],
+  ['PURCHASE_REVIEW', '구매평 (직접 구매 후 환급)'],
 ]
 const CONTENT_CHANNELS = [
   ['', '지정하지 않음'],
@@ -245,6 +249,14 @@ export default function CampaignFields({
           />
         </label>
       </fieldset>
+      {/* 구매평 캠페인은 구매처·판매가·환급액 안내를 함께 받습니다. */}
+      {value.campaignType === 'PURCHASE_REVIEW' && (
+        <PurchaseInfoFields
+          value={value.purchaseReview || emptyPurchaseInfo()}
+          onChange={(next) => change('purchaseReview', next)}
+          disabled={disabled}
+        />
+      )}
       <fieldset className="seller-campaign-fields" disabled={disabled}>
         <legend>모집 일정과 인원</legend>
         <p>

@@ -10,8 +10,13 @@ import {
   periodEndInstant,
 } from './scheduleModel.js'
 
-// 서버의 캠페인 종류 코드를 탐색 메뉴 이름(제품·지역·기자단)으로 바꿉니다.
-const KIND_LABELS = { PRODUCT: '제품', LOCAL: '지역', REPORTER: '기자단' }
+// 서버의 캠페인 종류 코드를 탐색 메뉴 이름(제품·지역·기자단·구매평)으로 바꿉니다.
+const KIND_LABELS = {
+  PRODUCT: '제품',
+  LOCAL: '지역',
+  REPORTER: '기자단',
+  PURCHASE_REVIEW: '구매평',
+}
 
 // 서버의 콘텐츠 채널 코드를 미디어 필터 이름으로 바꿉니다.
 const MEDIA_LABELS = {
@@ -65,7 +70,8 @@ export function adaptCampaignSummary(dto, now = new Date()) {
       now,
     ),
     premier: dto.premier === true,
-    shoppingreview: false,
+    // 구매평 메뉴(/special/shoppingreview)는 구매평 유형 캠페인만 보여줍니다.
+    shoppingreview: dto.campaignType === 'PURCHASE_REVIEW',
     source: dto,
   }
 }

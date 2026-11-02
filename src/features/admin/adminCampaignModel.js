@@ -21,6 +21,7 @@ export const CAMPAIGN_TYPE_LABELS = {
   PRODUCT: '제품',
   LOCAL: '지역',
   REPORTER: '기자단',
+  PURCHASE_REVIEW: '구매평',
 }
 
 // 점검용 캠페인([QA], [QA-E2E] 등)은 제목 앞의 대괄호 표시로 구분합니다.

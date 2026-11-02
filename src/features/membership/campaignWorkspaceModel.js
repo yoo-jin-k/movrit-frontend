@@ -32,14 +32,22 @@ export function nextCampaignAction(application, content) {
   const messages = {
     SUBMITTED: '신청이 접수되었습니다. 선정 결과를 기다려 주세요.',
     SELECTED: '선정되었습니다. 아래에서 참여를 수락해 주세요.',
-    ACTIVE: application.experienceConfirmedAt
-      ? '체험 확인이 완료되었습니다. 채널별 콘텐츠 링크를 제출해 주세요.'
-      : '미션과 일정을 확인하고 실제 체험 완료 후 아래에서 확인해 주세요.',
+    ACTIVE:
+      application.fulfillmentType === 'PURCHASE'
+        ? application.experienceConfirmedAt
+          ? '구매 인증이 완료되었습니다. 구매처에 남긴 구매평 주소를 제출해 주세요.'
+          : '구매처에서 상품을 구매한 뒤 아래에서 구매 인증을 제출해 주세요.'
+        : application.experienceConfirmedAt
+          ? '체험 확인이 완료되었습니다. 채널별 콘텐츠 링크를 제출해 주세요.'
+          : '미션과 일정을 확인하고 실제 체험 완료 후 아래에서 확인해 주세요.',
     CONTENT_SUBMITTED:
       '콘텐츠를 제출했습니다. 브랜드의 검토 결과를 기다려 주세요.',
     REVISION_REQUESTED:
       '브랜드의 수정 의견을 확인하고 콘텐츠를 재제출해 주세요.',
-    COMPLETED: '캠페인 참여가 완료되었습니다.',
+    COMPLETED:
+      application.fulfillmentType === 'PURCHASE'
+        ? '구매평이 승인되었습니다. 브랜드의 환급 진행 상태를 아래에서 확인해 주세요.'
+        : '캠페인 참여가 완료되었습니다.',
     REJECTED: '이번 캠페인에 선정되지 않았습니다.',
     CANCELLED: '취소된 신청입니다.',
   }

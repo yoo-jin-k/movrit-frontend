@@ -19,6 +19,7 @@ import ParticipantPortfolio, {
   ParticipantMetrics,
 } from './ParticipantPortfolio'
 import useParticipantDetail from './useParticipantDetail'
+import PurchasePaybackPanel from '../purchaseReview/PurchasePaybackPanel'
 import { readParticipantPortfolio } from '../../api/participantPortfolioApi'
 import { myContentLink } from '../membership/myContentModel'
 import { completedCountLabel } from './participantPortfolioModel'
@@ -405,6 +406,13 @@ export default function BusinessParticipants() {
               이 참여자의 제출 콘텐츠 확인 →
             </Link>
           </p>
+          {/* 구매평 캠페인: 참여자의 구매 인증을 확인하고, 완료 후 환급 완료를 기록합니다. */}
+          {current.fulfillmentType === 'PURCHASE' && (
+            <PurchasePaybackPanel
+              key={`purchase-${current.id}`}
+              application={current}
+            />
+          )}
           {current.fulfillmentType === 'VISIT' && (
             <VisitEvidence
               key={`visit-${current.id}`}

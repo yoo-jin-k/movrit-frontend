@@ -1,6 +1,7 @@
 /**
  * 클립·구매평 구분에 맞춰 조회된 캠페인을 골라 표시합니다.
- * 예시 모드와 실제 데이터의 지원 범위를 구분하여 화면을 구성합니다.
+ * - 구매평: 캠페인 종류가 구매평(PURCHASE_REVIEW)인 캠페인
+ * - 클립: 주요 콘텐츠 채널이 클립(CLIP)인 캠페인(별도 종류가 아니라 채널 기준)
  */
 import { useParams } from 'react-router-dom'
 import DiscoveryLayout from './DiscoveryLayout'
@@ -41,9 +42,15 @@ export default function SpecialCampaignPage() {
           <div className="main-campaign-section__heading">
             <h2>{title} 캠페인 신청하기</h2>
           </div>
-          {!previewMode && (
+          {!previewMode && !clip && (
             <p className="discovery-info">
-              이 메뉴의 유형 구분 정보는 아직 서버에서 제공하지 않습니다.
+              구매처에서 직접 구매하고 구매평을 남기면, 구매평 승인 후 브랜드가
+              약속한 금액을 돌려드립니다.
+            </p>
+          )}
+          {!previewMode && clip && (
+            <p className="discovery-info">
+              네이버 클립 등 짧은 영상으로 콘텐츠를 올리는 캠페인입니다.
             </p>
           )}
           <CampaignGrid items={filtered} loading={loading} error={error} />

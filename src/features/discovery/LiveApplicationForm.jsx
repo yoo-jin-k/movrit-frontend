@@ -2,6 +2,7 @@
  * 서버가 제공한 참여 방식·질문·동의 문서로 실제 신청 요청을 구성합니다.
  * 충돌 이후에는 다시 확인하도록 막으며 개인정보는 컴포넌트 메모리에만 둡니다.
  */
+import { fulfillmentLabel } from '../purchaseReview/purchaseReviewModel'
 import { participationError } from './participationError'
 import { applicationPayload } from './applicationPayload'
 import { useState } from 'react'
@@ -77,7 +78,7 @@ export default function LiveApplicationForm({
           >
             {form.allowedFulfillmentTypes.map((value) => (
               <option key={value} value={value}>
-                {value === 'DELIVERY' ? '배송형' : '방문형'}
+                {fulfillmentLabel(value)}
               </option>
             ))}
           </select>

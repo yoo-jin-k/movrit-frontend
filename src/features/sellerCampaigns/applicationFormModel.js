@@ -14,10 +14,12 @@ export function applicationFormRequest(value) {
     !Array.isArray(value.allowedFulfillmentTypes) ||
     value.allowedFulfillmentTypes.length === 0 ||
     value.allowedFulfillmentTypes.some(
-      (type) => !['DELIVERY', 'VISIT'].includes(type),
+      (type) => !['DELIVERY', 'VISIT', 'PURCHASE'].includes(type),
     )
   )
-    throw new Error('배송형 또는 방문형을 선택해 주세요.')
+    throw new Error(
+      '참여 방식(배송형·방문형, 구매평은 직접 구매)을 선택해 주세요.',
+    )
   const seenQuestions = new Set(),
     seenAgreements = new Set()
   for (const question of value.questions) {

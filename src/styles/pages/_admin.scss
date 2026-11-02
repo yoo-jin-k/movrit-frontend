@@ -825,3 +825,12 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+// 캠페인 관리 필터의 '점검용 캠페인 함께 보기' 체크박스입니다.
+.admin-filters .admin-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+}

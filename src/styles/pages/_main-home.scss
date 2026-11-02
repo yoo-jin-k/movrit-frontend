@@ -156,7 +156,8 @@
     left: 0;
     z-index: 45;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    // 홈·카테고리·내 캠페인·메시지·알림·마이 6칸입니다.
+    grid-template-columns: repeat(6, 1fr);
     padding-bottom: env(safe-area-inset-bottom);
     border-top: 1px solid #ececf1;
     background: rgba(255, 255, 255, 0.97);

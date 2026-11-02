@@ -6,6 +6,8 @@ export function notificationPath(item, business = false) {
     ? {
         CAMPAIGN_APPLICATION: `/seller/participants?applicationId=${id}`,
         CAMPAIGN_CONTENT: `/seller/contents?contentId=${id}`,
+        // 운영자가 캠페인을 숨기거나 다시 공개하면 해당 캠페인 편집 화면으로 이동합니다.
+        CAMPAIGN: `/seller/campaigns/${id}`,
         INQUIRY: '/seller/inbox?tab=inquiries',
         PREORDER: `/preorders/${id}`,
       }

@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom'
 
 const menu = [
   ['대시보드', '/admin/dashboard'],
+  ['캠페인 관리', '/admin/campaigns'],
   ['캠페인 참여자', '/admin/campaign-participants'],
   ['콘텐츠 최종 승인', '/admin/content-reviews'],
   ['채널 확인', '/admin/channel-verifications'],

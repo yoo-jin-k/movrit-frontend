@@ -4,6 +4,7 @@
  */
 import axios from 'axios'
 import {
+  adaptCampaignList,
   adaptCampaignSummary,
   validateCampaignForm,
 } from '../features/discovery/campaignReadAdapter'
@@ -18,6 +19,21 @@ const publicApi = axios.create({
 export async function readCampaigns(signal) {
   return (await publicApi.get('/collaborations/campaigns/open', { signal }))
     .data
+}
+// 서버 검색 한 페이지입니다. 조건·정렬·페이지는 서버가 적용하고, 카드 모델 변환까지 마쳐 돌려줍니다.
+export async function readCampaignPage(params, signal) {
+  const { data } = await publicApi.get('/collaborations/campaigns/search', {
+    params,
+    signal,
+  })
+  if (!data || !Array.isArray(data.items))
+    throw new Error('캠페인 목록 응답 형식이 올바르지 않습니다.')
+  return {
+    items: adaptCampaignList(data.items),
+    page: data.page,
+    totalPages: data.totalPages,
+    total: data.total,
+  }
 }
 // 본문 응답의 최소 구조를 확인하되 상세 필드가 사라지지 않도록 원본 DTO를 반환합니다.
 export async function readCampaign(id, signal) {

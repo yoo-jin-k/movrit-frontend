@@ -7,6 +7,8 @@ MOVRIT 프론트의 메뉴·목록·상세·달력·신청 연결 코드와 화�
 - 채널 아이콘(인스타그램·유튜브·네이버): npm 패키지 simple-icons(CC0 1.0)의 모양을 씁니다. 클립·기타는 직접 그린 단순 도형입니다.
 - fonts/Pretendard: 동봉된 LICENSE-Pretendard.txt를 함께 유지합니다.
 - 미리보기 캠페인명과 제공 내용: 가상의 시연 문구입니다.
+- 시연 캠페인 사진(README 캡처·시연 영상에 보이는 사진): 위키미디어 공용(Wikimedia Commons)에서 상업적 이용이 허용된 라이선스(CC0·퍼블릭 도메인·CC BY·CC BY-SA)의 사진 39장을 골라 크기만 줄여 씁니다. 사진 파일은 저장소에 올리지 않고 `qa/portfolio/fetch-images.mjs`로 받으며, 원본 주소·작성자·라이선스는 `qa/portfolio/IMAGE_CREDITS.md`에 밝힙니다. 브랜드 로고·워터마크가 보이는 사진은 고르지 않았습니다.
+- 시연 업체·브랜드·매장·주소·상품 주소: 모두 지어낸 것입니다(`qa/portfolio/seed-catalog.mjs`).
 - 로컬 reference-preview 폴더: 코드에서 참조하지 않으며 커밋·푸시 대상에 포함하지 않습니다.
 
 공개 배포는 수행하지 않았습니다. SMTP 발송 및 실명인증 공급자 연동 완료를 주장하지 않습니다.

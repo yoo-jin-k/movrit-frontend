@@ -39,3 +39,6 @@ qa/e2e/shots/
 # 점검 스크립트가 qa/ 에서 실행될 때 남기는 스크린샷·임시 ID
 qa/e2e/*.png
 qa/e2e/*.txt
+
+# 시연 데이터 사진(위키미디어 공용에서 받는 사본, 출처: qa/portfolio/IMAGE_CREDITS.md)
+qa/portfolio/images/

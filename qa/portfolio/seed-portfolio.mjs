@@ -3,11 +3,13 @@
 // - 계정: 업체 '루미 스튜디오'(브랜드 4개)와 참여자 3명. 비밀번호 해시는 기존 점검 계정(demo-brand)과 같게 둡니다.
 // - 캠페인 5개와 신청·선정·배송·콘텐츠·구매 인증·방문 예약·채팅·커뮤니티 글을 실제 API로 진행해 둡니다.
 // - 이미 만든 데이터가 있으면 건너뜁니다(여러 번 실행해도 같은 결과).
+// - 마지막에 seed-catalog.mjs 로 업체 6곳·참여자 5명·캠페인 39개·커뮤니티 글을 더 채웁니다(목록 화면을 골고루 보이게).
 //
 // 실행: MOVRIT_QA_PASSWORD=... node qa/portfolio/seed-portfolio.mjs
 import fs from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { api, call, login } from '../e2e/e2e-lib.mjs'
+import { seedCatalog } from './seed-catalog.mjs'
 
 const PSQL =
   process.env.MOVRIT_PSQL ||
@@ -663,3 +665,6 @@ console.log(
     room: room.id,
   }),
 )
+
+// ───────── 5) 캠페인 목록 골고루 채우기 ─────────
+await seedCatalog()

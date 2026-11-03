@@ -152,6 +152,8 @@ async function typeSlowly(locator, text) {
 await scene('01-participant-apply', 'minji', async (page) => {
   await go(page, '/home', '참여자 · 진행 중인 캠페인 둘러보기')
   await scroll(page, 320)
+  await go(page, '/category/지역', '지역 캠페인 · 카테고리·채널로 골라 보기')
+  await scroll(page, 900, 10)
   await go(
     page,
     `/campaign/${coffee}`,
@@ -190,6 +192,23 @@ await scene('02-participant-workspace', 'haneul', async (page) => {
     .click()
   await wait(1200)
   await scroll(page, 1400, 12)
+  // 진행 중인 다른 캠페인의 참여 조정(참여 취소·협의 취소·기간 연장)
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page
+    .getByRole('navigation', { name: '내 캠페인 선택' })
+    .getByRole('button', { name: /해운대 비스트로/ })
+    .first()
+    .click()
+  await wait(1000)
+  await page
+    .getByRole('region', { name: '참여 조정' })
+    .evaluate((el) => el.scrollIntoView({ block: 'center' }))
+  await caption(page, '참여 조정 · 참여 취소, 협의 취소, 기간 연장 요청')
+  await wait(2400)
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.getByRole('tab', { name: '달력' }).click()
+  await caption(page, '달력 보기 · 신청한 캠페인 일정을 한 달 단위로')
+  await wait(2600)
   await go(
     page,
     `/messages?room=${room.id}`,

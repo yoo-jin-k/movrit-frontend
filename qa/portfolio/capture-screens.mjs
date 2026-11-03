@@ -29,6 +29,15 @@ const haneulApp = (
 const room = (
   await call(auth.studio, 'POST', `/chats/applications/${haneulApp.id}`)
 ).data
+// 다른 업체 캠페인은 공개 검색으로 찾습니다(seed-catalog.mjs 데이터).
+const findPublic = async (q) =>
+  (
+    await call(
+      auth.minji,
+      'GET',
+      `/collaborations/campaigns/search?q=${encodeURIComponent(q)}&size=5`,
+    )
+  ).data.items[0]?.id
 
 async function open(
   who,
@@ -72,6 +81,11 @@ if (want('02-campaign-purchase-review')) {
   const page = await open(null, `/campaign/${coffee}`)
   await shot('02-campaign-purchase-review', page)
 }
+if (want('02b-campaign-first-come')) {
+  const latte = await findPublic('연남동 로스터리 라떼')
+  const page = await open(null, `/campaign/${latte}`)
+  await shot('02b-campaign-first-come', page)
+}
 if (want('03-apply-form')) {
   const page = await open('minji', `/campaign/${mist}`)
   if (
@@ -110,6 +124,21 @@ if (want('04-my-campaign-workspace')) {
   await page.waitForTimeout(1200)
   await shot('04-my-campaign-workspace', page, { fullPage: true })
 }
+if (want('04b-my-campaign-change')) {
+  // 선정되어 진행 중인 캠페인의 참여 조정(참여 취소·협의 취소·기간 연장) 영역
+  const page = await open('minji', '/mypage/campaigns')
+  await page
+    .getByRole('navigation', { name: '내 캠페인 선택' })
+    .getByRole('button', { name: /그래놀라/ })
+    .first()
+    .click()
+  await page.waitForTimeout(1200)
+  await page.getByRole('region', { name: '참여 조정' }).evaluate((el) => {
+    window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 240)
+  })
+  await page.waitForTimeout(400)
+  await shot('04b-my-campaign-change', page)
+}
 if (want('05-mypage-grade')) {
   const page = await open('haneul', '/mypage')
   await shot('05-mypage-grade', page)
@@ -125,6 +154,29 @@ if (want('07-community')) {
   const post = posts.find((p) => p.title.startsWith('체험단 처음이신 분들'))
   const page = await open('minji', `/community/free/${post.id}`)
   await shot('07-community', page)
+}
+
+if (want('08-category-list')) {
+  const page = await open(null, '/category/지역')
+  // 카드 이미지는 화면에 들어올 때 불러오므로 끝까지 천천히 내려 모두 불러온 뒤 찍습니다.
+  for (let y = 0; y < 4000; y += 600) {
+    await page.evaluate((top) => window.scrollTo(0, top), y)
+    await page.waitForTimeout(250)
+  }
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.waitForLoadState('networkidle')
+  await shot('08-category-list', page, { fullPage: true })
+}
+if (want('09-my-campaign-calendar')) {
+  const page = await open('minji', '/mypage/campaigns')
+  await page.getByRole('tab', { name: '달력' }).click()
+  await page.waitForTimeout(800)
+  await shot('09-my-campaign-calendar', page)
+}
+if (want('00-signup')) {
+  const page = await open(null, '/signup')
+  await page.locator('.common-role-business').scrollIntoViewIfNeeded()
+  await shot('00-signup', page)
 }
 
 // ── 업체 ──

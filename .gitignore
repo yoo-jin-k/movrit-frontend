@@ -26,3 +26,16 @@ dist-ssr
 # 자동 점검 실행 결과(스크린샷·임시 ID)
 qa/e2e/e2e/
 qa/e2e/shots/
+
+# 환경 파일: 비밀값을 담을 수 있으므로 올리지 않습니다(값이 없는 통합 설정·예시 파일만 예외).
+.env
+.env.*
+!.env.integration
+!.env.example
+*.pem
+*.key
+*.p12
+
+# 점검 스크립트가 qa/ 에서 실행될 때 남기는 스크린샷·임시 ID
+qa/e2e/*.png
+qa/e2e/*.txt

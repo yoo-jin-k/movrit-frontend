@@ -2,7 +2,15 @@
 // 준비: demo-creator 가 demo-brand 캠페인에 신청한 상태(./e2e/qa-app-b.txt)가 필요합니다.
 // 탈퇴 점검은 매번 새로 가입한 임시 계정(qa-withdraw-…@movrit.local)으로만 합니다.
 import fs from 'node:fs'
-import { api, base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
+import {
+  api,
+  base,
+  call,
+  login,
+  openBrowser,
+  pageAs,
+  temporaryPassword,
+} from './e2e-lib.mjs'
 
 const appB = fs.readFileSync('./e2e/qa-app-b.txt', 'utf8').trim()
 const user = await login('demo-creator@movrit.local')
@@ -216,12 +224,14 @@ check(
   (await up.locator('main').innerText()).includes('지금은 탈퇴할 수 없습니다'),
 )
 const email = `qa-withdraw-${stamp}@movrit.local`
+// 임시 계정 비밀번호는 실행할 때마다 무작위로 만듭니다(저장소에 남기지 않음).
+const withdrawPassword = temporaryPassword()
 const signup = await fetch(`${api}/members/signup`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     email,
-    password: 'Withdraw123',
+    password: withdrawPassword,
     name: '탈퇴점검',
     nickname: `탈퇴점검${stamp}`,
     phone: '',
@@ -230,7 +240,7 @@ const signup = await fetch(`${api}/members/signup`, {
 const tokenRes = await fetch(`${api}/auth/login`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password: 'Withdraw123' }),
+  body: JSON.stringify({ email, password: withdrawPassword }),
 })
 const temp = await tokenRes.json()
 check(
@@ -246,7 +256,7 @@ await wp.waitForURL(/\/home$/, { timeout: 10000 })
 const relogin = await fetch(`${api}/auth/login`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password: 'Withdraw123' }),
+  body: JSON.stringify({ email, password: withdrawPassword }),
 })
 check('탈퇴 후 같은 계정으로 로그인 불가', !relogin.ok, String(relogin.status))
 

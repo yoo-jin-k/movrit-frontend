@@ -1,6 +1,14 @@
 // 운영자 캠페인 관리(숨기기·다시 공개), 비밀번호 찾기·재설정, 찜한 프리오더 메뉴 숨김, 모바일 메시지 탭을 실제 화면으로 확인합니다.
 // 비밀번호 재설정 점검 계정(demo-user)은 점검 뒤 원래 비밀번호로 되돌립니다(되돌리기는 qa/e2e 밖의 운영 스크립트가 맡습니다).
-import { api, base, call, login, openBrowser, pageAs } from './e2e-lib.mjs'
+import {
+  api,
+  base,
+  call,
+  login,
+  openBrowser,
+  pageAs,
+  temporaryPassword,
+} from './e2e-lib.mjs'
 
 const admin = await login('demo-admin@movrit.local')
 const results = []
@@ -51,6 +59,8 @@ const again = await call(admin, 'PATCH', `/admin/campaigns/${target}/close`, {
 check('다시 숨김(정리 상태 유지)', again.status === 200, String(again.status))
 
 // 2) 비밀번호 찾기 → 로컬 시연 모드 재설정 → 새 비밀번호 로그인
+// 새 비밀번호는 실행할 때마다 무작위로 만듭니다(저장소에 남기지 않음).
+const resetPassword = temporaryPassword()
 const guest = await pageAs(browser, null)
 await guest.goto(`${base}/password/forgot`, { waitUntil: 'networkidle' })
 await guest.getByLabel('이메일').fill('demo-user@movrit.local')
@@ -58,8 +68,8 @@ await guest.getByRole('button', { name: '재설정 메일 받기' }).click()
 await guest.getByRole('button', { name: '비밀번호 재설정하기' }).click()
 await guest.waitForURL(/\/password\/reset\?token=/)
 const resetUrl = guest.url()
-await guest.getByLabel('새 비밀번호', { exact: true }).fill('Reset1234')
-await guest.getByLabel('새 비밀번호 확인').fill('Reset1234')
+await guest.getByLabel('새 비밀번호', { exact: true }).fill(resetPassword)
+await guest.getByLabel('새 비밀번호 확인').fill(resetPassword)
 await guest.getByRole('button', { name: '비밀번호 변경' }).click()
 await guest
   .getByText('비밀번호를 바꿨습니다')
@@ -70,7 +80,7 @@ const relogin = await fetch(`${api}/auth/login`, {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     email: 'demo-user@movrit.local',
-    password: 'Reset1234',
+    password: resetPassword,
   }),
 })
 check('재설정한 비밀번호로 로그인', relogin.ok, String(relogin.status))

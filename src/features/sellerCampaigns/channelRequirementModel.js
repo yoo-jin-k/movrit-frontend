@@ -1,7 +1,8 @@
 /**
- * 콘텐츠 채널별 기본 제출 요건입니다. 캠페인 작성 화면의 '채널 기본 요건 넣기'에서 씁니다.
- * 비어 있는 칸(제출 요구사항·채널별 작성 안내)만 채우고, 업체가 이미 적은 내용은 바꾸지 않습니다.
- * 넣은 뒤에는 업체가 자유롭게 고칠 수 있습니다.
+ * 콘텐츠 채널별 기본 제출 요건입니다. 캠페인 작성 화면에서 콘텐츠 채널을 고르면 자동으로 채웁니다.
+ * - 비어 있는 칸(제출 요구사항·채널별 작성 안내)만 채우고, 업체가 직접 적은 내용은 바꾸지 않습니다.
+ * - 채널을 다른 것으로 바꾸면, 이전 채널의 기본 문구를 그대로 둔 칸만 새 채널 문구로 바꿉니다(업체가 고친 칸은 그대로).
+ * - 기본 요건이 없는 채널(기타·지정 안 함)로 바꾸면, 이전 채널의 기본 문구를 그대로 둔 칸은 비웁니다.
  */
 export const CHANNEL_DEFAULTS = {
   BLOG: {
@@ -64,4 +65,26 @@ export function applyChannelDefaults(value) {
     }
   }
   return { next, filled }
+}
+
+const DEFAULT_FIELDS = ['submissionRequirement', 'channelGuide']
+
+// 콘텐츠 채널을 바꿀 때 쓰는 새 값과, 자동으로 바뀐 칸 이름 목록을 돌려줍니다.
+export function changeChannelWithDefaults(value, nextChannel) {
+  const previous = CHANNEL_DEFAULTS[value?.contentChannel] || {}
+  const nextDefaults = CHANNEL_DEFAULTS[nextChannel] || {}
+  const next = { ...value, contentChannel: nextChannel }
+  const changed = []
+  for (const field of DEFAULT_FIELDS) {
+    const current = String(value?.[field] ?? '')
+    // 비어 있거나, 이전 채널의 기본 문구를 그대로 둔 칸만 자동으로 바꿉니다.
+    const untouched = !current.trim() || current === previous[field]
+    if (!untouched) continue
+    const replacement = nextDefaults[field] || ''
+    if (replacement !== current) {
+      next[field] = replacement
+      changed.push(field)
+    }
+  }
+  return { next, changed }
 }

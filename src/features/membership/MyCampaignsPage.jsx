@@ -85,8 +85,16 @@ function Workspace({ item, onReload, attempt }) {
             ' 전까지 (한국 시간)'}
           {application.contentDeadlineExtendedUntil && ' · 연장 승인됨'}
         </p>
+        {/* 기간 연장이 승인된 신청은 늘어난 체험 기간·콘텐츠 마감으로 보여 줍니다. */}
         <CampaignSchedule
-          schedule={liveCampaignSchedule(campaign)}
+          schedule={liveCampaignSchedule({
+            ...campaign,
+            experienceEndAt:
+              application.experienceExtendedUntil || campaign.experienceEndAt,
+            contentSubmissionEndAt:
+              application.contentDeadlineExtendedUntil ||
+              campaign.contentSubmissionEndAt,
+          })}
           defaultExpanded
         />
         {campaign.scheduleGuide && <p>{campaign.scheduleGuide}</p>}

@@ -18,7 +18,9 @@ import {
   selectionModeField,
 } from '../src/features/business/selectionModeModel.js'
 import {
+  CHANNEL_DEFAULTS,
   applyChannelDefaults,
+  changeChannelWithDefaults,
   hasChannelDefaults,
 } from '../src/features/sellerCampaigns/channelRequirementModel.js'
 import { notificationPath } from '../src/features/business/notificationModel.js'
@@ -152,6 +154,44 @@ test('채널 기본 요건은 비어 있는 칸만 채웁니다', () => {
   assert.deepEqual(kept.filled, ['channelGuide'])
   assert.equal(kept.next.submissionRequirement, '업체가 직접 쓴 요건')
   assert.deepEqual(applyChannelDefaults({ contentChannel: '' }).filled, [])
+})
+
+test('채널을 고르면 기본 요건을 자동으로 채우고, 업체가 고친 칸은 그대로 둡니다', () => {
+  // 처음 채널을 고르면 빈 칸이 채워집니다.
+  const blog = changeChannelWithDefaults(
+    { contentChannel: '', submissionRequirement: '', channelGuide: '' },
+    'BLOG',
+  )
+  assert.deepEqual(blog.changed, ['submissionRequirement', 'channelGuide'])
+  assert.equal(blog.next.contentChannel, 'BLOG')
+  assert.equal(
+    blog.next.submissionRequirement,
+    CHANNEL_DEFAULTS.BLOG.submissionRequirement,
+  )
+  // 업체가 안내 문구를 고친 뒤 채널을 바꾸면, 고친 칸은 그대로 두고 기본 문구 칸만 바꿉니다.
+  const edited = { ...blog.next, channelGuide: '업체가 직접 쓴 안내' }
+  const insta = changeChannelWithDefaults(edited, 'INSTAGRAM')
+  assert.deepEqual(insta.changed, ['submissionRequirement'])
+  assert.equal(
+    insta.next.submissionRequirement,
+    CHANNEL_DEFAULTS.INSTAGRAM.submissionRequirement,
+  )
+  assert.equal(insta.next.channelGuide, '업체가 직접 쓴 안내')
+  // 기본 요건이 없는 채널로 바꾸면 기본 문구를 그대로 둔 칸은 비웁니다.
+  const other = changeChannelWithDefaults(insta.next, 'OTHER')
+  assert.equal(other.next.submissionRequirement, '')
+  assert.equal(other.next.channelGuide, '업체가 직접 쓴 안내')
+  // 수정 화면에서 업체가 직접 쓴 요건이 있으면 채널을 바꿔도 덮어쓰지 않습니다.
+  const own = changeChannelWithDefaults(
+    {
+      contentChannel: 'BLOG',
+      submissionRequirement: '직접 쓴 요건',
+      channelGuide: '',
+    },
+    'YOUTUBE',
+  )
+  assert.deepEqual(own.changed, ['channelGuide'])
+  assert.equal(own.next.submissionRequirement, '직접 쓴 요건')
 })
 
 test('협의 취소·패널티 알림은 담당 화면으로 이동합니다', () => {

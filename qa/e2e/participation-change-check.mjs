@@ -68,7 +68,11 @@ async function createCampaign({
       startAt: local(hoursFromNow(-1)),
       endAt: local(hoursFromNow(2)),
       minFollowerCount: 0,
-      details: { contentSubmissionEndAt: local(hoursFromNow(72)) },
+      details: {
+        experienceStartAt: local(hoursFromNow(3)),
+        experienceEndAt: local(hoursFromNow(48)),
+        contentSubmissionEndAt: local(hoursFromNow(72)),
+      },
     },
     applicationForm: {
       allowedFulfillmentTypes: [fulfillment],
@@ -314,11 +318,18 @@ const afterExt = await changes(userB, appE.id)
 const diffDays =
   (new Date(afterExt.contentDeadline) - new Date(beforeDeadline)) / 86400_000
 check(
-  '연장 승인 → 이 신청 마감만 7일 뒤로',
+  '연장 승인 → 이 신청 콘텐츠 마감 7일 뒤로',
   decided.data?.status === 'APPROVED' && Math.round(diffDays) === 7,
   `${beforeDeadline} → ${afterExt.contentDeadline}`,
 )
 check('연장은 신청당 1회', !afterExt.canRequestExtension)
+const experienceDiff =
+  (new Date(afterExt.experienceExtendedUntil) - hoursFromNow(48)) / 86400_000
+check(
+  '연장 승인 → 체험 기간도 7일 늘어남',
+  Math.round(experienceDiff) === 7,
+  String(afterExt.experienceExtendedUntil),
+)
 
 // ───────── 5) 마감 지난 미제출 자동 취소 · 6) 업체 미선정 ─────────
 const cM = await createCampaign({
@@ -451,13 +462,12 @@ check(
   (await bp.locator('main').innerText()).includes('연장'),
 )
 await bp.screenshot({ path: './e2e/chg_seller.png', fullPage: true })
-// 캠페인 작성: 선착순을 고르면 지역(방문형)·방문 참여로 맞추고, 채널 기본 요건을 빈 칸에 넣습니다(저장하지 않음).
+// 캠페인 작성: 선착순을 고르면 지역(방문형)·방문 참여로 맞추고, 채널을 고르면 기본 요건이 빈 칸에 자동으로 채워집니다(저장하지 않음).
 await bp.goto(`${base}/seller/campaigns/new`, { waitUntil: 'networkidle' })
 await bp.getByLabel('선정 방식').selectOption('FIRST_COME')
 await bp.getByLabel('콘텐츠 채널').selectOption('BLOG')
-await bp.getByRole('button', { name: '채널 기본 요건 넣기' }).click()
 check(
-  '작성 화면: 선착순 → 방문형·방문 참여, 채널 기본 요건 넣기',
+  '작성 화면: 선착순 → 방문형·방문 참여, 채널을 고르면 기본 요건 자동 채움',
   (await bp.getByLabel('캠페인 종류').inputValue()) === 'LOCAL' &&
     (await bp.getByRole('checkbox', { name: /방문/ }).first().isChecked()) &&
     (await bp.getByLabel('제출 요구사항').inputValue()).includes('1,000자'),

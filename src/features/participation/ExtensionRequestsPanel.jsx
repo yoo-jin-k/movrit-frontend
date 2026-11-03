@@ -1,6 +1,6 @@
 /**
  * 업체 '참여자 관리'의 기간 연장 요청 목록입니다.
- * - 참여자가 보낸 7·14일 연장 요청을 승인하면 그 신청의 콘텐츠 마감만 늦춰지고, 반려하면 사유가 참여자에게 갑니다.
+ * - 참여자가 보낸 7·14일 연장 요청을 승인하면 그 신청의 체험 기간과 콘텐츠 마감이 함께 늘어나고(다른 참여자 일정은 그대로), 반려하면 사유가 참여자에게 갑니다.
  * - 캠페인을 골라 둔 경우 그 캠페인 요청만 보여 줍니다. 요청이 하나도 없으면 영역을 숨깁니다.
  */
 import { useEffect, useState } from 'react'
@@ -76,7 +76,7 @@ export default function ExtensionRequestsPanel({ campaignId, onChanged }) {
           <li key={item.applicationId}>
             <div>
               <strong>{item.participantNickname || '참여자'}</strong> ·{' '}
-              {item.campaignTitle} · {item.days}일 연장{' '}
+              {item.campaignTitle} · 체험·마감 {item.days}일 연장{' '}
               <span
                 className={`participation-badge is-${item.status.toLowerCase()}`}
               >

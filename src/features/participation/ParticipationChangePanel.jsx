@@ -2,7 +2,7 @@
  * '내 캠페인'의 참여 조정 영역입니다.
  * - 선정 발표 전: 신청 철회(취소 횟수 없음). 철회하면 같은 캠페인에 다시 신청할 수 없습니다.
  * - 선정·진행 중(콘텐츠 제출 전): 단순 참여 취소(취소 횟수 1회) 또는 업체와 협의한 취소(증빙 이미지, 운영자 확인 후 횟수 없음).
- * - 콘텐츠 마감 전: 기간 연장 7·14일 요청(신청당 1회, 업체가 승인하면 이 신청의 마감만 늦춰집니다).
+ * - 콘텐츠 마감 전: 기간 연장 7·14일 요청(신청당 1회, 업체가 승인하면 이 신청의 체험 기간과 콘텐츠 마감이 함께 늘어납니다).
  * 가능 여부는 서버 응답(GET /changes)을 그대로 따릅니다.
  */
 import { useEffect, useState } from 'react'
@@ -143,6 +143,13 @@ export default function ParticipationChangePanel({ application, onChanged }) {
       <h2>참여 조정</h2>
       {status.extendedUntil && (
         <p className="participation-change__extended">
+          {status.experienceExtendedUntil && (
+            <>
+              <strong>연장된 체험 기간</strong>{' '}
+              {workspaceTime(status.experienceExtendedUntil)}까지
+              <br />
+            </>
+          )}
           <strong>연장된 콘텐츠 마감</strong>{' '}
           {workspaceTime(status.extendedUntil)} 전까지 (한국 시간)
         </p>
@@ -197,7 +204,7 @@ export default function ParticipationChangePanel({ application, onChanged }) {
             {form === 'agreed' &&
               '업체와 취소를 합의한 대화 화면 등 이미지 1장을 올려 주세요. 운영자가 확인하고 승인하면 취소 횟수 없이 취소됩니다.'}
             {form === 'extension' &&
-              '연장은 신청마다 한 번만 요청할 수 있고, 업체가 승인하면 이 신청의 콘텐츠 마감만 늦춰집니다.'}
+              '연장은 신청마다 한 번만 요청할 수 있고, 업체가 승인하면 이 신청의 체험 기간과 콘텐츠 마감이 함께 늘어납니다(다른 참여자 일정은 그대로).'}
           </p>
           {form === 'extension' && (
             <fieldset className="participation-change__days">

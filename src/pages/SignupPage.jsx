@@ -1,9 +1,10 @@
 /**
  * 기본 회원 정보로 가입하고 선택한 이용 목적에 맞는 로그인 후 경로를 전달합니다.
  * 업체 선택은 안내 경로에만 쓰며 가입 요청에 업체 권한을 부여하는 값으로 보내지 않습니다.
+ * 업체 안내 한 줄: 가입 후 업체 신청 → 운영자 심사 순서를 알려 주고, 이미 회원인 업체는 바로 업체 신청으로 갈 수 있게 합니다.
  */
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { signup } from '../api/memberApi'
 import { normalizeMemberNickname } from '../features/membership/memberNickname'
 import CommonLayout from '../components/layout/CommonLayout'
@@ -110,6 +111,11 @@ function SignupPage() {
         <small>
           업체 기능은 업체 정보 등록과 별도 심사 후 이용할 수 있습니다.
         </small>
+        <p className="common-role-business">
+          업체로 가입하시면 가입 후 업체 신청 화면으로 이어지며, 사업자 정보를
+          등록하고 운영자 심사를 마치면 캠페인을 등록하실 수 있습니다. 이미
+          회원이신가요? <Link to="/seller/apply">업체 신청하기 →</Link>
+        </p>
       </aside>
       <form className="common-card common-signup-form" onSubmit={handleSubmit}>
         <h2>가입 정보 입력</h2>

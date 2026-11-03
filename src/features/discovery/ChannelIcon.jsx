@@ -2,13 +2,23 @@
  * 콘텐츠 채널(인스타그램·블로그·유튜브·클립) 구분 아이콘입니다.
  *
  * - 카드·목록 필터·상세 화면이 같은 모양과 색을 쓰도록 한 곳에서 그립니다.
- * - 각 서비스의 로고를 그대로 옮기지 않고, 색과 단순한 그림(카메라·펜·재생·필름)으로 구분합니다.
+ * - 인스타그램·유튜브·네이버(블로그)는 널리 쓰는 공개 아이콘 묶음 Simple Icons(CC0)의 모양을 씁니다.
+ *   클립과 기타 채널은 해당 아이콘이 없어 단순한 그림(필름·링크)으로 그립니다.
  * - 색만으로 구분하지 않도록 기본으로 채널 이름 글자를 함께 보여 줍니다(showLabel=false면 화면 읽기용 이름만 남깁니다).
  */
+import { siInstagram, siNaver, siYoutube } from 'simple-icons'
 import { CHANNELS, channelKey } from './channelModel'
 
-// 채널별 단순 그림입니다. 모두 24×24 격자에 흰 선으로 그립니다.
+// 공개 아이콘 묶음에서 가져온 채널 모양입니다(24×24, 흰색으로 채웁니다).
+const BRAND_PATHS = {
+  instagram: siInstagram.path,
+  youtube: siYoutube.path,
+  blog: siNaver.path,
+}
+
+// 채널 그림입니다. 공개 아이콘이 있으면 그 모양을, 없으면 흰 선으로 그린 단순한 그림을 씁니다.
 function Glyph({ channel }) {
+  if (BRAND_PATHS[channel]) return <path d={BRAND_PATHS[channel]} fill="#fff" />
   const line = {
     fill: 'none',
     stroke: '#fff',
@@ -17,26 +27,6 @@ function Glyph({ channel }) {
     strokeLinejoin: 'round',
   }
   switch (channel) {
-    case 'instagram':
-      // 카메라: 몸체와 렌즈
-      return (
-        <>
-          <rect x="5" y="7" width="14" height="11" rx="3" {...line} />
-          <circle cx="12" cy="12.5" r="2.8" {...line} />
-          <path d="M9 7l1.2-2h3.6L15 7" {...line} />
-        </>
-      )
-    case 'blog':
-      // 펜: 글 쓰는 채널
-      return (
-        <>
-          <path d="M6 18l1-4 8.5-8.5 3 3L10 17z" {...line} />
-          <path d="M13.5 7.5l3 3" {...line} />
-        </>
-      )
-    case 'youtube':
-      // 재생 단추
-      return <path d="M9.5 7.5v9l7-4.5z" fill="#fff" />
     case 'clip':
       // 짧은 영상 필름
       return (

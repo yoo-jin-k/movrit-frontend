@@ -798,8 +798,10 @@ $mv-surface: #f9fafb;
     display: block;
     color: inherit;
   }
+  // 이미지 아래 간격은 이미지에 두어 브랜드가 없는 카드도 같은 간격이 되게 합니다.
   &__image {
     position: relative;
+    margin-bottom: 14px;
     aspect-ratio: 1;
     overflow: hidden;
     border-radius: 12px;
@@ -822,17 +824,19 @@ $mv-surface: #f9fafb;
     color: #9ca3af;
     font-size: 13px;
   }
-  // 왼쪽 위 캠페인 종류
-  &__kind {
+  // 왼쪽 위 채널 아이콘(종류 표시 대신)
+  &__channel {
     position: absolute;
     top: 12px;
     left: 12px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: #fff;
-    color: $mv-ink;
-    font-size: 12px;
-    font-weight: 700;
+    line-height: 0;
+    .channel-icon svg {
+      width: 28px;
+      height: 28px;
+      padding: 5px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(17, 24, 39, 0.15);
+    }
   }
   // 오른쪽 위 찜(하트) 버튼
   &__favorite {
@@ -845,32 +849,27 @@ $mv-surface: #f9fafb;
     height: 40px;
     padding: 0;
     border: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    color: $mv-text;
+    // 배경 없이 회색 선 하트만 보입니다. 밝은 테두리 그림자로 어두운 사진 위에서도 보이게 합니다.
+    background: none;
+    color: #9ca3af;
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.9));
     cursor: pointer;
     svg {
       display: block;
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
     }
     &.is-saved {
       color: $mv-accent;
     }
   }
   &__brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 20px;
-    margin: 14px 0 4px;
+    margin: 0 0 4px;
+    overflow: hidden;
     color: $mv-muted;
     font-size: 13px;
-    > span:first-child {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   h3 {
     display: -webkit-box;
@@ -954,7 +953,13 @@ $mv-surface: #f9fafb;
     }
   }
   &--instagram svg {
-    background: linear-gradient(135deg, #f58529, #dd2a7b 55%, #8134af);
+    background: radial-gradient(
+      circle at 30% 107%,
+      #fdf497 0%,
+      #fd5949 45%,
+      #d6249f 60%,
+      #285aeb 90%
+    );
   }
   &--blog svg {
     background: #03a94d;
@@ -1427,18 +1432,17 @@ $mv-surface: #f9fafb;
     width: 40px;
     height: 40px;
     padding: 0;
-    border: 1px solid $mv-line-strong;
-    border-radius: 50%;
-    background: #fff;
-    color: $mv-text;
+    border: 0;
+    // 카드와 같이 배경·테두리 없이 회색 선 하트만 보입니다.
+    background: none;
+    color: #9ca3af;
     cursor: pointer;
     svg {
       display: block;
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
     }
     &.is-saved {
-      border-color: $mv-accent;
       color: $mv-accent;
     }
   }
@@ -2202,8 +2206,10 @@ $mv-surface: #f9fafb;
     h3 {
       font-size: 15px;
     }
+    &__image {
+      margin-bottom: 10px;
+    }
     &__brand {
-      margin-top: 10px;
       font-size: 12px;
     }
     &__description {

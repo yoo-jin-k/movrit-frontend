@@ -46,7 +46,7 @@ function FeaturedCard({ item }) {
       </span>
       <span className="home-hero__feature-text">
         <small>
-          {[brand, item.kind].filter(Boolean).join(' · ')}
+          {brand}
           {item.media && (
             <ChannelIcon channel={item.media} size="sm" showLabel={false} />
           )}

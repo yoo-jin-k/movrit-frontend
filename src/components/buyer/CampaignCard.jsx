@@ -2,8 +2,9 @@
  * 캠페인 카드입니다. 홈·목록·특별 메뉴가 같은 카드를 씁니다.
  *
  * 구성(위에서 아래로)
- * - 정사각형 대표 이미지: 왼쪽 위 캠페인 종류 표시(제품·지역·기자단·구매평), 오른쪽 위 찜(하트) 버튼
- * - 브랜드 · 채널 아이콘(인스타그램·블로그·유튜브·클립)
+ * - 정사각형 대표 이미지: 왼쪽 위 채널 아이콘(인스타그램·블로그·유튜브·클립), 오른쪽 위 찜(하트) 버튼
+ *   캠페인 종류(제품·지역 등)는 헤더 메뉴로 고르므로 카드에는 표시하지 않습니다.
+ * - 브랜드
  * - 캠페인 제목(두 줄까지), 제공 내역 한 줄
  * - 마감 안내와 '신청 N / M명', 모집 인원 대비 신청 비율 막대
  *
@@ -75,14 +76,13 @@ export default function CampaignCard({ item }) {
               {item.image ? '이미지를 불러오지 못했습니다.' : '이미지 준비 중'}
             </span>
           )}
-          {item.kind && (
-            <span className="main-campaign-card__kind">{item.kind}</span>
+          {item.media && (
+            <span className="main-campaign-card__channel">
+              <ChannelIcon channel={item.media} showLabel={false} />
+            </span>
           )}
         </div>
-        <p className="main-campaign-card__brand">
-          {brand && <span>{brand}</span>}
-          {item.media && <ChannelIcon channel={item.media} size="sm" />}
-        </p>
+        {brand && <p className="main-campaign-card__brand">{brand}</p>}
         <h3>{item.title}</h3>
         <p className="main-campaign-card__description">{reward}</p>
       </Link>

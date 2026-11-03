@@ -1,7 +1,8 @@
 /**
  * 참여자 '내 활동 등급' 카드입니다(마이페이지).
  * - 완료 횟수로 정한 등급(새싹·브론즈·실버·골드·다이아)과 다음 등급까지 남은 횟수를 보여줍니다.
- * - 미제출·노쇼 패널티 기록과, 신청이 제한되었다면 언제까지인지 알려 줍니다.
+ * - 미제출·노쇼·취소 누적 패널티 기록과, 신청이 제한되었다면 언제까지인지 알려 줍니다.
+ * - 참여 취소 횟수(1년 안, 5회가 되면 패널티 1회)를 함께 보여 줍니다.
  */
 import { useEffect, useState } from 'react'
 import { readMyActivity } from '../../api/participationApi'
@@ -10,6 +11,7 @@ import {
   PENALTY_LABELS,
   nextGradeText,
 } from './participationModel'
+import { cancelCountText } from './participationChangeModel'
 import './participation.css'
 
 export default function MyActivityCard() {
@@ -40,9 +42,13 @@ export default function MyActivityCard() {
       </div>
       {activity.restrictedUntil && (
         <p className="participant-activity__warn" role="status">
-          미제출·노쇼 패널티가 쌓여{' '}
-          {String(activity.restrictedUntil).slice(0, 10)}까지 새 캠페인에 신청할
-          수 없습니다.
+          패널티가 쌓여 {String(activity.restrictedUntil).slice(0, 10)}까지 새
+          캠페인에 신청할 수 없습니다.
+        </p>
+      )}
+      {activity.cancelCount != null && (
+        <p className="my-activity__cancel">
+          {cancelCountText(activity.cancelCount, activity.cancelLimit)}
         </p>
       )}
       {activity.penalties?.length > 0 && (
@@ -63,8 +69,7 @@ export default function MyActivityCard() {
       )}
       <small className="my-activity__rule">
         등급은 완료한 캠페인 수로 정해집니다(브론즈 1회·실버 3회·골드 6회·다이아
-        10회). 최근 90일 동안 미제출·노쇼가 2회 쌓이면 30일 동안 신청할 수
-        없습니다.
+        10회). 최근 90일 동안 패널티가 2회 쌓이면 30일 동안 신청할 수 없습니다.
       </small>
     </section>
   )

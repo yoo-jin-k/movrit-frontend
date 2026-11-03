@@ -118,3 +118,21 @@
   border: 1px solid #ddd;
   border-radius: 8px;
 }
+
+/* 채널 기본 요건 넣기 */
+.seller-campaign-fields__defaults {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  margin: 4px 0 12px;
+}
+.seller-campaign-fields__defaults small {
+  color: #6d6873;
+}
+.seller-campaign-fields__defaults p {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 14px;
+}

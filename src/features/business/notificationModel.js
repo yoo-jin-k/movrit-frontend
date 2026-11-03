@@ -18,11 +18,15 @@ export function notificationPath(item, business = false) {
         CAMPAIGN_CONTENT: `/mypage/campaigns?contentId=${id}`,
         INQUIRY: '/inquiries',
         PREORDER: `/preorders/${id}`,
+        // 패널티 기록(미제출·노쇼·취소 누적) 알림은 활동 등급이 보이는 마이페이지로 이동합니다.
+        CAMPAIGN_PENALTY: '/mypage',
         // 채널 확인 결과(확인·반려)는 설정의 SNS 채널 연결 영역으로 이동합니다.
         MEMBER_CHANNEL_CONNECTION: '/settings#channel-connect',
         CHAT_ROOM: `/messages?room=${id}`,
         // 운영자에게 온 새 신고 알림은 '신고·제재' 화면으로 이동합니다.
         ADMIN_REPORT: '/admin/moderation',
+        // 운영자에게 온 협의 취소 요청 알림은 '패널티·마감 알림' 화면의 협의 취소 목록으로 이동합니다.
+        ADMIN_CANCEL_REQUEST: '/admin/participation',
       }
   return paths[item.targetType] || null
 }

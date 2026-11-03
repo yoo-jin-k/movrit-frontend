@@ -1,8 +1,11 @@
 /**
  * 승인 업체의 캠페인·신청·콘텐츠 목록으로 대시보드 수치를 계산합니다.
  * 조회 실패와 빈 목록을 구분하고 앞으로 마감하는 캠페인만 별도로 표시합니다.
+ * 업체 미선정: 신청이 있었는데 선정 발표 시각(없으면 모집 종료)까지 아무도 선정하지 않은 캠페인 수입니다.
  */
+import { useEffect, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
+import { readMyUnselected } from '../../api/participationChangeApi'
 import useBusinessList from './useBusinessList'
 import { CampaignCards, ListState, PageHeader } from './BusinessUi'
 import { dateLabel, upcomingCampaigns } from './businessModel'
@@ -28,6 +31,16 @@ export default function BusinessHome() {
     ['검토할 콘텐츠', contents, 'contents', (c) => c.status === 'SUBMITTED'],
   ]
   const deadlines = upcomingCampaigns(campaigns.data)
+  const [unselected, setUnselected] = useState(null)
+  useEffect(() => {
+    const controller = new AbortController()
+    readMyUnselected(controller.signal)
+      .then(setUnselected)
+      .catch(() => {
+        if (!controller.signal.aborted) setUnselected(false)
+      })
+    return () => controller.abort()
+  }, [])
   return (
     <>
       <PageHeader
@@ -109,6 +122,38 @@ export default function BusinessHome() {
             ))
           ) : (
             <p>예정된 모집 마감이 없습니다.</p>
+          )}
+        </section>
+        <section className="business-panel" aria-label="업체 미선정 기록">
+          <h2>업체 미선정</h2>
+          {unselected === null ? (
+            <p>확인하고 있습니다.</p>
+          ) : unselected === false ? (
+            <p role="alert">미선정 기록을 불러오지 못했습니다.</p>
+          ) : (
+            <>
+              <p>
+                신청자가 있었는데 선정 발표까지 아무도 선정하지 않은 캠페인{' '}
+                <strong>{unselected.count}건</strong>
+              </p>
+              {unselected.records.slice(0, 3).map((record) => (
+                <Link
+                  className="business-deadline"
+                  key={record.campaignId}
+                  to={`/seller/participants?campaignId=${record.campaignId}`}
+                >
+                  <small>
+                    {dateLabel(record.recordedAt)} · 신청{' '}
+                    {record.applicationCount}건
+                  </small>
+                  <strong>{record.campaignTitle}</strong>
+                </Link>
+              ))}
+              <p>
+                선정 발표일을 넘기지 않도록 신청자를 확인해 주세요. 이 기록은
+                운영자도 함께 확인합니다.
+              </p>
+            </>
           )}
         </section>
       </div>

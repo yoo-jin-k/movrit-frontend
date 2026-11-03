@@ -25,6 +25,7 @@ import PurchasePaybackPanel from '../purchaseReview/PurchasePaybackPanel'
 import VisitReservationPanel from '../participation/VisitReservationPanel'
 import ShipmentCard from '../shipping/ShipmentCard'
 import ParticipantActivityPanel from '../participation/ParticipantActivityPanel'
+import ExtensionRequestsPanel from '../participation/ExtensionRequestsPanel'
 import { bulkApplications } from '../../api/participationApi'
 import {
   bulkSelectable,
@@ -345,6 +346,11 @@ export default function BusinessParticipants() {
           {error}
         </p>
       )}
+      {/* 참여자가 보낸 콘텐츠 마감 연장(7·14일) 요청 */}
+      <ExtensionRequestsPanel
+        campaignId={campaignId}
+        onChanged={state.reload}
+      />
       <section className="business-panel">
         <div className="business-panel-heading">
           <h2>
@@ -513,6 +519,8 @@ export default function BusinessParticipants() {
             선정 방식: {SELECTION_MODES[selectionMode(current)] || '확인 필요'}
             {selectionMode(current) === 'OPERATOR' &&
               ' · 운영자가 선정 결과를 처리합니다.'}
+            {selectionMode(current) === 'FIRST_COME' &&
+              ' · 신청 순서대로 바로 선정되었습니다.'}
           </p>
           <p>
             <Link

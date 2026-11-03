@@ -21,6 +21,10 @@ import {
   applicationFormRequest,
 } from './applicationFormModel'
 import CampaignFields from './CampaignFields'
+import {
+  applySelectionModeRules,
+  firstComeError,
+} from '../business/selectionModeModel'
 import RequirementFields from './RequirementFields'
 import { emptyRequirement, requirementForm } from './requirementModel'
 import { emptyCampaign, configuredCampaignPayload } from './campaignEditorModel'
@@ -268,6 +272,11 @@ export default function SellerCampaignManager({
           originalVisitLocation: mediaSession.managed?.visitLocation,
           fulfillmentTypes: applicationForm.allowedFulfillmentTypes,
         })
+      const firstComeProblem = firstComeError(
+        form,
+        applicationForm.allowedFulfillmentTypes,
+      )
+      if (firstComeProblem) throw new Error(firstComeProblem)
       // 구매평 캠페인은 구매 안내도 함께 확인합니다(저장 요청 전에 막아 캠페인만 저장되는 일을 줄입니다).
       if (form.campaignType === 'PURCHASE_REVIEW') {
         const purchaseProblem = purchaseInfoError(form.purchaseReview)
@@ -393,9 +402,19 @@ export default function SellerCampaignManager({
               </h3>
               <CampaignFields
                 value={form}
-                onChange={(next) => {
+                onChange={(changed) => {
+                  // 선착순은 방문형 전용입니다. 선착순을 고르면 지역(방문형)·방문 참여로 맞춥니다.
+                  const { form: next, fulfillment } = applySelectionModeRules(
+                    form,
+                    changed,
+                  )
                   // 캠페인 종류가 구매평으로(또는 구매평에서) 바뀌면 신청서 참여 방식도 그 종류에 맞춥니다.
-                  if (
+                  if (fulfillment)
+                    changeApplicationForm({
+                      ...applicationForm,
+                      allowedFulfillmentTypes: fulfillment,
+                    })
+                  else if (
                     (next.campaignType || 'PRODUCT') !==
                     (form.campaignType || 'PRODUCT')
                   )

@@ -77,6 +77,8 @@ export function adaptCampaignSummary(dto, now = new Date()) {
     premier: dto.premier === true,
     // 구매평 메뉴(/special/shoppingreview)는 구매평 유형 캠페인만 보여줍니다.
     shoppingreview: dto.campaignType === 'PURCHASE_REVIEW',
+    // 선착순(방문형)은 신청하면 모집 인원이 찰 때까지 바로 선정됩니다. 카드에 '선착순' 표시를 붙입니다.
+    firstCome: dto.selectionMode === 'FIRST_COME',
     source: dto,
   }
 }

@@ -2,6 +2,7 @@
  * 운영자 '패널티·마감 알림' 화면입니다(/admin/participation).
  * - 업체가 기록한 미제출·노쇼 패널티를 보고, 잘못 기록된 패널티는 사유와 함께 취소합니다(등급·신청 제한 계산에서 빠짐).
  * - 콘텐츠 마감 알림(D-3·D-1)은 30분마다 자동으로 보내며, 시연·점검 때는 '지금 확인'으로 바로 보낼 수 있습니다.
+ * - 협의 취소 요청(증빙 확인·승인·반려), 참여 자동 처리 바로 실행, 업체 미선정 기록은 AdminParticipationChanges가 맡습니다.
  * - 서버 API: GET /api/admin/penalties, PATCH /api/admin/penalties/{id}/revoke, POST /api/admin/deadline-reminders/run
  */
 import { useState } from 'react'
@@ -10,6 +11,7 @@ import useBusinessList from '../features/business/useBusinessList'
 import { dateLabel } from '../features/business/businessModel'
 import { revokePenalty, runDeadlineReminders } from '../api/participationApi'
 import { PENALTY_LABELS } from '../features/participation/participationModel'
+import AdminParticipationChanges from '../features/participation/AdminParticipationChanges'
 import '../features/participation/participation.css'
 
 export default function AdminParticipationPage() {
@@ -76,7 +78,8 @@ export default function AdminParticipationPage() {
       <AdminCard title={`패널티 기록 ${state.data?.length ?? 0}건`}>
         <p>
           최근 90일 동안 유효한 패널티가 2회 쌓이면 마지막 패널티일로부터 30일
-          동안 새 캠페인에 신청할 수 없습니다.
+          동안 새 캠페인에 신청할 수 없습니다. 참여 취소가 1년 안에 5회 쌓이면
+          패널티 1회로 바뀝니다.
         </p>
         {state.loading ? (
           <p role="status">패널티를 불러오고 있습니다.</p>
@@ -144,6 +147,7 @@ export default function AdminParticipationPage() {
           <p>기록된 패널티가 없습니다.</p>
         )}
       </AdminCard>
+      <AdminParticipationChanges />
     </AdminLayout>
   )
 }

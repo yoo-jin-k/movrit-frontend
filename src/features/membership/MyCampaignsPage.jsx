@@ -1,4 +1,7 @@
-/** 본인 전용 작업공간을 조회하여 선택한 신청의 일정·안내·제출을 함께 표시합니다. */
+/**
+ * 본인 전용 작업공간을 조회하여 선택한 신청의 일정·안내·제출을 함께 표시합니다.
+ * '목록'과 '달력' 보기를 바꿀 수 있고, 선택한 신청에서는 신청 철회·참여 취소·기간 연장(참여 조정)을 할 수 있습니다.
+ */
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../api/axios'
@@ -13,6 +16,8 @@ import ApplicationEditPanel from '../participation/ApplicationEditPanel'
 import VisitReservationPanel from '../participation/VisitReservationPanel'
 import ShipmentCard from '../shipping/ShipmentCard'
 import PurchaseProofPanel from '../purchaseReview/PurchaseProofPanel'
+import ParticipationChangePanel from '../participation/ParticipationChangePanel'
+import MyCampaignCalendar from '../participation/MyCampaignCalendar'
 import {
   APPLICATION_STATUS,
   nextCampaignAction,
@@ -53,6 +58,12 @@ function Workspace({ item, onReload, attempt }) {
       <p className="campaign-workspace__next" role="status">
         {nextCampaignAction(application, content)}
       </p>
+      {/* 신청 철회(발표 전) · 참여 취소(단순·협의) · 기간 연장 */}
+      <ParticipationChangePanel
+        key={`change-${application.id}-${attempt}`}
+        application={application}
+        onChanged={onReload}
+      />
       {/* 선정 전(접수)에는 신청 메시지·배송지·질문 답변을 고칠 수 있습니다. */}
       {application.status === 'SUBMITTED' && (
         <ApplicationEditPanel
@@ -65,8 +76,14 @@ function Workspace({ item, onReload, attempt }) {
         <h2>참여 일정</h2>
         <p className="campaign-workspace__deadline">
           <strong>콘텐츠 제출 마감</strong>{' '}
-          {workspaceTime(campaign.contentSubmissionEndAt)}
-          {campaign.contentSubmissionEndAt && ' 전까지 (한국 시간)'}
+          {workspaceTime(
+            application.contentDeadlineExtendedUntil ||
+              campaign.contentSubmissionEndAt,
+          )}
+          {(application.contentDeadlineExtendedUntil ||
+            campaign.contentSubmissionEndAt) &&
+            ' 전까지 (한국 시간)'}
+          {application.contentDeadlineExtendedUntil && ' · 연장 승인됨'}
         </p>
         <CampaignSchedule
           schedule={liveCampaignSchedule(campaign)}
@@ -196,6 +213,8 @@ export default function MyCampaignsPage() {
   const [attempt, setAttempt] = useState(0)
   // 진입 시에는 상세를 열지 않고 사용자가 직접 선택한 신청만 표시합니다.
   const [selectedId, setSelectedId] = useState(null)
+  // 'list'(목록) 또는 'calendar'(월 달력)
+  const [view, setView] = useState('list')
   const [params, setParams] = useSearchParams()
   const targetApplication = params.get('applicationId')
   const targetContent = params.get('contentId')
@@ -289,67 +308,105 @@ export default function MyCampaignsPage() {
         <p>아직 신청한 캠페인이 없습니다.</p>
       ) : (
         <>
-          <label className="campaign-workspace__filter">
-            진행 상태{' '}
-            <select
-              value={filter}
-              onChange={(e) => {
-                setFilter(e.target.value)
-                setSelectedId(null)
+          <div
+            className="campaign-workspace__views"
+            role="tablist"
+            aria-label="보기 방식"
+          >
+            {[
+              ['list', '목록'],
+              ['calendar', '달력'],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                role="tab"
+                aria-selected={view === value}
+                onClick={() => setView(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {view === 'calendar' ? (
+            <MyCampaignCalendar
+              items={state.items}
+              onOpen={(id) => {
+                setFilter('')
+                setParams({})
+                setSelectedId(id)
+                setView('list')
               }}
-            >
-              <option value="">전체 ({state.items.length})</option>
-              {Object.entries(APPLICATION_STATUS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          {!shown.length ? (
-            <p>선택한 상태의 캠페인이 없습니다.</p>
+            />
           ) : (
-            <div className="campaign-workspace__grid">
-              <nav aria-label="내 캠페인 선택">
-                <ul className="campaign-workspace__list">
-                  {shown.map((item) => (
-                    <li key={item.application.id}>
-                      <button
-                        aria-current={selected === item ? 'true' : undefined}
-                        onClick={() => setSelectedId(item.application.id)}
-                      >
-                        <span className="campaign-workspace__status">
-                          {APPLICATION_STATUS[item.application.status] ||
-                            '상태 확인 필요'}
-                        </span>
-                        <strong>
-                          {item.campaign.title ||
-                            `캠페인 #${item.application.campaignId}`}
-                        </strong>
-                        <span>
-                          {item.campaign.brandName || '브랜드명 미등록'}
-                        </span>
-                        <small>
-                          콘텐츠 마감{' '}
-                          {workspaceTime(item.campaign.contentSubmissionEndAt)}
-                        </small>
-                        <span className="campaign-workspace__open">
-                          일정·제출 확인 →
-                        </span>
-                      </button>
-                    </li>
+            <>
+              <label className="campaign-workspace__filter">
+                진행 상태{' '}
+                <select
+                  value={filter}
+                  onChange={(e) => {
+                    setFilter(e.target.value)
+                    setSelectedId(null)
+                  }}
+                >
+                  <option value="">전체 ({state.items.length})</option>
+                  {Object.entries(APPLICATION_STATUS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
                   ))}
-                </ul>
-              </nav>
-              {selected && (
-                <Workspace
-                  key={`${selected.application.id}-${attempt}`}
-                  item={selected}
-                  attempt={attempt}
-                  onReload={reload}
-                />
+                </select>
+              </label>
+              {!shown.length ? (
+                <p>선택한 상태의 캠페인이 없습니다.</p>
+              ) : (
+                <div className="campaign-workspace__grid">
+                  <nav aria-label="내 캠페인 선택">
+                    <ul className="campaign-workspace__list">
+                      {shown.map((item) => (
+                        <li key={item.application.id}>
+                          <button
+                            aria-current={
+                              selected === item ? 'true' : undefined
+                            }
+                            onClick={() => setSelectedId(item.application.id)}
+                          >
+                            <span className="campaign-workspace__status">
+                              {APPLICATION_STATUS[item.application.status] ||
+                                '상태 확인 필요'}
+                            </span>
+                            <strong>
+                              {item.campaign.title ||
+                                `캠페인 #${item.application.campaignId}`}
+                            </strong>
+                            <span>
+                              {item.campaign.brandName || '브랜드명 미등록'}
+                            </span>
+                            <small>
+                              콘텐츠 마감{' '}
+                              {workspaceTime(
+                                item.application.contentDeadlineExtendedUntil ||
+                                  item.campaign.contentSubmissionEndAt,
+                              )}
+                            </small>
+                            <span className="campaign-workspace__open">
+                              일정·제출 확인 →
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                  {selected && (
+                    <Workspace
+                      key={`${selected.application.id}-${attempt}`}
+                      item={selected}
+                      attempt={attempt}
+                      onReload={reload}
+                    />
+                  )}
+                </div>
               )}
-            </div>
+            </>
           )}
         </>
       )}

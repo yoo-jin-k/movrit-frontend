@@ -9,7 +9,13 @@
  * 캠페인 종류·지역·콘텐츠 채널: 사용자 탐색 메뉴(제품·지역·기자단·구매평, 지역 필터, 미디어 필터)에 쓰입니다.
  * 구매평 종류를 고르면 구매처·상품 주소·판매가·환급액 입력 칸이 함께 나옵니다.
  * 세부 일정·참여 안내(선택): 사용자 캠페인 상세와 '내 캠페인'의 참여 일정·미션 안내에 그대로 표시됩니다.
+ * 채널 기본 요건 넣기: 고른 콘텐츠 채널(블로그·인스타그램·유튜브·클립)의 기본 제출 요건을 비어 있는 칸에만 넣습니다.
  */
+import { useState } from 'react'
+import {
+  applyChannelDefaults,
+  hasChannelDefaults,
+} from './channelRequirementModel'
 import {
   LOCAL_CATEGORIES,
   PRODUCT_CATEGORIES,
@@ -93,6 +99,16 @@ export default function CampaignFields({
   disabled = false,
 }) {
   const change = (name, next) => onChange({ ...value, [name]: next })
+  const [defaultsNotice, setDefaultsNotice] = useState('')
+  const insertChannelDefaults = () => {
+    const { next, filled } = applyChannelDefaults(value)
+    if (filled.length) onChange(next)
+    setDefaultsNotice(
+      filled.length
+        ? '비어 있던 제출 요구사항·채널별 작성 안내에 기본 요건을 넣었습니다. 캠페인에 맞게 고쳐 주세요.'
+        : '이미 적어 둔 내용이 있어 바꾸지 않았습니다. 기본 요건을 쓰려면 두 칸을 비운 뒤 다시 눌러 주세요.',
+    )
+  }
   // 브랜드를 바꾸면 다른 브랜드의 프리오더 선택은 비웁니다.
   const changeBrand = (next) =>
     onChange({ ...value, brandId: next, preorderId: '' })
@@ -156,11 +172,13 @@ export default function CampaignFields({
             </option>
             <option value="BRAND_DIRECT">브랜드 직접 선정</option>
             <option value="OPERATOR">운영자 선정</option>
+            <option value="FIRST_COME">선착순 (방문형)</option>
           </select>
         </label>
         <p>
           브랜드 직접 선정은 업체가, 운영자 선정은 관리자가 참여자를 선정합니다.
-          신청 이력이 생기면 선정 방식을 변경할 수 없습니다.
+          선착순은 방문형 캠페인 전용으로, 신청한 순서대로 모집 인원이 찰 때까지
+          바로 선정됩니다. 신청 이력이 생기면 선정 방식을 변경할 수 없습니다.
         </p>
         <label>
           모집 제목
@@ -313,6 +331,17 @@ export default function CampaignFields({
       <fieldset className="seller-campaign-fields" disabled={disabled}>
         <legend>참여 안내 (선택)</legend>
         <p>참여자가 체험·콘텐츠 작성 전에 확인할 내용을 적어 주세요.</p>
+        {hasChannelDefaults(value.contentChannel) && (
+          <div className="seller-campaign-fields__defaults">
+            <button type="button" onClick={insertChannelDefaults}>
+              채널 기본 요건 넣기
+            </button>
+            <small>
+              고른 콘텐츠 채널에 맞는 기본 제출 요건을 비어 있는 칸에 넣습니다.
+            </small>
+            {defaultsNotice && <p role="status">{defaultsNotice}</p>}
+          </div>
+        )}
         {GUIDE_INPUTS.map(([field, label, placeholder, max]) => (
           <label key={field}>
             {label}

@@ -838,6 +838,19 @@ $mv-surface: #f9fafb;
       box-shadow: 0 1px 3px rgba(17, 24, 39, 0.15);
     }
   }
+  // 왼쪽 아래 선착순 표시(방문형 선착순 캠페인)
+  &__first-come {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(17, 24, 39, 0.82);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
   // 오른쪽 위 찜(하트) 버튼
   &__favorite {
     position: absolute;
@@ -1444,6 +1457,18 @@ $mv-surface: #f9fafb;
     }
     &.is-saved {
       color: $mv-accent;
+    }
+  }
+  // 선착순(방문형) 안내
+  &__first-come {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    font-size: 14px;
+    strong {
+      margin-right: 6px;
+      color: #111827;
     }
   }
   // 신청서 작성으로 이동하는 버튼

@@ -61,7 +61,12 @@ export const GRADE_STYLES = {
   GOLD: 'gold',
   DIAMOND: 'diamond',
 }
-export const PENALTY_LABELS = { NO_SUBMIT: '미제출', NO_SHOW: '노쇼' }
+// CANCEL_LIMIT: 참여 취소(단순 취소·마감 지난 미제출 자동 취소)가 1년 안에 5회 쌓여 바뀐 패널티입니다.
+export const PENALTY_LABELS = {
+  NO_SUBMIT: '미제출',
+  NO_SHOW: '노쇼',
+  CANCEL_LIMIT: '취소 5회 누적',
+}
 
 // 다음 등급 안내 문구입니다.
 export function nextGradeText(activity) {

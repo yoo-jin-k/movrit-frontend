@@ -404,6 +404,13 @@ export default function LiveCampaignDetailPage({ campaignId }) {
                 {detail.contentChannel && (
                   <ChannelIcon channel={detail.contentChannel} />
                 )}
+                {/* 선착순(방문형): 신청하면 모집 인원이 찰 때까지 바로 선정됩니다. */}
+                {detail.selectionMode === 'FIRST_COME' && (
+                  <p className="campaign-detail__first-come">
+                    <strong>선착순</strong> 신청하면 바로 선정되고, 모집 인원이
+                    차면 신청이 마감됩니다.
+                  </p>
+                )}
                 <CampaignSchedule
                   key={detail.scheduleVersion}
                   schedule={liveCampaignSchedule(detail)}
@@ -424,7 +431,11 @@ export default function LiveCampaignDetailPage({ campaignId }) {
                   onClick={scrollToApply}
                   disabled={!recruiting}
                 >
-                  {recruiting ? '신청서 작성하기' : '모집이 끝났습니다'}
+                  {recruiting
+                    ? detail.selectionMode === 'FIRST_COME'
+                      ? '선착순 신청하기'
+                      : '신청서 작성하기'
+                    : '모집이 끝났습니다'}
                 </button>
                 <button
                   type="button"

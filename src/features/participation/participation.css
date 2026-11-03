@@ -262,3 +262,201 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* 참여 조정: 신청 철회 · 참여 취소 · 기간 연장 · 협의 취소 증빙 */
+.participation-change {
+  display: grid;
+  gap: 10px;
+}
+.participation-change h2,
+.participation-change p {
+  margin: 0;
+}
+.participation-change__extended {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #eef7ee;
+  font-size: 14px;
+}
+.participation-change__extended strong {
+  display: block;
+}
+.participation-change__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.participation-change__actions button[aria-pressed='true'] {
+  border-color: #8051d0;
+  color: #5b2fa8;
+}
+.participation-change__form {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #ece9f0;
+  border-radius: 10px;
+}
+.participation-change__form label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.participation-change__days {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.participation-change__days label {
+  display: inline-flex;
+  align-items: center;
+}
+.participation-change__help,
+.participation-change__count,
+.my-activity__cancel {
+  color: #6d6873;
+  font-size: 13px;
+}
+.extension-requests ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0 24px 12px;
+  list-style: none;
+}
+.extension-requests li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 0;
+  border-top: 1px solid #ece9f0;
+}
+.extension-requests li p {
+  margin: 4px 0;
+}
+.extension-requests__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.admin-cancel-evidence {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.admin-cancel-evidence img {
+  max-width: min(320px, 100%);
+  border: 1px solid #ece9f0;
+  border-radius: 8px;
+}
+
+/* 내 캠페인 월 달력 */
+.campaign-workspace__views {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.campaign-workspace__views button[aria-selected='true'] {
+  border-color: #8051d0;
+  background: #f7f3fd;
+  color: #5b2fa8;
+  font-weight: 700;
+}
+.my-calendar__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.my-calendar__head h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.my-calendar__grid {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.my-calendar__grid th {
+  padding: 6px 0;
+  font-size: 13px;
+  color: #6d6873;
+}
+.my-calendar__grid td {
+  height: 96px;
+  padding: 4px;
+  vertical-align: top;
+  border: 1px solid #ece9f0;
+}
+.my-calendar__grid td.is-today .my-calendar__date {
+  background: #8051d0;
+  color: white;
+}
+.my-calendar__date {
+  display: inline-block;
+  min-width: 22px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 13px;
+  text-align: center;
+}
+.campaign-workspace .my-calendar__event {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  margin-top: 3px;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #f1ecfa;
+}
+.my-calendar__event.is-selection {
+  background: #fff3d6;
+}
+.my-calendar__event.is-experience {
+  background: #e6f2ff;
+}
+.my-calendar__event.is-submission {
+  background: #fde8e6;
+}
+.my-calendar__event.is-results {
+  background: #eef7ee;
+}
+.my-calendar__list {
+  display: none;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.my-calendar__list button {
+  width: 100%;
+  text-align: left;
+}
+.my-calendar__list span {
+  margin-right: 8px;
+  color: #6d6873;
+}
+@media (max-width: 640px) {
+  .my-calendar__grid td {
+    height: 48px;
+  }
+  .my-calendar__grid .my-calendar__event {
+    display: none;
+  }
+  .my-calendar__grid td:has(.my-calendar__event) .my-calendar__date {
+    outline: 2px solid #8051d0;
+  }
+  .my-calendar__list {
+    display: grid;
+    gap: 6px;
+  }
+}

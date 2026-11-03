@@ -16,58 +16,58 @@
 
 ### 참여자
 
-| 홈 | 구매평 캠페인 상세 |
-|---|---|
-| ![홈](docs/screenshots/01-home.png) | ![구매평 캠페인](docs/screenshots/02-campaign-purchase-review.png) |
+| 홈                                                                           | 구매평 캠페인 상세                                                                                                     |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| ![홈](docs/screenshots/01-home.png)                                          | ![구매평 캠페인](docs/screenshots/02-campaign-purchase-review.png)                                                     |
 | 이번 주 모집 현황, 체험 방식 바로가기, 마감이 가까운·선정 확률이 높은 캠페인 | 왼쪽은 이미지와 탭(캠페인 정보·상세페이지·미션·일정·유의사항), 오른쪽은 따라 내려오는 요약 카드(일정·캘린더·모집 현황) |
 
-| 신청서 | 내 캠페인 |
-|---|---|
-| ![신청서](docs/screenshots/03-apply-form.png) | ![내 캠페인](docs/screenshots/04-my-campaign-workspace.png) |
-| 캠페인마다 다른 참여 방식·질문·동의 항목 | 일정표, 미션, 송장번호, 콘텐츠 제출과 성과 기록을 한 화면에서 |
+| 신청서                                        | 내 캠페인                                                     |
+| --------------------------------------------- | ------------------------------------------------------------- |
+| ![신청서](docs/screenshots/03-apply-form.png) | ![내 캠페인](docs/screenshots/04-my-campaign-workspace.png)   |
+| 캠페인마다 다른 참여 방식·질문·동의 항목      | 일정표, 미션, 송장번호, 콘텐츠 제출과 성과 기록을 한 화면에서 |
 
-| 마이페이지 | 채팅 | 커뮤니티 |
-|---|---|---|
-| ![마이페이지](docs/screenshots/05-mypage-grade.png) | ![채팅](docs/screenshots/06-chat.png) | ![커뮤니티](docs/screenshots/07-community.png) |
-| 활동 등급과 진행 현황 | 브랜드와 1:1 대화, 사진 첨부, 읽음 표시 | 글·댓글, 신고 |
+| 마이페이지                                          | 채팅                                    | 커뮤니티                                       |
+| --------------------------------------------------- | --------------------------------------- | ---------------------------------------------- |
+| ![마이페이지](docs/screenshots/05-mypage-grade.png) | ![채팅](docs/screenshots/06-chat.png)   | ![커뮤니티](docs/screenshots/07-community.png) |
+| 활동 등급과 진행 현황                               | 브랜드와 1:1 대화, 사진 첨부, 읽음 표시 | 글·댓글, 신고                                  |
 
 ### 업체
 
-| 대시보드 | 캠페인 수정 |
-|---|---|
+| 대시보드                                              | 캠페인 수정                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------- |
 | ![대시보드](docs/screenshots/10-seller-dashboard.png) | ![캠페인 수정](docs/screenshots/11-seller-campaign-editor.png) |
 
-| 참여자 관리 | 참여자 상세 · 평가 |
-|---|---|
+| 참여자 관리                                                 | 참여자 상세 · 평가                                                |
+| ----------------------------------------------------------- | ----------------------------------------------------------------- |
 | ![참여자 관리](docs/screenshots/12-seller-participants.png) | ![참여자 상세](docs/screenshots/13-seller-participant-detail.png) |
-| 여러 명을 골라 한 번에 선정·미선정 | 활동 등급, 진행 단계, 완료 후 별점과 메모 |
+| 여러 명을 골라 한 번에 선정·미선정                          | 활동 등급, 진행 단계, 완료 후 별점과 메모                         |
 
-| 배송 관리 | 구매평 환급 |
-|---|---|
+| 배송 관리                                             | 구매평 환급                                      |
+| ----------------------------------------------------- | ------------------------------------------------ |
 | ![배송 관리](docs/screenshots/14-seller-shipping.png) | ![환급](docs/screenshots/15-seller-paybacks.png) |
-| 택배사·송장번호 입력, 배송지 엑셀 내려받기 | 구매 인증 확인 후 환급 처리 |
+| 택배사·송장번호 입력, 배송지 엑셀 내려받기            | 구매 인증 확인 후 환급 처리                      |
 
-| 콘텐츠 성과 |
-|---|
-| ![콘텐츠 성과](docs/screenshots/16-seller-content-performance.png) |
+| 콘텐츠 성과                                                                              |
+| ---------------------------------------------------------------------------------------- |
+| ![콘텐츠 성과](docs/screenshots/16-seller-content-performance.png)                       |
 | 캠페인을 고르면 참여자 게시물의 최근 조회수·좋아요·댓글 합계와 평균 참여율을 보여 줍니다 |
 
 ### 운영자
 
-| 콘텐츠 최종 승인 | 신고·제재 |
-|---|---|
-| ![최종 승인](docs/screenshots/20-admin-content-reviews.png) | ![신고 처리](docs/screenshots/21-admin-moderation.png) |
-| 업체 검토가 끝난 콘텐츠만 모아 승인 | 신고 당시 내용, 같은 대상 신고 수, 기각·경고·가리기·이용 정지 |
+| 콘텐츠 최종 승인                                            | 신고·제재                                                     |
+| ----------------------------------------------------------- | ------------------------------------------------------------- |
+| ![최종 승인](docs/screenshots/20-admin-content-reviews.png) | ![신고 처리](docs/screenshots/21-admin-moderation.png)        |
+| 업체 검토가 끝난 콘텐츠만 모아 승인                         | 신고 당시 내용, 같은 대상 신고 수, 기각·경고·가리기·이용 정지 |
 
-| 커뮤니티 관리 | 운영 리포트 |
-|---|---|
+| 커뮤니티 관리                                             | 운영 리포트                                           |
+| --------------------------------------------------------- | ----------------------------------------------------- |
 | ![커뮤니티 관리](docs/screenshots/22-admin-community.png) | ![운영 리포트](docs/screenshots/23-admin-reports.png) |
-| 신고 없이도 글·댓글을 바로 가리고 다시 보이게 함 | 기간 선택, 날짜별 추이, 엑셀(요약·날짜별·상태별) |
+| 신고 없이도 글·댓글을 바로 가리고 다시 보이게 함          | 기간 선택, 날짜별 추이, 엑셀(요약·날짜별·상태별)      |
 
 ### 모바일
 
-| 홈 | 캠페인 상세 | 채팅 |
-|---|---|---|
+| 홈                                                          | 캠페인 상세                                                     | 채팅                                                        |
+| ----------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- |
 | <img src="docs/screenshots/30-mobile-home.png" width="260"> | <img src="docs/screenshots/31-mobile-campaign.png" width="260"> | <img src="docs/screenshots/32-mobile-chat.png" width="260"> |
 
 ## 화면 디자인
@@ -107,7 +107,7 @@ src/
     purchaseReview/   구매 정보·구매 인증·환급
     shipping/         송장·배송 상태
     contentMetric/    게시물 성과 기록, 캠페인 성과 요약
-    participation/    등급·패널티·방문 예약·평가·신고
+    participation/    등급·패널티·방문 예약·평가·신고, 참여 조정(철회·취소·연장), 내 캠페인 달력
     chat/             채팅방, 첨부, 검색, 입력 중 표시
     admin/            운영자 화면 모델(커뮤니티 관리, 리포트 기간)
   pages/       경로에 바로 연결되는 화면
@@ -118,22 +118,22 @@ qa/
 scripts/       node:test 단위 테스트
 ```
 
-화면 컴포넌트에는 표시만 두고, 상태 이름 바꾸기·버튼 노출 조건·입력 검사처럼 규칙이 있는 부분은 `*Model.js`로 빼서 단위 테스트를 붙였습니다. 홈 화면의 '마감이 가까운 순'·'선정 확률이 높은 순'·이번 주 표시도 `homeModel`로 빼서 테스트합니다. 예를 들어 `shippingModel`은 송장번호 형식 검사와 "바뀐 행만 골라 저장"을, `participationModel`은 일괄 선정 가능 여부, 방문 예약 입력 검사, 상황에 맞는 패널티 종류 고르기를 맡습니다.
+화면 컴포넌트에는 표시만 두고, 상태 이름 바꾸기·버튼 노출 조건·입력 검사처럼 규칙이 있는 부분은 `*Model.js`로 빼서 단위 테스트를 붙였습니다. 홈 화면의 '마감이 가까운 순'·'선정 확률이 높은 순'·이번 주 표시도 `homeModel`로 빼서 테스트합니다. 예를 들어 `shippingModel`은 송장번호 형식 검사와 "바뀐 행만 골라 저장"을, `participationModel`은 일괄 선정 가능 여부, 방문 예약 입력 검사, 상황에 맞는 패널티 종류 고르기를, `participationChangeModel`은 취소·연장 입력 검사와 달력 일정 계산을 맡습니다.
 
 ## 주요 경로
 
 경로는 92개이고, 첫 화면을 빼고는 지연 로딩합니다.
 
-| 대상 | 경로 |
-|---|---|
-| 참여자 | `/home`, `/category/:section`, `/campaign/:campaignId`, `/mypage`, `/mypage/campaigns`, `/messages`, `/community/:board`, `/settings` |
-| 업체 | `/seller/dashboard`, `/seller/campaigns`, `/seller/participants`, `/seller/shipping`, `/seller/paybacks`, `/seller/contents`, `/seller/messages` |
+| 대상   | 경로                                                                                                                                              |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 참여자 | `/home`, `/category/:section`, `/campaign/:campaignId`, `/mypage`, `/mypage/campaigns`, `/messages`, `/community/:board`, `/settings`             |
+| 업체   | `/seller/dashboard`, `/seller/campaigns`, `/seller/participants`, `/seller/shipping`, `/seller/paybacks`, `/seller/contents`, `/seller/messages`  |
 | 운영자 | `/admin/dashboard`, `/admin/content-reviews`, `/admin/community`, `/admin/moderation`, `/admin/reports`, `/admin/participation`, `/admin/members` |
 
 ## 테스트와 점검
 
 ```bash
-npm test               # 단위 테스트 195개 (scripts/*.test.mjs)
+npm test               # 단위 테스트 201개 (scripts/*.test.mjs)
 npm run lint
 npm run format:check
 npm run build
@@ -144,6 +144,7 @@ npm run build
 - `e2e-flow.mjs`: 캠페인 등록 → 신청 → 선정 → 콘텐츠 제출 → 업체 검토 → 운영자 최종 승인
 - `qa-checks.mjs`: 동시 선정 시 정원 초과 여부, 다른 브랜드 권한, 신청 내용 보존
 - `purchase-review-check.mjs`, `shipping-check.mjs`, `participation-check.mjs`, `chat-extras-check.mjs`: 구매평, 배송, 패널티·예약·평가, 채팅 첨부·검색
+- `participation-change-check.mjs`: 신청 철회, 참여 취소(단순·협의+증빙), 기간 연장, 마감 지난 미제출 자동 취소, 업체 미선정, 방문형 선착순, 내 캠페인 달력, 채널 기본 요건
 - `ops-extras-check.mjs`: 커뮤니티 가리기·다시 보이기, 리포트 기간·엑셀, 콘텐츠 성과 기록, 캠페인 서버 검색·페이지
 - `route-check.mjs`: 역할별로 전체 경로를 열어 오류·빈 화면 확인
 

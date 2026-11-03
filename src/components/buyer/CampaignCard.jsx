@@ -81,6 +81,9 @@ export default function CampaignCard({ item }) {
               <ChannelIcon channel={item.media} showLabel={false} />
             </span>
           )}
+          {item.firstCome && (
+            <span className="main-campaign-card__first-come">선착순</span>
+          )}
         </div>
         {brand && <p className="main-campaign-card__brand">{brand}</p>}
         <h3>{item.title}</h3>

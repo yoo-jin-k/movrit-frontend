@@ -25,6 +25,7 @@ Playwright는 설치된 Chrome(`channel: 'chrome'`)을 사용합니다.
 | —    | `route-check.mjs`                | 비회원·사용자·업체·운영자로 62개 경로를 열어 오류·빈 화면 확인                                                                                                      |
 | —    | `admin-check.mjs`                | 관리자 화면 14개 실제 데이터 표시, 공지 작성→사용자 표시, 회원 정지·해제                                                                                            |
 | —    | `ops-extras-check.mjs`           | 커뮤니티 운영자 가리기, 리포트 기간·엑셀, 콘텐츠 성과, 캠페인 서버 검색                                                                                             |
+| —    | `access-control-check.mjs`       | 남의 자료 접근 점검(참여자↔참여자, 업체↔업체, 일반 회원→운영자 API, 배송지·알림·글, 비공개 업로드 폴더). 준비: qa-checks.mjs로 demo-brand2 계정                   |
 | —    | `participation-change-check.mjs` | 신청 철회·참여 취소(단순·협의+증빙)·기간 연장·미제출 자동 취소·업체 미선정·방문형 선착순·내 캠페인 달력. 점검 계정 취소 횟수가 쌓여 생긴 패널티는 끝에서 취소합니다 |
 
 ## 2026-11-01 결과

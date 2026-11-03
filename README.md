@@ -146,6 +146,7 @@ npm run build
 - `e2e-flow.mjs`: 캠페인 등록 → 신청 → 선정 → 콘텐츠 제출 → 업체 검토 → 운영자 최종 승인
 - `qa-checks.mjs`: 동시 선정 시 정원 초과 여부, 다른 브랜드 권한, 신청 내용 보존
 - `purchase-review-check.mjs`, `shipping-check.mjs`, `participation-check.mjs`, `chat-extras-check.mjs`: 구매평, 배송, 패널티·예약·평가, 채팅 첨부·검색
+- `access-control-check.mjs`: 주소의 ID만 바꿔 남의 신청·채팅·배송·증빙·주소·알림, 다른 업체의 캠페인·참여자, 운영자 기능에 접근할 수 없는지(51항목), 비공개 업로드 폴더 차단
 - `participation-change-check.mjs`: 신청 철회, 참여 취소(단순·협의+증빙), 기간 연장, 마감 지난 미제출 자동 취소, 업체 미선정, 방문형 선착순, 내 캠페인 달력, 채널 기본 요건
 - `ops-extras-check.mjs`: 커뮤니티 가리기·다시 보이기, 리포트 기간·엑셀, 콘텐츠 성과 기록, 캠페인 서버 검색·페이지
 - `route-check.mjs`: 역할별로 전체 경로를 열어 오류·빈 화면 확인

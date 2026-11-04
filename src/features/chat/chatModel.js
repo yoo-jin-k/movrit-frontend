@@ -1,6 +1,7 @@
 /**
  * 채팅 화면의 표시 규칙입니다(화면 없이 테스트할 수 있도록 분리).
  */
+import { seoulInstant } from '../discovery/scheduleModel.js'
 
 export const CHAT_ROLE_LABELS = {
   CREATOR: '참여자',
@@ -29,16 +30,38 @@ export function mergeMessages(current, incoming) {
 }
 
 // 목록·말풍선에 쓰는 시각 표시입니다. 오늘이면 시:분, 아니면 월/일 시:분입니다.
+// 서버 시각(오프셋 없음)은 서울 시간이고, 화면도 기기 시간대와 관계없이 서울 기준으로 보여 줍니다.
+const SEOUL_TIME = new Intl.DateTimeFormat('ko-KR', {
+  timeZone: 'Asia/Seoul',
+  hour: '2-digit',
+  minute: '2-digit',
+})
+const SEOUL_DAY = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Seoul',
+  month: 'numeric',
+  day: 'numeric',
+  year: 'numeric',
+})
+
+function seoulParts(date) {
+  return Object.fromEntries(
+    SEOUL_DAY.formatToParts(date).map(({ type, value }) => [type, value]),
+  )
+}
+
 export function chatTime(value, now = new Date()) {
   if (!value) return ''
-  const date = new Date(value)
+  const date =
+    value instanceof Date ? value : (seoulInstant(value) ?? new Date(value))
   if (Number.isNaN(date.getTime())) return ''
-  const time = date.toLocaleTimeString('ko-KR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-  const sameDay = date.toDateString() === now.toDateString()
-  return sameDay ? time : `${date.getMonth() + 1}/${date.getDate()} ${time}`
+  const time = SEOUL_TIME.format(date)
+  const day = seoulParts(date)
+  const today = seoulParts(now)
+  const sameDay =
+    day.year === today.year &&
+    day.month === today.month &&
+    day.day === today.day
+  return sameDay ? time : `${Number(day.month)}/${Number(day.day)} ${time}`
 }
 
 // 방 종류 표시입니다.

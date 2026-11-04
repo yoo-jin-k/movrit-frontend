@@ -2,7 +2,7 @@
  * 날짜를 서울 달력 기준 일수로 바꾸어 모집 시작·마감과 남은 날짜를 계산합니다.
  * 브라우저 시간대 차이가 카드의 일수 표시를 바꾸지 않도록 합니다.
  */
-import { periodHasEnded } from './scheduleModel.js'
+import { periodHasEnded, seoulInstant } from './scheduleModel.js'
 
 const DAY_MS = 86_400_000
 const koreanDate = new Intl.DateTimeFormat('en-CA', {
@@ -13,9 +13,11 @@ const koreanDate = new Intl.DateTimeFormat('en-CA', {
 })
 
 // 사용자의 PC 시간대와 관계없이 상세 화면과 동일한 한국 날짜로 남은 일수를 계산합니다.
+// 서버가 보내는 시각 문자열(오프셋 없음)은 서울 시간이므로 seoulInstant로 읽습니다. 브라우저 시간대로 읽으면 하루가 어긋날 수 있습니다.
 function dayNumber(value) {
   if (value == null || value === '') return null
-  const date = new Date(value)
+  const date =
+    value instanceof Date ? value : (seoulInstant(value) ?? new Date(value))
   if (Number.isNaN(date.getTime())) return null
   const parts = Object.fromEntries(
     koreanDate.formatToParts(date).map(({ type, value }) => [type, value]),

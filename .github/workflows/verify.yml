@@ -55,8 +55,11 @@ jobs:
         run: npm run lint
       - name: 형식(Prettier)
         run: npm run format:check
-      - name: 화면 규칙 단위 테스트
-        run: npm test
+      # 서버 시각은 서울 기준이라, 기기 시간대가 달라도 같은 결과가 나오는지 두 시간대로 확인합니다.
+      - name: 화면 규칙 단위 테스트(UTC)
+        run: TZ=UTC npm test
+      - name: 화면 규칙 단위 테스트(서울)
+        run: TZ=Asia/Seoul npm test
       - name: 빌드
         run: npm run build
 

@@ -147,11 +147,15 @@ scripts/       node:test 단위 테스트
 ## 테스트와 점검
 
 ```bash
-npm test               # 단위 테스트 201개 (scripts/*.test.mjs)
+npm test               # 단위 테스트 207개 (scripts/*.test.mjs)
 npm run lint
 npm run format:check
 npm run build
 ```
+
+GitHub Actions(`.github/workflows/verify.yml`)가 `developer`·`main`에 올리거나 PR을 열 때마다 비밀값 검사 → ESLint → Prettier → 단위 테스트 → 빌드 → Docker 이미지 빌드를 GitHub 서버에서 돌립니다. Dependabot이 매달 npm·Actions 버전을 확인해 `developer`로 PR을 엽니다.
+
+Docker 이미지(`Dockerfile`)는 화면을 빌드해 nginx로 보여 주고 `/api`·`/uploads`를 백엔드로 넘깁니다(`docker/nginx.conf`). DB·백엔드와 함께 띄우는 방법은 백엔드 저장소의 `docker-compose.yml`을 봐 주세요.
 
 `qa/e2e`에는 실제 서버에 붙어 화면을 조작하는 Playwright 스크립트가 있습니다. 점검용 계정과 점검용 캠페인만 만들고 바꿉니다.
 

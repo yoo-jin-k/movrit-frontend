@@ -1,0 +1,13 @@
+# 이미지에 넣지 않는 것: 설치 폴더·빌드 결과, 점검 산출물, 환경 파일(비밀값), Git 기록
+.git
+.github
+node_modules
+dist
+qa
+docs
+*.env
+.env
+.env.*
+!.env.integration
+**/* 2.*
+public/assets/reference-preview

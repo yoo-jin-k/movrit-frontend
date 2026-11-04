@@ -196,6 +196,12 @@ export function AdminMemberDetailPage() {
                   ['로그인 방식', loginMethods(member)],
                   ['이메일 인증', member.emailVerified ? '완료' : '미완료'],
                   ['연락처', state.data.phoneMasked],
+                  [
+                    '휴대폰 인증',
+                    state.data.phoneVerifiedAt
+                      ? `완료 (${dateTime(state.data.phoneVerifiedAt)})`
+                      : '미완료',
+                  ],
                   ['가입일', dateTime(member.createdAt)],
                   ['최근 로그인', dateTime(member.lastLoginAt)],
                   ['운영 브랜드', state.data.brands.join(', ')],

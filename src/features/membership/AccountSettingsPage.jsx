@@ -1,5 +1,5 @@
 /**
- * 사진과 기본 정보, 로그인 연결, 보안, 배송지를 명확한 그룹으로 구분합니다.
+ * 사진과 기본 정보, 휴대폰 인증, 로그인 연결, 보안, 배송지를 명확한 그룹으로 구분합니다.
  * 소셜 계정 연결 콜백에서 돌아오면 location.state.linkNotice로 결과 안내를 받아 로그인 연결 영역에 표시합니다.
  */
 import { Link, useLocation } from 'react-router-dom'
@@ -9,6 +9,7 @@ import useMemberAccount from './useMemberAccount'
 import AvatarEditor from './AvatarEditor'
 import SocialLoginLinks from './SocialLoginLinks'
 import ChannelConnections from './ChannelConnections'
+import PhoneVerification from './PhoneVerification'
 import './accountProfile.css'
 export default function AccountSettingsPage() {
   const state = useMemberAccount()
@@ -18,6 +19,7 @@ export default function AccountSettingsPage() {
       <nav className="account-settings-nav" aria-label="계정 설정 항목">
         <a href="#profile-photo">프로필 사진</a>
         <a href="#account-basic">기본 정보</a>
+        <a href="#phone-verify">휴대폰 인증</a>
         <a href="#social-login">로그인 연결</a>
         <a href="#channel-connect">SNS 채널 연결</a>
         <Link to="/settings/security">비밀번호</Link>
@@ -46,6 +48,7 @@ export default function AccountSettingsPage() {
         <Link to="/mypage/profile">닉네임 수정 ›</Link>
         <Link to="/creator/profile">활동 프로필·채널 정보 관리 ›</Link>
       </section>
+      <PhoneVerification />
       <SocialLoginLinks notice={location.state?.linkNotice} />
       <ChannelConnections notice={location.state?.channelNotice} />
       <section className="account-settings-group">

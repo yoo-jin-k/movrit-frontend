@@ -579,6 +579,81 @@
   font: inherit;
   font-weight: 400;
 }
+/* 휴대폰 인증: 번호 입력과 '인증번호 받기'를 한 줄로, 시연 인증번호는 눈에 띄게 보여 줍니다. */
+.account-phone-row {
+  display: flex;
+  gap: 8px;
+}
+.account-phone-row input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dedbe5;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 400;
+}
+.account-phone-row button {
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  background: #17171b;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.account-phone-form .account-channel-actions button {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: #17171b;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.account-phone-form .account-channel-actions button.is-secondary {
+  color: #17171b;
+  background: #f1f1f4;
+}
+.account-phone-preview {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f3effd;
+  color: #3b1d8f !important;
+}
+.account-phone-verified {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.account-phone-verified span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.account-phone-verified small {
+  color: #6f6a7d;
+}
+.account-phone-verified button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  color: #17171b;
+  background: #f1f1f4;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
 /* 소개글 코드 인증: 코드는 크게, 복사 버튼과 한 줄로 보여 줍니다. */
 .account-bio-code > button,
 .account-bio-code__code button {

@@ -6,6 +6,7 @@
  * - 확인하면 회원의 팔로워 수가 '확인됨'이 되어 캠페인 참여 조건 판정에 쓰이고, 회원에게 알림이 갑니다.
  * - 반려하면 사유가 회원 설정 화면과 알림에 그대로 보입니다. 회원은 다시 등록할 수 있습니다.
  * - 로그인으로 연결한 채널은 SNS가 직접 확인한 값이라 이 화면에 나오지 않습니다.
+ * - 소개글 코드 등록 중 자동으로 확인하지 못한 인스타그램 계정도 여기로 옵니다. 캡처 대신 인증 코드가 보이며, 채널 소개글에 그 코드가 있는지 봅니다.
  */
 import { useEffect, useRef, useState } from 'react'
 import AdminLayout, { AdminCard } from '../components/admin/AdminLayout'
@@ -16,7 +17,10 @@ import {
   readChannelEvidence,
   rejectChannel,
 } from '../api/channelConnectApi'
-import { followerText } from '../features/membership/channelConnectModel'
+import {
+  CONNECTION_METHODS,
+  followerText,
+} from '../features/membership/channelConnectModel'
 import {
   CHANNEL_REVIEW_FILTERS,
   CHANNEL_REVIEW_STATUS,
@@ -174,7 +178,13 @@ export default function AdminChannelVerificationsPage() {
                       <br />
                       <small>{item.memberEmail}</small>
                     </td>
-                    <td data-label="채널">{item.label}</td>
+                    <td data-label="채널">
+                      {item.label}
+                      <br />
+                      <small>
+                        {CONNECTION_METHODS[item.method] || '직접 등록'}
+                      </small>
+                    </td>
                     <td data-label="계정">{item.accountName}</td>
                     <td data-label="수치">
                       {followerText(item.provider, item.followerCount)}
@@ -216,7 +226,13 @@ export default function AdminChannelVerificationsPage() {
               · 입력한 수치:{' '}
               {followerText(selected.provider, selected.followerCount)}
             </p>
-            {selected.hasEvidence ? (
+            {selected.method === 'BIO_CODE' ? (
+              // 소개글 코드 등록: 채널을 열어 소개글에 이 코드가 있는지, 팔로워 수가 맞는지 확인합니다.
+              <p className="admin-bio-code">
+                소개글 인증 코드 <code>{selected.verificationCode}</code> — 채널
+                소개글에 이 코드가 있고 팔로워 수가 맞는지 확인해 주세요.
+              </p>
+            ) : selected.hasEvidence ? (
               <EvidenceImage id={selected.id} />
             ) : (
               <p>첨부된 캡처가 없습니다.</p>

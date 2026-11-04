@@ -3,6 +3,7 @@
  * - 시작: 서버가 발급한 SNS 로그인 주소로 이동합니다.
  * - 완료: SNS에서 돌아온 code·state를 서버에 넘겨 계정 정보를 저장합니다.
  * - 직접 등록: 로그인 연결이 안 되는 계정(개인 인스타그램 등)은 주소·팔로워 수·프로필 캡처를 올리고 운영자 확인을 기다립니다.
+ * - 소개글 코드: 받은 인증 코드를 소개글에 넣고 주소를 보내면 서버가 공개 정보에서 코드를 확인합니다(인스타그램·네이버 블로그).
  * 접근 토큰은 서버도 저장하지 않으며 화면에는 오지 않습니다.
  */
 import api from './axios'
@@ -58,6 +59,38 @@ export async function registerChannelManually(
     `${base}/${encodeURIComponent(provider)}/manual`,
     body,
     { headers: { 'Content-Type': undefined }, timeout: 30000 },
+  )
+  return data
+}
+
+// ───────── 소개글 인증 코드 ─────────
+
+// 지금 쓸 수 있는 코드입니다. 없으면 null(서버 204)입니다.
+export async function readBioCode(provider, signal) {
+  const response = await api.get(
+    `${base}/${encodeURIComponent(provider)}/bio-code`,
+    { signal, timeout: 15000 },
+  )
+  return response.status === 204 ? null : response.data || null
+}
+
+// 코드를 받습니다. 쓸 수 있는 코드가 있으면 같은 코드가 옵니다.
+export async function issueBioCode(provider) {
+  const { data } = await api.post(
+    `${base}/${encodeURIComponent(provider)}/bio-code`,
+    undefined,
+    { timeout: 15000 },
+  )
+  return data
+}
+
+// 소개글에서 코드를 확인합니다. 결과는 VERIFIED(바로 확인됨) 또는 PENDING_REVIEW(운영자 확인 대기)입니다.
+export async function verifyBioCode(provider, { profileUrl, followerCount }) {
+  const count = String(followerCount ?? '').trim()
+  const { data } = await api.post(
+    `${base}/${encodeURIComponent(provider)}/bio-code/verify`,
+    { profileUrl, followerCount: count ? Number(count) : null },
+    { timeout: 30000 },
   )
   return data
 }

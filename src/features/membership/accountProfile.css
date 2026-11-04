@@ -579,6 +579,59 @@
   font: inherit;
   font-weight: 400;
 }
+/* 소개글 코드 인증: 코드는 크게, 복사 버튼과 한 줄로 보여 줍니다. */
+.account-bio-code > button,
+.account-bio-code__code button {
+  justify-self: start;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: #6b38db;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.account-bio-code__code {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.account-bio-code__code code {
+  padding: 8px 14px;
+  border: 1px dashed #b9a6ee;
+  border-radius: 10px;
+  background: #fff;
+  color: #3b1d8f;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.account-bio-code__code button.is-secondary {
+  color: #17171b;
+  background: #f1f1f4;
+}
+.account-bio-code small {
+  color: #6f6a7d;
+}
+.account-bio-code__steps {
+  margin: 0;
+  padding-left: 20px;
+  color: #3f3a4d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+/* 채널 목록 카드 스타일(li)이 안내 단계에 번지지 않게 되돌립니다. */
+.account-social-list .account-bio-code__steps li {
+  display: list-item;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
 @media (max-width: 640px) {
   .account-channel-row {
     flex-wrap: wrap;

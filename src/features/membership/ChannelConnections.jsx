@@ -1,6 +1,7 @@
 /**
  * 설정 화면의 'SNS 채널 연결' 영역입니다.
  * - 로그인 연결: 인스타그램(크리에이터·비즈니스)·유튜브·네이버 계정으로 로그인해 바로 '확인됨'이 됩니다.
+ * - 소개글 코드(인스타그램·네이버 블로그): 받은 코드를 소개글에 넣고 주소를 입력하면 서버가 코드를 찾아 바로 '확인됨'이 됩니다(BioCodePanel).
  * - 직접 등록: 로그인 연결이 안 되는 계정(개인 인스타그램 등)은 주소·팔로워 수·프로필 캡처를 올리고, 운영자가 확인합니다.
  * - 지금은 로그인 연결을 꺼 두어(서버 설정) 직접 등록 → 운영자 확인만 씁니다. 로그인 연결을 켜면(row.available) 버튼과 안내가 함께 나타납니다.
  */
@@ -11,12 +12,14 @@ import {
   registerChannelManually,
   startChannelConnection,
 } from '../../api/channelConnectApi'
+import BioCodePanel from './BioCodePanel'
 import {
   CHANNEL_PROVIDERS,
   channelErrorMessage,
   connectionBadge,
   followerText,
   manualFormError,
+  supportsBioCode,
 } from './channelConnectModel'
 
 const EMPTY_FORM = { profileUrl: '', followerCount: '', file: null }
@@ -30,6 +33,8 @@ export default function ChannelConnections({ notice }) {
   // 직접 등록 입력을 펼친 서비스와 입력값입니다. 한 번에 하나만 펼칩니다.
   const [manual, setManual] = useState('')
   const [form, setForm] = useState(EMPTY_FORM)
+  // 소개글 코드 인증을 펼친 서비스입니다. 직접 등록과 동시에 펼치지 않습니다.
+  const [bio, setBio] = useState('')
 
   useEffect(() => {
     const controller = new AbortController()
@@ -79,7 +84,22 @@ export default function ChannelConnections({ notice }) {
     }
   }
 
+  const openBio = (provider) => {
+    setBio((value) => (value === provider ? '' : provider))
+    setManual('')
+    setError('')
+    setMessage('')
+  }
+
+  // 소개글 확인이 끝나면(바로 확인됨 또는 운영자 확인 대기) 안내를 보여 주고 목록을 다시 불러옵니다.
+  const bioDone = (text) => {
+    setBio('')
+    setMessage(text)
+    reload()
+  }
+
   const openManual = (provider) => {
+    setBio('')
     setManual((value) => (value === provider ? '' : provider))
     setForm(EMPTY_FORM)
     setError('')
@@ -119,9 +139,10 @@ export default function ChannelConnections({ notice }) {
     <section id="channel-connect" className="account-settings-group">
       <h2>SNS 채널 연결</h2>
       <p>
-        활동 중인 채널을 등록해 주세요. 운영자가 캡처와 실제 채널을 확인하면
-        &lsquo;확인됨&rsquo;으로 바뀌고, 브랜드가 신청자의 채널과 팔로워 수를 볼
-        수 있습니다.
+        활동 중인 채널을 등록해 주세요. 인스타그램·네이버 블로그는 소개글에 인증
+        코드를 넣으면 바로 &lsquo;확인됨&rsquo;이 됩니다. 직접 등록은 운영자가
+        캡처와 실제 채널을 확인합니다. 확인된 채널과 팔로워 수는 브랜드가
+        신청자를 볼 때 함께 보입니다.
       </p>
       {notice && (
         <p
@@ -198,6 +219,18 @@ export default function ChannelConnections({ notice }) {
                             : '로그인 연결'}
                       </button>
                     )}
+                    {!oauthLinked && supportsBioCode(row.provider) && (
+                      <button
+                        type="button"
+                        aria-expanded={bio === row.provider}
+                        onClick={() => openBio(row.provider)}
+                        disabled={Boolean(busy)}
+                      >
+                        {linked?.method === 'BIO_CODE'
+                          ? '코드 다시 인증'
+                          : '소개글 코드 인증'}
+                      </button>
+                    )}
                     {!oauthLinked && (
                       <button
                         type="button"
@@ -233,6 +266,13 @@ export default function ChannelConnections({ notice }) {
                       후 로그인 연결을 눌러 주세요.
                     </p>
                   </details>
+                )}
+                {bio === row.provider && (
+                  <BioCodePanel
+                    provider={row.provider}
+                    onDone={bioDone}
+                    onClose={() => setBio('')}
+                  />
                 )}
                 {manual === row.provider && (
                   <form

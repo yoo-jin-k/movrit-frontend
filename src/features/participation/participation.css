@@ -460,3 +460,49 @@
     gap: 6px;
   }
 }
+
+/* 기간 직접 연장(업체·운영자 참여자 상세) */
+.direct-extension {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+.direct-extension h3,
+.direct-extension p {
+  margin: 0;
+}
+.direct-extension__hint {
+  color: #92400e;
+}
+.direct-extension__form {
+  display: grid;
+  grid-template-columns: minmax(96px, 140px) 1fr;
+  gap: 8px;
+  align-items: end;
+}
+.direct-extension__form label {
+  display: grid;
+  gap: 4px;
+}
+.direct-extension__wide,
+.direct-extension__form [role='alert'],
+.direct-extension__form button {
+  grid-column: 1 / -1;
+}
+.direct-extension__form button {
+  justify-self: start;
+}
+.direct-extension__logs {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+@media (max-width: 560px) {
+  .direct-extension__form {
+    grid-template-columns: 1fr;
+  }
+}

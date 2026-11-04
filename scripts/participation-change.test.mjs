@@ -4,7 +4,10 @@ import test from 'node:test'
 import {
   calendarEvents,
   cancelCountText,
+  directExtensionError,
+  EXTENSION_SOURCE,
   evidenceError,
+  extensionCountText,
   eventsOnDay,
   extensionError,
   initialCalendarMonth,
@@ -203,4 +206,16 @@ test('협의 취소·패널티 알림은 담당 화면으로 이동합니다', (
     notificationPath({ targetType: 'CAMPAIGN_PENALTY', targetId: 9 }),
     '/mypage',
   )
+})
+
+test('업체·운영자 직접 연장은 1~30일과 사유를 확인하고, 연장 횟수를 함께 보여 줍니다', () => {
+  assert.match(directExtensionError(0, '사유'), /1일부터 30일/)
+  assert.match(directExtensionError(31, '사유'), /1일부터 30일/)
+  assert.match(directExtensionError('2.5', '사유'), /1일부터 30일/)
+  assert.equal(directExtensionError('3', ''), '사유를 입력해 주세요.')
+  assert.equal(directExtensionError(30, '개인 사정으로 일정 조정'), '')
+  assert.equal(extensionCountText(3, 4), '최근 1년 3회 · 전체 4회')
+  assert.equal(extensionCountText(), '최근 1년 0회 · 전체 0회')
+  assert.equal(EXTENSION_SOURCE.SELLER, '업체 직접 연장')
+  assert.equal(EXTENSION_SOURCE.PARTICIPANT_REQUEST, '참여자 요청 승인')
 })

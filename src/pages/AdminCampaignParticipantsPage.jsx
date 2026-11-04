@@ -5,6 +5,7 @@ import AdminLayout, { AdminCard } from '../components/admin/AdminLayout'
 import useBusinessList from '../features/business/useBusinessList'
 import { statusNames, dateLabel } from '../features/business/businessModel'
 import { canSelectApplication } from '../features/business/selectionModeModel'
+import DirectExtensionPanel from '../features/participation/DirectExtensionPanel'
 export default function AdminCampaignParticipantsPage() {
   const state = useBusinessList('/admin/campaign-applications')
   const [filter, setFilter] = useState('SUBMITTED'),
@@ -216,6 +217,13 @@ export default function AdminCampaignParticipantsPage() {
               )}
             </div>
           )}
+          {/* 운영자 직접 연장: 체험·마감을 함께 늘리고 참여자 연장 횟수로 기록합니다. */}
+          <DirectExtensionPanel
+            key={`extension-${selected.id}-${selected.status}`}
+            applicationId={selected.id}
+            admin
+            onChanged={reload}
+          />
           {error && <p role="alert">{error}</p>}
           {locked && (
             <button

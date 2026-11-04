@@ -129,3 +129,38 @@ export async function runParticipationJobs() {
   })
   return data
 }
+
+// 업체·운영자 직접 연장(1~30일, 횟수 제한 없음)과 연장 기록입니다. 모든 연장은 참여자 연장 횟수로 남습니다.
+export async function readApplicationExtensions(applicationId, signal) {
+  const { data } = await api.get(`${app(applicationId)}/extensions`, {
+    signal,
+    timeout: 15000,
+  })
+  return data
+}
+
+export async function directExtend(applicationId, days, reason) {
+  const { data } = await api.post(
+    `${app(applicationId)}/extensions`,
+    { days: Number(days), reason: reason.trim() },
+    { timeout: 15000 },
+  )
+  return data
+}
+
+// 운영자: 전체 기간 연장 요청 목록과 회원 한 명의 연장 횟수·이력입니다.
+export async function readAdminExtensions(signal) {
+  const { data } = await api.get('/admin/extension-requests', {
+    signal,
+    timeout: 15000,
+  })
+  return Array.isArray(data) ? data : []
+}
+
+export async function readMemberExtensions(memberId, signal) {
+  const { data } = await api.get(
+    `/admin/members/${encodeURIComponent(memberId)}/extensions`,
+    { signal, timeout: 15000 },
+  )
+  return data
+}

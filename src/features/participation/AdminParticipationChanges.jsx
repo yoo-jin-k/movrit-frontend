@@ -3,12 +3,17 @@
  * - 협의 취소 요청: 참여자가 올린 증빙 이미지를 보고 승인(취소 횟수 없이 참여 취소)하거나 사유와 함께 반려합니다.
  * - 자동 처리: 30분마다 도는 '마감 지난 미제출 자동 취소'와 '업체 미선정 기록'을 바로 실행합니다(시연·점검용).
  * - 업체 미선정 기록: 신청자가 있었는데 선정 발표까지 아무도 선정하지 않은 캠페인 목록입니다.
+ * - 기간 연장 요청: 전체 캠페인의 참여자 연장 요청(7·14일, 신청당 1회)을 보고 운영자가 대신 승인·반려합니다.
+ *   업체·운영자 직접 연장은 참여자 상세에서 하고, 참여자별 연장 횟수는 회원 상세(참여자 이름 링크)에서 확인합니다.
  */
 import { useEffect, useState } from 'react'
 import { AdminCard } from '../../components/admin/AdminLayout'
+import { Link } from 'react-router-dom'
 import {
   decideCancelRequest,
+  decideExtension,
   readAdminCancelRequests,
+  readAdminExtensions,
   readAllUnselected,
   readCancelEvidence,
   runParticipationJobs,
@@ -42,6 +47,9 @@ export default function AdminParticipationChanges() {
   const [revision, setRevision] = useState(0)
   const requests = useLoad(readAdminCancelRequests, revision)
   const unselected = useLoad(readAllUnselected, revision)
+  const extensions = useLoad(readAdminExtensions, revision)
+  const [rejectingId, setRejectingId] = useState(null)
+  const [extensionNote, setExtensionNote] = useState('')
   const [openId, setOpenId] = useState(null)
   const [evidenceUrl, setEvidenceUrl] = useState('')
   const [note, setNote] = useState('')
@@ -97,6 +105,35 @@ export default function AdminParticipationChanges() {
       setBusy(false)
     }
   }
+  // 참여자 연장 요청을 운영자가 승인(체험·마감 함께 연장)하거나 사유와 함께 반려합니다.
+  const decideRequest = async (item, approve) => {
+    if (busy) return
+    if (!approve && !extensionNote.trim()) {
+      setError('반려 사유를 입력해 주세요.')
+      return
+    }
+    setBusy(true)
+    setError('')
+    try {
+      await decideExtension(
+        item.applicationId,
+        approve,
+        approve ? null : extensionNote,
+      )
+      setNotice(
+        approve
+          ? `${item.participantNickname}님의 체험·마감을 ${item.days}일 늘렸습니다.`
+          : `${item.participantNickname}님에게 반려 사유를 보냈습니다.`,
+      )
+      setRejectingId(null)
+      setExtensionNote('')
+      setRevision((value) => value + 1)
+    } catch (failure) {
+      setError(failure.response?.data?.detail || '처리하지 못했습니다.')
+    } finally {
+      setBusy(false)
+    }
+  }
   const runJobs = async () => {
     if (busy) return
     setBusy(true)
@@ -118,6 +155,10 @@ export default function AdminParticipationChanges() {
 
   const list = requests.data || []
   const waiting = list.filter((item) => item.status === 'REQUESTED').length
+  const extensionList = extensions.data || []
+  const extensionWaiting = extensionList.filter(
+    (item) => item.status === 'REQUESTED',
+  ).length
   return (
     <>
       {notice && <p role="status">{notice}</p>}
@@ -218,6 +259,108 @@ export default function AdminParticipationChanges() {
           </table>
         ) : (
           <p>협의 취소 요청이 없습니다.</p>
+        )}
+      </AdminCard>
+      <AdminCard
+        title={`기간 연장 요청 ${extensionList.length}건${extensionWaiting ? ` · 대기 ${extensionWaiting}건` : ''}`}
+      >
+        <p className="admin-muted">
+          참여자 요청은 신청마다 한 번입니다. 업체·운영자 직접 연장은 참여자
+          상세에서 하고, 참여자별 연장 횟수는 참여자 이름을 눌러 회원 상세에서
+          확인합니다.
+        </p>
+        {extensions.loading ? (
+          <p role="status">요청을 불러오고 있습니다.</p>
+        ) : extensions.error ? (
+          <p role="alert">기간 연장 요청을 불러오지 못했습니다.</p>
+        ) : extensionList.length ? (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>참여자</th>
+                <th>캠페인</th>
+                <th>요청</th>
+                <th>마감</th>
+                <th>상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              {extensionList.map((item) => (
+                <tr key={item.applicationId}>
+                  <td>
+                    <Link to={`/admin/members/${item.participantMemberId}`}>
+                      {item.participantNickname}
+                    </Link>
+                  </td>
+                  <td>
+                    {item.campaignTitle}
+                    <br />
+                    <small>{item.brandName}</small>
+                  </td>
+                  <td>
+                    {item.days}일 · {item.reason}
+                    {rejectingId === item.applicationId && (
+                      <span className="admin-inline-form">
+                        <input
+                          aria-label="연장 반려 사유"
+                          maxLength={500}
+                          value={extensionNote}
+                          onChange={(e) => setExtensionNote(e.target.value)}
+                          placeholder="반려 사유"
+                        />
+                        <button
+                          className="admin-button admin-button--danger"
+                          disabled={busy}
+                          onClick={() => decideRequest(item, false)}
+                        >
+                          반려 보내기
+                        </button>
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    {dateLabel(item.previousDeadline)} →{' '}
+                    {dateLabel(item.extendedDeadline)}
+                  </td>
+                  <td>
+                    <span title={item.decisionNote || undefined}>
+                      {REQUEST_STATUS[item.status]}
+                    </span>
+                    {item.status === 'REQUESTED' && (
+                      <>
+                        {' '}
+                        <button
+                          className="admin-button"
+                          disabled={busy}
+                          onClick={() => decideRequest(item, true)}
+                        >
+                          승인
+                        </button>{' '}
+                        <button
+                          className="admin-button admin-button--secondary"
+                          disabled={busy}
+                          aria-expanded={rejectingId === item.applicationId}
+                          onClick={() => {
+                            setRejectingId(
+                              rejectingId === item.applicationId
+                                ? null
+                                : item.applicationId,
+                            )
+                            setExtensionNote('')
+                            setError('')
+                          }}
+                        >
+                          {rejectingId === item.applicationId ? '닫기' : '반려'}
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>기간 연장 요청이 없습니다.</p>
         )}
       </AdminCard>
       <AdminCard title={`업체 미선정 기록 ${unselected.data?.count ?? 0}건`}>

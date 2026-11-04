@@ -36,6 +36,31 @@ export function extensionError(days, reason) {
   return reasonError(reason)
 }
 
+// 업체·운영자 직접 연장은 1~30일, 사유 필수입니다. 횟수 제한은 없지만 모든 연장이 참여자 연장 횟수로 남습니다.
+export const DIRECT_EXTENSION_MIN = 1
+export const DIRECT_EXTENSION_MAX = 30
+export const EXTENSION_SOURCE = {
+  PARTICIPANT_REQUEST: '참여자 요청 승인',
+  SELLER: '업체 직접 연장',
+  ADMIN: '운영자 직접 연장',
+}
+
+export function directExtensionError(days, reason) {
+  const value = Number(days)
+  if (
+    !Number.isInteger(value) ||
+    value < DIRECT_EXTENSION_MIN ||
+    value > DIRECT_EXTENSION_MAX
+  )
+    return `연장 일수는 ${DIRECT_EXTENSION_MIN}일부터 ${DIRECT_EXTENSION_MAX}일까지 정할 수 있습니다.`
+  return reasonError(reason)
+}
+
+// 연장 횟수 안내입니다. 예) 최근 1년 3회 · 전체 4회
+export function extensionCountText(yearCount = 0, totalCount = 0) {
+  return `최근 1년 ${yearCount ?? 0}회 · 전체 ${totalCount ?? 0}회`
+}
+
 // 취소 횟수 안내입니다. 예) 취소 2/5회 · 5회가 되면 패널티 1회로 바뀝니다.
 export function cancelCountText(count, limit = CANCEL_LIMIT_FALLBACK) {
   const used = Number(count) || 0

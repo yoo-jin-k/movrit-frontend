@@ -26,6 +26,7 @@ import VisitReservationPanel from '../participation/VisitReservationPanel'
 import ShipmentCard from '../shipping/ShipmentCard'
 import ParticipantActivityPanel from '../participation/ParticipantActivityPanel'
 import ExtensionRequestsPanel from '../participation/ExtensionRequestsPanel'
+import DirectExtensionPanel from '../participation/DirectExtensionPanel'
 import { bulkApplications } from '../../api/participationApi'
 import {
   bulkSelectable,
@@ -548,6 +549,12 @@ export default function BusinessParticipants() {
           <ParticipantActivityPanel
             key={`activity-${current.id}-${current.status}`}
             application={current}
+            onChanged={state.reload}
+          />
+          {/* 사정이 있는 참여자 한 명의 체험·마감을 직접 늘립니다(횟수 제한 없음, 연장 횟수로 기록). */}
+          <DirectExtensionPanel
+            key={`extension-${current.id}-${current.status}`}
+            applicationId={current.id}
             onChanged={state.reload}
           />
           {/* 구매평 캠페인: 참여자의 구매 인증을 확인하고, 완료 후 환급 완료를 기록합니다. */}

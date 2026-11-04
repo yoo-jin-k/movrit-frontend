@@ -331,6 +331,100 @@ check(
   String(afterExt.experienceExtendedUntil),
 )
 
+// ───────── 4-2) 업체·운영자 직접 연장(횟수 제한 없음) · 연장 횟수 기록 ─────────
+const memberB = (await call(admin, 'GET', '/admin/members')).data.find(
+  (m) => m.email === 'demo-creator@movrit.local',
+)
+const historyBefore = (
+  await call(admin, 'GET', `/admin/members/${memberB.id}/extensions`)
+).data
+check(
+  '회원 연장 이력: 참여자 요청 승인도 1회로 셈',
+  historyBefore.logs.some(
+    (l) => l.applicationId === appE.id && l.source === 'PARTICIPANT_REQUEST',
+  ),
+)
+const deadlineBeforeDirect = (await changes(userB, appE.id)).contentDeadline
+const direct1 = await call(
+  brand,
+  'POST',
+  `/campaigns/applications/${appE.id}/extensions`,
+  { days: 3, reason: '참여자 개인 사정으로 촬영 일정을 조정했습니다.' },
+)
+const direct2 = await call(
+  brand,
+  'POST',
+  `/campaigns/applications/${appE.id}/extensions`,
+  { days: 2, reason: '배송 지연으로 한 번 더 조정했습니다.' },
+)
+const afterDirect = await changes(userB, appE.id)
+check(
+  '업체 직접 연장: 참여자 요청 뒤에도 횟수 제한 없이 두 번 연장',
+  direct1.status === 200 &&
+    direct2.status === 200 &&
+    Math.round(
+      (new Date(afterDirect.contentDeadline) - new Date(deadlineBeforeDirect)) /
+        86400_000,
+    ) === 5,
+  `${direct1.status}/${direct2.status} ${deadlineBeforeDirect} → ${afterDirect.contentDeadline}`,
+)
+check(
+  '업체 직접 연장: 이 신청 기록과 참여자 연장 횟수',
+  direct2.data.logs.filter((l) => l.source === 'SELLER').length === 2 &&
+    direct2.data.participantYearCount === historyBefore.yearCount + 2,
+  `${direct2.data.participantYearCount}`,
+)
+check(
+  '직접 연장 일수는 1~30일(31일 거절)',
+  (
+    await call(brand, 'POST', `/campaigns/applications/${appE.id}/extensions`, {
+      days: 31,
+      reason: '확인',
+    })
+  ).status === 400,
+)
+const selfDirect = await call(
+  userB,
+  'POST',
+  `/campaigns/applications/${appE.id}/extensions`,
+  { days: 3, reason: '스스로 연장' },
+)
+check(
+  '참여자는 직접 연장 불가',
+  [403, 404].includes(selfDirect.status),
+  String(selfDirect.status),
+)
+const adminDirect = await call(
+  admin,
+  'POST',
+  `/campaigns/applications/${appE.id}/extensions`,
+  { days: 1, reason: '운영자 확인 후 하루 연장' },
+)
+check(
+  '운영자 직접 연장',
+  adminDirect.status === 200 &&
+    adminDirect.data.logs.some((l) => l.source === 'ADMIN'),
+)
+const historyAfter = (
+  await call(admin, 'GET', `/admin/members/${memberB.id}/extensions`)
+).data
+check(
+  '운영자 회원 상세: 연장 횟수가 3회 늘고 출처별로 셈',
+  historyAfter.yearCount === historyBefore.yearCount + 3 &&
+    historyAfter.directCount === historyBefore.directCount + 3,
+  `${historyBefore.yearCount} → ${historyAfter.yearCount}`,
+)
+check(
+  '직접 연장 알림이 참여자에게 감',
+  (await notes(userB)).some((n) => String(n.title).includes('기간을 2일')),
+)
+check(
+  '운영자 연장 요청 목록(회원 링크용 번호 포함)',
+  (await call(admin, 'GET', '/admin/extension-requests')).data.some(
+    (e) => e.applicationId === appE.id && e.participantMemberId === memberB.id,
+  ),
+)
+
 // ───────── 5) 마감 지난 미제출 자동 취소 · 6) 업체 미선정 ─────────
 const cM = await createCampaign({
   title: `[QA-CHG-M] 미제출 자동 처리 점검 ${stamp}`,
@@ -449,8 +543,10 @@ const ap = await pageAs(browser, admin)
 await ap.goto(`${base}/admin/participation`, { waitUntil: 'networkidle' })
 const adminText = await ap.locator('main').innerText()
 check(
-  '운영자 협의 취소·업체 미선정 화면',
-  adminText.includes('QA-CHG-A') && adminText.includes('QA-CHG-U'),
+  '운영자 협의 취소·연장 요청·업체 미선정 화면',
+  adminText.includes('QA-CHG-A') &&
+    adminText.includes('기간 연장 요청') &&
+    adminText.includes('QA-CHG-U'),
 )
 await ap.screenshot({ path: './e2e/chg_admin.png', fullPage: true })
 const bp = await pageAs(browser, brand)
@@ -462,6 +558,32 @@ check(
   (await bp.locator('main').innerText()).includes('연장'),
 )
 await bp.screenshot({ path: './e2e/chg_seller.png', fullPage: true })
+await bp.goto(
+  `${base}/seller/participants?campaignId=${cE}&applicationId=${appE.id}`,
+  { waitUntil: 'networkidle' },
+)
+await bp
+  .getByRole('button', { name: new RegExp(`신청 ${appE.id} 상세 보기`) })
+  .click()
+const directRegion = bp.getByRole('region', { name: '기간 직접 연장' })
+check(
+  '업체 참여자 상세: 직접 연장 영역과 연장 횟수',
+  await directRegion
+    .waitFor({ timeout: 5000 })
+    .then(async () => (await directRegion.innerText()).includes('최근 1년'))
+    .catch(() => false),
+)
+await directRegion
+  .screenshot({ path: './e2e/chg_seller_direct.png' })
+  .catch(() => {})
+await ap.goto(`${base}/admin/members/${memberB.id}`, {
+  waitUntil: 'networkidle',
+})
+check(
+  '운영자 회원 상세: 기간 연장 이력 카드',
+  (await ap.locator('main').innerText()).includes('기간 연장 이력'),
+)
+await ap.screenshot({ path: './e2e/chg_admin_member.png', fullPage: true })
 // 캠페인 작성: 선착순을 고르면 지역(방문형)·방문 참여로 맞추고, 채널을 고르면 기본 요건이 빈 칸에 자동으로 채워집니다(저장하지 않음).
 await bp.goto(`${base}/seller/campaigns/new`, { waitUntil: 'networkidle' })
 await bp.getByLabel('선정 방식').selectOption('FIRST_COME')

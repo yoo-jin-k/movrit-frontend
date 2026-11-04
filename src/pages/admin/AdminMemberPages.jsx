@@ -3,6 +3,7 @@
  *
  * - 목록(/admin/members): GET /api/admin/members — 이름·이메일·닉네임 검색, 상태 필터
  * - 상세(/admin/members/:id): GET /api/admin/members/{id} — 기본 정보, 운영 브랜드, 최근 캠페인 신청
+ *   기간 연장 이력: GET /api/admin/members/{id}/extensions — 연장 횟수(최근 1년·전체)와 출처별 기록
  * - 계정 정지·해제: PATCH /api/members/admin/{id}/status?status=SUSPENDED|ACTIVE
  *   운영자 계정과 본인 계정은 바꿀 수 없습니다(서버도 본인 계정 변경을 막습니다).
  */
@@ -31,6 +32,7 @@ import {
   statusLabel,
 } from '../../features/admin/adminConsoleModel'
 import useAdminResource from '../../features/admin/useAdminResource'
+import MemberExtensionHistory from '../../features/participation/MemberExtensionHistory'
 
 const MEMBER_CHIPS = [
   ['', '전체'],
@@ -217,6 +219,8 @@ export function AdminMemberDetailPage() {
                   <p className="admin-muted">캠페인 신청 내역이 없습니다.</p>
                 )}
               </AdminCard>
+              {/* 참여자 요청 승인 + 업체·운영자 직접 연장을 모두 센 연장 횟수입니다. */}
+              <MemberExtensionHistory memberId={member.id} />
             </div>
           </>
         )}

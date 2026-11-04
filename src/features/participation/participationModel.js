@@ -62,10 +62,12 @@ export const GRADE_STYLES = {
   DIAMOND: 'diamond',
 }
 // CANCEL_LIMIT: 참여 취소(단순 취소·마감 지난 미제출 자동 취소)가 1년 안에 5회 쌓여 바뀐 패널티입니다.
+// EXTENSION_LIMIT: 기간 연장(참여자 요청 승인·업체/운영자 직접 연장)이 1년 안에 10회 쌓여 바뀐 패널티로, 30일 동안 신청을 막습니다.
 export const PENALTY_LABELS = {
   NO_SUBMIT: '미제출',
   NO_SHOW: '노쇼',
   CANCEL_LIMIT: '취소 5회 누적',
+  EXTENSION_LIMIT: '연장 10회 누적',
 }
 
 // 다음 등급 안내 문구입니다.

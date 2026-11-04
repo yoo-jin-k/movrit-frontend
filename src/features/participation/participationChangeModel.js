@@ -61,6 +61,22 @@ export function extensionCountText(yearCount = 0, totalCount = 0) {
   return `최근 1년 ${yearCount ?? 0}회 · 전체 ${totalCount ?? 0}회`
 }
 
+// 연장 횟수 기준 안내입니다. 예) 기준 3/10회 · 5회부터 운영자 알림, 10회면 패널티 1회와 30일 신청 제한
+export const EXTENSION_WARN_AT = 5
+export const EXTENSION_LIMIT_AT = 10
+export function extensionLimitText(
+  count = 0,
+  warnAt = EXTENSION_WARN_AT,
+  limitAt = EXTENSION_LIMIT_AT,
+) {
+  return `기준 ${count ?? 0}/${limitAt}회 · ${warnAt}회부터 운영자 알림, ${limitAt}회면 패널티 1회와 30일 신청 제한(1년 안 연장, 패널티로 바뀌면 0회부터)`
+}
+
+// 'warn': 운영자 알림 기준 이상, '': 그 아래
+export function extensionLevel(count = 0, warnAt = EXTENSION_WARN_AT) {
+  return Number(count) >= Number(warnAt) ? 'warn' : ''
+}
+
 // 취소 횟수 안내입니다. 예) 취소 2/5회 · 5회가 되면 패널티 1회로 바뀝니다.
 export function cancelCountText(count, limit = CANCEL_LIMIT_FALLBACK) {
   const used = Number(count) || 0

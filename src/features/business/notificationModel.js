@@ -27,6 +27,8 @@ export function notificationPath(item, business = false) {
         ADMIN_REPORT: '/admin/moderation',
         // 운영자에게 온 협의 취소 요청 알림은 '패널티·마감 알림' 화면의 협의 취소 목록으로 이동합니다.
         ADMIN_CANCEL_REQUEST: '/admin/participation',
+        // 연장이 잦은 참여자(1년 5회 알림·10회 신청 제한) 알림은 그 참여자의 회원 상세(연장 이력)로 이동합니다.
+        ADMIN_MEMBER: `/admin/members/${id}`,
       }
   return paths[item.targetType] || null
 }

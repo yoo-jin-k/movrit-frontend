@@ -3,6 +3,7 @@
  * - 참여자 한 명에게 사정이 있을 때 업체나 운영자가 1~30일을 사유와 함께 직접 늘립니다. 횟수 제한은 없습니다.
  * - 늘리면 이 신청의 체험 기간과 콘텐츠 마감이 함께 늘어나고(캠페인 일정은 그대로), 참여자에게 사유와 함께 알림이 갑니다.
  * - 모든 연장은 기록되어 이 참여자의 연장 횟수(최근 1년·전체)로 보이고, 운영자 회원 상세에서도 확인합니다.
+ * - 연장 횟수 기준: 1년 5회면 운영자 알림, 10회면 패널티 1회와 30일 신청 제한(서버가 자동 적용).
  * - 참여자가 보낸 연장 요청이 확인 대기 중이면 그 요청을 먼저 처리해야 합니다.
  */
 import { useEffect, useState } from 'react'
@@ -17,6 +18,8 @@ import {
   EXTENSION_SOURCE,
   directExtensionError,
   extensionCountText,
+  extensionLevel,
+  extensionLimitText,
 } from './participationChangeModel'
 import './participation.css'
 
@@ -89,9 +92,14 @@ export default function DirectExtensionPanel({
           )}
         </strong>
         <br />
-        <small>
-          참여자 요청 승인과 업체·운영자 직접 연장을 모두 셉니다. 잦은 연장은
-          운영자가 회원 정보에서 확인합니다.
+        <small
+          className={
+            extensionLevel(data.countingCount, data.warnAt)
+              ? 'extension-limit is-warn'
+              : 'extension-limit'
+          }
+        >
+          {extensionLimitText(data.countingCount, data.warnAt, data.limitAt)}
         </small>
       </p>
       <p>

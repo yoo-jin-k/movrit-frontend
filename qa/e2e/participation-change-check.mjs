@@ -425,6 +425,74 @@ check(
   ),
 )
 
+// ───────── 4-3) 연장 횟수 기준: 1년 5회 운영자 알림, 10회 패널티·30일 신청 제한 ─────────
+// 점검 계정은 반복 점검으로 연장 기록이 쌓여 있으므로, 제한이 걸릴 때까지 하루씩 늘린 뒤 확인하고 바로 패널티를 취소합니다.
+const extensionPenalties = async () =>
+  (await call(admin, 'GET', '/admin/penalties')).data.filter(
+    (p) =>
+      p.active && p.type === 'EXTENSION_LIMIT' && p.memberId === memberB.id,
+  )
+const extendOneDay = (n) =>
+  call(admin, 'POST', `/campaigns/applications/${appE.id}/extensions`, {
+    days: 1,
+    reason: `연장 횟수 기준 점검 ${n}`,
+  })
+let limitPenalties = await extensionPenalties()
+for (let n = 1; !limitPenalties.length && n <= 12; n++) {
+  await extendOneDay(n)
+  limitPenalties = await extensionPenalties()
+}
+const limitedActivity = (await call(userB, 'GET', '/members/me/activity')).data
+const cL = await createCampaign({
+  title: `[QA-CHG-L] 연장 누적 신청 제한 점검 ${stamp}`,
+})
+const blocked = await apply(userB, cL)
+check(
+  '연장 10회 → 연장 누적 패널티와 30일 신청 제한',
+  limitPenalties.length >= 1 &&
+    limitedActivity.restrictedUntil &&
+    blocked.status === 409 &&
+    String(blocked.data?.detail).includes('패널티'),
+  `${limitPenalties.length}건 ${limitedActivity.restrictedUntil} ${blocked.status}`,
+)
+const limitedHistory = (
+  await call(admin, 'GET', `/admin/members/${memberB.id}/extensions`)
+).data
+check(
+  '운영자 회원 상세: 신청 제한 중 표시, 횟수는 0회부터 다시',
+  Boolean(limitedHistory.restrictedUntil) &&
+    limitedHistory.countingCount < limitedHistory.limitAt &&
+    limitedHistory.limitPenaltyCount >= 1,
+  `기준 ${limitedHistory.countingCount}/${limitedHistory.limitAt}`,
+)
+for (const p of await extensionPenalties())
+  await call(admin, 'PATCH', `/admin/penalties/${p.id}/revoke`, {
+    reason: '점검 종료 정리',
+  })
+check(
+  '운영자가 연장 누적 패널티를 취소하면 신청 제한이 풀림',
+  !(await call(userB, 'GET', '/members/me/activity')).data.restrictedUntil,
+)
+const warnNotes = async (user, pattern) =>
+  (await notes(user)).filter((n) => pattern.test(String(n.title))).length
+const adminWarnBefore = await warnNotes(admin, /1년 안에 5회인 참여자/)
+const userWarnBefore = await warnNotes(userB, /1년 안에 5회가 되었습니다/)
+let counting = limitedHistory.countingCount
+for (let n = 1; counting < limitedHistory.warnAt && n <= 6; n++) {
+  counting = (await extendOneDay(`알림 ${n}`)).data.countingCount
+}
+const adminWarn = (await notes(admin)).find((n) =>
+  /1년 안에 5회인 참여자/.test(String(n.title)),
+)
+check(
+  '연장 5회 → 운영자 알림(회원 상세로 이동)과 참여자 안내',
+  (await warnNotes(admin, /1년 안에 5회인 참여자/)) > adminWarnBefore &&
+    (await warnNotes(userB, /1년 안에 5회가 되었습니다/)) > userWarnBefore &&
+    adminWarn?.targetType === 'ADMIN_MEMBER' &&
+    adminWarn?.targetId === memberB.id,
+  `기준 ${counting}회`,
+)
+
 // ───────── 5) 마감 지난 미제출 자동 취소 · 6) 업체 미선정 ─────────
 const cM = await createCampaign({
   title: `[QA-CHG-M] 미제출 자동 처리 점검 ${stamp}`,
@@ -579,9 +647,11 @@ await directRegion
 await ap.goto(`${base}/admin/members/${memberB.id}`, {
   waitUntil: 'networkidle',
 })
+const memberPageText = await ap.locator('main').innerText()
 check(
-  '운영자 회원 상세: 기간 연장 이력 카드',
-  (await ap.locator('main').innerText()).includes('기간 연장 이력'),
+  '운영자 회원 상세: 기간 연장 이력 카드와 횟수 기준',
+  memberPageText.includes('기간 연장 이력') &&
+    memberPageText.includes('5회부터 운영자 알림'),
 )
 await ap.screenshot({ path: './e2e/chg_admin_member.png', fullPage: true })
 // 캠페인 작성: 선착순을 고르면 지역(방문형)·방문 참여로 맞추고, 채널을 고르면 기본 요건이 빈 칸에 자동으로 채워집니다(저장하지 않음).
@@ -600,7 +670,7 @@ await bp.screenshot({ path: './e2e/chg_editor.png', fullPage: true })
 for (const id of created)
   await call(brand, 'PATCH', `/collaborations/campaigns/${id}/close`)
 const penalties = (await call(admin, 'GET', '/admin/penalties')).data.filter(
-  (p) => p.active && p.type === 'CANCEL_LIMIT',
+  (p) => p.active && ['CANCEL_LIMIT', 'EXTENSION_LIMIT'].includes(p.type),
 )
 for (const p of penalties)
   await call(admin, 'PATCH', `/admin/penalties/${p.id}/revoke`, {

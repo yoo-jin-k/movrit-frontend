@@ -506,3 +506,23 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 연장 횟수 기준 안내(5회 이상 주의, 신청 제한 중) */
+.extension-limit {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.extension-limit.is-warn {
+  color: #b45309;
+  font-weight: 600;
+}
+.extension-limit.is-limited {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+}

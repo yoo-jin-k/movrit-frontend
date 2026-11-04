@@ -8,6 +8,8 @@ import {
   EXTENSION_SOURCE,
   evidenceError,
   extensionCountText,
+  extensionLevel,
+  extensionLimitText,
   eventsOnDay,
   extensionError,
   initialCalendarMonth,
@@ -27,6 +29,7 @@ import {
   hasChannelDefaults,
 } from '../src/features/sellerCampaigns/channelRequirementModel.js'
 import { notificationPath } from '../src/features/business/notificationModel.js'
+import { PENALTY_LABELS } from '../src/features/participation/participationModel.js'
 import { adaptCampaignSummary } from '../src/features/discovery/campaignReadAdapter.js'
 
 test('취소·연장 사유와 증빙 이미지를 미리 확인합니다', () => {
@@ -218,4 +221,19 @@ test('업체·운영자 직접 연장은 1~30일과 사유를 확인하고, 연�
   assert.equal(extensionCountText(), '최근 1년 0회 · 전체 0회')
   assert.equal(EXTENSION_SOURCE.SELLER, '업체 직접 연장')
   assert.equal(EXTENSION_SOURCE.PARTICIPANT_REQUEST, '참여자 요청 승인')
+})
+
+test('연장 횟수 기준: 5회부터 주의, 10회면 패널티와 30일 신청 제한을 안내합니다', () => {
+  assert.match(
+    extensionLimitText(3, 5, 10),
+    /^기준 3\/10회 · 5회부터 운영자 알림, 10회면 패널티 1회와 30일 신청 제한/,
+  )
+  assert.match(extensionLimitText(), /^기준 0\/10회/)
+  assert.equal(extensionLevel(4, 5), '')
+  assert.equal(extensionLevel(5, 5), 'warn')
+  assert.equal(PENALTY_LABELS.EXTENSION_LIMIT, '연장 10회 누적')
+  assert.equal(
+    notificationPath({ targetType: 'ADMIN_MEMBER', targetId: 76 }),
+    '/admin/members/76',
+  )
 })

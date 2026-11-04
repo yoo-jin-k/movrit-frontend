@@ -42,7 +42,7 @@ export default function MyActivityCard() {
       </div>
       {activity.restrictedUntil && (
         <p className="participant-activity__warn" role="status">
-          패널티가 쌓여 {String(activity.restrictedUntil).slice(0, 10)}까지 새
+          패널티로 {String(activity.restrictedUntil).slice(0, 10)}까지 새
           캠페인에 신청할 수 없습니다.
         </p>
       )}
@@ -70,6 +70,8 @@ export default function MyActivityCard() {
       <small className="my-activity__rule">
         등급은 완료한 캠페인 수로 정해집니다(브론즈 1회·실버 3회·골드 6회·다이아
         10회). 최근 90일 동안 패널티가 2회 쌓이면 30일 동안 신청할 수 없습니다.
+        기간 연장(요청 승인·업체 직접 연장 포함)이 1년 안에 10회가 되면 패널티
+        1회가 기록되고 30일 동안 신청할 수 없습니다.
       </small>
     </section>
   )

@@ -1,16 +1,21 @@
 /**
  * 운영자 회원 상세의 '기간 연장 이력' 카드입니다.
  * - 참여자 요청 승인과 업체·운영자 직접 연장을 모두 세어 최근 1년·전체 횟수와 출처별 횟수, 반려된 요청 수를 보여 줍니다.
- * - 잦은 연장은 여기서 확인하고, 필요하면 같은 화면의 계정 정지 등으로 제재를 판단합니다.
+ * - 횟수 기준(서버 자동): 1년 5회면 운영자 알림, 10회면 '연장 10회 누적' 패널티와 30일 신청 제한.
+ *   제한을 풀려면 '패널티·마감 알림' 화면에서 그 패널티를 취소합니다. 더 무거운 제재는 같은 화면의 계정 정지로 판단합니다.
  */
 import { useEffect, useState } from 'react'
 import { AdminCard } from '../../components/admin/AdminLayout'
 import { readMemberExtensions } from '../../api/participationChangeApi'
 import { workspaceTime } from '../membership/campaignWorkspaceModel'
+import { dateLabel } from '../business/businessModel'
 import {
   EXTENSION_SOURCE,
   extensionCountText,
+  extensionLevel,
+  extensionLimitText,
 } from './participationChangeModel'
+import './participation.css'
 
 export default function MemberExtensionHistory({ memberId }) {
   const [state, setState] = useState({ loading: true, data: null })
@@ -43,6 +48,20 @@ export default function MemberExtensionHistory({ memberId }) {
             <strong>
               {extensionCountText(data.yearCount, data.totalCount)}
             </strong>
+          </p>
+          {data.restrictedUntil && (
+            <p className="extension-limit is-limited" role="status">
+              신청 제한 중 · {dateLabel(data.restrictedUntil)}까지
+            </p>
+          )}
+          <p
+            className={`extension-limit${
+              extensionLevel(data.countingCount, data.warnAt) ? ' is-warn' : ''
+            }`}
+          >
+            {extensionLimitText(data.countingCount, data.warnAt, data.limitAt)}
+            {data.limitPenaltyCount > 0 &&
+              ` · 연장 누적 패널티 ${data.limitPenaltyCount}회`}
           </p>
           <p className="admin-muted">
             참여자 요청 승인 {data.requestCount}회 · 업체·운영자 직접 연장{' '}

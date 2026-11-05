@@ -630,10 +630,15 @@ await bp.goto(
   `${base}/seller/participants?campaignId=${cE}&applicationId=${appE.id}`,
   { waitUntil: 'networkidle' },
 )
-await bp
-  .getByRole('button', { name: new RegExp(`신청 ${appE.id} 상세 보기`) })
-  .click()
+// 신청 하나를 가리켜 들어오면 상세가 바로 열립니다(목록에서 다시 누르지 않아도 됨).
 const directRegion = bp.getByRole('region', { name: '기간 직접 연장' })
+check(
+  '업체 참여자: 신청을 가리켜 들어오면 상세가 바로 열림',
+  await directRegion
+    .waitFor({ timeout: 5000 })
+    .then(() => true)
+    .catch(() => false),
+)
 check(
   '업체 참여자 상세: 직접 연장 영역과 연장 횟수',
   await directRegion

@@ -12,6 +12,8 @@ const REASONS = {
   CHANNEL_METRIC_UNVERIFIED: '등록된 채널 지표가 아직 확인되지 않았습니다.',
   CHANNEL_METRIC_BELOW_MINIMUM:
     '확인된 채널 지표가 이 캠페인의 최소 기준에 미달합니다.',
+  CHANNEL_METRIC_STALE:
+    '블로그 방문자 수를 확인한 지 하루가 지났습니다. 다시 확인해 주세요.',
   CHANNEL_REQUIRED: '활동 채널 정보를 먼저 등록해 주세요.',
   EMAIL_VERIFICATION_REQUIRED: '이메일 인증을 완료해 주세요.',
   ALREADY_APPLIED: '이미 신청한 캠페인입니다.',
@@ -63,10 +65,26 @@ export function campaignRequirementSummary(requirement) {
   )
     return '캠페인별 채널 조건을 확인할 수 없습니다.'
   const channels = { INSTAGRAM: '인스타그램', NAVER_BLOG: '네이버 블로그' }
-  const metrics = { FOLLOWER_COUNT: '팔로워 수', VISITOR_COUNT: '방문자 수' }
+  const metrics = {
+    FOLLOWER_COUNT: '팔로워 수',
+    VISITOR_COUNT: '방문자 수',
+    DAILY_VISITORS: '일평균 방문자',
+  }
+  const periods = { RECENT_4_DAYS: '최근 4일 평균' }
   if (!channels[requirement.channelType] || !metrics[requirement.metricType])
     return '캠페인에 별도 채널 지표 조건이 있습니다.'
-  return `${channels[requirement.channelType]} ${metrics[requirement.metricType]} ${requirement.minimumValue.toLocaleString('ko-KR')} 이상${requirement.measurementPeriod ? ` (집계기간: ${requirement.measurementPeriod})` : ''}`
+  const period = requirement.measurementPeriod
+    ? ` (${periods[requirement.measurementPeriod] || `집계기간: ${requirement.measurementPeriod}`})`
+    : ''
+  return `${channels[requirement.channelType]} ${metrics[requirement.metricType]} ${requirement.minimumValue.toLocaleString('ko-KR')}명 이상${period}`
+}
+
+// 네이버 블로그 일평균 방문자 조건인지 봅니다. 이 조건이 있는 캠페인만 신청 화면에서 방문자 수 확인을 안내합니다.
+export function isVisitorRequirement(requirement) {
+  return (
+    requirement?.channelType === 'NAVER_BLOG' &&
+    requirement?.metricType === 'DAILY_VISITORS'
+  )
 }
 // 당시 평가값과 검증 상태를 표시하며 누락된 수치를 임의의 통과값으로 만들지 않습니다.
 export function metricEvaluationSummary(evaluation) {

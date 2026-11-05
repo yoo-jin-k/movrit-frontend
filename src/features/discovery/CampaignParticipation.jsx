@@ -13,11 +13,13 @@ import {
 import { CAMPAIGN_APPLIED_EVENT } from '../../api/campaignReadApi'
 import EmailVerificationPanel from './EmailVerificationPanel'
 import LiveApplicationForm from './LiveApplicationForm'
+import VisitorCheckPanel from './VisitorCheckPanel'
 import { readCampaignEligibility } from '../../api/campaignParticipationApi'
 import {
   applicationAvailable,
   eligibilityReason,
   campaignRequirementSummary,
+  isVisitorRequirement,
   metricEvaluationSummary,
 } from './eligibilityModel'
 import { participationError } from './participationError'
@@ -34,6 +36,7 @@ export default function CampaignParticipation({ campaignId, form, onRefresh }) {
   })
   const [submitted, setSubmitted] = useState(null)
   const [attempt, setAttempt] = useState(0)
+  const [visitorCheck, setVisitorCheck] = useState(null)
   useEffect(() => {
     if (!loggedIn) return
     const controller = new AbortController()
@@ -108,7 +111,18 @@ export default function CampaignParticipation({ campaignId, form, onRefresh }) {
             {campaignRequirementSummary(state.eligibility.campaignRequirement)}
           </p>
           <p>{metricEvaluationSummary(state.eligibility.metricEvaluation)}</p>
-          <Link to="/creator/profile">내 채널 지표 확인</Link>
+          {isVisitorRequirement(state.eligibility.campaignRequirement) ? (
+            <VisitorCheckPanel
+              eligibility={state.eligibility}
+              result={visitorCheck}
+              onChecked={(checked) => {
+                setVisitorCheck(checked)
+                reload()
+              }}
+            />
+          ) : (
+            <Link to="/creator/profile">내 채널 지표 확인</Link>
+          )}
           <p>
             로그인, 이메일 인증, 모집기간 및 신청서 확인은 별도로 필요합니다.
           </p>

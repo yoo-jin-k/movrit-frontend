@@ -145,16 +145,35 @@ export default function ParticipantPortfolio({ data }) {
                 evaluation.applicationRequirementSnapshot ?? undefined,
               )}
         </p>
-        {evaluation.applicationRequirementSnapshot && (
-          <p>
-            현재 비교 지표: {metricValueLabel(evaluation.currentMetricValue)} ·{' '}
-            {metricVerificationLabel(evaluation.currentVerificationStatus)}
-          </p>
+        {evaluation.evaluationBasis === 'METRIC_AT_APPLICATION' ? (
+          <>
+            {/* 블로그 방문자 조건은 참여자가 신청할 때 확인한 값만 보여줍니다. */}
+            <p>
+              신청 당시 일평균 방문자:{' '}
+              {metricValueLabel(evaluation.currentMetricValue)}
+              {evaluation.currentMetricValue != null && '명'}
+            </p>
+            <p className="business-info">
+              참여자가 신청할 때 블로그 방문자 위젯에서 확인한 최근 4일
+              평균(오늘 제외)입니다. 방문자 수는 이 조건이 있는 캠페인에서만
+              공개됩니다.
+            </p>
+          </>
+        ) : (
+          <>
+            {evaluation.applicationRequirementSnapshot && (
+              <p>
+                현재 비교 지표:{' '}
+                {metricValueLabel(evaluation.currentMetricValue)} ·{' '}
+                {metricVerificationLabel(evaluation.currentVerificationStatus)}
+              </p>
+            )}
+            <p className="business-info">
+              신청 당시 저장한 조건과 현재 지표를 비교한 결과입니다. 신청 당시의
+              판정 또는 새로운 신청 가능 여부를 의미하지 않습니다.
+            </p>
+          </>
         )}
-        <p className="business-info">
-          신청 당시 저장한 조건과 현재 지표를 비교한 결과입니다. 신청 당시의
-          판정 또는 새로운 신청 가능 여부를 의미하지 않습니다.
-        </p>
       </section>
       <section aria-label="해당 신청 답변">
         <h3>해당 신청 답변</h3>

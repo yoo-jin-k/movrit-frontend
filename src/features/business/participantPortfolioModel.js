@@ -47,6 +47,15 @@ export function requirementResult(evaluation) {
     return '추가 채널 조건 없음'
   if (evaluation?.evaluationBasis === 'APPLICATION_SNAPSHOT_UNAVAILABLE')
     return '신청 당시 조건 확인 불가'
+  // 블로그 방문자 조건은 신청 당시 확인한 값으로 판정합니다.
+  if (evaluation?.evaluationBasis === 'METRIC_AT_APPLICATION') {
+    if (!evaluation.applicationRequirementSnapshot)
+      return '신청 당시 조건 확인 불가'
+    if (evaluation.satisfied === true) return '신청 당시 조건 충족'
+    return evaluation.reason === 'CHANNEL_METRIC_REQUIRED'
+      ? '신청 당시 방문자 수 기록 없음'
+      : '신청 당시 기준 미달'
+  }
   if (
     !evaluation ||
     evaluation.evaluationBasis !== 'CURRENT_METRIC_AGAINST_APPLICATION_SNAPSHOT'

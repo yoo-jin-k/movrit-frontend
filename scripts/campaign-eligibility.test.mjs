@@ -83,7 +83,7 @@ test('명시적인 빈 조건만 조건 없음으로 표시하고 500을 캠페�
       metricType: 'FOLLOWER_COUNT',
       minimumValue: 500,
     }),
-    '인스타그램 팔로워 수 500 이상',
+    '인스타그램 팔로워 수 500명 이상',
   )
 })
 test('이전 channelReady 없이도 신규 서버 응답을 검증합니다', () => {

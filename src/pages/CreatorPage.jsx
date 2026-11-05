@@ -97,6 +97,7 @@ export default function CreatorPage() {
                         {{
                           FOLLOWER_COUNT: '팔로워 수',
                           VISITOR_COUNT: '방문자 수',
+                          DAILY_VISITORS: '일평균 방문자 수',
                         }[metric.metricType] || metric.metricType}
                       </strong>
                       <p>
@@ -105,7 +106,12 @@ export default function CreatorPage() {
                         등급 미산정
                       </p>
                       {metric.measurementPeriod && (
-                        <p>집계기간: {metric.measurementPeriod}</p>
+                        <p>
+                          집계기간:{' '}
+                          {metric.measurementPeriod === 'RECENT_4_DAYS'
+                            ? '최근 4일 평균(오늘 제외)'
+                            : metric.measurementPeriod}
+                        </p>
                       )}
                     </li>
                   ))}

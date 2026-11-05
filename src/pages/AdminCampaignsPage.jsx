@@ -3,7 +3,8 @@
  * - 모든 브랜드의 캠페인을 상태(모집 예정·모집 중·모집 마감·숨김)와 신청·선정·완료 수로 봅니다.
  * - 부적절하거나 점검용인 캠페인은 사유와 함께 '숨기기'(마감)로 사용자 목록에서 내리고, 필요하면 '다시 공개'합니다.
  * - 숨김은 데이터를 지우지 않습니다. 이미 진행 중인 참여자·콘텐츠 흐름은 그대로 이어집니다.
- * - 서버 API: GET /api/admin/campaigns, PATCH …/{id}/close, PATCH …/{id}/reopen
+ * - 캠페인마다 신청 조건(인스타그램 팔로워 수·네이버 블로그 일평균 방문자)을 정하거나 해제합니다.
+ * - 서버 API: GET /api/admin/campaigns, PATCH …/{id}/close, PATCH …/{id}/reopen, PUT·DELETE …/{id}/eligibility-requirement
  */
 import { useState } from 'react'
 import api from '../api/axios'
@@ -18,11 +19,14 @@ import {
   filterAdminCampaigns,
   isQaCampaign,
 } from '../features/admin/adminCampaignModel'
+import AdminRequirementEditor from '../features/admin/AdminRequirementEditor'
+import { campaignRequirementSummary } from '../features/discovery/eligibilityModel'
 
 export default function AdminCampaignsPage() {
   const state = useBusinessList('/admin/campaigns')
   const [filter, setFilter] = useState({ state: '', search: '', showQa: true })
   const [closing, setClosing] = useState(null)
+  const [editingRequirement, setEditingRequirement] = useState(null)
   const [reason, setReason] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -136,6 +140,7 @@ export default function AdminCampaignsPage() {
                   <th>상태</th>
                   <th>모집 기간</th>
                   <th>신청·선정·완료 / 모집</th>
+                  <th>신청 조건</th>
                   <th>관리</th>
                 </tr>
               </thead>
@@ -172,12 +177,30 @@ export default function AdminCampaignsPage() {
                       {item.applied} · {item.selected} · {item.completed} /{' '}
                       {item.recruitmentCount ?? '-'}명
                     </td>
+                    <td data-label="신청 조건">
+                      {item.requirement
+                        ? campaignRequirementSummary(item.requirement)
+                        : '없음'}
+                      <br />
+                      <button
+                        className="admin-button admin-button--secondary"
+                        disabled={busy}
+                        onClick={() => {
+                          setClosing(null)
+                          setEditingRequirement(item)
+                          setError('')
+                        }}
+                      >
+                        조건 설정
+                      </button>
+                    </td>
                     <td data-label="관리">
                       {item.open ? (
                         <button
                           className="admin-button admin-button--secondary"
                           disabled={busy}
                           onClick={() => {
+                            setEditingRequirement(null)
                             setClosing(item)
                             setReason(
                               isQaCampaign(item) ? '점검용 캠페인 정리' : '',
@@ -203,6 +226,18 @@ export default function AdminCampaignsPage() {
             </table>
           </div>
         </AdminCard>
+      )}
+      {editingRequirement && (
+        <AdminRequirementEditor
+          key={editingRequirement.id}
+          item={editingRequirement}
+          onCancel={() => setEditingRequirement(null)}
+          onDone={(message) => {
+            setNotice(message)
+            setEditingRequirement(null)
+            state.reload()
+          }}
+        />
       )}
       {closing && (
         <AdminCard title={`#${closing.id} 캠페인 숨기기`}>

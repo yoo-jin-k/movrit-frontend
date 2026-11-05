@@ -59,7 +59,7 @@ export default function BusinessParticipants() {
   const inFlight = useRef(false)
   const applicationId = params.get('applicationId') || ''
   const [status, setStatus] = useState(''),
-    [selected, setSelected] = useState(null),
+    [picked, setPicked] = useState(null),
     [action, setAction] = useState(''),
     [error, setError] = useState(''),
     [notice, setNotice] = useState(''),
@@ -70,6 +70,18 @@ export default function BusinessParticipants() {
     // 일괄 처리: 체크한 신청 ID와 확인 중인 동작(select·reject)
     [checked, setChecked] = useState(() => new Set()),
     [bulkAction, setBulkAction] = useState('')
+  // 환급·알림 화면에서 신청 하나를 가리켜(?applicationId=) 들어오면 그 참여자 상세를 바로 엽니다.
+  // 사용자가 상세를 닫으면 같은 신청을 다시 자동으로 열지 않습니다.
+  const [dismissedTarget, setDismissedTarget] = useState('')
+  const autoTarget =
+    applicationId && dismissedTarget !== applicationId
+      ? state.data.find((item) => String(item.id) === applicationId) || null
+      : null
+  const selected = picked || autoTarget
+  const setSelected = (item) => {
+    if (!item && applicationId) setDismissedTarget(applicationId)
+    setPicked(item)
+  }
   // 상세는 자동 새로고침된 최신 목록의 같은 신청을 보여줍니다(목록에서 사라졌으면 열었던 값을 유지).
   const current =
     (selected && state.data.find((item) => item.id === selected.id)) || selected

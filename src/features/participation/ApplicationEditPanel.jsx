@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { readCampaignForm } from '../../api/campaignReadApi'
 import { reviseApplication } from '../../api/participationApi'
+import { formatContactPhone } from '../membership/phoneVerificationModel'
 import './participation.css'
 
 const CONTACT_FIELDS = [
@@ -113,12 +114,17 @@ export default function ApplicationEditPanel({ application, onSaved }) {
               <label key={key}>
                 {label}
                 <input
+                  type={key === 'recipientPhone' ? 'tel' : 'text'}
                   required={key !== 'address2'}
                   value={contact[key] || ''}
                   onChange={(e) =>
                     setContact((current) => ({
                       ...current,
-                      [key]: e.target.value,
+                      // 연락처는 신청서와 같이 하이픈 모양으로 맞춥니다.
+                      [key]:
+                        key === 'recipientPhone'
+                          ? formatContactPhone(e.target.value)
+                          : e.target.value,
                     }))
                   }
                 />

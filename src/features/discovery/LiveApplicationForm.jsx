@@ -5,6 +5,7 @@
 import { fulfillmentLabel } from '../purchaseReview/purchaseReviewModel'
 import { participationError } from './participationError'
 import { applicationPayload } from './applicationPayload'
+import { formatContactPhone } from '../membership/phoneVerificationModel'
 import { useState } from 'react'
 import api from '../../api/axios'
 
@@ -106,7 +107,14 @@ export default function LiveApplicationForm({
                 required={key !== 'address2'}
                 value={contact[key] || ''}
                 onChange={(e) =>
-                  setContact((old) => ({ ...old, [key]: e.target.value }))
+                  setContact((old) => ({
+                    ...old,
+                    // 연락처는 입력하는 대로 010-1234-5678 모양으로 맞춰 저장합니다.
+                    [key]:
+                      key === 'recipientPhone'
+                        ? formatContactPhone(e.target.value)
+                        : e.target.value,
+                  }))
                 }
               />
             </label>

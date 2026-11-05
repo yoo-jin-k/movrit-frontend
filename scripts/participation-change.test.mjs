@@ -12,6 +12,7 @@ import {
   extensionLimitText,
   eventsOnDay,
   extensionError,
+  extendedResultsAt,
   initialCalendarMonth,
   reasonError,
 } from '../src/features/participation/participationChangeModel.js'
@@ -236,4 +237,38 @@ test('연장 횟수 기준: 5회부터 주의, 10회면 패널티와 30일 신�
     notificationPath({ targetType: 'ADMIN_MEMBER', targetId: 76 }),
     '/admin/members/76',
   )
+})
+
+test('연장으로 콘텐츠 마감이 결과 발표보다 늦어지면 결과 발표도 같은 만큼 미뤄 보여 줍니다', () => {
+  const campaign = {
+    contentSubmissionEndAt: '2026-11-24T23:00:00',
+    resultsAnnouncedAt: '2026-11-26T23:00:00',
+  }
+  // 13일 연장 → 결과 발표도 13일 뒤
+  assert.equal(
+    extendedResultsAt(campaign, {
+      contentDeadlineExtendedUntil: '2026-12-07T23:00:00',
+    }),
+    '2026-12-09T23:00:00',
+  )
+  // 연장해도 결과 발표가 여전히 뒤면 그대로
+  assert.equal(
+    extendedResultsAt(campaign, {
+      contentDeadlineExtendedUntil: '2026-11-25T23:00:00',
+    }),
+    '2026-11-26T23:00:00',
+  )
+  assert.equal(extendedResultsAt(campaign, {}), '2026-11-26T23:00:00')
+  assert.equal(extendedResultsAt({}, {}), null)
+  const results = calendarEvents([
+    {
+      application: {
+        id: 1,
+        status: 'ACTIVE',
+        contentDeadlineExtendedUntil: '2026-12-07T23:00:00',
+      },
+      campaign: { title: '연장', ...campaign },
+    },
+  ]).find((event) => event.stage === 'results')
+  assert.equal(results.day, '2026-12-09')
 })

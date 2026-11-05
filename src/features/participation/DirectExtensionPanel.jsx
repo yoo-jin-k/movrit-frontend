@@ -122,7 +122,11 @@ export default function DirectExtensionPanel({
               min={DIRECT_EXTENSION_MIN}
               max={DIRECT_EXTENSION_MAX}
               value={days}
-              onChange={(e) => setDays(e.target.value)}
+              onChange={(e) => {
+                setDays(e.target.value)
+                // 값을 고치면 이전 안내는 지웁니다(다시 누를 때 새로 확인합니다).
+                setError('')
+              }}
             />
           </label>
           <label className="direct-extension__wide">
@@ -131,7 +135,10 @@ export default function DirectExtensionPanel({
               maxLength={500}
               rows={2}
               value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              onChange={(e) => {
+                setReason(e.target.value)
+                setError('')
+              }}
               placeholder="예) 참여자 개인 사정으로 촬영 일정을 조정했습니다."
             />
           </label>

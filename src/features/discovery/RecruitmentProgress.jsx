@@ -6,7 +6,10 @@
  * - 처음 불러오기 전에는 상세 응답의 모집 인원만 보여줍니다.
  */
 import { useEffect, useState } from 'react'
-import { readCampaignRecruitment } from '../../api/campaignReadApi'
+import {
+  CAMPAIGN_APPLIED_EVENT,
+  readCampaignRecruitment,
+} from '../../api/campaignReadApi'
 
 const REFRESH_MS = 15000
 
@@ -32,13 +35,18 @@ export default function RecruitmentProgress({
           // 실패하면 마지막 값을 유지합니다.
         })
     }
+    const onApplied = (event) => {
+      if (String(event.detail?.campaignId) === String(campaignId)) load()
+    }
     load()
     const timer = window.setInterval(load, REFRESH_MS)
     window.addEventListener('focus', load)
+    window.addEventListener(CAMPAIGN_APPLIED_EVENT, onApplied)
     document.addEventListener('visibilitychange', load)
     return () => {
       window.clearInterval(timer)
       window.removeEventListener('focus', load)
+      window.removeEventListener(CAMPAIGN_APPLIED_EVENT, onApplied)
       document.removeEventListener('visibilitychange', load)
       controller?.abort()
     }

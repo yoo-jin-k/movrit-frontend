@@ -10,6 +10,7 @@ import {
   confirmEmailCode,
   readEmailStatus,
 } from '../../api/emailVerificationApi'
+import { CAMPAIGN_APPLIED_EVENT } from '../../api/campaignReadApi'
 import EmailVerificationPanel from './EmailVerificationPanel'
 import LiveApplicationForm from './LiveApplicationForm'
 import { readCampaignEligibility } from '../../api/campaignParticipationApi'
@@ -133,6 +134,12 @@ export default function CampaignParticipation({ campaignId, form, onRefresh }) {
           onSubmitted={(result) => {
             setSubmitted(result)
             reload()
+            // 같은 화면의 모집 현황(신청 n / 모집 m명)이 바로 늘어나도록 알립니다.
+            window.dispatchEvent(
+              new CustomEvent(CAMPAIGN_APPLIED_EVENT, {
+                detail: { campaignId },
+              }),
+            )
           }}
         />
       ) : (

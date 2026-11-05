@@ -18,8 +18,10 @@ import ShipmentCard from '../shipping/ShipmentCard'
 import PurchaseProofPanel from '../purchaseReview/PurchaseProofPanel'
 import ParticipationChangePanel from '../participation/ParticipationChangePanel'
 import MyCampaignCalendar from '../participation/MyCampaignCalendar'
+import { extendedResultsAt } from '../participation/participationChangeModel'
 import {
   APPLICATION_STATUS,
+  applicationStatusLabel,
   nextCampaignAction,
   workspaceTime,
 } from './campaignWorkspaceModel'
@@ -44,7 +46,7 @@ function Workspace({ item, onReload, attempt }) {
     >
       <header>
         <span className="campaign-workspace__status">
-          {APPLICATION_STATUS[application.status] || '상태 확인 필요'}
+          {applicationStatusLabel(application)}
         </span>
         <h2>{campaign.title || `캠페인 #${application.campaignId}`}</h2>
         <p>
@@ -94,6 +96,8 @@ function Workspace({ item, onReload, attempt }) {
             contentSubmissionEndAt:
               application.contentDeadlineExtendedUntil ||
               campaign.contentSubmissionEndAt,
+            // 마감이 늘어 결과 발표가 마감보다 앞서면 같은 만큼 미뤄 보여 줍니다.
+            resultsAnnouncedAt: extendedResultsAt(campaign, application),
           })}
           defaultExpanded
         />
@@ -219,8 +223,9 @@ function Workspace({ item, onReload, attempt }) {
 export default function MyCampaignsPage() {
   const [state, setState] = useState({ loading: true, items: [], error: '' })
   const [attempt, setAttempt] = useState(0)
-  // 진입 시에는 상세를 열지 않고 사용자가 직접 선택한 신청만 표시합니다.
-  const [selectedId, setSelectedId] = useState(null)
+  // 그냥 들어오면 상세를 열지 않고, 알림처럼 특정 신청을 가리켜 들어오면 그 신청 상세를 바로 엽니다(아래 효과).
+  // undefined는 아직 고르지 않음(알림으로 가리킨 신청을 자동으로 엶), null은 사용자가 상세를 닫은 상태입니다.
+  const [selectedId, setSelectedId] = useState(undefined)
   // 'list'(목록) 또는 'calendar'(월 달력)
   const [view, setView] = useState('list')
   const [params, setParams] = useSearchParams()
@@ -277,7 +282,13 @@ export default function MyCampaignsPage() {
         String(item.application.id) === targetApplication) &&
       (!targetContent || String(item.content?.id) === targetContent),
   )
-  const selected = shown.find((item) => item.application.id === selectedId)
+  // 알림·링크로 신청 하나를 가리켜 들어왔다면 목록을 한 번 더 누르지 않아도 상세가 열리게 합니다.
+  const onlyTarget =
+    (targetApplication || targetContent) && shown.length === 1
+      ? shown[0].application.id
+      : null
+  const activeId = selectedId === undefined ? onlyTarget : selectedId
+  const selected = shown.find((item) => item.application.id === activeId)
   return (
     <BuyerLayout title="내 캠페인" className="campaign-workspace">
       <div className="campaign-workspace__toolbar">
@@ -379,8 +390,7 @@ export default function MyCampaignsPage() {
                             onClick={() => setSelectedId(item.application.id)}
                           >
                             <span className="campaign-workspace__status">
-                              {APPLICATION_STATUS[item.application.status] ||
-                                '상태 확인 필요'}
+                              {applicationStatusLabel(item.application)}
                             </span>
                             <strong>
                               {item.campaign.title ||

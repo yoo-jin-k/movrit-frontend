@@ -80,8 +80,8 @@ export default function AdminContentReviewsPage() {
       )
       setNotice(
         action === 'approve'
-          ? `콘텐츠 #${selected.id}를 최종 승인했습니다. 참여자의 신청이 완료로 바뀌었습니다.`
-          : `콘텐츠 #${selected.id}에 수정을 요청했습니다. 참여자가 다시 제출할 수 있습니다.`,
+          ? `콘텐츠 #${selected.id} 최종 승인을 마쳤습니다. 참여자의 신청이 완료로 바뀌었습니다.`
+          : `콘텐츠 #${selected.id} 수정을 요청했습니다. 참여자가 다시 제출할 수 있습니다.`,
       )
       reload()
     } catch (failure) {

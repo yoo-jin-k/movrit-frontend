@@ -10,6 +10,18 @@ export const APPLICATION_STATUS = {
   COMPLETED: '완료',
   CANCELLED: '취소',
 }
+// 선정 발표 전에 참여자가 거둬들인 신청입니다. 서버는 취소(CANCELLED)로 두고 사유 앞에 [신청 철회]를 붙입니다.
+export function isWithdrawn(application) {
+  return (
+    application?.status === 'CANCELLED' &&
+    String(application.cancellationReason || '').startsWith('[신청 철회]')
+  )
+}
+// 목록·상세의 상태 이름입니다. 철회한 신청은 '취소' 대신 '신청 철회'로 보여 줍니다.
+export function applicationStatusLabel(application) {
+  if (isWithdrawn(application)) return '신청 철회'
+  return APPLICATION_STATUS[application?.status] || '상태 확인 필요'
+}
 export function workspaceTime(value) {
   const date = seoulInstant(value)
   return date
@@ -49,7 +61,9 @@ export function nextCampaignAction(application, content) {
         ? '구매평이 승인되었습니다. 브랜드의 환급 진행 상태를 아래에서 확인해 주세요.'
         : '캠페인 참여가 완료되었습니다.',
     REJECTED: '이번 캠페인에 선정되지 않았습니다.',
-    CANCELLED: '취소된 신청입니다.',
+    CANCELLED: isWithdrawn(application)
+      ? '신청을 철회했습니다. 철회한 캠페인에는 다시 신청할 수 없습니다.'
+      : '취소된 신청입니다.',
   }
   return messages[application.status] || '최신 참여 상태를 확인해 주세요.'
 }

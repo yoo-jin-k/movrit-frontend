@@ -84,7 +84,27 @@ export function cancelCountText(count, limit = CANCEL_LIMIT_FALLBACK) {
   return `취소 ${used}/${max}회 · ${max}회가 되면 패널티 1회로 바뀌고 다시 0회부터 셉니다(1년이 지난 취소는 세지 않습니다).`
 }
 
-// 달력에 올릴 내 일정입니다. 연장이 승인된 신청은 연장된 마감을 씁니다.
+// 서버 일시 문자열(초 단위, 시간대 없음)을 같은 기준으로 계산하려고 UTC로 읽었다가 같은 형식으로 돌려줍니다.
+const asUtc = (value) => {
+  const time = Date.parse(`${String(value).slice(0, 19)}Z`)
+  return Number.isNaN(time) ? null : time
+}
+
+/**
+ * 기간이 연장된 신청의 결과 발표일입니다. 콘텐츠 마감이 늘어 결과 발표가 마감보다 앞서게 되면, 마감이 늘어난 만큼 결과 발표도
+ * 함께 미뤄 보여 줍니다(원래 마감과 결과 발표 사이 간격을 유지). 연장이 없거나 순서가 그대로면 캠페인 결과 발표일을 씁니다.
+ */
+export function extendedResultsAt(campaign, application) {
+  const results = campaign?.resultsAnnouncedAt
+  const extended = application?.contentDeadlineExtendedUntil
+  const original = campaign?.contentSubmissionEndAt
+  if (!results || !extended || !original) return results ?? null
+  const [r, e, o] = [asUtc(results), asUtc(extended), asUtc(original)]
+  if (r === null || e === null || o === null || r >= e) return results
+  return new Date(r + (e - o)).toISOString().slice(0, 19)
+}
+
+// 달력에 올릴 내 일정입니다. 연장이 승인된 신청은 연장된 마감과 그에 맞춘 결과 발표일을 씁니다.
 const CALENDAR_STAGES = [
   ['selection', '선정 발표', (c) => c.selectionAnnouncedAt],
   ['experience', '체험 시작', (c) => c.experienceStartAt],
@@ -93,7 +113,7 @@ const CALENDAR_STAGES = [
     '콘텐츠 마감',
     (c, a) => a.contentDeadlineExtendedUntil || c.contentSubmissionEndAt,
   ],
-  ['results', '결과 발표', (c) => c.resultsAnnouncedAt],
+  ['results', '결과 발표', (c, a) => extendedResultsAt(c, a)],
 ]
 const CALENDAR_HIDDEN = ['REJECTED', 'CANCELLED']
 

@@ -34,6 +34,20 @@ export function formatPhoneInput(value) {
   return `${digits.slice(0, 3)}-${digits.slice(3, 3 + middle)}-${digits.slice(3 + middle)}`
 }
 
+// 신청서 연락처처럼 일반 전화번호도 받을 수 있는 칸을 하이픈 모양으로 맞춥니다.
+// 서울(02)은 02-123-4567·02-1234-5678, 그 밖에는 휴대폰과 같은 규칙입니다. 숫자가 아닌 입력은 그대로 둡니다.
+export function formatContactPhone(value) {
+  const text = String(value ?? '')
+  if (/[^\d\s-]/.test(text)) return text
+  const digits = text.replace(/\D/g, '')
+  if (!digits.startsWith('02')) return formatPhoneInput(digits)
+  const d = digits.slice(0, 10)
+  if (d.length < 3) return d
+  if (d.length < 6) return `02-${d.slice(2)}`
+  const middle = d.length === 10 ? 4 : 3
+  return `02-${d.slice(2, 2 + middle)}-${d.slice(2 + middle)}`
+}
+
 // 남은 시간 표시입니다. 예) 4:05
 export function remainingText(seconds) {
   const safe = Math.max(0, Math.floor(seconds))

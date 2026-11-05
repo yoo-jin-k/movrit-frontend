@@ -15,6 +15,7 @@ const REASONS = {
   CHANNEL_REQUIRED: '활동 채널 정보를 먼저 등록해 주세요.',
   EMAIL_VERIFICATION_REQUIRED: '이메일 인증을 완료해 주세요.',
   ALREADY_APPLIED: '이미 신청한 캠페인입니다.',
+  ALREADY_WITHDRAWN: '신청을 철회한 캠페인이라 다시 신청할 수 없습니다.',
 }
 
 // 서버 판정과 폼 버전을 함께 확인하며 누락되거나 모순된 응답은 신청을 열지 않습니다.

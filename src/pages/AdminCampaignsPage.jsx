@@ -51,9 +51,9 @@ export default function AdminCampaignsPage() {
         { timeout: 15000 },
       )
       setNotice(
-        `캠페인 #${item.id} '${item.title}'을(를) ${
-          action === 'close' ? '숨겼습니다' : '다시 공개했습니다'
-        }. 업체에 알림을 보냈습니다.`,
+        `캠페인 #${item.id} '${item.title}' ${
+          action === 'close' ? '숨김을' : '다시 공개를'
+        } 마쳤습니다. 업체에 알림을 보냈습니다.`,
       )
       setClosing(null)
       setReason('')
@@ -207,8 +207,9 @@ export default function AdminCampaignsPage() {
       {closing && (
         <AdminCard title={`#${closing.id} 캠페인 숨기기`}>
           <p>
-            &lsquo;{closing.title}&rsquo;을(를) 사용자 목록에서 숨깁니다. 신청을
-            더 받지 않으며, 이미 선정된 참여자의 진행은 그대로 이어집니다.
+            &lsquo;{closing.title}&rsquo; 캠페인을 사용자 목록에서 숨깁니다.
+            신청을 더 받지 않고 상세 주소로도 일반 회원에게 보이지 않으며, 이미
+            신청·선정된 참여자의 진행은 그대로 이어집니다.
           </p>
           <div className="admin-review-form">
             <label>

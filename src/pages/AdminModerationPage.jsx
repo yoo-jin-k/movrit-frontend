@@ -45,7 +45,7 @@ export default function AdminModerationPage() {
     setError('')
     try {
       await handleReport(selected.id, action, note)
-      setNotice(`신고 #${selected.id}을(를) '${label}'(으)로 처리했습니다.`)
+      setNotice(`신고 #${selected.id} 처리를 마쳤습니다(${label}).`)
       setSelectedId(null)
       setNote('')
       state.reload()

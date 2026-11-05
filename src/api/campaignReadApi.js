@@ -35,17 +35,37 @@ export async function readCampaignPage(params, signal) {
     total: data.total,
   }
 }
-// 본문 응답의 최소 구조를 확인하되 상세 필드가 사라지지 않도록 원본 DTO를 반환합니다.
-export async function readCampaign(id, signal) {
-  const { data } = await publicApi.get(
-    `/collaborations/campaigns/${encodeURIComponent(id)}`,
-    {
-      signal,
-    },
-  )
-  adaptCampaignSummary(data)
-  return data
+// 로그인 중이면 접근 토큰을 돌려줍니다. 저장소를 쓸 수 없는 환경이면 비로그인으로 봅니다.
+function currentAccessToken() {
+  try {
+    return sessionStorage.getItem('accessToken')
+  } catch {
+    return null
+  }
 }
+
+// 본문 응답의 최소 구조를 확인하되 상세 필드가 사라지지 않도록 원본 DTO를 반환합니다.
+// 운영자가 숨긴 캠페인은 소유 업체·운영자·신청자에게만 보이므로, 로그인 중이면 접근 토큰을 함께 보냅니다.
+// 토큰이 만료돼 401이 오면 토큰 없이 한 번 더 조회해 공개 캠페인은 그대로 보이게 합니다.
+export async function readCampaign(id, signal) {
+  const url = `/collaborations/campaigns/${encodeURIComponent(id)}`
+  const token = currentAccessToken()
+  let response
+  try {
+    response = await publicApi.get(url, {
+      signal,
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    })
+  } catch (error) {
+    if (!token || error.response?.status !== 401) throw error
+    response = await publicApi.get(url, { signal })
+  }
+  adaptCampaignSummary(response.data)
+  return response.data
+}
+// 신청을 마치면 신청 영역이 이 이름의 이벤트로 알려, 모집 현황이 15초를 기다리지 않고 바로 다시 불러옵니다.
+export const CAMPAIGN_APPLIED_EVENT = 'movrit:campaign-applied'
+
 // 모집 현황(신청·선정·수락 인원)을 가볍게 다시 불러옵니다. 상세 화면이 주기적으로 호출합니다.
 export async function readCampaignRecruitment(id, signal) {
   const { data } = await publicApi.get(

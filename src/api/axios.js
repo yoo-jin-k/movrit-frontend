@@ -25,6 +25,27 @@ api.interceptors.request.use((config) => {
 
 export default api
 
+// 접근 토큰이 만료된 순간 여러 요청이 동시에 401을 받아도 갱신은 한 번만 합니다.
+// 갱신 토큰은 쓸 때마다 새 값으로 바뀌므로, 같은 토큰으로 두 번 갱신하면 두 번째가 실패해 로그아웃되기 때문입니다.
+let pendingRefresh = null
+function refreshOnce(refreshToken) {
+  if (!pendingRefresh) {
+    pendingRefresh = axios
+      .post('/api/auth/refresh', { refreshToken })
+      .then(({ data }) => {
+        // 로그아웃 이후 도착한 갱신 응답으로 세션이 복구되지 않게 합니다.
+        if (localStorage.getItem('refreshToken') !== refreshToken) return null
+        sessionStorage.setItem('accessToken', data.accessToken)
+        localStorage.setItem('refreshToken', data.refreshToken)
+        return data.accessToken
+      })
+      .finally(() => {
+        pendingRefresh = null
+      })
+  }
+  return pendingRefresh
+}
+
 api.interceptors.response.use(
   (response) => response,
 
@@ -42,13 +63,15 @@ api.interceptors.response.use(
       // 이 재시도는 인증 복구용이며 업무 버전 충돌(409)을 자동 재시도하는 기능은 아닙니다.
       original._retry = true
       try {
-        const { data } = await axios.post('/api/auth/refresh', { refreshToken })
-        // 로그아웃 이후 도착한 갱신 응답으로 세션이 복구되지 않게 합니다.
-        if (localStorage.getItem('refreshToken') !== refreshToken)
-          return Promise.reject(error)
-        sessionStorage.setItem('accessToken', data.accessToken)
-        localStorage.setItem('refreshToken', data.refreshToken)
-        original.headers.Authorization = `Bearer ${data.accessToken}`
+        // 다른 요청이 이미 새 토큰을 받아 왔다면 갱신하지 않고 그 토큰으로 다시 보냅니다.
+        const current = sessionStorage.getItem('accessToken')
+        const sent = String(original.headers?.Authorization || '')
+        const accessToken =
+          current && sent && sent !== `Bearer ${current}`
+            ? current
+            : await refreshOnce(refreshToken)
+        if (!accessToken) return Promise.reject(error)
+        original.headers.Authorization = `Bearer ${accessToken}`
         return api(original)
       } catch {
         localStorage.removeItem('refreshToken')

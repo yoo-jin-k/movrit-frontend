@@ -36,6 +36,7 @@ test('미인증·중복·서버 거절·미지의 차단 사유는 신청 폼을
     assert.equal(applicationAvailable({ ...ready, ...override }, form), false)
   }
   assert.match(eligibilityReason('ALREADY_APPLIED'), /이미 신청/)
+  assert.match(eligibilityReason('ALREADY_WITHDRAWN'), /철회한 캠페인/)
   assert.match(eligibilityReason('UNKNOWN_REASON'), /신청할 수 없는 조건/)
 })
 test('폼이 없거나 서버 조건 버전·캠페인이 바뀌면 재확인이 필요합니다', () => {

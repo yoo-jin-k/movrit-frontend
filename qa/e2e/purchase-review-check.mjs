@@ -226,6 +226,16 @@ const afterSubmit = (
   await call(user, 'GET', '/campaigns/applications/mine')
 ).data.find((a) => String(a.id) === appId)
 check('구매평 제출', afterSubmit?.status === 'CONTENT_SUBMITTED')
+// 새로고침하지 않아도 제출한 상태가 바로 보여야 합니다.
+check(
+  '구매평 제출 직후 화면에 제출 완료 표시(새로고침 없이)',
+  await u
+    .getByText(/제출 완료 · 검토 대기/)
+    .first()
+    .waitFor({ timeout: 5000 })
+    .then(() => true)
+    .catch(() => false),
+)
 
 // 7) 업체 화면: 구매 인증 확인, 완료 전에는 환급 기록 버튼 없음
 await b.goto(`${base}/seller/participants?campaignId=${campaignId}`, {
@@ -293,6 +303,10 @@ await b
   .getByRole('button', { name: new RegExp(`신청 ${appId} 상세 보기`) })
   .click()
 await b.waitForTimeout(1000)
+check(
+  '업체 참여자 상세: 완료 후 미환급은 목록과 같이 환급 가능',
+  (await pay.innerText()).includes('환급 가능'),
+)
 await pay.getByRole('button', { name: '환급 완료로 기록' }).click()
 await pay.getByLabel(/메모/).fill('11/2 계좌 이체 완료')
 await pay.getByRole('button', { name: '환급 완료 기록' }).click()

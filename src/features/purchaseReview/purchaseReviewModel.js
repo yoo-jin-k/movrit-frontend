@@ -122,6 +122,12 @@ export function purchaseProofError({ orderNumber, paidAmount, file } = {}) {
 }
 
 // 업체 화면의 환급 기록 버튼을 보여줄지입니다. 구매평 검토가 끝나 완료되고, 아직 환급 전일 때만입니다.
+// 업체 화면의 환급 상태 이름입니다. 구매평이 승인돼 완료됐고 아직 보내지 않았으면 환급 목록과 같이 '환급 가능'으로 보여 줍니다.
+export function sellerPaybackLabel(application, proof) {
+  if (canRecordPayback(application, proof)) return '환급 가능'
+  return PAYBACK_LABELS[proof?.paybackStatus] || ''
+}
+
 export function canRecordPayback(application, proof) {
   return (
     application?.status === 'COMPLETED' &&

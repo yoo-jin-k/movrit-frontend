@@ -6,7 +6,11 @@
 import { useEffect, useState } from 'react'
 import { readPurchaseProof, recordPayback } from '../../api/purchaseReviewApi'
 import PurchaseEvidenceImage from './PurchaseEvidenceImage'
-import { PAYBACK_LABELS, canRecordPayback, won } from './purchaseReviewModel'
+import {
+  canRecordPayback,
+  sellerPaybackLabel,
+  won,
+} from './purchaseReviewModel'
 import './purchaseReview.css'
 
 const dateTime = (value) =>
@@ -61,7 +65,7 @@ export default function PurchasePaybackPanel({ application }) {
             <span
               className={`purchase-badge is-${proof.paybackStatus.toLowerCase()}`}
             >
-              {PAYBACK_LABELS[proof.paybackStatus]}
+              {sellerPaybackLabel(application, proof)}
             </span>{' '}
             주문번호 <strong>{proof.orderNumber}</strong> · 결제{' '}
             {won(proof.paidAmount)}

@@ -77,9 +77,9 @@ export default function MyContentSubmission({
     try {
       await submitMyCampaignContent(application.id, payload)
       setLocked(true)
-      setNotice(
-        '콘텐츠를 제출했습니다. 최신 내역 확인에서 반영된 상태를 확인해 주세요.',
-      )
+      setNotice('콘텐츠를 제출했습니다. 브랜드의 검토 결과를 기다려 주세요.')
+      // 제출한 내용이 바로 보이도록 내 캠페인 정보를 다시 불러옵니다.
+      onReload?.()
     } catch (failure) {
       setLocked(true)
       setError(

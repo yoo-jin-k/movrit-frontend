@@ -3,6 +3,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
   canRecordPayback,
+  sellerPaybackLabel,
   fulfillmentForType,
   fulfillmentLabel,
   fulfillmentOptions,
@@ -125,5 +126,21 @@ test('구매평 캠페인은 구매평 메뉴에 표시', () => {
     adaptCampaignSummary({ id: 2, title: '제품', campaignType: 'PRODUCT' })
       .shoppingreview,
     false,
+  )
+})
+
+test('업체 화면 환급 상태: 완료된 신청의 미환급은 목록과 같이 환급 가능으로 표시합니다', () => {
+  const pending = { paybackStatus: 'PENDING' }
+  assert.equal(
+    sellerPaybackLabel({ status: 'COMPLETED' }, pending),
+    '환급 가능',
+  )
+  assert.equal(
+    sellerPaybackLabel({ status: 'CONTENT_SUBMITTED' }, pending),
+    '환급 대기',
+  )
+  assert.equal(
+    sellerPaybackLabel({ status: 'COMPLETED' }, { paybackStatus: 'PAID' }),
+    '환급 완료',
   )
 })

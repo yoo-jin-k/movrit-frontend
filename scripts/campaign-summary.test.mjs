@@ -41,3 +41,50 @@ test('단일 상태 단계만 상태 필터 값을 가집니다', () => {
 test('목록이 아닌 응답은 0건으로 위장하지 않습니다', () => {
   assert.equal(summarizeCampaignStages({ data: [] }), null)
 })
+
+test('단계 요약을 누르면 그 단계로 걸러진 내 캠페인 목록 주소로 갑니다', async () => {
+  const {
+    CAMPAIGN_STAGES,
+    stageLink,
+    filterFromParams,
+    matchesFilter,
+    paramsFromFilter,
+  } = await import('../src/features/membership/campaignSummaryModel.js')
+  const links = Object.fromEntries(
+    CAMPAIGN_STAGES.map((stage) => [stage.label, stageLink(stage)]),
+  )
+  assert.equal(links['신청'], '/mypage/campaigns?status=SUBMITTED')
+  assert.equal(links['선정'], '/mypage/campaigns?status=SELECTED')
+  assert.equal(links['진행'], '/mypage/campaigns?stage=progress')
+  assert.equal(links['완료'], '/mypage/campaigns?status=COMPLETED')
+  const known = [
+    'SUBMITTED',
+    'SELECTED',
+    'ACTIVE',
+    'CONTENT_SUBMITTED',
+    'REVISION_REQUESTED',
+    'COMPLETED',
+  ]
+  const progress = filterFromParams(
+    new URLSearchParams('stage=progress'),
+    known,
+  )
+  assert.equal(progress, 'stage:progress')
+  // 진행 단계는 참여 중·제출·수정 요청을 모두 보여주고, 완료는 넣지 않습니다.
+  for (const status of ['ACTIVE', 'CONTENT_SUBMITTED', 'REVISION_REQUESTED'])
+    assert.equal(matchesFilter(status, progress), true)
+  assert.equal(matchesFilter('COMPLETED', progress), false)
+  assert.equal(
+    filterFromParams(new URLSearchParams('status=COMPLETED'), known),
+    'COMPLETED',
+  )
+  // 모르는 값은 전체 보기로 둡니다.
+  assert.equal(filterFromParams(new URLSearchParams('status=HACK'), known), '')
+  assert.equal(
+    filterFromParams(new URLSearchParams('stage=applied'), known),
+    '',
+  )
+  assert.deepEqual(paramsFromFilter('stage:progress'), { stage: 'progress' })
+  assert.deepEqual(paramsFromFilter('COMPLETED'), { status: 'COMPLETED' })
+  assert.deepEqual(paramsFromFilter(''), {})
+})

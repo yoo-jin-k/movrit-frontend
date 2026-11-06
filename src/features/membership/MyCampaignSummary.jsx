@@ -6,7 +6,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/axios'
-import { summarizeCampaignStages } from './campaignSummaryModel'
+import {
+  CAMPAIGN_STAGES,
+  stageLink,
+  summarizeCampaignStages,
+} from './campaignSummaryModel'
 
 export default function MyCampaignSummary() {
   // stages가 null이면 아직 조회 전이거나 실패한 상태입니다. error로 두 경우를 구분합니다.
@@ -49,11 +53,9 @@ export default function MyCampaignSummary() {
           {(state.stages || summarizeCampaignStages([])).map((stage) => (
             <li key={stage.key}>
               <Link
-                to={
-                  stage.status
-                    ? `/mypage/campaigns?status=${stage.status}`
-                    : '/mypage/campaigns'
-                }
+                to={stageLink(
+                  CAMPAIGN_STAGES.find((item) => item.key === stage.key),
+                )}
                 aria-label={`${stage.label} ${state.stages ? `${stage.count}건` : '조회 중'}`}
               >
                 <strong>{state.stages ? stage.count : '·'}</strong>

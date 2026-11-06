@@ -27,6 +27,12 @@ import {
 } from './campaignWorkspaceModel'
 import './myCampaignWorkspace.css'
 import { SELECTION_MODES } from '../business/selectionModeModel'
+import {
+  CAMPAIGN_STAGES,
+  filterFromParams,
+  matchesFilter,
+  paramsFromFilter,
+} from './campaignSummaryModel'
 
 function Guide({ title, value }) {
   return (
@@ -231,12 +237,10 @@ export default function MyCampaignsPage() {
   const [params, setParams] = useSearchParams()
   const targetApplication = params.get('applicationId')
   const targetContent = params.get('contentId')
-  // 마이페이지 요약 카드에서 ?status=로 들어오면 해당 상태로 목록을 먼저 좁혀 보여줍니다.
-  const [filter, setFilter] = useState(() =>
-    Object.hasOwn(APPLICATION_STATUS, params.get('status') || '')
-      ? params.get('status')
-      : '',
-  )
+  // 마이페이지·계정 메뉴의 단계 요약(신청·선정·진행·완료)에서 ?status= 또는 ?stage=로 들어오면 그 단계로 목록을 좁혀 보여줍니다.
+  // 필터는 주소에서 바로 읽으므로, 이 화면에 있는 채로 계정 메뉴의 다른 단계를 눌러도 목록이 바로 바뀝니다.
+  const filter = filterFromParams(params, Object.keys(APPLICATION_STATUS))
+  const setFilter = (value) => setParams(paramsFromFilter(value))
   const reload = () => {
     setState((old) => ({ ...old, loading: true }))
     setAttempt((v) => v + 1)
@@ -277,7 +281,7 @@ export default function MyCampaignsPage() {
   }, [attempt])
   const shown = state.items.filter(
     (item) =>
-      (!filter || item.application.status === filter) &&
+      matchesFilter(item.application.status, filter) &&
       (!targetApplication ||
         String(item.application.id) === targetApplication) &&
       (!targetContent || String(item.content?.id) === targetContent),
@@ -350,7 +354,6 @@ export default function MyCampaignsPage() {
             <MyCampaignCalendar
               items={state.items}
               onOpen={(id) => {
-                setFilter('')
                 setParams({})
                 setSelectedId(id)
                 setView('list')
@@ -368,6 +371,19 @@ export default function MyCampaignsPage() {
                   }}
                 >
                   <option value="">전체 ({state.items.length})</option>
+                  {CAMPAIGN_STAGES.filter(
+                    (stage) => stage.statuses.length > 1,
+                  ).map((stage) => (
+                    <option key={stage.key} value={`stage:${stage.key}`}>
+                      {stage.label} 전체 (
+                      {
+                        state.items.filter((item) =>
+                          stage.statuses.includes(item.application.status),
+                        ).length
+                      }
+                      )
+                    </option>
+                  ))}
                   {Object.entries(APPLICATION_STATUS).map(([value, label]) => (
                     <option key={value} value={value}>
                       {label}

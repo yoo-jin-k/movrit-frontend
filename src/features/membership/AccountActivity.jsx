@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import { readChannelProfile } from '../../api/channelProfileApi'
 import { readMyCampaignContents } from '../../api/myCampaignContentApi'
+import { CAMPAIGN_STAGES, stageLink } from './campaignSummaryModel'
 const channels = [
   ['NAVER_BLOG', '블로그', 'B'],
   ['INSTAGRAM', '인스타그램', 'I'],
@@ -116,20 +117,21 @@ export default function AccountActivity({ onClose }) {
           ) : (
             <>
               <div className="account-summary-counts">
-                {[
-                  ['신청', ['SUBMITTED']],
-                  ['선정', ['SELECTED']],
-                  [
-                    '진행',
-                    ['ACTIVE', 'CONTENT_SUBMITTED', 'REVISION_REQUESTED'],
-                  ],
-                  ['완료', ['COMPLETED']],
-                ].map(([label, statuses]) => (
-                  <Link key={label} to="/mypage/campaigns" onClick={onClose}>
+                {/* 단계를 누르면 내 캠페인 목록을 그 단계로 걸러 보여줍니다. */}
+                {CAMPAIGN_STAGES.map((stage) => (
+                  <Link
+                    key={stage.key}
+                    to={stageLink(stage)}
+                    onClick={onClose}
+                    aria-label={`${stage.label} 캠페인 보기`}
+                  >
                     <strong>
-                      {apps.filter((a) => statuses.includes(a.status)).length}
+                      {
+                        apps.filter((a) => stage.statuses.includes(a.status))
+                          .length
+                      }
                     </strong>
-                    <span>{label}</span>
+                    <span>{stage.label}</span>
                   </Link>
                 ))}
               </div>

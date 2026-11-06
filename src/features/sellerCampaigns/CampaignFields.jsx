@@ -10,6 +10,7 @@
  * 구매평 종류를 고르면 구매처·상품 주소·판매가·환급액 입력 칸이 함께 나옵니다.
  * 세부 일정·참여 안내(선택): 사용자 캠페인 상세와 '내 캠페인'의 참여 일정·미션 안내에 그대로 표시됩니다.
  * 채널 기본 요건: 콘텐츠 채널(블로그·인스타그램·유튜브·클립)을 고르면 그 채널의 기본 제출 요건을 비어 있는 칸에 자동으로 채웁니다.
+ * AI 초안: 기본 정보 아래 'AI로 초안 만들기'로 설명·미션·제출 요구사항·주의사항 초안을 비어 있는 칸에 채웁니다.
  *   업체가 직접 적은 내용은 바꾸지 않고, 채널을 바꾸면 기본 문구를 그대로 둔 칸만 새 채널 문구로 바꿉니다.
  */
 import { useState } from 'react'
@@ -23,6 +24,7 @@ import {
   REGIONS,
 } from '../discovery/catalog.js'
 import PurchaseInfoFields from '../purchaseReview/PurchaseInfoFields'
+import AiDraftPanel from './AiDraftPanel'
 import { emptyPurchaseInfo } from '../purchaseReview/purchaseReviewModel'
 
 // 세부 일정 입력 항목(서버 필드, 화면 이름)입니다. 비워 두면 사용자 화면에 '미정'으로 표시됩니다.
@@ -269,6 +271,8 @@ export default function CampaignFields({
           />
         </label>
       </fieldset>
+      {/* 기본 정보를 바탕으로 안내 문구 초안을 받습니다. 업체가 쓴 칸은 바꾸지 않습니다. */}
+      <AiDraftPanel value={value} onChange={onChange} disabled={disabled} />
       {/* 구매평 캠페인은 구매처·판매가·환급액 안내를 함께 받습니다. */}
       {value.campaignType === 'PURCHASE_REVIEW' && (
         <PurchaseInfoFields

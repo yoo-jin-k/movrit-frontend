@@ -136,3 +136,21 @@
   margin: 0;
   font-size: 14px;
 }
+
+/* AI로 초안 만들기 */
+.seller-ai-draft__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+}
+.seller-ai-draft__actions span {
+  color: #6d6873;
+  font-size: 13px;
+}
+.seller-ai-draft > p[role='status'],
+.seller-ai-draft > p[role='alert'] {
+  grid-column: 1 / -1;
+  margin: 0;
+}

@@ -1,6 +1,10 @@
 /**
  * 'AI로 초안 만들기' 화면 규칙입니다.
  * 서버에 보낼 요청을 만들고, 받은 초안을 업체가 아직 쓰지 않은 칸에만 넣습니다.
+ *
+ * 변경 이력(코드 리뷰 반영): 고치기 전에는 서버 설명이 없는 실패에서 'Request failed with status code 403' 같은
+ * 영어 문장이 화면에 그대로 보였습니다. 고친 후에는 aiDraftError가 서버의 한국어 설명을 먼저 쓰고,
+ * 없으면 상태별 한국어 안내를 보여 줍니다.
  */
 import { CHANNEL_DEFAULTS } from './channelRequirementModel.js'
 
@@ -50,4 +54,25 @@ export function applyAiDraft(form, draft) {
     }
   }
   return { next, filled, kept }
+}
+
+// 상태별 기본 안내입니다. 서버가 한국어 설명(detail)을 보냈으면 그것을 먼저 씁니다.
+const ERROR_BY_STATUS = {
+  400: '입력한 내용을 다시 확인해 주세요.',
+  401: '로그인이 만료되었습니다. 다시 로그인해 주세요.',
+  403: 'AI 초안은 승인된 업체만 사용할 수 있습니다.',
+  429: '오늘 AI 초안을 모두 사용했습니다. 내일 다시 이용해 주세요.',
+  502: 'AI 답을 초안으로 정리하지 못했습니다. 다시 시도해 주세요.',
+  503: '지금은 AI 초안을 쓸 수 없습니다. 잠시 후 다시 시도해 주세요.',
+}
+
+// 실패를 화면 안내 문장으로 바꿉니다. 영어 오류 문장이나 외부 상태 코드를 그대로 보이지 않습니다.
+export function aiDraftError(failure) {
+  const detail = failure?.response?.data?.detail
+  if (typeof detail === 'string' && detail.trim()) return detail
+  const status = failure?.response?.status
+  if (ERROR_BY_STATUS[status]) return ERROR_BY_STATUS[status]
+  if (!failure?.response)
+    return '서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.'
+  return 'AI 초안을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'
 }

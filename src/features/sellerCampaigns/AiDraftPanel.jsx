@@ -6,7 +6,7 @@
  */
 import { useState } from 'react'
 import { requestCampaignDraft } from '../../api/campaignDraftApi'
-import { aiDraftRequest, applyAiDraft } from './aiDraftModel'
+import { aiDraftError, aiDraftRequest, applyAiDraft } from './aiDraftModel'
 
 export default function AiDraftPanel({ value, onChange, disabled = false }) {
   const [highlights, setHighlights] = useState('')
@@ -43,10 +43,11 @@ export default function AiDraftPanel({ value, onChange, disabled = false }) {
       else parts.push(`오늘 ${draft.remainingToday}번 더 만들 수 있습니다.`)
       setNotice(parts.join(' '))
     } catch (failure) {
+      // 응답 형식 검사 실패는 한국어로 만든 오류라 그대로 보이고, 통신 실패는 상태별 안내로 바꿉니다.
       setError(
-        failure.response?.data?.detail ||
-          failure.message ||
-          'AI 초안을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        failure.response
+          ? aiDraftError(failure)
+          : failure.message || aiDraftError(failure),
       )
     } finally {
       setBusy(false)

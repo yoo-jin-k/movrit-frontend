@@ -65,3 +65,31 @@ test('비어 있는 초안 항목은 넣지 않습니다', () => {
   assert.equal(next.description, '')
   assert.equal(filled.includes('설명'), false)
 })
+
+test('실패 안내는 서버 설명을 먼저 쓰고, 없으면 상태별 한국어 안내를 씁니다', async () => {
+  const { aiDraftError } = await import(
+    '../src/features/sellerCampaigns/aiDraftModel.js'
+  )
+  assert.equal(
+    aiDraftError({
+      response: {
+        status: 429,
+        data: { detail: '오늘 AI 초안을 모두 사용했습니다(하루 20회).' },
+      },
+    }),
+    '오늘 AI 초안을 모두 사용했습니다(하루 20회).',
+  )
+  assert.match(
+    aiDraftError({ response: { status: 403, data: {} } }),
+    /승인된 업체만/,
+  )
+  assert.match(aiDraftError({ response: { status: 503 } }), /지금은 AI 초안을/)
+  assert.match(
+    aiDraftError({ message: 'Network Error' }),
+    /서버에 연결하지 못했습니다/,
+  )
+  assert.doesNotMatch(
+    aiDraftError({ response: { status: 418 } }),
+    /status code|418/,
+  )
+})

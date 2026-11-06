@@ -137,3 +137,11 @@ test('최초 제출은 시작·종료 경계를 안내하고 수정 요청 재�
   )
   assert.equal(submissionWindowMessage({}, null), '')
 })
+
+test('신청 날짜는 한국 시간 날짜로만 보여주고 없으면 미등록입니다', async () => {
+  const { workspaceDate } = await import(
+    '../src/features/membership/campaignWorkspaceModel.js'
+  )
+  assert.equal(workspaceDate('2026-11-05T23:30:00'), '2026. 11. 05.')
+  assert.equal(workspaceDate(null), '미등록')
+})

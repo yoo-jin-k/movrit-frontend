@@ -36,6 +36,18 @@ export function workspaceTime(value) {
       }).format(date)
     : '미등록'
 }
+// 목록 카드처럼 날짜만 필요한 곳에 씁니다(예: 2026. 11. 05.).
+export function workspaceDate(value) {
+  const date = seoulInstant(value)
+  return date
+    ? new Intl.DateTimeFormat('ko-KR', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(date)
+    : '미등록'
+}
 export function nextCampaignAction(application, content) {
   if (content?.status === 'BRAND_APPROVED')
     return '업체 검토가 완료되었습니다. 운영자 최종 승인을 기다려 주세요.'

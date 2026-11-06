@@ -23,6 +23,7 @@ import {
   APPLICATION_STATUS,
   applicationStatusLabel,
   nextCampaignAction,
+  workspaceDate,
   workspaceTime,
 } from './campaignWorkspaceModel'
 import './myCampaignWorkspace.css'
@@ -58,6 +59,8 @@ function Workspace({ item, onReload, attempt }) {
         <p>
           {campaign.brandName || '브랜드명 미등록'} · 신청 #{application.id}
         </p>
+        {/* 언제 신청했는지 상세 머리에도 함께 보여줍니다. */}
+        <p>신청 일시 {workspaceTime(application.submittedAt)}</p>
         <Link to={`/campaign/${application.campaignId}`}>
           캠페인 상세 보기 ↗
         </Link>
@@ -415,6 +418,10 @@ export default function MyCampaignsPage() {
                             <span>
                               {item.campaign.brandName || '브랜드명 미등록'}
                             </span>
+                            {/* 목록에서도 신청한 날짜를 바로 볼 수 있게 합니다. */}
+                            <small>
+                              신청 {workspaceDate(item.application.submittedAt)}
+                            </small>
                             <small>
                               콘텐츠 마감{' '}
                               {workspaceTime(

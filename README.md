@@ -8,7 +8,7 @@
 
 ## 시연 영상
 
-[docs/demo/movrit-demo.mp4](docs/demo/movrit-demo.mp4) (약 2분, 소리 없음)
+[docs/demo/movrit-demo.mp4](docs/demo/movrit-demo.mp4) (약 2분, 소리 없음) · 화면에서 바로 재생되는 장면별 GIF는 [백엔드 README](https://github.com/yoo-jin-k/movrit-backend#시연)에 있습니다.
 
 참여자가 캠페인을 둘러보고(홈 → 지역 캠페인 목록) 신청서를 쓰는 장면 → 내 캠페인(참여 조정·달력)과 채팅 → 업체의 참여자·배송·환급 관리 → 운영자의 최종 승인과 신고 처리 → AI 기능(업체 캠페인 초안, 참여자 제출 전 점검) 순서입니다. AI 장면은 실제 모델을 불러 녹화했습니다. 시연 데이터를 바꾸지 않으려고 신청·저장 버튼은 누르지 않았습니다.
 
@@ -189,4 +189,5 @@ node qa/portfolio/seed-portfolio.mjs           # 시연 계정·캠페인 44개�
 node qa/portfolio/capture-screens.mjs          # docs/screenshots/*.png
 node qa/portfolio/record-demo.mjs              # 장면별 프레임 → ffmpeg로 mp4 변환
 swift qa/portfolio/frames-to-mp4.swift docs/demo/movrit-demo.mp4 ../movrit-portfolio-media/frames/0*   # ffmpeg 없이 macOS 기본 기능으로 mp4 만들기
+swift qa/portfolio/frames-to-gif.swift <결과.gif> ../movrit-portfolio-media/frames/05-ai 960 1.5   # 장면 하나를 README용 GIF로 (가로 960px, 1.5배속)
 ```

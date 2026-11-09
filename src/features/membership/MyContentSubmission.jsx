@@ -25,6 +25,8 @@ import {
 import { showsCancellationHelp } from './campaignCancellationModel'
 import OpenChatButton from '../chat/OpenChatButton'
 import ContentMetricPanel from '../contentMetric/ContentMetricPanel'
+import ContentPrecheckPanel from './ContentPrecheckPanel'
+import { precheckAvailable } from './contentPrecheckModel'
 import './myCampaignContent.css'
 
 // 서버 상태와 최신 version을 함께 사용합니다. 저장 결과가 불명확하면 자동 재전송하지 않습니다.
@@ -225,6 +227,14 @@ export default function MyContentSubmission({
         <p>아직 제출한 콘텐츠가 없습니다.</p>
       )}
       {eligible && windowNotice && <p role="status">{windowNotice}</p>}
+      {/* 올리기 전에 본문이 미션·제출 요구사항·협찬 표시를 지켰는지 확인합니다. 제출과는 별개라 체험 확인 전 초안 단계에서도 쓸 수 있습니다. */}
+      {available && precheckAvailable(application) && (
+        <ContentPrecheckPanel
+          applicationId={application.id}
+          channelType={links[0]?.channelType}
+          disabled={busy}
+        />
+      )}
       {canSubmit && (
         <form onSubmit={submit}>
           {links.map((link, index) => (

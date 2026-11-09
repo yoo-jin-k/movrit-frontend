@@ -153,3 +153,58 @@
   color: #6b38db;
   font-weight: 700;
 }
+.my-campaign-content__precheck {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #e3dfe8;
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 0;
+}
+.my-campaign-content__precheck textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.my-campaign-content__precheck-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+}
+.my-campaign-content__precheck-result ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.my-campaign-content__precheck-item {
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px;
+  border-left: 3px solid #9a95a0;
+  background: #f8f7fa;
+  color: #2b2830;
+}
+.my-campaign-content__precheck-item span {
+  font-size: 12px;
+  font-weight: 600;
+}
+.my-campaign-content__precheck-item p {
+  margin: 0;
+}
+.my-campaign-content__precheck-item.is-missing {
+  border-left-color: #a42525;
+}
+.my-campaign-content__precheck-item.is-missing span {
+  color: #a42525;
+}
+.my-campaign-content__precheck-item.is-met {
+  border-left-color: #386b46;
+}
+.my-campaign-content__precheck-item.is-met span {
+  color: #386b46;
+}
+.my-campaign-content [role='status'].my-campaign-content__precheck-result {
+  color: inherit;
+}

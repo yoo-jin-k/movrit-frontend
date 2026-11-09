@@ -1,4 +1,4 @@
-// 포트폴리오 시연 영상(참여자 → 업체 → 운영자 흐름)을 녹화합니다.
+// 포트폴리오 시연 영상(참여자 → 업체 → 운영자 흐름, AI 초안·제출 전 점검)을 녹화합니다.
 // 준비: 통합 서버·프론트 실행, seed-portfolio.mjs 로 시연 데이터 준비
 // 실행: MOVRIT_QA_PASSWORD=... node qa/portfolio/record-demo.mjs
 // 결과: 저장소 바깥 movrit-portfolio-media/frames/<장면>/ 에 프레임(jpg)과 frames.txt(ffmpeg concat 목록)
@@ -6,6 +6,8 @@
 // Playwright 녹화(recordVideo)는 별도 ffmpeg 내려받기가 필요해서, 크롬 화면 전송(CDP screencast)
 // 프레임을 받아 두고 영상 변환은 ffmpeg로 따로 합니다. 예)
 //   ffmpeg -f concat -safe 0 -i frames/01-participant-apply/frames.txt -vf "fps=30,format=yuv420p" 01.mp4
+// ffmpeg가 없으면 macOS 기본 기능(AVFoundation)으로 장면들을 이어 붙여 변환합니다. 예)
+//   swift qa/portfolio/frames-to-mp4.swift movrit-demo.mp4 frames/01-participant-apply frames/05-ai
 //
 // 시연 데이터를 바꾸지 않도록 신청·저장 버튼은 누르지 않고 화면 이동과 입력까지만 보여 줍니다.
 import fs from 'node:fs'
@@ -15,7 +17,12 @@ import { base, call, login } from '../e2e/e2e-lib.mjs'
 const out =
   process.env.MOVRIT_DEMO_OUT ||
   new URL('../../../movrit-portfolio-media/frames/', import.meta.url).pathname
-fs.rmSync(out, { recursive: true, force: true })
+// MOVRIT_DEMO_SCENES=05-ai 처럼 장면 이름(쉼표 구분)을 주면 그 장면만 다시 녹화하고 나머지 프레임은 그대로 둡니다.
+const only = (process.env.MOVRIT_DEMO_SCENES || '')
+  .split(',')
+  .map((name) => name.trim())
+  .filter(Boolean)
+if (!only.length) fs.rmSync(out, { recursive: true, force: true })
 fs.mkdirSync(out, { recursive: true })
 
 const size = { width: 1440, height: 900 }
@@ -52,7 +59,9 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
  * 화면이 바뀔 때만 프레임이 오므로, 프레임마다 다음 프레임까지의 시간을 함께 적어 둡니다.
  */
 async function scene(name, who, run) {
+  if (only.length && !only.includes(name)) return
   const dir = `${out}${name}/`
+  fs.rmSync(dir, { recursive: true, force: true })
   fs.mkdirSync(dir, { recursive: true })
   const ctx = await browser.newContext({ viewport: size })
   const token = who ? auth[who] : null
@@ -160,18 +169,29 @@ await scene('01-participant-apply', 'minji', async (page) => {
     '구매평 캠페인 · 결제 금액과 환급액을 함께 안내',
   )
   await scroll(page, 500)
-  await go(
-    page,
-    `/campaign/${ids['패브릭 미스트 공간 리뷰 체험단']}`,
-    '배송형 캠페인 신청서',
+  // 시연 계정이 아직 신청하지 않은 모집 중 배송형 캠페인을 골라 신청서를 보여 줍니다(제출은 하지 않음).
+  const applied = new Set(
+    (await call(auth.minji, 'GET', '/campaigns/applications/mine')).data.map(
+      (a) => a.campaignId,
+    ),
   )
+  const product = (
+    await call(auth.minji, 'GET', '/collaborations/campaigns/open')
+  ).data.find(
+    (c) =>
+      c.campaignType === 'PRODUCT' &&
+      c.selectionMode === 'BRAND_DIRECT' &&
+      !applied.has(c.id) &&
+      (!c.endAt || Date.parse(c.endAt) > Date.now()),
+  )
+  await go(page, `/campaign/${product.id}`, '배송형 캠페인 신청서')
   const message = page.getByLabel('신청 메시지')
   if (!(await message.isVisible().catch(() => false)))
     await page.getByRole('button', { name: /신청/ }).first().click()
   await message.scrollIntoViewIfNeeded()
   await typeSlowly(
     message,
-    '거실과 침실 두 공간에서 향을 비교해 15초 클립으로 담아 보겠습니다.',
+    '평소 사용 장면과 비교해 2주 동안의 변화를 사진과 함께 기록하겠습니다.',
   )
   await page.getByLabel('수령인', { exact: true }).fill('이민지')
   await page.getByLabel('연락처', { exact: true }).fill('010-3920-1184')
@@ -266,8 +286,107 @@ await scene('04-admin', 'admin', async (page) => {
     '/admin/moderation',
     '신고·제재 · 신고 당시 내용을 남겨 두고 처리',
   )
-  await page.getByRole('button', { name: '보기' }).first().click()
+  // 처리할 신고가 있을 때만 상세를 엽니다.
+  await page
+    .getByRole('button', { name: '보기' })
+    .first()
+    .click({ timeout: 3000 })
+    .catch(() => {})
   await wait(2500)
+})
+
+// 5. AI 기능: 업체 캠페인 초안 → 참여자 제출 전 점검(실제 AI 호출 각 1회, 저장·제출은 하지 않음)
+await scene('05-ai', null, async (page) => {
+  // 한 장면 안에서 업체 → 참여자로 계정을 바꿉니다.
+  const as = async (who) => {
+    await page.goto(`${base}/home`, { waitUntil: 'domcontentloaded' })
+    await page.evaluate(
+      ([a, r]) => {
+        sessionStorage.setItem('accessToken', a)
+        localStorage.setItem('refreshToken', r)
+      },
+      [auth[who].accessToken, auth[who].refreshToken],
+    )
+  }
+  await as('studio')
+  await go(
+    page,
+    '/seller/campaigns/new',
+    'AI 캠페인 초안 · 입력한 정보만으로 안내문 초안 만들기',
+  )
+  await typeSlowly(
+    page.getByLabel('모집 제목', { exact: true }),
+    '저자극 세안 폼 2주 사용 후기 체험단',
+  )
+  const panel = page
+    .locator('fieldset', { hasText: 'AI로 초안 만들기' })
+    .first()
+  await panel.scrollIntoViewIfNeeded()
+  await typeSlowly(
+    panel.getByLabel(/제품·매장 특징/),
+    '약산성 세안 폼 150ml, 민감 피부용, 거품이 촘촘하고 당김이 적음',
+  )
+  await panel.getByRole('button', { name: 'AI로 초안 만들기' }).click()
+  await caption(
+    page,
+    '업체 입력 속 지시는 따르지 않고, 없는 가격·효능은 지어내지 않음',
+  )
+  await panel
+    .locator('p[role="status"]')
+    .filter({ hasText: /초안을 넣었습니다|비어 있는 칸/ })
+    .waitFor({ timeout: 60000 })
+  await wait(1500)
+  await caption(page, '비어 있던 설명·미션·제출 요건·주의사항 칸에만 채움')
+  await wait(1200)
+  for (const label of ['설명', '요청사항 · 미션', '주의사항']) {
+    await page
+      .locator('label')
+      .filter({ hasText: label })
+      .locator('textarea')
+      .first()
+      .evaluate(
+        (el) => el.scrollIntoView({ block: 'center', behavior: 'smooth' }),
+        null,
+        { timeout: 3000 },
+      )
+      .catch(() => {})
+    await wait(2400)
+  }
+
+  await as('minji')
+  await go(
+    page,
+    '/mypage/campaigns',
+    'AI 제출 전 점검 · 올리기 전에 빠진 항목 확인',
+  )
+  await page
+    .getByRole('button', { name: /패브릭 미스트 공간 리뷰 체험단/ })
+    .first()
+    .click()
+  await wait(1000)
+  const check = page.locator('fieldset', { hasText: '제출 전 점검' }).first()
+  await check.evaluate((el) => el.scrollIntoView({ block: 'start' }))
+  await wait(800)
+  await typeSlowly(
+    check.getByLabel('게시할 본문'),
+    '거실 소파와 커튼에 2주 동안 뿌려 봤어요. 향이 은은하고 하루 정도 유지됩니다. 피부염도 완치되는 느낌!',
+  )
+  await check.getByRole('button', { name: '제출 전 점검하기' }).click()
+  await caption(
+    page,
+    '점검 기준은 서버가 캠페인에서 읽음 · 본문은 저장하지 않음',
+  )
+  await check
+    .locator('.my-campaign-content__precheck-result')
+    .waitFor({ timeout: 60000 })
+  await wait(800)
+  await caption(page, '협찬 표시 누락·효능 표현·필수 언급을 항목별로 안내')
+  await check
+    .locator('.my-campaign-content__precheck-result')
+    .evaluate((el) => el.scrollIntoView({ block: 'start', behavior: 'smooth' }))
+  await wait(2500)
+  await scroll(page, 500, 8)
+  await wait(2000)
 })
 
 await browser.close()

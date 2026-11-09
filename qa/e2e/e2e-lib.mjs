@@ -2,8 +2,9 @@
 import { randomBytes } from 'node:crypto'
 import { chromium } from 'playwright-core'
 
-export const base = 'http://localhost:5174'
-export const api = 'http://localhost:18080/api'
+// 사용자가 띄운 서버와 겹치지 않게 다른 포트로 점검할 때는 QA_BASE·QA_API로 바꿉니다.
+export const base = process.env.QA_BASE || 'http://localhost:5174'
+export const api = process.env.QA_API || 'http://localhost:18080/api'
 // 점검 계정 비밀번호는 저장소에 두지 않고 환경 변수로 받습니다.
 export const password = process.env.MOVRIT_QA_PASSWORD
 if (!password) throw new Error('MOVRIT_QA_PASSWORD 환경 변수를 설정해 주세요.')

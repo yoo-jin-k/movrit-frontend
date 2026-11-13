@@ -17,7 +17,6 @@ import {
   validateCampaignImageFile,
   validateVisitLocationInput,
 } from './campaignMediaValidation'
-import './campaignMedia.css'
 
 // 선택 파일 또는 인증 blob의 임시 URL을 이미지에 연결하고 파일 교체·언마운트 시 URL을 해제합니다.
 function LocalImage({ image }) {

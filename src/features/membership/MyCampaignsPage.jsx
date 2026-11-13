@@ -26,7 +26,6 @@ import {
   workspaceDate,
   workspaceTime,
 } from './campaignWorkspaceModel'
-import './myCampaignWorkspace.css'
 import { SELECTION_MODES } from '../business/selectionModeModel'
 import {
   CAMPAIGN_STAGES,

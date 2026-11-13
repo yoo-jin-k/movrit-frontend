@@ -26,7 +26,6 @@ import {
   brandImageError,
   brandImageSrc,
 } from '../features/business/brandModel'
-import '../features/business/businessSeller.css'
 
 const emptyForm = {
   name: '',

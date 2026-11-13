@@ -24,7 +24,6 @@ import {
   shortTime,
   trackingError,
 } from '../shipping/shippingModel'
-import '../shipping/shipping.css'
 
 export default function BusinessShipping() {
   const campaigns = useBusinessList('/collaborations/campaigns/seller')

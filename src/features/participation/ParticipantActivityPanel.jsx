@@ -25,7 +25,6 @@ import {
   ratingAvailability,
   ratingChoiceLabel,
 } from '../business/participantRatingModel'
-import './participation.css'
 
 export default function ParticipantActivityPanel({ application, onChanged }) {
   const [data, setData] = useState(null)

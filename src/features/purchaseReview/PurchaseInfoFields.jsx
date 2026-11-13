@@ -3,7 +3,6 @@
  * 값은 상위 폼(form.purchaseReview)에 담기고, 캠페인을 저장한 뒤 별도 요청으로 저장됩니다.
  */
 import { won } from './purchaseReviewModel'
-import './purchaseReview.css'
 
 export default function PurchaseInfoFields({ value, onChange, disabled }) {
   const change = (name, next) => onChange({ ...value, [name]: next })

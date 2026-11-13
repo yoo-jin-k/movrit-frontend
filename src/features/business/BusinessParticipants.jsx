@@ -36,7 +36,6 @@ import {
 import { readParticipantPortfolio } from '../../api/participantPortfolioApi'
 import { myContentLink } from '../membership/myContentModel'
 import { completedCountLabel } from './participantPortfolioModel'
-import './participantPortfolio.css'
 import { SELECTION_MODES, canSelectApplication } from './selectionModeModel'
 import {
   PROGRESS_STEPS,

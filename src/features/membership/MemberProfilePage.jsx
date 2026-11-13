@@ -9,7 +9,6 @@ import BuyerLayout, {
 } from '../../components/buyer/BuyerLayout'
 import { getMyMemberProfile, updateMyMemberProfile } from '../../api/memberApi'
 import AvatarEditor from './AvatarEditor'
-import './accountProfile.css'
 import { normalizeMemberNickname } from './memberNickname'
 
 export default function MemberProfilePage() {

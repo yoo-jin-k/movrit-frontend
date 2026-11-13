@@ -12,7 +12,6 @@ import { Link } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'
 import { getMySellerProfile } from '../api/sellerApi'
 import { businessEntry } from '../features/business/sellerEntryModel'
-import './sellerEntry.css'
 
 export function RoleSwitchPage() {
   const [seller, setSeller] = useState({

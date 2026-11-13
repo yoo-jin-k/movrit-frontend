@@ -8,7 +8,6 @@ import api from '../../api/axios'
 import { readCampaignPerformance } from '../../api/contentMetricApi'
 import { CONTENT_CHANNELS } from '../membership/myContentModel'
 import { compactCount, engagementRate } from './contentMetricModel'
-import './contentMetric.css'
 
 export default function CampaignPerformanceCard() {
   const [campaigns, setCampaigns] = useState([])

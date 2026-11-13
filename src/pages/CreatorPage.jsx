@@ -13,7 +13,6 @@ import {
   metricTitle,
   metricVerificationLabel,
 } from '../features/membership/channelProfileModel'
-import './CreatorPage.css'
 
 export default function CreatorPage() {
   const [profile, setProfile] = useState(null)

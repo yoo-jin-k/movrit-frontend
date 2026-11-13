@@ -10,7 +10,6 @@ import {
 } from '../../api/participationChangeApi'
 import { workspaceTime } from '../membership/campaignWorkspaceModel'
 import { REQUEST_STATUS } from './participationChangeModel'
-import './participation.css'
 
 export default function ExtensionRequestsPanel({ campaignId, onChanged }) {
   const [items, setItems] = useState(null)

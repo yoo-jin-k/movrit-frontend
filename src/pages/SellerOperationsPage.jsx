@@ -22,7 +22,6 @@ import {
 import { getSellerReviews, replyReview } from '../api/reviewApi'
 import { PageHeader } from '../features/business/BusinessUi'
 import { settleOperations } from '../features/business/sellerOperationsModel'
-import '../features/business/businessSeller.css'
 
 const labels = {
   PAID: '결제 완료',

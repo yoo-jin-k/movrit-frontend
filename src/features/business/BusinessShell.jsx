@@ -5,10 +5,8 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { getMySellerProfile } from '../../api/sellerApi'
-import './business.css'
 import BusinessIcon from './BusinessIcon'
 import useChatUnread from '../chat/useChatUnread'
-import './businessSeller.css'
 import useUnreadNotifications from '../notifications/useUnreadNotifications'
 import { unreadBadgeText } from '../notifications/notificationBadge'
 const menus = [

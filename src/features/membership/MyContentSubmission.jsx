@@ -27,7 +27,6 @@ import OpenChatButton from '../chat/OpenChatButton'
 import ContentMetricPanel from '../contentMetric/ContentMetricPanel'
 import ContentPrecheckPanel from './ContentPrecheckPanel'
 import { precheckAvailable } from './contentPrecheckModel'
-import './myCampaignContent.css'
 
 // 서버 상태와 최신 version을 함께 사용합니다. 저장 결과가 불명확하면 자동 재전송하지 않습니다.
 export default function MyContentSubmission({

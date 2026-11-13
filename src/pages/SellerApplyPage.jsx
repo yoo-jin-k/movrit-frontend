@@ -15,7 +15,6 @@ import {
   sellerStatusGuide,
   sellerStatusLabel,
 } from '../features/business/sellerEntryModel'
-import './sellerEntry.css'
 
 const initialForm = {
   businessName: '',

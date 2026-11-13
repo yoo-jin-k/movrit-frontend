@@ -13,7 +13,6 @@ import { PageHeader } from './BusinessUi'
 import { getMyBrands } from '../../api/brandApi'
 import { brandSetupState } from './brandModel'
 import { sellerStatusLabel } from './sellerEntryModel'
-import './businessSeller.css'
 
 const operationLinks = [
   ['/seller/brands', '브랜드 관리', '로고·대표 이미지, 운영 상태'],

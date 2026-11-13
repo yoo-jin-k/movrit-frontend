@@ -16,7 +16,6 @@ import {
   reservationError,
   visitLabel,
 } from './participationModel'
-import './participation.css'
 
 export default function VisitReservationPanel({ application, mode }) {
   const [reservation, setReservation] = useState(undefined)

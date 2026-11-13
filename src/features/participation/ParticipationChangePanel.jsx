@@ -25,7 +25,6 @@ import {
   isDestructiveChange,
   reasonError,
 } from './participationChangeModel'
-import './participation.css'
 
 const FORMS = {
   withdraw: '신청 철회',

@@ -22,7 +22,6 @@ import {
   signed,
   todayIso,
 } from './contentMetricModel'
-import './contentMetric.css'
 
 const EMPTY_FORM = {
   viewCount: '',

@@ -26,8 +26,6 @@ import {
   visibilityAction,
   visibilityError,
 } from '../features/admin/communityAdminModel'
-import '../features/participation/participation.css'
-import '../features/admin/communityAdmin.css'
 
 const EMPTY_PAGE = { items: [], page: 0, totalPages: 0, total: 0 }
 

@@ -10,7 +10,6 @@ import AvatarEditor from './AvatarEditor'
 import SocialLoginLinks from './SocialLoginLinks'
 import ChannelConnections from './ChannelConnections'
 import PhoneVerification from './PhoneVerification'
-import './accountProfile.css'
 export default function AccountSettingsPage() {
   const state = useMemberAccount()
   const location = useLocation()

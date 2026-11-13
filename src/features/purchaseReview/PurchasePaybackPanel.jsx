@@ -11,7 +11,6 @@ import {
   sellerPaybackLabel,
   won,
 } from './purchaseReviewModel'
-import './purchaseReview.css'
 
 const dateTime = (value) =>
   value ? String(value).replace('T', ' ').slice(0, 16) : '-'

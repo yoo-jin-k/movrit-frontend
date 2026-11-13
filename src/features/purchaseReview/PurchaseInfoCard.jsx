@@ -5,7 +5,6 @@
 import { useEffect, useState } from 'react'
 import { readPurchaseInfo } from '../../api/purchaseReviewApi'
 import { won } from './purchaseReviewModel'
-import './purchaseReview.css'
 
 export default function PurchaseInfoCard({ campaignId }) {
   const [state, setState] = useState({ loading: true, info: null, error: '' })

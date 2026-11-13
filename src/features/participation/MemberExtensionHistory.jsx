@@ -15,7 +15,6 @@ import {
   extensionLevel,
   extensionLimitText,
 } from './participationChangeModel'
-import './participation.css'
 
 export default function MemberExtensionHistory({ memberId }) {
   const [state, setState] = useState({ loading: true, data: null })

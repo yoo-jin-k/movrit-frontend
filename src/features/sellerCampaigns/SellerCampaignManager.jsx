@@ -31,7 +31,6 @@ import {
 import RequirementFields from './RequirementFields'
 import { emptyRequirement, requirementForm } from './requirementModel'
 import { emptyCampaign, configuredCampaignPayload } from './campaignEditorModel'
-import './sellerCampaigns.css'
 import CampaignFormPreview from './CampaignFormPreview'
 import CampaignMediaFields from './CampaignMediaFields'
 import { emptyCampaignMediaDraft } from './campaignMediaDraft'

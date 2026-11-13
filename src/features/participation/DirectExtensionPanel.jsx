@@ -21,7 +21,6 @@ import {
   extensionLevel,
   extensionLimitText,
 } from './participationChangeModel'
-import './participation.css'
 
 export default function DirectExtensionPanel({
   applicationId,

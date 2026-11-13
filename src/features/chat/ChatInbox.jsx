@@ -11,7 +11,6 @@ import { openSupportChat, readChatRooms } from '../../api/chatApi'
 import ChatRoomView from './ChatRoomView'
 import { CHAT_EVENT, acquireChatStream } from './chatStream'
 import { chatTime, roomTypeLabel } from './chatModel'
-import './chat.css'
 
 const LIST_REFRESH_MS = 15000
 

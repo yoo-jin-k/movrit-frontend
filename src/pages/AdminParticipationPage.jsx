@@ -12,7 +12,6 @@ import { dateLabel } from '../features/business/businessModel'
 import { revokePenalty, runDeadlineReminders } from '../api/participationApi'
 import { PENALTY_LABELS } from '../features/participation/participationModel'
 import AdminParticipationChanges from '../features/participation/AdminParticipationChanges'
-import '../features/participation/participation.css'
 
 export default function AdminParticipationPage() {
   const state = useBusinessList('/admin/penalties')

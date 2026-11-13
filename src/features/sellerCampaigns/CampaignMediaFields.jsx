@@ -1,6 +1,10 @@
 /**
  * 이미지 선택·정렬·설명과 방문 주소 확인을 화면 초안에 반영합니다.
  * 파일은 선택 시 검증하고 미리보기 URL은 사용이 끝나면 해제하며 업로드는 부모 저장 흐름이 담당합니다.
+ *
+ * 변경 이력: 고치기 전에는 편집 화면의 2열 칸 배치를 그대로 받아 주소 칸이 왼쪽 절반에만 세로로 쌓이고,
+ * 확인 체크박스가 오른쪽 칸 전체 너비로 늘어났습니다. 고친 후에는 장소명·상세 주소를 한 줄 전체로,
+ * 우편번호(좁게)와 기본 주소를 한 줄에 두고, 확인 체크박스는 글자 옆 기본 크기로 보입니다.
  */
 import { useEffect, useRef, useState } from 'react'
 import {
@@ -200,7 +204,7 @@ export default function CampaignMediaFields({
         </ol>
       </fieldset>
       {visit ? (
-        <fieldset disabled={disabled}>
+        <fieldset className="campaign-media-location" disabled={disabled}>
           <legend>공개 방문 장소</legend>
           <p>
             방문할 사업장 주소를 입력해 주세요. 개인 주거지·연락처·출입
@@ -208,17 +212,19 @@ export default function CampaignMediaFields({
           </p>
           <div className="campaign-media-address">
             {[
-              ['venueName', '장소명', 100],
-              ['postalCode', '우편번호 (선택)', 5],
-              ['address1', '기본 주소', 255],
-              ['address2', '상세 주소 (선택)', 255],
-            ].map(([key, label, limit]) => (
-              <label key={key}>
+              ['venueName', '장소명', 100, 'organization'],
+              ['postalCode', '우편번호 (선택)', 5, 'postal-code'],
+              ['address1', '기본 주소', 255, 'address-line1'],
+              ['address2', '상세 주소 (선택)', 255, 'address-line2'],
+            ].map(([key, label, limit, autoComplete]) => (
+              <label key={key} className={`campaign-media-address__${key}`}>
                 {label}
                 <input
                   value={value.location?.[key] || ''}
                   maxLength={limit}
+                  autoComplete={autoComplete}
                   inputMode={key === 'postalCode' ? 'numeric' : undefined}
+                  placeholder={key === 'address2' ? '예) 2층 201호' : undefined}
                   onChange={(event) => locationField(key, event.target.value)}
                 />
               </label>

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
   instagramMetricRequest,
   validateChannelProfile,
+  metricTitle,
   metricVerificationLabel,
 } from '../src/features/membership/channelProfileModel.js'
 import {
@@ -61,4 +62,19 @@ test('업체 선택은 신청 화면 안내이며 권한 값으로 사용하지 
   )
   assert.equal(signupDestination('SELLER'), '/seller/apply')
   assert.equal(signupDestination('ADMIN'), '/home')
+})
+
+test('채널 지표 제목은 서버 코드를 화면 이름으로 바꾸고 모르는 코드는 그대로 둡니다', () => {
+  assert.equal(
+    metricTitle({ channelType: 'INSTAGRAM', metricType: 'FOLLOWER_COUNT' }),
+    '인스타그램 · 팔로워 수',
+  )
+  assert.equal(
+    metricTitle({ channelType: 'BLOG', metricType: 'FOLLOWER_COUNT' }),
+    '블로그 · 팔로워 수',
+  )
+  assert.equal(
+    metricTitle({ channelType: 'TIKTOK', metricType: 'VIEW_COUNT' }),
+    'TIKTOK · VIEW_COUNT',
+  )
 })

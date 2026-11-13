@@ -61,7 +61,7 @@ export async function readCancelEvidence(requestId) {
   return URL.createObjectURL(data)
 }
 
-// 기간 연장 요청(7·14일)과 업체의 승인·반려입니다.
+// 기간 연장 요청(1~30일)과 업체의 승인·반려입니다.
 export async function requestExtension(applicationId, days, reason) {
   const { data } = await api.post(
     `${app(applicationId)}/extension`,

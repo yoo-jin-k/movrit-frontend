@@ -2,7 +2,7 @@
  * '내 캠페인'의 참여 조정 영역입니다.
  * - 선정 발표 전: 신청 철회(취소 횟수 없음). 철회하면 같은 캠페인에 다시 신청할 수 없습니다.
  * - 선정·진행 중(콘텐츠 제출 전): 단순 참여 취소(취소 횟수 1회) 또는 업체와 협의한 취소(증빙 이미지, 운영자 확인 후 횟수 없음).
- * - 콘텐츠 마감 전: 기간 연장 7·14일 요청(신청당 1회, 업체가 승인하면 이 신청의 체험 기간과 콘텐츠 마감이 함께 늘어납니다).
+ * - 콘텐츠 마감 전: 기간 연장 1~30일 요청(신청당 1회, 업체가 승인하면 이 신청의 체험 기간과 콘텐츠 마감이 함께 늘어납니다).
  * 가능 여부는 서버 응답(GET /changes)을 그대로 따릅니다.
  */
 import { useEffect, useState } from 'react'
@@ -16,10 +16,13 @@ import {
 import { workspaceTime } from '../membership/campaignWorkspaceModel'
 import {
   EXTENSION_DAYS,
+  EXTENSION_MAX,
+  EXTENSION_MIN,
   REQUEST_STATUS,
   cancelCountText,
   evidenceError,
   extensionError,
+  isDestructiveChange,
   reasonError,
 } from './participationChangeModel'
 import './participation.css'
@@ -186,6 +189,11 @@ export default function ParticipationChangePanel({ application, onChanged }) {
             <button
               key={name}
               type="button"
+              className={
+                isDestructiveChange(name)
+                  ? 'participation-change__button--danger'
+                  : undefined
+              }
               aria-pressed={form === name}
               onClick={() => open(name)}
             >
@@ -220,6 +228,25 @@ export default function ParticipationChangePanel({ application, onChanged }) {
                   {value}일
                 </label>
               ))}
+              <label className="participation-change__custom-days">
+                직접 입력
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={EXTENSION_MIN}
+                  max={EXTENSION_MAX}
+                  value={days}
+                  onChange={(e) => setDays(e.target.value)}
+                  aria-describedby="extension-days-help"
+                />
+                일
+              </label>
+              <span
+                id="extension-days-help"
+                className="participation-change__count"
+              >
+                {EXTENSION_MIN}~{EXTENSION_MAX}일 사이로 정할 수 있습니다.
+              </span>
             </fieldset>
           )}
           <label>
@@ -242,7 +269,15 @@ export default function ParticipationChangePanel({ application, onChanged }) {
             </label>
           )}
           <div className="participation-change__actions">
-            <button type="submit" disabled={busy}>
+            <button
+              type="submit"
+              className={
+                isDestructiveChange(form)
+                  ? 'participation-change__button--danger is-solid'
+                  : 'participation-change__button--primary'
+              }
+              disabled={busy}
+            >
               {busy ? '처리 중…' : `${FORMS[form]} 보내기`}
             </button>
             <button type="button" disabled={busy} onClick={() => open('')}>

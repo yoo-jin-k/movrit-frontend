@@ -30,6 +30,7 @@ import {
   statusLabel,
 } from '../../features/admin/adminConsoleModel'
 import useAdminResource from '../../features/admin/useAdminResource'
+import { notifyPendingSellersChanged } from '../../features/admin/usePendingSellerCount'
 
 export function AdminSellerDetailPage() {
   const { id } = useParams()
@@ -48,6 +49,8 @@ export function AdminSellerDetailPage() {
           ? '업체를 승인했습니다.'
           : '업체 신청을 반려했습니다.',
       )
+      // 왼쪽 메뉴의 심사 대기 배지를 바로 다시 셉니다.
+      notifyPendingSellersChanged()
       state.reload()
     } catch (error) {
       setMessage(

@@ -42,7 +42,8 @@
 }
 .campaign-workspace__grid {
   display: grid;
-  grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
+  /* 위에는 캠페인 카드 그리드, 아래에는 선택한 캠페인 상세를 놓습니다. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
@@ -52,6 +53,9 @@
   list-style: none;
   display: grid;
   gap: 12px;
+  /* 화면 너비에 맞춰 칸 수가 바뀝니다(넓으면 3~4칸, 태블릿 2칸, 휴대폰 1칸).
+     min()으로 250px보다 좁은 화면에서도 카드가 넘치지 않게 합니다. */
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
 }
 .campaign-workspace__list button {
   width: 100%;
@@ -162,19 +166,6 @@
   min-width: 0;
 }
 @media (max-width: 800px) {
-  .campaign-workspace__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .campaign-workspace__list {
-    display: flex;
-    overflow-x: auto;
-    padding: 3px 3px 12px;
-    scroll-snap-type: x proximity;
-  }
-  .campaign-workspace__list li {
-    flex: 0 0 260px;
-    scroll-snap-align: start;
-  }
   .campaign-workspace__detail {
     padding: 18px;
   }

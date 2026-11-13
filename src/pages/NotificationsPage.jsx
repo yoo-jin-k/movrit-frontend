@@ -1,4 +1,8 @@
-/** 실제 알림만 조회하며 실패와 빈 목록을 구분합니다. 읽음 처리 후 서버 값을 다시 확인합니다. */
+/**
+ * 실제 알림만 조회하며 실패와 빈 목록을 구분합니다. 읽음 처리 후 서버 값을 다시 확인합니다.
+ * 변경 이력(고치기 전 → 고친 후): 공용 칩 줄에 필터와 '모두 읽음'이 섞이고 링크 버튼 글자가 위로 붙음
+ * → 필터·동작 줄을 나누고 버튼을 가로·세로 가운데 정렬, 목록을 제목과 같은 왼쪽 선에 맞춤.
+ */
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -72,8 +76,30 @@ export default function NotificationsPage() {
   const shown = filterNotifications(state.items, filter)
   return (
     <CommonLayout title="알림센터">
-      <p>읽지 않은 알림 {state.count ?? '—'}개</p>
-      <div className="common-chips">
+      <div className="notification-toolbar">
+        <p>
+          읽지 않은 알림 <strong>{state.count ?? '—'}</strong>개
+        </p>
+        <div className="notification-actions">
+          <button
+            type="button"
+            className="notification-button"
+            onClick={() => read(null)}
+            disabled={busy || state.loading || !state.count}
+          >
+            모두 읽음
+          </button>
+          <button
+            type="button"
+            className="notification-button"
+            onClick={reload}
+            disabled={busy || state.loading}
+          >
+            새로고침
+          </button>
+        </div>
+      </div>
+      <div className="notification-filters" role="group" aria-label="알림 종류">
         {[
           ['', '전체'],
           ['unread', '읽지 않음'],
@@ -83,21 +109,14 @@ export default function NotificationsPage() {
         ].map(([value, label]) => (
           <button
             key={value}
+            type="button"
+            className="notification-button"
             aria-pressed={filter === value}
             onClick={() => setFilter(value)}
           >
             {label}
           </button>
         ))}
-        <button
-          onClick={() => read(null)}
-          disabled={busy || state.loading || !state.count}
-        >
-          모두 읽음
-        </button>
-        <button onClick={reload} disabled={busy || state.loading}>
-          새로고침
-        </button>
       </div>
       {error && <p role="alert">{error}</p>}
       {state.loading ? (
@@ -105,33 +124,46 @@ export default function NotificationsPage() {
       ) : state.error ? (
         <p role="alert">{state.error}</p>
       ) : !shown.length ? (
-        <p>표시할 알림이 없습니다.</p>
+        <p className="common-empty">표시할 알림이 없습니다.</p>
       ) : (
-        <section className="notification-list">
+        <ul className="notification-list">
           {shown.map((item) => (
-            <article key={item.id} className="common-card">
-              <h2>{item.title}</h2>
-              <p>{item.message}</p>
-              <small>
-                {workspaceTime(item.createdAt)} ·{' '}
-                {item.read ? '읽음' : '읽지 않음'}
-              </small>
-              <div className="common-chips">
-                <button
-                  disabled={busy || item.read}
-                  onClick={() => read(item.id)}
-                >
-                  {item.read ? '읽음' : '읽음 표시'}
-                </button>
+            <li
+              key={item.id}
+              className={`notification-item${item.read ? '' : ' is-unread'}`}
+            >
+              <span className="notification-item__dot" aria-hidden="true" />
+              <div className="notification-item__body">
+                <h2>{item.title}</h2>
+                <p>{item.message}</p>
+                <small>
+                  {workspaceTime(item.createdAt)} ·{' '}
+                  {item.read ? '읽음' : '읽지 않음'}
+                </small>
+              </div>
+              <div className="notification-item__actions">
+                {!item.read && (
+                  <button
+                    type="button"
+                    className="notification-button"
+                    disabled={busy}
+                    onClick={() => read(item.id)}
+                  >
+                    읽음 표시
+                  </button>
+                )}
                 {notificationPath(item) && (
-                  <Link className="common-button" to={notificationPath(item)}>
+                  <Link
+                    className="notification-button notification-button--primary"
+                    to={notificationPath(item)}
+                  >
                     관련 내역 보기
                   </Link>
                 )}
               </div>
-            </article>
+            </li>
           ))}
-        </section>
+        </ul>
       )}
     </CommonLayout>
   )

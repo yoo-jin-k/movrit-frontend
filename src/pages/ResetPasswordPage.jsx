@@ -3,11 +3,15 @@
  * - 링크의 토큰을 먼저 서버에서 확인하고, 쓸 수 없으면(만료·사용됨) 다시 받기 안내를 보여줍니다.
  * - 새 비밀번호 규칙(영문+숫자, 8~100자)과 확인 입력 일치를 먼저 확인한 뒤 저장합니다.
  * - 저장되면 기존 로그인 정보를 지우고 로그인 화면으로 안내합니다. 안내와 오류는 화면 안에 표시합니다(팝업 없이).
+ * - 비밀번호 칸은 눈 아이콘으로 입력한 글자를 보거나 숨길 수 있습니다(PasswordField).
+ * 변경 이력: 입력 폼 안 요소 사이 간격이 없음 → 로그인 카드와 같은 간격(common-auth-card), 오류는 빨간 느낌표 안내.
  */
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { resetPassword, validatePasswordResetToken } from '../api/authApi'
 import CommonLayout from '../components/layout/CommonLayout'
+import FormAlert from '../components/ui/FormAlert'
+import PasswordField from '../components/ui/PasswordField'
 import { newPasswordError } from '../features/auth/passwordRules'
 
 function ResetPasswordPage() {
@@ -59,14 +63,22 @@ function ResetPasswordPage() {
   const invalid = !token || (!checking && !validation.valid)
 
   return (
-    <CommonLayout title="비밀번호 재설정">
-      <div className="common-card common-account-card">
+    <CommonLayout
+      title="비밀번호 재설정"
+      className="common-auth-page"
+      hideTitle
+    >
+      <div className="common-card common-auth-card">
         {checking ? (
-          <p role="status">재설정 링크를 확인하고 있습니다.</p>
+          <p className="common-auth-card__status" role="status">
+            재설정 링크를 확인하고 있습니다.
+          </p>
         ) : done ? (
           <>
             <h2>비밀번호를 바꿨습니다</h2>
-            <p role="status">{done}</p>
+            <p className="common-auth-card__status" role="status">
+              {done}
+            </p>
             <button
               className="common-button"
               type="button"
@@ -98,38 +110,39 @@ function ResetPasswordPage() {
             </button>
           </>
         ) : (
-          <form onSubmit={submit}>
+          <form className="common-auth-card__form" onSubmit={submit}>
             <h2>새 비밀번호 설정</h2>
-            <p>영문과 숫자를 포함해 8자 이상으로 입력해 주세요.</p>
-            <label className="common-field">
-              새 비밀번호
-              <input
-                type="password"
-                value={form.newPassword}
-                onChange={(event) =>
-                  setForm({ ...form, newPassword: event.target.value })
-                }
-                minLength={8}
-                maxLength={100}
-                required
-                autoComplete="new-password"
-              />
-            </label>
-            <label className="common-field">
-              새 비밀번호 확인
-              <input
-                type="password"
-                value={form.confirmPassword}
-                onChange={(event) =>
-                  setForm({ ...form, confirmPassword: event.target.value })
-                }
-                minLength={8}
-                maxLength={100}
-                required
-                autoComplete="new-password"
-              />
-            </label>
-            {error && <p role="alert">{error}</p>}
+            <p id="reset-password-help">
+              영문과 숫자를 포함해 8자 이상으로 입력해 주세요.
+            </p>
+            <PasswordField
+              label="새 비밀번호"
+              value={form.newPassword}
+              onChange={(event) => {
+                setForm({ ...form, newPassword: event.target.value })
+                setError('')
+              }}
+              minLength={8}
+              maxLength={100}
+              required
+              autoComplete="new-password"
+              aria-describedby="reset-password-help"
+              aria-invalid={Boolean(error) || undefined}
+            />
+            <PasswordField
+              label="새 비밀번호 확인"
+              value={form.confirmPassword}
+              onChange={(event) => {
+                setForm({ ...form, confirmPassword: event.target.value })
+                setError('')
+              }}
+              minLength={8}
+              maxLength={100}
+              required
+              autoComplete="new-password"
+              aria-invalid={Boolean(error) || undefined}
+            />
+            <FormAlert>{error}</FormAlert>
             <button className="common-button" type="submit" disabled={loading}>
               {loading ? '변경 중...' : '비밀번호 변경'}
             </button>

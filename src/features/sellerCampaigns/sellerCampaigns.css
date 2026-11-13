@@ -119,6 +119,11 @@
   border-radius: 8px;
 }
 
+/* 참여 방식 안내(기존 방문 정보 삭제 등): 성공 안내와 구분되는 주의 색입니다. */
+.seller-campaign-manager .seller-fulfillment-warning {
+  color: #8a4b00;
+}
+
 /* 채널 기본 요건 넣기 */
 .seller-campaign-fields__defaults {
   grid-column: 1 / -1;
@@ -145,12 +150,19 @@
   gap: 8px 12px;
   align-items: center;
 }
-.seller-ai-draft__actions span {
-  color: #6d6873;
-  font-size: 13px;
+.seller-ai-draft__actions button {
+  flex: none;
 }
-.seller-ai-draft > p[role='status'],
-.seller-ai-draft > p[role='alert'] {
-  grid-column: 1 / -1;
+/* 버튼 옆 완료·실패 안내: 좁은 화면에서는 버튼 아래로 내려갑니다. */
+.seller-campaign-manager .seller-ai-draft__result {
+  flex: 1 1 240px;
+  min-width: 0;
   margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+/* 빈 안내 영역은 자리를 차지하지 않게 하되, 낭독용 영역은 그대로 둡니다. */
+.seller-campaign-manager .seller-ai-draft__result:empty {
+  flex: 0 0 0;
 }

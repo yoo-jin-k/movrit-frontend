@@ -19,6 +19,9 @@ import ApplicationFormFields from './ApplicationFormFields'
 import {
   emptyApplicationForm,
   applicationFormRequest,
+  fulfillmentForCampaignType,
+  usesVisit,
+  visitRemovalWarning,
 } from './applicationFormModel'
 import CampaignFields from './CampaignFields'
 import {
@@ -40,7 +43,6 @@ import {
 } from './campaignCopy'
 import { readPurchaseInfo, savePurchaseInfo } from '../../api/purchaseReviewApi'
 import {
-  fulfillmentForType,
   purchaseInfoError,
   purchaseInfoForm,
   purchaseInfoRequest,
@@ -255,6 +257,14 @@ export default function SellerCampaignManager({
     setNotice('')
     setMustReload(false)
   }
+  // 방문형 참여일 때만 방문 장소·방문 안내 입력을 보이고 저장합니다(신청서 참여 방식에서 파생).
+  const visit = usesVisit(applicationForm.allowedFulfillmentTypes)
+  const visitWarning = visitRemovalWarning({
+    editing: Boolean(original),
+    savedTypes: savedForm?.allowedFulfillmentTypes || [],
+    currentTypes: applicationForm.allowedFulfillmentTypes,
+    savedVisitGuide: original?.visitGuide,
+  })
   // 로컬 검증은 네트워크 요청 전에 수행합니다. 이후 실패는 서버 반영 여부가 불명확할 수 있으므로 재조회 잠금을 사용합니다.
   const submit = async (event) => {
     event.preventDefault()
@@ -282,7 +292,10 @@ export default function SellerCampaignManager({
         const purchaseProblem = purchaseInfoError(form.purchaseReview)
         if (purchaseProblem) throw new Error(purchaseProblem)
       }
-      payload = configuredCampaignPayload(form, condition, original)
+      // 방문형이 아니면 숨긴 방문 안내는 보내지 않습니다.
+      payload = configuredCampaignPayload(form, condition, original, {
+        visit,
+      })
       if (formDirty || !original) {
         payload.applicationForm = applicationFormRequest(applicationForm)
         if (original)
@@ -408,7 +421,7 @@ export default function SellerCampaignManager({
                     form,
                     changed,
                   )
-                  // 캠페인 종류가 구매평으로(또는 구매평에서) 바뀌면 신청서 참여 방식도 그 종류에 맞춥니다.
+                  // 캠페인 종류가 바뀌면 신청서 참여 방식도 그 종류에 맞춥니다(지역→방문형, 제품→배송형, 구매평→직접 구매).
                   if (fulfillment)
                     changeApplicationForm({
                       ...applicationForm,
@@ -420,7 +433,7 @@ export default function SellerCampaignManager({
                   )
                     changeApplicationForm({
                       ...applicationForm,
-                      allowedFulfillmentTypes: fulfillmentForType(
+                      allowedFulfillmentTypes: fulfillmentForCampaignType(
                         next.campaignType,
                         applicationForm.allowedFulfillmentTypes,
                       ),
@@ -435,6 +448,7 @@ export default function SellerCampaignManager({
                 )}
                 editing={Boolean(original)}
                 disabled={busy || mustReload}
+                visit={visit}
               />
               <RequirementFields
                 value={condition}
@@ -452,6 +466,7 @@ export default function SellerCampaignManager({
                 value={applicationForm}
                 campaignType={form.campaignType || 'PRODUCT'}
                 onChange={changeApplicationForm}
+                visitWarning={visitWarning}
                 disabled={busy || mustReload}
               />
               {mediaApi && (

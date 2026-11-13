@@ -8,6 +8,9 @@ import { getMySellerProfile } from '../../api/sellerApi'
 import './business.css'
 import BusinessIcon from './BusinessIcon'
 import useChatUnread from '../chat/useChatUnread'
+import './businessSeller.css'
+import useUnreadNotifications from '../notifications/useUnreadNotifications'
+import { unreadBadgeText } from '../notifications/notificationBadge'
 const menus = [
   ['dashboard', '홈'],
   ['campaigns', '캠페인'],
@@ -22,6 +25,9 @@ const menus = [
 export default function BusinessShell() {
   // 메시지 메뉴에 안 읽은 채팅 수를 배지로 보여줍니다.
   const chatUnread = useChatUnread()
+  // 상단 알림 아이콘과 '알림·문의' 메뉴에 안 읽은 알림 수를 배지로 보여줍니다(30초마다·알림 읽음 시 갱신).
+  const notificationUnread = useUnreadNotifications()
+  const notificationBadge = unreadBadgeText(notificationUnread)
   const [profile, setProfile] = useState(null),
     [error, setError] = useState(''),
     [attempt, setAttempt] = useState(0)
@@ -57,9 +63,18 @@ export default function BusinessShell() {
         <Link
           to="/seller/inbox"
           className="business-header-notifications"
-          aria-label="업체 알림"
+          aria-label={
+            notificationBadge
+              ? `업체 알림, 안 읽은 알림 ${notificationUnread}개`
+              : '업체 알림'
+          }
         >
           <BusinessIcon name="inbox" />
+          {notificationBadge && (
+            <em className="business-count-badge" aria-hidden="true">
+              {notificationBadge}
+            </em>
+          )}
         </Link>
         <Link
           to="/seller/settings"
@@ -92,9 +107,17 @@ export default function BusinessShell() {
               <NavLink key={path} to={`/seller/${path}`}>
                 <BusinessIcon name={path} />
                 {label}
+                {path === 'inbox' && notificationBadge && (
+                  <em
+                    className="business-count-badge"
+                    aria-label={`안 읽은 알림 ${notificationUnread}개`}
+                  >
+                    {notificationBadge}
+                  </em>
+                )}
                 {path === 'messages' && chatUnread > 0 && (
                   <em
-                    className="chat-nav-badge"
+                    className="chat-nav-badge business-count-badge"
                     aria-label={`안 읽은 메시지 ${chatUnread}개`}
                   >
                     {chatUnread > 99 ? '99+' : chatUnread}

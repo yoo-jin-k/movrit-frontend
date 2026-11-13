@@ -4,6 +4,8 @@
  * - 완료한 참여자에게 1~5점 평가와 업체만 보는 메모를 남깁니다(다시 저장하면 고쳐집니다).
  * - 콘텐츠 마감이 지났는데 제출하지 않았거나(미제출), 확정한 방문 일시가 지났는데 방문하지 않았으면(노쇼) 패널티를 기록합니다.
  *   기록하면 그 참여는 취소되고 참여자에게 알림이 갑니다. 최근 90일 2회면 30일간 신청이 제한됩니다.
+ * - 변경 이력: 고치기 전에는 완료가 아닌 참여에서 별점·메모 영역이 안내 없이 빠져 있었습니다.
+ *   고친 후에는 '완료 후 별점 · 메모' 제목과 상태별 안내를 늘 보여 주고, 입력 칸은 완료 참여에만 엽니다.
  */
 import { useEffect, useState } from 'react'
 import {
@@ -19,6 +21,10 @@ import {
   penaltyOptions,
   stars,
 } from './participationModel'
+import {
+  ratingAvailability,
+  ratingChoiceLabel,
+} from '../business/participantRatingModel'
 import './participation.css'
 
 export default function ParticipantActivityPanel({ application, onChanged }) {
@@ -61,6 +67,7 @@ export default function ParticipantActivityPanel({ application, onChanged }) {
   if (!data) return <p role="status">참여자 활동 정보를 불러오고 있습니다.</p>
   const { activity } = data
   const options = penaltyOptions(application, campaign, reservation)
+  const ratingState = ratingAvailability(application.status)
 
   const saveRating = async () => {
     if (busy) return
@@ -129,44 +136,50 @@ export default function ParticipantActivityPanel({ application, onChanged }) {
           제한된 참여자입니다.
         </p>
       )}
-      {application.status === 'COMPLETED' && (
-        <div className="participant-activity__rating">
-          <span id={`rating-${application.id}`}>이 참여 평가</span>
-          <div
-            className="rating-stars"
-            role="radiogroup"
-            aria-labelledby={`rating-${application.id}`}
-          >
-            {[1, 2, 3, 4, 5].map((value) => (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={rating === value}
-                aria-label={`${value}점`}
-                className={value <= rating ? 'is-on' : ''}
-                onClick={() => setRating(value)}
-              >
-                ★
-              </button>
-            ))}
-          </div>
-          <label>
-            브랜드 메모 (참여자에게 보이지 않습니다)
-            <textarea
-              rows={2}
-              maxLength={1000}
-              value={memo}
-              placeholder="예) 마감 전에 제출, 사진 품질이 좋음"
-              onChange={(e) => setMemo(e.target.value)}
-            />
-          </label>
-          <button type="button" disabled={busy} onClick={saveRating}>
-            {data.myRating ? '평가 고치기' : '평가 저장'}
-          </button>
-          {data.myRating && <small>저장한 평가: {stars(data.myRating)}</small>}
-        </div>
-      )}
+      <div className="participant-activity__rating">
+        <h4 id={`rating-${application.id}`}>완료 후 별점 · 메모</h4>
+        <p>{ratingState.hint}</p>
+        {ratingState.editable && (
+          <>
+            <div
+              className="rating-stars"
+              role="radiogroup"
+              aria-labelledby={`rating-${application.id}`}
+            >
+              {[1, 2, 3, 4, 5].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={rating === value}
+                  aria-label={`${value}점`}
+                  className={value <= rating ? 'is-on' : ''}
+                  onClick={() => setRating(value)}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <small>{ratingChoiceLabel(rating)}</small>
+            <label>
+              브랜드 메모 (참여자에게 보이지 않습니다)
+              <textarea
+                rows={2}
+                maxLength={1000}
+                value={memo}
+                placeholder="예) 마감 전에 제출, 사진 품질이 좋음"
+                onChange={(e) => setMemo(e.target.value)}
+              />
+            </label>
+            <button type="button" disabled={busy} onClick={saveRating}>
+              {data.myRating ? '평가 고치기' : '평가 저장'}
+            </button>
+            {data.myRating && (
+              <small>저장한 평가: {stars(data.myRating)}</small>
+            )}
+          </>
+        )}
+      </div>
       {options.length > 0 && (
         <div className="participant-activity__penalty">
           <label>

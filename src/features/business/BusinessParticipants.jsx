@@ -25,6 +25,7 @@ import PurchasePaybackPanel from '../purchaseReview/PurchasePaybackPanel'
 import VisitReservationPanel from '../participation/VisitReservationPanel'
 import ShipmentCard from '../shipping/ShipmentCard'
 import ParticipantActivityPanel from '../participation/ParticipantActivityPanel'
+import { participantDetailLabel } from './participantRatingModel'
 import ExtensionRequestsPanel from '../participation/ExtensionRequestsPanel'
 import DirectExtensionPanel from '../participation/DirectExtensionPanel'
 import { bulkApplications } from '../../api/participationApi'
@@ -359,7 +360,7 @@ export default function BusinessParticipants() {
           {error}
         </p>
       )}
-      {/* 참여자가 보낸 콘텐츠 마감 연장(7·14일) 요청 */}
+      {/* 참여자가 보낸 콘텐츠 마감 연장(1~30일) 요청 */}
       <ExtensionRequestsPanel
         campaignId={campaignId}
         onChanged={state.reload}
@@ -454,7 +455,7 @@ export default function BusinessParticipants() {
                       <td data-label="신청일">{dateLabel(item.submittedAt)}</td>
                       <td data-label="관리">
                         <button disabled={busy} onClick={() => choose(item)}>
-                          상세 보기
+                          {participantDetailLabel(item.status)}
                         </button>
                       </td>
                     </tr>
@@ -557,7 +558,7 @@ export default function BusinessParticipants() {
                 mode="seller"
               />
             )}
-          {/* 활동 등급·평가 평균, 완료 참여자 평가·메모, 미제출·노쇼 패널티 */}
+          {/* 활동 등급·평가 평균, 완료 후 별점·메모(완료 전에는 언제 남길 수 있는지 안내), 미제출·노쇼 패널티 */}
           <ParticipantActivityPanel
             key={`activity-${current.id}-${current.status}`}
             application={current}

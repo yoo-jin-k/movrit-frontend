@@ -89,14 +89,37 @@
   opacity: 0.45;
   cursor: default;
 }
+/* 공개 방문 장소: 편집 화면의 2열 fieldset 배치를 받지 않고 한 열로 쌓습니다. */
+.campaign-media .campaign-media-location {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+.campaign-media .campaign-media-location p {
+  margin: 0;
+}
+/* 장소명·상세 주소는 한 줄 전체, 우편번호(좁게)와 기본 주소는 같은 줄입니다. */
 .campaign-media-address {
   display: grid;
-  gap: 14px;
+  grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+  gap: 14px 12px;
+}
+.campaign-media-address__venueName,
+.campaign-media-address__address2 {
+  grid-column: 1 / -1;
 }
 .campaign-media .campaign-media-confirm {
   display: flex;
   align-items: flex-start;
-  margin-top: 18px;
+  gap: 8px;
+  margin-top: 4px;
+}
+.campaign-media .campaign-media-confirm input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  padding: 0;
 }
 .campaign-media .campaign-media-error {
   color: #b42318;
@@ -104,6 +127,12 @@
 @media (max-width: 480px) {
   .campaign-media fieldset {
     padding: 14px;
+  }
+  .campaign-media-address {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .campaign-media-address__postalCode {
+    max-width: 10rem;
   }
   .campaign-media-list li {
     grid-template-columns: minmax(0, 1fr);

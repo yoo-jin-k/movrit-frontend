@@ -2,15 +2,19 @@ import {
   fulfillmentLabel,
   fulfillmentOptions,
 } from '../purchaseReview/purchaseReviewModel'
+import { chooseFulfillment, hasMixedFulfillment } from './applicationFormModel'
 /**
  * 참여 방식·추가 질문·동의 문서의 편집값을 부모 폼으로 전달합니다.
  * 행별 변경은 새 배열로 반영하며 저장 요청과 버전 검증은 상위 편집기에 맡깁니다.
+ * 참여 방식은 라디오 버튼으로 하나만 고릅니다(배송형·방문형 택1, 구매평은 직접 구매).
+ * visitWarning: 수정 중 방문형을 해제해 기존 방문 정보가 지워질 때 부모가 넘겨주는 안내입니다.
  */
 export default function ApplicationFormFields({
   value,
   onChange,
   disabled = false,
   campaignType = 'PRODUCT',
+  visitWarning = '',
 }) {
   // 변경한 질문 행만 새 객체로 바꾸고 다른 질문과 동의 문서는 유지합니다.
   const updateQuestion = (index, patch) =>
@@ -35,26 +39,39 @@ export default function ApplicationFormFields({
         캠페인과 신청서를 함께 저장합니다. 신청서를 구성하기 전에는 참여 신청을
         받을 수 없습니다.
       </p>
-      <div className="seller-form-full">
-        <h4>참여 방식</h4>
-        {/* 구매평 캠페인은 '직접 구매'만, 다른 캠페인은 배송형·방문형 중에서 고릅니다. */}
+      <div
+        className="seller-form-full"
+        role="radiogroup"
+        aria-labelledby="seller-fulfillment-heading"
+      >
+        <h4 id="seller-fulfillment-heading">참여 방식 (하나 선택)</h4>
+        {/* 구매평 캠페인은 '직접 구매'만, 다른 캠페인은 배송형·방문형 중 하나를 고릅니다. */}
         {fulfillmentOptions(campaignType).map((type) => (
           <label className="seller-checkbox" key={type}>
             <input
-              type="checkbox"
-              checked={value.allowedFulfillmentTypes.includes(type)}
-              onChange={(e) =>
-                onChange({
-                  ...value,
-                  allowedFulfillmentTypes: e.target.checked
-                    ? [...value.allowedFulfillmentTypes, type]
-                    : value.allowedFulfillmentTypes.filter((v) => v !== type),
-                })
+              type="radio"
+              name="seller-fulfillment-type"
+              value={type}
+              checked={
+                value.allowedFulfillmentTypes.length === 1 &&
+                value.allowedFulfillmentTypes[0] === type
               }
+              onChange={() => onChange(chooseFulfillment(value, type))}
             />
             {fulfillmentLabel(type)}
           </label>
         ))}
+        {hasMixedFulfillment(value.allowedFulfillmentTypes) && (
+          <p className="seller-fulfillment-warning" role="status">
+            예전에 배송형과 방문형을 함께 고른 신청서입니다. 이제는 하나만 고를
+            수 있으니 다시 골라 주세요.
+          </p>
+        )}
+        {visitWarning && (
+          <p className="seller-fulfillment-warning" role="status">
+            {visitWarning}
+          </p>
+        )}
       </div>
       <div className="seller-form-full">
         <h4>신청 질문</h4>

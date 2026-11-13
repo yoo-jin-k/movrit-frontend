@@ -1,5 +1,6 @@
 /**
- * 운영자 캠페인 관리 화면에서 캠페인 한 개의 신청 조건을 정하거나 해제하는 영역입니다.
+ * 운영자 캠페인 관리 화면에서 캠페인 한 개의 신청 조건을 정하거나 해제하는 모달 창입니다.
+ * - 변경 이력: 목록 맨 아래에 편집 영역이 붙어 스크롤해야 보이던 것 → 목록 위 모달(AdminDialog)로 띄웁니다.
  * - 조건 종류: 인스타그램 팔로워 수, 네이버 블로그 일평균 방문자(최근 4일 평균). 업체 편집 화면과 같은 입력 부품을 씁니다.
  * - 저장은 마지막으로 본 조건 버전을 함께 보내며, 업체가 먼저 바꿨다면 서버가 409로 거절합니다.
  * - 이미 신청한 참여자에게는 신청 당시 조건이 그대로 남습니다.
@@ -7,7 +8,7 @@
  */
 import { useState } from 'react'
 import api from '../../api/axios'
-import { AdminCard } from '../../components/admin/AdminLayout'
+import AdminDialog from './AdminDialog'
 import RequirementFields from '../sellerCampaigns/RequirementFields'
 import {
   requirementForm,
@@ -67,7 +68,11 @@ export default function AdminRequirementEditor({ item, onDone, onCancel }) {
   }
 
   return (
-    <AdminCard title={`#${item.id} 신청 조건 설정`}>
+    <AdminDialog
+      title={`#${item.id} 신청 조건 설정`}
+      onClose={onCancel}
+      busy={busy}
+    >
       <p>
         &lsquo;{item.title}&rsquo; 캠페인에 신청할 수 있는 채널 조건을 정합니다.
         이미 신청한 참여자에게는 신청 당시 조건이 그대로 남습니다.
@@ -81,7 +86,11 @@ export default function AdminRequirementEditor({ item, onDone, onCancel }) {
         />
         {error && <p role="alert">{error}</p>}
         <div className="admin-actions-row">
-          <button className="admin-button" disabled={busy} onClick={save}>
+          <button
+            className="admin-button admin-button--primary"
+            disabled={busy}
+            onClick={save}
+          >
             {busy ? '저장하고 있습니다' : '조건 저장'}
           </button>
           <button
@@ -93,6 +102,6 @@ export default function AdminRequirementEditor({ item, onDone, onCancel }) {
           </button>
         </div>
       </div>
-    </AdminCard>
+    </AdminDialog>
   )
 }

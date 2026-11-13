@@ -5,135 +5,19 @@
 import AccountPasswordPage from '../features/membership/AccountPasswordPage'
 
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'
 import {
   WITHDRAW_CONFIRM_TEXT,
   readWithdrawalEligibility,
   withdrawMember,
 } from '../api/memberWithdrawalApi'
-import useAdminResource from '../features/admin/useAdminResource'
-import {
-  NOTICE_CATEGORY_LABELS,
-  dateOnly,
-} from '../features/admin/adminConsoleModel'
 
-// 사용자 참여와 업체 운영의 진입 경로만 안내하며 권한은 서버에서 확인합니다.
-export function RoleSwitchPage() {
-  return (
-    <CommonLayout title="서비스 이용">
-      <section className="common-card common-card--medium">
-        <h2>이용할 서비스를 선택해 주세요.</h2>
-        <p>
-          사용자는 캠페인별 조건에 따라 참여할 수 있습니다. 업체 운영은 별도
-          등록과 심사가 필요합니다.
-        </p>
-        <div className="common-setting-list">
-          <article>
-            <div>
-              <strong>사용자</strong>
-              <small>캠페인 탐색과 신청, 주문 및 관심 상품 관리</small>
-            </div>
-            <Link to="/home">캠페인 둘러보기</Link>
-          </article>
-          <article>
-            <div>
-              <strong>업체</strong>
-              <small>기존 업체 정보와 운영 권한은 그대로 유지됩니다.</small>
-            </div>
-            <Link to="/seller/apply">업체 등록 및 상태 확인</Link>
-            <Link to="/seller/dashboard">업체 관리</Link>
-          </article>
-        </div>
-      </section>
-    </CommonLayout>
-  )
-}
+// 이용 서비스 선택(/roles)은 버튼 설명·업체 신청 상태 표시를 위해 RoleSwitchPage.jsx로 옮겼습니다(기존 경로 import 유지용 다시 내보내기).
+export { RoleSwitchPage } from './RoleSwitchPage'
 
-// 운영자가 게시한 공지 목록입니다(GET /api/notices, 로그인 없이 조회). 고정 공지가 먼저 나오고 제목으로 검색할 수 있습니다.
-export function NoticesPage() {
-  const state = useAdminResource('/notices', [])
-  const [search, setSearch] = useState('')
-  const query = search.trim().toLowerCase()
-  const items = (state.data || []).filter((notice) =>
-    notice.title.toLowerCase().includes(query),
-  )
-  return (
-    <CommonLayout title="공지사항">
-      <section className="common-list-wrap">
-        <label className="common-field common-field--search">
-          검색
-          <input
-            placeholder="공지 제목 검색"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </label>
-        {state.loading ? (
-          <p role="status">공지를 불러오고 있습니다.</p>
-        ) : state.error ? (
-          <p role="alert">
-            공지를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
-          </p>
-        ) : !items.length ? (
-          <p>
-            {search ? '검색한 공지가 없습니다.' : '등록된 공지가 없습니다.'}
-          </p>
-        ) : (
-          <div className="common-notice-list">
-            {items.map((notice) => (
-              <Link to={`/notices/${notice.id}`} key={notice.id}>
-                <div>
-                  <strong>
-                    {notice.pinned ? '[고정] ' : ''}[
-                    {NOTICE_CATEGORY_LABELS[notice.category]}] {notice.title}
-                  </strong>
-                  <small>{dateOnly(notice.publishedAt)}</small>
-                </div>
-                <span>›</span>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
-    </CommonLayout>
-  )
-}
-
-// 게시된 공지 한 건입니다(GET /api/notices/{id}). 게시 전이거나 없는 공지는 안내 문구를 보여줍니다.
-export function NoticeDetailPage() {
-  const { noticeId } = useParams()
-  const state = useAdminResource(`/notices/${noticeId}`)
-  const notice = state.data
-  return (
-    <CommonLayout title="공지 상세">
-      <article className="common-card common-card--wide notice-detail-card">
-        {state.loading ? (
-          <p role="status">공지를 불러오고 있습니다.</p>
-        ) : state.error || !notice ? (
-          <p role="alert">공지를 찾을 수 없습니다.</p>
-        ) : (
-          <>
-            <h2>{notice.title}</h2>
-            <small>
-              {dateOnly(notice.publishedAt)} ·{' '}
-              {NOTICE_CATEGORY_LABELS[notice.category]} · 운영팀
-            </small>
-            <hr />
-            {notice.body.split(/\n{2,}/).map((paragraph, index) => (
-              <p key={index} style={{ whiteSpace: 'pre-wrap' }}>
-                {paragraph}
-              </p>
-            ))}
-          </>
-        )}
-        <Link className="common-button common-button--secondary" to="/notices">
-          목록으로
-        </Link>
-      </article>
-    </CommonLayout>
-  )
-}
+// 공지 목록·상세는 커뮤니티와 같은 화면 틀을 쓰도록 NoticePages.jsx로 옮겼습니다(기존 경로 import 유지용 다시 내보내기).
+export { NoticeDetailPage, NoticesPage } from './NoticePages'
 
 const termItems = [
   ['서비스 이용약관', '필수 · 동의 완료', '보기'],

@@ -14,6 +14,7 @@ import {
   extensionError,
   extendedResultsAt,
   initialCalendarMonth,
+  isDestructiveChange,
   reasonError,
 } from '../src/features/participation/participationChangeModel.js'
 import {
@@ -45,7 +46,12 @@ test('취소·연장 사유와 증빙 이미지를 미리 확인합니다', () =
     /5MB/,
   )
   assert.equal(evidenceError({ type: 'image/jpeg', size: 1000 }), '')
-  assert.match(extensionError(3, '사유'), /7일 또는 14일/)
+  assert.equal(extensionError(3, '촬영 일정 조율'), '')
+  assert.equal(extensionError('30', '촬영 일정 조율'), '')
+  assert.match(extensionError(0, '사유'), /1일부터 30일까지/)
+  assert.match(extensionError(31, '사유'), /1일부터 30일까지/)
+  assert.match(extensionError(2.5, '사유'), /1일부터 30일까지/)
+  assert.match(extensionError('', '사유'), /1일부터 30일까지/)
   assert.equal(extensionError(14, '촬영 일정 조율'), '')
 })
 
@@ -271,4 +277,12 @@ test('연장으로 콘텐츠 마감이 결과 발표보다 늦어지면 결과 �
     },
   ]).find((event) => event.stage === 'results')
   assert.equal(results.day, '2026-12-09')
+})
+
+test('신청 철회·참여 취소는 위험 버튼, 기간 연장은 보조 버튼으로 구분합니다', () => {
+  assert.equal(isDestructiveChange('withdraw'), true)
+  assert.equal(isDestructiveChange('cancel'), true)
+  assert.equal(isDestructiveChange('agreed'), true)
+  assert.equal(isDestructiveChange('extension'), false)
+  assert.equal(isDestructiveChange(''), false)
 })

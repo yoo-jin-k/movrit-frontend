@@ -4,7 +4,10 @@
  */
 import { seoulDay } from '../discovery/scheduleModel.js'
 
+// 참여자 연장 요청은 1~30일 직접 입력이고, 7·14일은 빠른 선택으로 보여 줍니다.
 export const EXTENSION_DAYS = [7, 14]
+export const EXTENSION_MIN = 1
+export const EXTENSION_MAX = 30
 export const CANCEL_LIMIT_FALLBACK = 5
 export const REQUEST_STATUS = {
   REQUESTED: '확인 대기',
@@ -30,9 +33,22 @@ export function evidenceError(file) {
   return ''
 }
 
+// 참여 조정 버튼의 색 구분입니다. 신청 철회·참여 취소처럼 되돌리기 어려운 동작은 위험 색으로,
+// 기간 연장 요청은 일반 보조 버튼으로 보여 줍니다.
+const DESTRUCTIVE_CHANGES = ['withdraw', 'cancel', 'agreed']
+export function isDestructiveChange(name) {
+  return DESTRUCTIVE_CHANGES.includes(name)
+}
+
 export function extensionError(days, reason) {
-  if (!EXTENSION_DAYS.includes(Number(days)))
-    return '연장 기간은 7일 또는 14일 중에서 골라 주세요.'
+  const value = Number(days)
+  if (
+    String(days ?? '').trim() === '' ||
+    !Number.isInteger(value) ||
+    value < EXTENSION_MIN ||
+    value > EXTENSION_MAX
+  )
+    return `연장 기간은 ${EXTENSION_MIN}일부터 ${EXTENSION_MAX}일까지 입력해 주세요.`
   return reasonError(reason)
 }
 

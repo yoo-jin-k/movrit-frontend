@@ -21,6 +21,11 @@ export default defineConfig(({ mode }) => {
           target: env.MOVRIT_API_TARGET || 'http://localhost:8080',
           changeOrigin: true,
         },
+        // 브랜드·상품·캠페인 공개 이미지(/uploads/...)도 같은 백엔드에서 받습니다(배포 nginx.conf와 같은 경로 규칙).
+        '/uploads': {
+          target: env.MOVRIT_API_TARGET || 'http://localhost:8080',
+          changeOrigin: true,
+        },
       },
     },
   }

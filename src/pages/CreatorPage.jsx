@@ -1,6 +1,8 @@
 /**
  * 본인의 채널 지표와 검증 상태를 조회하고 입력한 인스타그램 팔로워 수를 저장합니다.
  * 클라이언트는 숫자 형식을 검증하며 수동 입력값을 공식 채널 인증 결과로 바꾸지 않습니다.
+ * 변경 이력(고치기 전 → 고친 후): 안내 상자만 안쪽으로 들여 있고 지표가 점 목록·서버 코드(BLOG)로 보이며
+ * 하단 안내·링크에 스타일이 없음 → 카드 폭과 간격을 맞추고 지표를 칸으로 정리, 채널 이름을 한국어로 표시.
  */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -8,8 +10,10 @@ import CommonLayout from '../components/layout/CommonLayout'
 import { readChannelProfile, saveChannelMetric } from '../api/channelProfileApi'
 import {
   instagramMetricRequest,
+  metricTitle,
   metricVerificationLabel,
 } from '../features/membership/channelProfileModel'
+import './CreatorPage.css'
 
 export default function CreatorPage() {
   const [profile, setProfile] = useState(null)
@@ -63,8 +67,8 @@ export default function CreatorPage() {
     }
   }
   return (
-    <CommonLayout title="활동 프로필">
-      <aside className="common-role-note">
+    <CommonLayout title="활동 프로필" className="creator-profile">
+      <aside className="creator-profile__note">
         <strong>채널 지표는 캠페인별 참여 조건을 확인할 때 사용합니다.</strong>
         <p>
           추가 지표 조건이 없는 캠페인은 채널 등록 없이 신청할 수 있습니다.
@@ -80,38 +84,33 @@ export default function CreatorPage() {
       ) : (
         <>
           {profile && (
-            <section className="common-card" aria-label="내 채널 지표">
-              <h2>내 채널 지표</h2>
+            <section
+              className="creator-profile__card"
+              aria-labelledby="creator-metrics-title"
+            >
+              <h2 id="creator-metrics-title">내 채널 지표</h2>
               {profile.metrics.length === 0 ? (
-                <p>등록된 채널 지표가 없습니다. · 등급 미산정</p>
+                <p className="creator-profile__empty">
+                  등록된 채널 지표가 없습니다. 아래에서 인스타그램 팔로워 수를
+                  입력할 수 있습니다.
+                </p>
               ) : (
-                <ul>
+                <ul className="creator-profile__metrics">
                   {profile.metrics.map((metric) => (
                     <li key={metric.id}>
-                      <strong>
-                        {{
-                          INSTAGRAM: '인스타그램',
-                          NAVER_BLOG: '네이버 블로그',
-                        }[metric.channelType] || metric.channelType}{' '}
-                        ·{' '}
-                        {{
-                          FOLLOWER_COUNT: '팔로워 수',
-                          VISITOR_COUNT: '방문자 수',
-                          DAILY_VISITORS: '일평균 방문자 수',
-                        }[metric.metricType] || metric.metricType}
-                      </strong>
-                      <p>
-                        {metric.value.toLocaleString('ko-KR')} ·{' '}
+                      <span>{metricTitle(metric)}</span>
+                      <strong>{metric.value.toLocaleString('ko-KR')}</strong>
+                      <small>
                         {metricVerificationLabel(metric.verificationStatus)} ·
                         등급 미산정
-                      </p>
+                      </small>
                       {metric.measurementPeriod && (
-                        <p>
+                        <small>
                           집계기간:{' '}
                           {metric.measurementPeriod === 'RECENT_4_DAYS'
                             ? '최근 4일 평균(오늘 제외)'
                             : metric.measurementPeriod}
-                        </p>
+                        </small>
                       )}
                     </li>
                   ))}
@@ -120,37 +119,51 @@ export default function CreatorPage() {
             </section>
           )}
           {profile && (
-            <form className="common-card common-signup-form" onSubmit={submit}>
+            <form className="creator-profile__card" onSubmit={submit}>
               <h2>인스타그램 팔로워 수</h2>
-              <p>
+              <p className="creator-profile__help">
                 저장하거나 수정하면 지표는 미확인 상태가 됩니다. 기존 확인
                 상태도 다시 확인이 필요합니다.
               </p>
-              <label className="common-field">
+              <label className="creator-profile__field">
                 팔로워 수
                 <input
                   type="number"
                   min="0"
                   step="1"
                   required
+                  inputMode="numeric"
                   value={count}
                   onChange={(e) => setCount(e.target.value)}
                 />
               </label>
-              <button className="common-button" type="submit" disabled={saving}>
+              <button
+                className="creator-profile__button"
+                type="submit"
+                disabled={saving}
+              >
                 {saving ? '저장 중...' : '지표 저장'}
               </button>
             </form>
           )}
-          <p>네이버 방문자 지표 입력은 집계기간 기준 확정 후 안내합니다.</p>
+          {/* UI점검: localhost:5174/creator/profile - 프론트 수정해야함 */}
+          {/* 카드 정렬·지표 표시는 정리했고, 네이버 방문자 입력 안내·다른 참여자 화면(UserPage) 틀 적용 여부는 정해지지 않았습니다. */}
+          <p className="creator-profile__help">
+            네이버 방문자 지표 입력은 집계기간 기준 확정 후 안내합니다.
+          </p>
         </>
       )}
-      {notice && <p role="status">{notice}</p>}
+      {notice && (
+        <p role="status" className="creator-profile__notice">
+          {notice}
+        </p>
+      )}
       {error && (
-        <div>
+        <div className="creator-profile__error">
           <p role="alert">{error}</p>
           <button
             type="button"
+            className="creator-profile__button is-secondary"
             disabled={loading || saving}
             onClick={() => {
               setLoading(true)
@@ -161,7 +174,9 @@ export default function CreatorPage() {
           </button>
         </div>
       )}
-      <Link to="/mypage/campaigns">내 캠페인 신청</Link>
+      <Link className="creator-profile__link" to="/mypage/campaigns">
+        내 캠페인 신청 보기 ›
+      </Link>
     </CommonLayout>
   )
 }

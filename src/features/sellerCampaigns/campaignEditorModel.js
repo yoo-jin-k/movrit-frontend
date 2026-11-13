@@ -74,11 +74,16 @@ function validateSchedule(form) {
 
 // 화면 입력값으로 참여 안내·세부 일정 묶음을 만듭니다.
 // 수정 화면에서 폼에 없는 항목(예: 이전 버전 화면)은 기존 값을 그대로 보내 유실되지 않게 합니다.
-function detailValues(form, original = null) {
+// 방문형이 아니면 방문 안내 칸을 숨기므로, 숨긴 값이 저장 요청에 섞이지 않게 null로 보냅니다.
+function detailValues(form, original = null, { visit = true } = {}) {
   return Object.fromEntries(
     [...GUIDE_FIELDS, ...SCHEDULE_FIELDS].map((field) => [
       field,
-      field in form ? optional(form[field]) : (original?.[field] ?? null),
+      field === 'visitGuide' && !visit
+        ? null
+        : field in form
+          ? optional(form[field])
+          : (original?.[field] ?? null),
     ]),
   )
 }
@@ -91,7 +96,13 @@ function optionalId(value, message) {
   return id
 }
 
-export function configuredCampaignPayload(form, condition, original = null) {
+// visit: 신청서 참여 방식이 방문형인지 여부입니다. 거짓이면 방문 안내를 비워 보냅니다(기본값은 기존 동작 유지).
+export function configuredCampaignPayload(
+  form,
+  condition,
+  original = null,
+  { visit = true } = {},
+) {
   if (!form.title?.trim()) throw new Error('모집 제목을 입력해 주세요.')
   if (
     !/^\d+$/.test(String(form.recruitmentCount)) ||
@@ -130,10 +141,10 @@ export function configuredCampaignPayload(form, condition, original = null) {
     if (!Number.isSafeInteger(original.scheduleVersion))
       throw new Error('최신 캠페인을 다시 불러와 주세요.')
     campaign.expectedScheduleVersion = original.scheduleVersion
-    Object.assign(campaign, detailValues(form, original))
+    Object.assign(campaign, detailValues(form, original, { visit }))
   } else {
     // 새 캠페인: 참여 안내·세부 일정은 details로 함께 보냅니다(모두 선택).
-    campaign.details = detailValues(form)
+    campaign.details = detailValues(form, null, { visit })
     // 새 캠페인: 운영 브랜드와 (선택) 프리오더를 숫자 ID로 보냅니다.
     // 브랜드를 비워 두면 서버가 운영 중인 브랜드가 하나일 때 그 브랜드로 정하고, 여러 개면 선택을 요청합니다.
     campaign.brandId = optionalId(

@@ -5,6 +5,8 @@
  * - 숨김은 데이터를 지우지 않습니다. 이미 진행 중인 참여자·콘텐츠 흐름은 그대로 이어집니다.
  * - 캠페인마다 신청 조건(인스타그램 팔로워 수·네이버 블로그 일평균 방문자)을 정하거나 해제합니다.
  * - 서버 API: GET /api/admin/campaigns, PATCH …/{id}/close, PATCH …/{id}/reopen, PUT·DELETE …/{id}/eligibility-requirement
+ * - 변경 이력: '조건 설정'·'숨기기'를 누르면 목록 맨 아래에 입력 영역이 붙던 것 → 목록 위 모달 창으로 띄웁니다
+ *   (Esc로 닫기, 닫으면 누른 버튼으로 초점 복귀, 열린 동안 바깥 스크롤 잠금).
  */
 import { useState } from 'react'
 import api from '../api/axios'
@@ -20,6 +22,7 @@ import {
   isQaCampaign,
 } from '../features/admin/adminCampaignModel'
 import AdminRequirementEditor from '../features/admin/AdminRequirementEditor'
+import AdminDialog from '../features/admin/AdminDialog'
 import { campaignRequirementSummary } from '../features/discovery/eligibilityModel'
 
 export default function AdminCampaignsPage() {
@@ -121,7 +124,7 @@ export default function AdminCampaignsPage() {
         </button>
       </div>
       {notice && <p role="status">{notice}</p>}
-      {error && <p role="alert">{error}</p>}
+      {error && !closing && <p role="alert">{error}</p>}
       {state.loading ? (
         <p role="status">캠페인 목록을 확인하고 있습니다.</p>
       ) : state.error ? (
@@ -240,7 +243,11 @@ export default function AdminCampaignsPage() {
         />
       )}
       {closing && (
-        <AdminCard title={`#${closing.id} 캠페인 숨기기`}>
+        <AdminDialog
+          title={`#${closing.id} 캠페인 숨기기`}
+          onClose={() => setClosing(null)}
+          busy={busy}
+        >
           <p>
             &lsquo;{closing.title}&rsquo; 캠페인을 사용자 목록에서 숨깁니다.
             신청을 더 받지 않고 상세 주소로도 일반 회원에게 보이지 않으며, 이미
@@ -259,7 +266,7 @@ export default function AdminCampaignsPage() {
             </label>
             <div className="admin-actions-row">
               <button
-                className="admin-button"
+                className="admin-button admin-button--danger"
                 disabled={busy}
                 onClick={() => act(closing, 'close')}
               >
@@ -273,8 +280,9 @@ export default function AdminCampaignsPage() {
                 취소
               </button>
             </div>
+            {error && <p role="alert">{error}</p>}
           </div>
-        </AdminCard>
+        </AdminDialog>
       )}
     </AdminLayout>
   )

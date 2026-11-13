@@ -2,6 +2,7 @@
 @use './abstracts/mixins' as *;
 @use './pages/buyer-home';
 @use './pages/common';
+@use './pages/auth-public';
 @use './pages/admin';
 @use './pages/admin-extras';
 @use './pages/buyer-v2';

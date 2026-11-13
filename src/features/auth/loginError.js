@@ -16,3 +16,8 @@ export function loginError(error) {
     return '로그인 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.'
   return '로그인 요청을 처리하지 못했습니다. 입력 내용을 확인해 주세요.'
 }
+
+// 입력한 이메일·비밀번호가 맞지 않은 경우(401)에만 입력칸을 오류로 강조합니다.
+export function isCredentialError(error) {
+  return error?.response?.status === 401
+}

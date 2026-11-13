@@ -93,3 +93,22 @@ test('실패 안내는 서버 설명을 먼저 쓰고, 없으면 상태별 한�
     /status code|418/,
   )
 })
+
+test('완료 안내에 채운 칸 수·그대로 둔 칸·남은 횟수를 적습니다', async () => {
+  const { aiDraftNotice } = await import(
+    '../src/features/sellerCampaigns/aiDraftModel.js'
+  )
+  const text = aiDraftNotice({
+    filled: ['설명', '주의사항'],
+    kept: ['요청사항 · 미션'],
+    live: true,
+    remainingToday: 3,
+  })
+  assert.match(text, /^완료: 2칸\(설명, 주의사항\)/)
+  assert.match(text, /요청사항 · 미션 칸은 그대로/)
+  assert.match(text, /오늘 3번 더/)
+  const sample = aiDraftNotice({ filled: [], kept: [], live: false })
+  assert.match(sample, /^완료: 비어 있는 칸이 없어/)
+  assert.match(sample, /견본 초안/)
+  assert.doesNotMatch(sample, /오늘/)
+})

@@ -290,6 +290,41 @@
   border-color: #8051d0;
   color: #5b2fa8;
 }
+/* 되돌리기 어려운 참여 조정(신청 철회·참여 취소)은 위험 색($color-danger #c53b31, 흰 바탕 대비 약 5:1)으로 구분합니다. */
+.participation-change .participation-change__button--danger {
+  border-color: #e6b7b2;
+  color: #c53b31;
+  background: #fff6f5;
+  font-weight: 600;
+}
+.participation-change
+  .participation-change__button--danger:hover:not(:disabled) {
+  border-color: #c53b31;
+  background: #fdecea;
+}
+.participation-change
+  .participation-change__actions
+  .participation-change__button--danger[aria-pressed='true'] {
+  border-color: #c53b31;
+  color: #a8322a;
+  background: #fdecea;
+}
+.participation-change .participation-change__button--danger.is-solid {
+  border-color: #c53b31;
+  color: white;
+  background: #c53b31;
+}
+.participation-change
+  .participation-change__button--danger.is-solid:hover:not(:disabled) {
+  border-color: #a8322a;
+  background: #a8322a;
+}
+.participation-change .participation-change__button--primary {
+  border-color: #17171b;
+  color: white;
+  background: #17171b;
+  font-weight: 600;
+}
 .participation-change__form {
   display: grid;
   gap: 10px;
@@ -304,7 +339,9 @@
 }
 .participation-change__days {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
   margin: 0;
   padding: 0;
   border: 0;
@@ -312,6 +349,17 @@
 .participation-change__days label {
   display: inline-flex;
   align-items: center;
+}
+.participation-change__custom-days {
+  gap: 6px;
+}
+.participation-change__custom-days input {
+  width: 72px;
+  min-height: 36px;
+  padding: 4px 8px;
+}
+.participation-change__days .participation-change__count {
+  flex-basis: 100%;
 }
 .participation-change__help,
 .participation-change__count,

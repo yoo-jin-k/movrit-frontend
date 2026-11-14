@@ -602,6 +602,51 @@
   padding-bottom: 22px;
   margin-bottom: 22px;
 }
+.business-shell .business-dialog-close {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #e4e4ea;
+  border-radius: 10px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #f4f2fa;
+  }
+  &:focus-visible {
+    outline: 2px solid #5926c8;
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+// 저장하지 않은 입력이 있을 때 닫기 전에 띄우는 확인 안내입니다(창 아래에 붙어 보입니다).
+.business-shell .business-dialog-confirm {
+  position: sticky;
+  bottom: -26px;
+  margin: 24px -30px -26px;
+  padding: 16px 30px 20px;
+  border-top: 1px solid #f0c9c9;
+  background: #fff6f6;
+  box-shadow: 0 -6px 16px #0000000f;
+
+  p {
+    margin: 0 0 12px;
+    color: #9b1c1c;
+    font-weight: 600;
+  }
+  .business-dialog-discard {
+    border-color: #d64545;
+    color: #b42323;
+  }
+}
 .business-shell .business-dialog h3 {
   margin: 20px 0 12px;
 }
@@ -703,6 +748,11 @@
   }
   .business-shell .business-dialog {
     padding: 22px;
+  }
+  .business-shell .business-dialog-confirm {
+    bottom: -22px;
+    margin: 24px -22px -22px;
+    padding: 16px 22px 18px;
   }
   .business-shell .business-filters select {
     max-width: 100%;

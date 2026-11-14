@@ -25,6 +25,7 @@ import {
   ratingAvailability,
   ratingChoiceLabel,
 } from '../business/participantRatingModel'
+import { useDialogUnsaved } from '../business/dialogUnsaved'
 
 export default function ParticipantActivityPanel({ application, onChanged }) {
   const [data, setData] = useState(null)
@@ -61,6 +62,15 @@ export default function ParticipantActivityPanel({ application, onChanged }) {
       })
     return () => controller.abort()
   }, [application.id, application.campaignId, application.fulfillmentType])
+
+  // 저장하지 않은 별점·메모나 패널티 사유가 있으면 상세 창이 닫기 전에 확인합니다.
+  const ratingEditable = ratingAvailability(application.status).editable
+  useDialogUnsaved(
+    (ratingEditable &&
+      data &&
+      (rating !== (data.myRating || 0) || memo !== (data.myMemo || ''))) ||
+      Boolean(penaltyReason.trim()),
+  )
 
   if (error && !data) return <p role="alert">{error}</p>
   if (!data) return <p role="status">참여자 활동 정보를 불러오고 있습니다.</p>

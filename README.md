@@ -1,7 +1,10 @@
 # MOVRIT 프론트엔드
 
-브랜드 캠페인 운영 플랫폼 MOVRIT의 화면입니다. 참여자·업체·운영자 화면을 한 앱에서 역할별로 나눠 제공합니다.
-서버와 전체 설계 설명은 백엔드 저장소 [movrit-backend](https://github.com/yoo-jin-k/movrit-backend)에 있습니다.
+체험단 캠페인 운영 플랫폼 MOVRIT의 화면입니다. 참여자·업체·운영자 화면을 한 앱에서 역할별로 나눠 제공합니다.
+업체의 **AI 캠페인 초안**과 참여자의 **AI 제출 전 점검** 화면도 여기에 있습니다.
+
+- 공개 시연: **https://movrit.yjinee.com**
+- 서버와 전체 설계, AI(LLM) 기능 설계는 백엔드 저장소 [movrit-backend](https://github.com/yoo-jin-k/movrit-backend#aillm-기능)에 있습니다.
 
 - React 19, React Router 7, Vite 8, Axios, Sass
 - Node 24 (`.nvmrc`)

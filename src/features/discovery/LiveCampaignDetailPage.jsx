@@ -24,7 +24,7 @@ import CampaignDetailImages from './CampaignDetailImages'
 import CampaignParticipation from './CampaignParticipation'
 import CampaignSchedule from './CampaignSchedule'
 import ChannelIcon from './ChannelIcon'
-import VisitMapLinks from './VisitMapLinks'
+import VisitMap from './VisitMap'
 import DiscoveryLayout from './DiscoveryLayout'
 import FavoriteButton from './FavoriteButton'
 import RecruitmentProgress from './RecruitmentProgress'
@@ -109,9 +109,8 @@ function InfoPanel({ detail, location }) {
               {location.address1}
               {location.address2 && ` ${location.address2}`}
             </p>
-            {/* 지도 API 키가 준비되면 이 자리에 지도를 넣습니다. 지금은 지도 검색 링크와 주소 복사로 대신합니다. */}
-            {/* UI점검: 방문장소에 지도 api 연결해야함 (지도 API 키 필요) */}
-            <VisitMapLinks location={location} />
+            {/* 네이버 지도 키(VITE_NAVER_MAP_KEY_ID)가 있으면 주소 아래에 지도를 그립니다. 키가 없거나 실패하면 주소만 보입니다. */}
+            <VisitMap key={location.address1} location={location} />
           </InfoRow>
         )}
       </dl>

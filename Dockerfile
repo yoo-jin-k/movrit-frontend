@@ -5,6 +5,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
+# 네이버 지도 Client ID는 빌드할 때 넣습니다(브라우저에 공개되는 값이지만 저장소에는 두지 않음).
+# 예: docker build --build-arg VITE_NAVER_MAP_KEY_ID=... .  비우면 지도 없이 주소만 보입니다.
+ARG VITE_NAVER_MAP_KEY_ID=
+ENV VITE_NAVER_MAP_KEY_ID=$VITE_NAVER_MAP_KEY_ID
 RUN npm run build
 
 FROM nginx:1.27-alpine

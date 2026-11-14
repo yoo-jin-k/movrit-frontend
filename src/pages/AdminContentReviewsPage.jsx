@@ -8,7 +8,7 @@
  * - 다른 화면에서 먼저 처리했으면(버전 불일치) 409로 막히고, 최신 목록을 다시 불러오도록 안내합니다.
  */
 import { useEffect, useRef, useState } from 'react'
-import api from '../api/axios'
+import { reviewAdminCampaignContent } from '../api/adminApi'
 import AdminLayout, { AdminCard } from '../components/admin/AdminLayout'
 import useBusinessList from '../features/business/useBusinessList'
 import {
@@ -73,11 +73,7 @@ export default function AdminContentReviewsPage() {
     setBusy(true)
     setError('')
     try {
-      await api.patch(
-        `/admin/campaign-contents/${selected.id}/${action}`,
-        payload,
-        { timeout: 15000 },
-      )
+      await reviewAdminCampaignContent(selected.id, action, payload)
       setNotice(
         action === 'approve'
           ? `콘텐츠 #${selected.id} 최종 승인을 마쳤습니다. 참여자의 신청이 완료로 바뀌었습니다.`

@@ -4,13 +4,13 @@
  */
 import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import DiscoveryLayout from './DiscoveryLayout'
-import CampaignGrid from './CampaignGrid'
-import CampaignApplicationDialog from './CampaignApplicationDialog'
-import { PREVIEW_CAMPAIGNS } from './catalog'
-import LiveCampaignDetailPage from './LiveCampaignDetailPage'
-import CampaignSchedule from './CampaignSchedule'
-import { LIVE_CAMPAIGN_LIST } from './campaignDataMode'
+import DiscoveryLayout from '../../features/discovery/DiscoveryLayout'
+import CampaignGrid from '../../features/discovery/CampaignGrid'
+import CampaignApplicationDialog from '../../features/discovery/CampaignApplicationDialog'
+import { PREVIEW_CAMPAIGNS } from '../../features/discovery/catalog'
+import LiveCampaignDetailPage from '../../features/discovery/LiveCampaignDetailPage'
+import CampaignSchedule from '../../features/discovery/CampaignSchedule'
+import { LIVE_CAMPAIGN_LIST } from '../../features/discovery/campaignDataMode'
 
 function InformationSection({ title, lines, children }) {
   return (

@@ -4,11 +4,11 @@
  * - 로그인한 회원은 MOVRIT 톡톡·우리 친구할까요? 게시판에 글을 쓰고, 댓글을 달 수 있습니다(소식·이벤트는 운영자만 작성).
  * - 내가 쓴 글·댓글은 고치거나 지울 수 있습니다. 쓰던 글은 이 기기에 임시저장되어 다시 열면 이어 쓸 수 있습니다.
  */
-import ReportButton from '../participation/ReportButton'
+import ReportButton from '../../features/participation/ReportButton'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import DiscoveryLayout from './DiscoveryLayout'
-import { COMMUNITY_POSTS } from './catalog'
+import DiscoveryLayout from '../../features/discovery/DiscoveryLayout'
+import { COMMUNITY_POSTS } from '../../features/discovery/catalog'
 import {
   BOARDS,
   CATEGORIES,
@@ -16,7 +16,7 @@ import {
   isServerPostId,
   postDate,
   postFormError,
-} from './communityModel'
+} from '../../features/discovery/communityModel'
 import {
   addCommunityComment,
   createCommunityPost,

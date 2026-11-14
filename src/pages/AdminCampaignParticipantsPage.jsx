@@ -7,7 +7,7 @@
  *   상세는 모달 창으로 띄워 신청 시점 준비 상태·조건·답변까지 보여줍니다. 선정 버튼은 처리 중·결과를 창 안에 표시합니다.
  */
 import { useRef, useState } from 'react'
-import api from '../api/axios'
+import { decideAdminCampaignApplication } from '../api/adminApi'
 import AdminLayout, {
   AdminCard,
   AdminStatus,
@@ -94,11 +94,7 @@ export default function AdminCampaignParticipantsPage() {
     setError('')
     setResult('')
     try {
-      const { data } = await api.patch(
-        `/admin/campaign-applications/${selected.id}/${action}`,
-        undefined,
-        { timeout: 15000 },
-      )
+      const data = await decideAdminCampaignApplication(selected.id, action)
       // 창은 열어 둔 채 바뀐 상태와 결과를 보여주고, 뒤의 목록은 새로 불러옵니다.
       setSelected(mergeActionResult(selected, data))
       setResult(actionResultMessage(action, selected))

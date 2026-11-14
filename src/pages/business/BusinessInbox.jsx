@@ -4,15 +4,20 @@
  */
 import { useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { notificationPath } from './notificationModel'
-import useBusinessList from './useBusinessList'
+import { notificationPath } from '../../features/business/notificationModel'
+import useBusinessList from '../../features/business/useBusinessList'
 import { closeInquiry, createInquiry } from '../../api/inquiryApi'
 import {
   markAllNotificationsRead,
   markNotificationRead,
 } from '../../api/notificationApi'
-import { DetailDialog, ListState, PageHeader, StatusBadge } from './BusinessUi'
-import { dateLabel } from './businessModel'
+import {
+  DetailDialog,
+  ListState,
+  PageHeader,
+  StatusBadge,
+} from '../../features/business/BusinessUi'
+import { dateLabel } from '../../features/business/businessModel'
 export default function BusinessInbox() {
   const notifications = useBusinessList('/notifications'),
     inquiries = useBusinessList('/inquiries/mine')
@@ -24,7 +29,9 @@ export default function BusinessInbox() {
     [compose, setCompose] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
-    [locked, setLocked] = useState(false)
+    [locked, setLocked] = useState(false),
+    // 문의 작성 칸에 무언가 입력했는지입니다. 등록 전 실수로 창을 닫지 않도록 확인할 때 씁니다.
+    [drafted, setDrafted] = useState(false)
   // 읽음 처리 성공 후 알림 목록을 재조회하며 오류 시 읽음 완료를 로컬에서 확정하지 않습니다.
   const read = async (id) => {
     if (inFlight.current) return
@@ -105,6 +112,7 @@ export default function BusinessInbox() {
             setCompose(true)
             setError('')
             setLocked(false)
+            setDrafted(false)
           }}
         >
           문의 작성
@@ -165,22 +173,25 @@ export default function BusinessInbox() {
                   </>
                 )}
               </div>
-              {tab === 'notifications' && notificationPath(item, true) && (
-                <Link
-                  className="business-link"
-                  to={notificationPath(item, true)}
-                >
-                  관련 내역 보기
-                </Link>
-              )}
-              {tab === 'notifications' && (
-                <button
-                  disabled={busy || item.read}
-                  onClick={() => read(item.id)}
-                >
-                  {item.read ? '읽음' : '읽음 표시'}
-                </button>
-              )}
+              <div>
+                {tab === 'notifications' && notificationPath(item, true) && (
+                  <Link
+                    className="business-link"
+                    to={notificationPath(item, true)}
+                  >
+                    관련 내역 보기
+                  </Link>
+                )}
+                {tab === 'notifications' && (
+                  <button
+                    disabled={busy || item.read}
+                    onClick={() => read(item.id)}
+                    style={{ marginLeft: '5px' }}
+                  >
+                    {item.read ? '읽음' : '읽음 표시'}
+                  </button>
+                )}
+              </div>
             </article>
           ))}
         </ListState>
@@ -189,12 +200,13 @@ export default function BusinessInbox() {
         <DetailDialog
           title="업체 문의 작성"
           busy={busy}
+          unsaved={drafted && !locked}
           onClose={() => {
             setCompose(false)
             if (locked) inquiries.reload()
           }}
         >
-          <form onSubmit={send}>
+          <form onSubmit={send} onInput={() => setDrafted(true)}>
             <label>
               문의 분류
               <input

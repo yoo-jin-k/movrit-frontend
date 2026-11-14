@@ -10,7 +10,7 @@
  */
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import api from '../../api/axios'
+import { actOnAdminSettlement, createAdminSettlement } from '../../api/adminApi'
 import AdminLayout, {
   AdminButton,
   AdminCard,
@@ -395,7 +395,7 @@ export function AdminSettlementsPage() {
     setBusyId(settlement.id)
     setMessage('')
     try {
-      await api.patch(`/settlements/${settlement.id}/${action}`)
+      await actOnAdminSettlement(settlement.id, action)
       setMessage(`${settlement.settlementNumber}: ${label} 처리했습니다.`)
       state.reload()
     } catch (error) {
@@ -418,10 +418,7 @@ export function AdminSettlementsPage() {
     setBusyId('create')
     setMessage('')
     try {
-      await api.post('/settlements', {
-        preorderId: Number(form.preorderId),
-        platformFeeRate: rate,
-      })
+      await createAdminSettlement(Number(form.preorderId), rate)
       setMessage('정산을 만들었습니다.')
       setForm({ preorderId: '', platformFeeRate: form.platformFeeRate })
       state.reload()

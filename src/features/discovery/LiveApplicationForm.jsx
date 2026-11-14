@@ -7,7 +7,7 @@ import { participationError } from './participationError'
 import { applicationPayload } from './applicationPayload'
 import { formatContactPhone } from '../membership/phoneVerificationModel'
 import { useState } from 'react'
-import api from '../../api/axios'
+import { submitCampaignApplication } from '../../api/campaignApplicationApi'
 
 // 실제 신청 DTO에 맞춰 입력을 구성하며, 개인정보는 저장소에 남기지 않습니다.
 export default function LiveApplicationForm({
@@ -33,19 +33,15 @@ export default function LiveApplicationForm({
     setBusy(true)
     setError('')
     try {
-      const { data, status } = await api.post(
-        `/campaigns/${campaignId}/applications`,
+      // 201과 신청 ID가 확인된 경우에만 돌아옵니다(그 외는 오류).
+      const data = await submitCampaignApplication(
+        campaignId,
         applicationPayload(
           form,
           { type, message, contact, answers, consents },
           requirement,
         ),
-        { timeout: 15000 },
       )
-      if (status !== 201 || !data?.id)
-        throw new Error(
-          '신청 결과를 확인할 수 없습니다. 신청 내역을 확인해 주세요.',
-        )
       onSubmitted(data)
     } catch (failure) {
       setConflict(failure.response?.status === 409)

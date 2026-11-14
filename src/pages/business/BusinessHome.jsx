@@ -6,9 +6,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { readMyUnselected } from '../../api/participationChangeApi'
-import useBusinessList from './useBusinessList'
-import { CampaignCards, ListState, PageHeader } from './BusinessUi'
-import { dateLabel, upcomingCampaigns } from './businessModel'
+import useBusinessList from '../../features/business/useBusinessList'
+import {
+  CampaignCards,
+  ListState,
+  PageHeader,
+} from '../../features/business/BusinessUi'
+import {
+  dateLabel,
+  upcomingCampaigns,
+} from '../../features/business/businessModel'
 export default function BusinessHome() {
   const { profile } = useOutletContext()
   const campaigns = useBusinessList('/collaborations/campaigns/seller')

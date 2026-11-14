@@ -9,7 +9,7 @@
  *   (Esc로 닫기, 닫으면 누른 버튼으로 초점 복귀, 열린 동안 바깥 스크롤 잠금).
  */
 import { useState } from 'react'
-import api from '../api/axios'
+import { changeAdminCampaignVisibility } from '../api/adminApi'
 import AdminLayout, { AdminCard } from '../components/admin/AdminLayout'
 import useBusinessList from '../features/business/useBusinessList'
 import { dateLabel } from '../features/business/businessModel'
@@ -52,11 +52,7 @@ export default function AdminCampaignsPage() {
     setBusy(true)
     setError('')
     try {
-      await api.patch(
-        `/admin/campaigns/${item.id}/${action}`,
-        action === 'close' ? { reason: reason.trim() } : undefined,
-        { timeout: 15000 },
-      )
+      await changeAdminCampaignVisibility(item.id, action, reason)
       setNotice(
         `캠페인 #${item.id} '${item.title}' ${
           action === 'close' ? '숨김을' : '다시 공개를'

@@ -8,42 +8,50 @@
  * - 접수된 신청을 체크해 여러 명을 한 번에 선정·미선정할 수 있습니다(건별 결과와 실패 사유 안내).
  * - 상세에서 방문 예약 확정·반려(방문형), 참여자 활동 등급·평가 평균, 완료 참여자 평가·메모, 미제출·노쇼 패널티 기록을 제공합니다.
  */
-import VisitEvidence from '../sellerCampaigns/VisitEvidence'
+import VisitEvidence from '../../features/sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
 import { useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import useBusinessList from './useBusinessList'
-import { actOnApplication, manageApplication } from './businessApi'
-import { DetailDialog, ListState, PageHeader, StatusBadge } from './BusinessUi'
-import { dateLabel, statusNames } from './businessModel'
-import OpenChatButton from '../chat/OpenChatButton'
+import useBusinessList from '../../features/business/useBusinessList'
+import { actOnApplication, manageApplication } from '../../api/businessApi'
+import {
+  DetailDialog,
+  ListState,
+  PageHeader,
+  StatusBadge,
+} from '../../features/business/BusinessUi'
+import { dateLabel, statusNames } from '../../features/business/businessModel'
+import OpenChatButton from '../../features/chat/OpenChatButton'
 import ParticipantPortfolio, {
   ParticipantMetrics,
-} from './ParticipantPortfolio'
-import useParticipantDetail from './useParticipantDetail'
-import PurchasePaybackPanel from '../purchaseReview/PurchasePaybackPanel'
-import VisitReservationPanel from '../participation/VisitReservationPanel'
-import ShipmentCard from '../shipping/ShipmentCard'
-import ParticipantActivityPanel from '../participation/ParticipantActivityPanel'
-import { participantDetailLabel } from './participantRatingModel'
-import ExtensionRequestsPanel from '../participation/ExtensionRequestsPanel'
-import DirectExtensionPanel from '../participation/DirectExtensionPanel'
+} from '../../features/business/ParticipantPortfolio'
+import useParticipantDetail from '../../features/business/useParticipantDetail'
+import PurchasePaybackPanel from '../../features/purchaseReview/PurchasePaybackPanel'
+import VisitReservationPanel from '../../features/participation/VisitReservationPanel'
+import ShipmentCard from '../../features/shipping/ShipmentCard'
+import ParticipantActivityPanel from '../../features/participation/ParticipantActivityPanel'
+import { participantDetailLabel } from '../../features/business/participantRatingModel'
+import ExtensionRequestsPanel from '../../features/participation/ExtensionRequestsPanel'
+import DirectExtensionPanel from '../../features/participation/DirectExtensionPanel'
 import { bulkApplications } from '../../api/participationApi'
 import {
   bulkSelectable,
   bulkSummary,
-} from '../participation/participationModel'
+} from '../../features/participation/participationModel'
 import { readParticipantPortfolio } from '../../api/participantPortfolioApi'
-import { myContentLink } from '../membership/myContentModel'
-import { completedCountLabel } from './participantPortfolioModel'
-import { SELECTION_MODES, canSelectApplication } from './selectionModeModel'
+import { myContentLink } from '../../features/membership/myContentModel'
+import { completedCountLabel } from '../../features/business/participantPortfolioModel'
+import {
+  SELECTION_MODES,
+  canSelectApplication,
+} from '../../features/business/selectionModeModel'
 import {
   PROGRESS_STEPS,
   manageActionsFor,
   managePayload,
   progressOf,
   recruitmentSummary,
-} from './selectionEditModel'
+} from '../../features/business/selectionEditModel'
 
 // 목록 자동 새로고침 간격(밀리초)입니다.
 const REFRESH_MS = 15000
@@ -472,6 +480,7 @@ export default function BusinessParticipants() {
           title={`${current.creatorNickname} · 신청 상세`}
           onClose={() => setSelected(null)}
           busy={busy}
+          unsaved={Boolean(reason.trim())}
         >
           <div className="participant-navigation" aria-label="참여자 이동">
             <button

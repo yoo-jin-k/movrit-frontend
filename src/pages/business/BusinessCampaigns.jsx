@@ -5,14 +5,18 @@
 import { liveCampaignMediaApi } from '../../api/liveCampaignMediaApi'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import useBusinessList from './useBusinessList'
-import { DetailDialog, ListState, PageHeader } from './BusinessUi'
-import { dateLabel } from './businessModel'
+import useBusinessList from '../../features/business/useBusinessList'
+import {
+  DetailDialog,
+  ListState,
+  PageHeader,
+} from '../../features/business/BusinessUi'
+import { dateLabel } from '../../features/business/businessModel'
 import { readCampaignRequirement } from '../../api/campaignRequirementApi'
-import { campaignRequirementSummary } from '../discovery/eligibilityModel'
-import SellerCampaignManager from '../sellerCampaigns/SellerCampaignManager'
-import CampaignContactEditor from './CampaignContactEditor'
-import { SELECTION_MODES } from './selectionModeModel'
+import { campaignRequirementSummary } from '../../features/discovery/eligibilityModel'
+import SellerCampaignManager from '../../features/sellerCampaigns/SellerCampaignManager'
+import CampaignContactEditor from '../../features/business/CampaignContactEditor'
+import { SELECTION_MODES } from '../../features/business/selectionModeModel'
 
 // 누적 선정/수락 이력은 추론하지 않고 현재 응답 상태별 건수만 집계합니다.
 function CampaignCounts({ campaignId, applications }) {

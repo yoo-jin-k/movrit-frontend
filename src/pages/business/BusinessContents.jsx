@@ -3,21 +3,29 @@
  * 처리 결과가 불명확하거나 충돌하면 명령을 잠그고 최신 목록 확인을 요구하며 업체 승인을 운영자 최종 승인과 구분합니다.
  * 위쪽에는 캠페인별 콘텐츠 성과 요약을, 검토 창에는 게시물별 성과 기록을 함께 보여 줍니다.
  */
-import ReportButton from '../participation/ReportButton'
-import ContentMetricPanel from '../contentMetric/ContentMetricPanel'
-import CampaignPerformanceCard from '../contentMetric/CampaignPerformanceCard'
+import ReportButton from '../../features/participation/ReportButton'
+import ContentMetricPanel from '../../features/contentMetric/ContentMetricPanel'
+import CampaignPerformanceCard from '../../features/contentMetric/CampaignPerformanceCard'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { contentLinks, CONTENT_CHANNELS } from '../membership/myContentModel'
-import useBusinessList from './useBusinessList'
-import { reviewContent } from './businessApi'
-import { DetailDialog, ListState, PageHeader, StatusBadge } from './BusinessUi'
+import {
+  contentLinks,
+  CONTENT_CHANNELS,
+} from '../../features/membership/myContentModel'
+import useBusinessList from '../../features/business/useBusinessList'
+import { reviewContent } from '../../api/businessApi'
+import {
+  DetailDialog,
+  ListState,
+  PageHeader,
+  StatusBadge,
+} from '../../features/business/BusinessUi'
 import {
   dateLabel,
   reviewPayload,
   safeContentUrl,
   statusNames,
-} from './businessModel'
+} from '../../features/business/businessModel'
 export default function BusinessContents() {
   const state = useBusinessList('/campaign-contents/seller')
   const [params, setParams] = useSearchParams()
@@ -168,6 +176,7 @@ export default function BusinessContents() {
           title="콘텐츠 검토"
           onClose={() => setSelected(null)}
           busy={busy}
+          unsaved={!locked && Boolean(comment.trim())}
         >
           <h3>{selected.campaignTitle}</h3>
           <p>

@@ -5,7 +5,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import api from '../../api/axios'
+import { readMyApplications } from '../../api/campaignApplicationApi'
 import {
   CAMPAIGN_STAGES,
   stageLink,
@@ -19,12 +19,8 @@ export default function MyCampaignSummary() {
 
   useEffect(() => {
     const controller = new AbortController()
-    api
-      .get('/campaigns/applications/mine', {
-        signal: controller.signal,
-        timeout: 15000,
-      })
-      .then(({ data }) => {
+    readMyApplications(controller.signal)
+      .then((data) => {
         const stages = summarizeCampaignStages(data)
         if (!stages) throw new Error('신청 목록 형식을 확인할 수 없습니다.')
         setState({ stages, error: false })

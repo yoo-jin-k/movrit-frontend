@@ -7,7 +7,7 @@
  * (참여자가 다른 기기에서 수락·취소해도 업체 화면에 곧 반영되도록 하기 위함입니다.)
  */
 import { useEffect, useState } from 'react'
-import { readBusinessList } from './businessApi'
+import { readBusinessList } from '../../api/businessApi'
 export default function useBusinessList(path, { refreshMs = 0 } = {}) {
   const [state, setState] = useState({ loading: true, data: [], error: '' })
   const [revision, setRevision] = useState(0)

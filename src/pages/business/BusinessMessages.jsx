@@ -2,8 +2,8 @@
  * 업체 메시지 화면입니다(/seller/messages).
  * 캠페인 참여자와의 대화(신청별)와 운영자 1:1 문의를 봅니다. 참여자 상세의 '참여자와 채팅하기'로 대화를 시작합니다.
  */
-import ChatInbox from '../chat/ChatInbox'
-import { PageHeader } from './BusinessUi'
+import ChatInbox from '../../features/chat/ChatInbox'
+import { PageHeader } from '../../features/business/BusinessUi'
 
 export default function BusinessMessages() {
   return (

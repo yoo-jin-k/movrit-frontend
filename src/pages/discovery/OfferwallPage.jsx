@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import DiscoveryLayout from './DiscoveryLayout'
+import DiscoveryLayout from '../../features/discovery/DiscoveryLayout'
 
 const SHOPS = [
   ['gmarket', 'G마켓', '#00a85a'],

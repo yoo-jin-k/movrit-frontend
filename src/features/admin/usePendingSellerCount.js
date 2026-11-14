@@ -7,7 +7,7 @@
  * - 조회에 실패하면 배지를 그리지 않습니다(메뉴 자체는 그대로 씁니다).
  */
 import { useEffect, useState } from 'react'
-import api from '../../api/axios'
+import { getPendingSellers } from '../../api/adminSellerApi'
 import { pendingCountFrom } from './adminSellerListModel'
 
 const CACHE_MS = 30_000
@@ -30,9 +30,8 @@ export default function usePendingSellerCount() {
       controller?.abort()
       controller = new AbortController()
       const signal = controller.signal
-      api
-        .get('/admin/sellers/pending', { signal, timeout: 15000 })
-        .then(({ data }) => {
+      getPendingSellers(signal)
+        .then((data) => {
           if (signal.aborted) return
           const next = pendingCountFrom(data)
           cache = { count: next, at: Date.now() }

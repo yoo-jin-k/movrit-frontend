@@ -37,3 +37,32 @@ export const getMyPerformance = async () =>
   (await api.get('/collaborations/performance/mine')).data
 export const getSellerPerformance = async () =>
   (await api.get('/collaborations/performance/seller')).data
+
+// 업체 본인 캠페인 목록입니다(성과 카드의 캠페인 선택용). 화면이 떠나면 signal로 요청을 취소합니다.
+export async function readSellerCampaigns(signal) {
+  const { data } = await api.get('/collaborations/campaigns/seller', {
+    signal,
+    timeout: 15000,
+  })
+  return Array.isArray(data) ? data : []
+}
+
+const contactPath = (campaignId) =>
+  `/collaborations/campaigns/${encodeURIComponent(campaignId)}/contact`
+
+// 캠페인 담당자 연락처 조회·저장입니다(업체 본인 캠페인만, 다른 업체면 403).
+export async function readCampaignContact(campaignId, signal) {
+  const { data } = await api.get(contactPath(campaignId), {
+    signal,
+    timeout: 15000,
+  })
+  return data || null
+}
+export async function saveCampaignContact(campaignId, { name, phone }) {
+  const { data } = await api.put(
+    contactPath(campaignId),
+    { name, phone },
+    { timeout: 15000 },
+  )
+  return data
+}

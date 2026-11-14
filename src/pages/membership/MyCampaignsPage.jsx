@@ -4,35 +4,35 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import api from '../../api/axios'
+import { readMyWorkspaces } from '../../api/campaignApplicationApi'
 import BuyerLayout from '../../components/buyer/BuyerLayout'
-import CampaignSchedule from '../discovery/CampaignSchedule'
-import { liveCampaignSchedule } from '../discovery/scheduleModel'
-import VisitEvidence from '../sellerCampaigns/VisitEvidence'
+import CampaignSchedule from '../../features/discovery/CampaignSchedule'
+import { liveCampaignSchedule } from '../../features/discovery/scheduleModel'
+import VisitEvidence from '../../features/sellerCampaigns/VisitEvidence'
 import { liveCampaignVisitEvidenceApi } from '../../api/liveCampaignVisitEvidenceApi'
-import MyContentSubmission from './MyContentSubmission'
-import PurchaseInfoCard from '../purchaseReview/PurchaseInfoCard'
-import ApplicationEditPanel from '../participation/ApplicationEditPanel'
-import VisitReservationPanel from '../participation/VisitReservationPanel'
-import ShipmentCard from '../shipping/ShipmentCard'
-import PurchaseProofPanel from '../purchaseReview/PurchaseProofPanel'
-import ParticipationChangePanel from '../participation/ParticipationChangePanel'
-import MyCampaignCalendar from '../participation/MyCampaignCalendar'
-import { extendedResultsAt } from '../participation/participationChangeModel'
+import MyContentSubmission from '../../features/membership/MyContentSubmission'
+import PurchaseInfoCard from '../../features/purchaseReview/PurchaseInfoCard'
+import ApplicationEditPanel from '../../features/participation/ApplicationEditPanel'
+import VisitReservationPanel from '../../features/participation/VisitReservationPanel'
+import ShipmentCard from '../../features/shipping/ShipmentCard'
+import PurchaseProofPanel from '../../features/purchaseReview/PurchaseProofPanel'
+import ParticipationChangePanel from '../../features/participation/ParticipationChangePanel'
+import MyCampaignCalendar from '../../features/participation/MyCampaignCalendar'
+import { extendedResultsAt } from '../../features/participation/participationChangeModel'
 import {
   APPLICATION_STATUS,
   applicationStatusLabel,
   nextCampaignAction,
   workspaceDate,
   workspaceTime,
-} from './campaignWorkspaceModel'
-import { SELECTION_MODES } from '../business/selectionModeModel'
+} from '../../features/membership/campaignWorkspaceModel'
+import { SELECTION_MODES } from '../../features/business/selectionModeModel'
 import {
   CAMPAIGN_STAGES,
   filterFromParams,
   matchesFilter,
   paramsFromFilter,
-} from './campaignSummaryModel'
+} from '../../features/membership/campaignSummaryModel'
 
 function Guide({ title, value }) {
   return (
@@ -249,23 +249,9 @@ export default function MyCampaignsPage() {
   }
   useEffect(() => {
     const controller = new AbortController()
-    api
-      .get('/campaigns/applications/mine/workspaces', {
-        signal: controller.signal,
-        timeout: 15000,
-      })
-      .then(({ data }) => {
-        // 부분 응답을 제출 전 상태로 오해하지 않도록 작업공간 전체 형식을 확인합니다.
-        if (
-          !Array.isArray(data) ||
-          data.some(
-            (item) =>
-              !item.application?.id ||
-              !item.campaign?.id ||
-              !Object.hasOwn(item, 'content'),
-          )
-        )
-          throw new Error('작업공간 응답을 확인할 수 없습니다.')
+    // 응답 형식 검사(부분 응답 거르기)는 readMyWorkspaces가 합니다.
+    readMyWorkspaces(controller.signal)
+      .then((data) => {
         if (!controller.signal.aborted)
           setState({ loading: false, items: data, error: '' })
       })

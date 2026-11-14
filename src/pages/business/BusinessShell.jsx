@@ -5,10 +5,10 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { getMySellerProfile } from '../../api/sellerApi'
-import BusinessIcon from './BusinessIcon'
-import useChatUnread from '../chat/useChatUnread'
-import useUnreadNotifications from '../notifications/useUnreadNotifications'
-import { unreadBadgeText } from '../notifications/notificationBadge'
+import BusinessIcon from '../../features/business/BusinessIcon'
+import useChatUnread from '../../features/chat/useChatUnread'
+import useUnreadNotifications from '../../features/notifications/useUnreadNotifications'
+import { unreadBadgeText } from '../../features/notifications/notificationBadge'
 const menus = [
   ['dashboard', '홈'],
   ['campaigns', '캠페인'],

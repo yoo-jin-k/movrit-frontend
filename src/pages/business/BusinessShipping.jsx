@@ -8,8 +8,8 @@
  */
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import useBusinessList from './useBusinessList'
-import { ListState, PageHeader } from './BusinessUi'
+import useBusinessList from '../../features/business/useBusinessList'
+import { ListState, PageHeader } from '../../features/business/BusinessUi'
 import {
   downloadShippingExcel,
   readCouriers,
@@ -23,7 +23,7 @@ import {
   shippingSummary,
   shortTime,
   trackingError,
-} from '../shipping/shippingModel'
+} from '../../features/shipping/shippingModel'
 
 export default function BusinessShipping() {
   const campaigns = useBusinessList('/collaborations/campaigns/seller')

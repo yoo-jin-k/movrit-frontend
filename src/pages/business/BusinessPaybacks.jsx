@@ -6,10 +6,10 @@
  */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import useBusinessList from './useBusinessList'
-import { ListState, PageHeader } from './BusinessUi'
-import { dateLabel, statusNames } from './businessModel'
-import { won } from '../purchaseReview/purchaseReviewModel'
+import useBusinessList from '../../features/business/useBusinessList'
+import { ListState, PageHeader } from '../../features/business/BusinessUi'
+import { dateLabel, statusNames } from '../../features/business/businessModel'
+import { won } from '../../features/purchaseReview/purchaseReviewModel'
 
 const PAYBACK_LABELS = {
   NO_PROOF: '구매 인증 전',

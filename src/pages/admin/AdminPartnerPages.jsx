@@ -8,7 +8,7 @@
  */
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import api from '../../api/axios'
+import { approveSeller, rejectSeller } from '../../api/adminSellerApi'
 import AdminLayout, {
   AdminButton,
   AdminCard,
@@ -43,7 +43,7 @@ export function AdminSellerDetailPage() {
     setBusy(true)
     setMessage('')
     try {
-      await api.patch(`/admin/sellers/${seller.id}/${action}`)
+      await (action === 'approve' ? approveSeller : rejectSeller)(seller.id)
       setMessage(
         action === 'approve'
           ? '업체를 승인했습니다.'

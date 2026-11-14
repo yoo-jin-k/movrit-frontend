@@ -4,10 +4,10 @@
  * - 클립: 주요 콘텐츠 채널이 클립(CLIP)인 캠페인(별도 종류가 아니라 채널 기준)
  */
 import { useParams } from 'react-router-dom'
-import DiscoveryLayout from './DiscoveryLayout'
-import CampaignGrid from './CampaignGrid'
-import ChannelIcon from './ChannelIcon'
-import { useCampaignCatalog } from './useCampaignCatalog'
+import DiscoveryLayout from '../../features/discovery/DiscoveryLayout'
+import CampaignGrid from '../../features/discovery/CampaignGrid'
+import ChannelIcon from '../../features/discovery/ChannelIcon'
+import { useCampaignCatalog } from '../../features/discovery/useCampaignCatalog'
 
 export default function SpecialCampaignPage() {
   const { kind } = useParams()

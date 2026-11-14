@@ -8,12 +8,20 @@
  */
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import DiscoveryLayout from './DiscoveryLayout'
-import ChannelIcon from './ChannelIcon'
-import CampaignGrid from './CampaignGrid'
-import { LOCAL_CATEGORIES, MEDIA, PRODUCT_CATEGORIES, REGIONS } from './catalog'
-import { useCampaignSearch } from './useCampaignCatalog'
-import { LISTING_SECTIONS, pageNumbers } from './campaignSearchModel'
+import DiscoveryLayout from '../../features/discovery/DiscoveryLayout'
+import ChannelIcon from '../../features/discovery/ChannelIcon'
+import CampaignGrid from '../../features/discovery/CampaignGrid'
+import {
+  LOCAL_CATEGORIES,
+  MEDIA,
+  PRODUCT_CATEGORIES,
+  REGIONS,
+} from '../../features/discovery/catalog'
+import { useCampaignSearch } from '../../features/discovery/useCampaignCatalog'
+import {
+  LISTING_SECTIONS,
+  pageNumbers,
+} from '../../features/discovery/campaignSearchModel'
 
 export default function CampaignListingPage({ search = false }) {
   const { section = '제품' } = useParams()

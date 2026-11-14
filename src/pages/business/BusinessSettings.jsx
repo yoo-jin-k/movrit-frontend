@@ -9,10 +9,10 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
-import { PageHeader } from './BusinessUi'
+import { PageHeader } from '../../features/business/BusinessUi'
 import { getMyBrands } from '../../api/brandApi'
-import { brandSetupState } from './brandModel'
-import { sellerStatusLabel } from './sellerEntryModel'
+import { brandSetupState } from '../../features/business/brandModel'
+import { sellerStatusLabel } from '../../features/business/sellerEntryModel'
 
 const operationLinks = [
   ['/seller/brands', '브랜드 관리', '로고·대표 이미지, 운영 상태'],

@@ -10,7 +10,7 @@ import {
   CHANNEL_PROVIDERS,
   channelErrorMessage,
   isChannelProvider,
-} from './channelConnectModel'
+} from '../../features/membership/channelConnectModel'
 
 export default function ChannelConnectCallbackPage() {
   const { provider } = useParams()

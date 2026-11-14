@@ -7,7 +7,10 @@
  * - 서버 API: PUT·DELETE /api/admin/campaigns/{id}/eligibility-requirement
  */
 import { useState } from 'react'
-import api from '../../api/axios'
+import {
+  clearAdminCampaignRequirement,
+  saveAdminCampaignRequirement,
+} from '../../api/campaignRequirementApi'
 import AdminDialog from './AdminDialog'
 import RequirementFields from '../sellerCampaigns/RequirementFields'
 import {
@@ -20,7 +23,6 @@ export default function AdminRequirementEditor({ item, onDone, onCancel }) {
   const [form, setForm] = useState(() => requirementForm(current))
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const endpoint = `/admin/campaigns/${item.id}/eligibility-requirement`
 
   // 조건을 저장하거나 해제합니다. 바뀐 것이 없으면 요청을 보내지 않습니다.
   const save = async () => {
@@ -40,19 +42,16 @@ export default function AdminRequirementEditor({ item, onDone, onCancel }) {
     setError('')
     try {
       if (payload) {
-        await api.put(
-          endpoint,
-          { ...payload, expectedVersion: current?.version ?? null },
-          { timeout: 15000 },
+        await saveAdminCampaignRequirement(
+          item.id,
+          payload,
+          current?.version ?? null,
         )
         onDone(
           `캠페인 #${item.id} 신청 조건을 저장했습니다. 업체에 알림을 보냈습니다.`,
         )
       } else {
-        await api.delete(endpoint, {
-          params: { expectedVersion: current.version },
-          timeout: 15000,
-        })
+        await clearAdminCampaignRequirement(item.id, current.version)
         onDone(
           `캠페인 #${item.id} 신청 조건을 해제했습니다. 업체에 알림을 보냈습니다.`,
         )

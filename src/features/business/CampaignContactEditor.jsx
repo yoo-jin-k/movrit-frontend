@@ -1,6 +1,9 @@
 /** 회원 개인정보를 자동 입력하지 않고 소유 브랜드가 공개할 담당자 정보를 직접 저장합니다. */
 import { useEffect, useRef, useState } from 'react'
-import api from '../../api/axios'
+import {
+  readCampaignContact,
+  saveCampaignContact,
+} from '../../api/collaborationApi'
 export default function CampaignContactEditor({ campaignId }) {
   const [state, setState] = useState({ loading: true, error: '', value: null })
   const [name, setName] = useState(''),
@@ -12,17 +15,13 @@ export default function CampaignContactEditor({ campaignId }) {
   const inFlight = useRef(false)
   useEffect(() => {
     const controller = new AbortController()
-    api
-      .get(
-        `/collaborations/campaigns/${encodeURIComponent(campaignId)}/contact`,
-        { signal: controller.signal, timeout: 15000 },
-      )
-      .then(({ data }) => {
+    readCampaignContact(campaignId, controller.signal)
+      .then((data) => {
         if (!controller.signal.aborted) {
           setName(data?.name || '')
           setPhone(data?.phone || '')
           setLocked(false)
-          setState({ loading: false, error: '', value: data || null })
+          setState({ loading: false, error: '', value: data })
         }
       })
       .catch(() => {
@@ -54,11 +53,10 @@ export default function CampaignContactEditor({ campaignId }) {
     setBusy(true)
     setNotice('')
     try {
-      await api.put(
-        `/collaborations/campaigns/${encodeURIComponent(campaignId)}/contact`,
-        { name: name.trim(), phone: phone.trim() },
-        { timeout: 15000 },
-      )
+      await saveCampaignContact(campaignId, {
+        name: name.trim(),
+        phone: phone.trim(),
+      })
       setNotice(
         '담당자 연락처를 저장했습니다. 선정된 신청 당사자에게 표시됩니다.',
       )

@@ -4,7 +4,7 @@
  * - 서버 API: GET /api/collaborations/campaigns/seller(캠페인 목록), GET /api/campaigns/{id}/content-performance
  */
 import { useEffect, useState } from 'react'
-import api from '../../api/axios'
+import { readSellerCampaigns } from '../../api/collaborationApi'
 import { readCampaignPerformance } from '../../api/contentMetricApi'
 import { CONTENT_CHANNELS } from '../membership/myContentModel'
 import { compactCount, engagementRate } from './contentMetricModel'
@@ -16,12 +16,8 @@ export default function CampaignPerformanceCard() {
 
   useEffect(() => {
     const controller = new AbortController()
-    api
-      .get('/collaborations/campaigns/seller', {
-        signal: controller.signal,
-        timeout: 15000,
-      })
-      .then(({ data }) => setCampaigns(Array.isArray(data) ? data : []))
+    readSellerCampaigns(controller.signal)
+      .then(setCampaigns)
       .catch(() => {})
     return () => controller.abort()
   }, [])

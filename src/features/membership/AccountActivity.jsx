@@ -2,7 +2,7 @@
 import ChannelIcon from './ChannelIcon'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import api from '../../api/axios'
+import { readMyApplications } from '../../api/campaignApplicationApi'
 import { readChannelProfile } from '../../api/channelProfileApi'
 import { readMyCampaignContents } from '../../api/myCampaignContentApi'
 import { CAMPAIGN_STAGES, stageLink } from './campaignSummaryModel'
@@ -24,15 +24,7 @@ export default function AccountActivity({ onClose }) {
     const controller = new AbortController()
     Promise.allSettled([
       readChannelProfile(controller.signal),
-      api
-        .get('/campaigns/applications/mine', {
-          signal: controller.signal,
-          timeout: 15000,
-        })
-        .then((r) => {
-          if (!Array.isArray(r.data)) throw new Error()
-          return r.data
-        }),
+      readMyApplications(controller.signal),
       readMyCampaignContents(controller.signal),
     ]).then((values) => {
       if (active) setState(values)

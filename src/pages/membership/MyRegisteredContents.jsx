@@ -8,7 +8,7 @@ import {
   CONTENT_CHANNELS,
   contentLinks,
   myContentLink,
-} from './myContentModel'
+} from '../../features/membership/myContentModel'
 export default function MyRegisteredContents() {
   const [state, setState] = useState({ items: null, error: '' }),
     [attempt, setAttempt] = useState(0)

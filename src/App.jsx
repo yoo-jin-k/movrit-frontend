@@ -6,8 +6,8 @@
 import { lazy, Suspense } from 'react'
 import MainHomeHeader from './components/buyer/MainHomeHeader'
 import AdminAccess from './components/AdminAccess'
-import CampaignListingPage from './features/discovery/CampaignListingPage'
-import CampaignDetailPage from './features/discovery/CampaignDetailPage'
+import CampaignListingPage from './pages/discovery/CampaignListingPage'
+import CampaignDetailPage from './pages/discovery/CampaignDetailPage'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import BuyerHomePage from './pages/BuyerHomePage'
 import OAuthCallbackPage from './pages/OAuthCallbackPage'
@@ -29,54 +29,44 @@ const AdminCommunityPage = lazy(() => import('./pages/AdminCommunityPage'))
 const AdminParticipationPage = lazy(
   () => import('./pages/AdminParticipationPage'),
 )
-const BusinessShipping = lazy(
-  () => import('./features/business/BusinessShipping'),
-)
-const BusinessPaybacks = lazy(
-  () => import('./features/business/BusinessPaybacks'),
-)
+const BusinessShipping = lazy(() => import('./pages/business/BusinessShipping'))
+const BusinessPaybacks = lazy(() => import('./pages/business/BusinessPaybacks'))
 const AdminChannelVerificationsPage = lazy(
   () => import('./pages/AdminChannelVerificationsPage'),
 )
-const BusinessShell = lazy(() => import('./features/business/BusinessShell'))
-const BusinessHome = lazy(() => import('./features/business/BusinessHome'))
+const BusinessShell = lazy(() => import('./pages/business/BusinessShell'))
+const BusinessHome = lazy(() => import('./pages/business/BusinessHome'))
 const BusinessCampaigns = lazy(() =>
-  import('./features/business/BusinessCampaigns').then((module) => ({
+  import('./pages/business/BusinessCampaigns').then((module) => ({
     default: module.BusinessCampaigns,
   })),
 )
 const BusinessCampaignEditor = lazy(() =>
-  import('./features/business/BusinessCampaigns').then((module) => ({
+  import('./pages/business/BusinessCampaigns').then((module) => ({
     default: module.BusinessCampaignEditor,
   })),
 )
 const BusinessParticipants = lazy(
-  () => import('./features/business/BusinessParticipants'),
+  () => import('./pages/business/BusinessParticipants'),
 )
-const BusinessContents = lazy(
-  () => import('./features/business/BusinessContents'),
-)
-const BusinessInbox = lazy(() => import('./features/business/BusinessInbox'))
-const BusinessSettings = lazy(
-  () => import('./features/business/BusinessSettings'),
-)
+const BusinessContents = lazy(() => import('./pages/business/BusinessContents'))
+const BusinessInbox = lazy(() => import('./pages/business/BusinessInbox'))
+const BusinessSettings = lazy(() => import('./pages/business/BusinessSettings'))
 const MyRegisteredContents = lazy(
-  () => import('./features/membership/MyRegisteredContents'),
+  () => import('./pages/membership/MyRegisteredContents'),
 )
 const AccountSettingsPage = lazy(
-  () => import('./features/membership/AccountSettingsPage'),
+  () => import('./pages/membership/AccountSettingsPage'),
 )
 const ChannelConnectCallbackPage = lazy(
-  () => import('./features/membership/ChannelConnectCallbackPage'),
+  () => import('./pages/membership/ChannelConnectCallbackPage'),
 )
-const MyCampaignsPage = lazy(
-  () => import('./features/membership/MyCampaignsPage'),
-)
+const MyCampaignsPage = lazy(() => import('./pages/membership/MyCampaignsPage'))
 const SpecialCampaignPage = lazy(
-  () => import('./features/discovery/SpecialCampaignPage'),
+  () => import('./pages/discovery/SpecialCampaignPage'),
 )
-const OfferwallPage = lazy(() => import('./features/discovery/OfferwallPage'))
-const CommunityPage = lazy(() => import('./features/discovery/CommunityPage'))
+const OfferwallPage = lazy(() => import('./pages/discovery/OfferwallPage'))
+const CommunityPage = lazy(() => import('./pages/discovery/CommunityPage'))
 const MyPage = lazy(() => import('./pages/MyPage'))
 const SocialLinkCallbackPage = lazy(
   () => import('./pages/SocialLinkCallbackPage'),
@@ -88,9 +78,7 @@ const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const MessagesPage = lazy(() => import('./pages/MessagesPage'))
 const AdminMessagesPage = lazy(() => import('./pages/AdminMessagesPage'))
 const AdminCampaignsPage = lazy(() => import('./pages/AdminCampaignsPage'))
-const BusinessMessages = lazy(
-  () => import('./features/business/BusinessMessages'),
-)
+const BusinessMessages = lazy(() => import('./pages/business/BusinessMessages'))
 const InquiriesPage = lazy(() => import('./pages/InquiriesPage'))
 const AdminInquiriesPage = lazy(() => import('./pages/AdminInquiriesPage'))
 const SellerApplyPage = lazy(() => import('./pages/SellerApplyPage'))

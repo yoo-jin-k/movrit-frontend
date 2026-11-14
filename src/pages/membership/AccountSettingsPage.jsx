@@ -4,12 +4,12 @@
  */
 import { Link, useLocation } from 'react-router-dom'
 import BuyerLayout from '../../components/buyer/BuyerLayout'
-import LogoutButton from '../auth/LogoutButton'
-import useMemberAccount from './useMemberAccount'
-import AvatarEditor from './AvatarEditor'
-import SocialLoginLinks from './SocialLoginLinks'
-import ChannelConnections from './ChannelConnections'
-import PhoneVerification from './PhoneVerification'
+import LogoutButton from '../../features/auth/LogoutButton'
+import useMemberAccount from '../../features/membership/useMemberAccount'
+import AvatarEditor from '../../features/membership/AvatarEditor'
+import SocialLoginLinks from '../../features/membership/SocialLoginLinks'
+import ChannelConnections from '../../features/membership/ChannelConnections'
+import PhoneVerification from '../../features/membership/PhoneVerification'
 export default function AccountSettingsPage() {
   const state = useMemberAccount()
   const location = useLocation()

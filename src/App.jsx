@@ -65,7 +65,8 @@ const MyCampaignsPage = lazy(() => import('./pages/membership/MyCampaignsPage'))
 const SpecialCampaignPage = lazy(
   () => import('./pages/discovery/SpecialCampaignPage'),
 )
-const OfferwallPage = lazy(() => import('./pages/discovery/OfferwallPage'))
+// 오퍼월(저금통)은 운영 방향을 정할 때까지 숨깁니다. 다시 열려면 아래 줄과 /offerwall 경로, 메뉴(catalog.js) 주석을 풀면 됩니다.
+// const OfferwallPage = lazy(() => import('./pages/discovery/OfferwallPage'))
 const CommunityPage = lazy(() => import('./pages/discovery/CommunityPage'))
 const MyPage = lazy(() => import('./pages/MyPage'))
 const SocialLinkCallbackPage = lazy(
@@ -214,8 +215,10 @@ function App() {
             element={<CampaignDetailPage />}
           />
           <Route path="/special/:kind" element={<SpecialCampaignPage />} />
+          {/* 오퍼월(저금통) 숨김: 위 OfferwallPage 주석과 함께 풀면 다시 열립니다.
           <Route path="/offerwall" element={<OfferwallPage />} />
           <Route path="/offerwall/:shop" element={<OfferwallPage />} />
+          */}
           <Route path="/community/:board" element={<CommunityPage />} />
           <Route path="/community/:board/:postId" element={<CommunityPage />} />
           <Route path="/notices" element={<NoticesPage />} />

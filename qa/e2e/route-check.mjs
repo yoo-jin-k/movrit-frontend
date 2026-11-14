@@ -10,7 +10,7 @@ const ROUTES = {
     '/category/제품',
     '/campaign/44',
     '/special/clip',
-    '/offerwall',
+    // '/offerwall', // 오퍼월 숨김 중
     '/community/free',
     '/notices',
     '/support',

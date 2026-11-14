@@ -2,8 +2,16 @@
  * 인증이 필요한 API의 기본 주소와 요청/응답 인터셉터를 설정합니다.
  * 요청 시 세션의 액세스 토큰을 붙이고, 401이면 저장된 갱신 토큰으로 원래 요청을 한 번 재전송합니다.
  * 갱신 실패 또는 최종 401은 인증 정보를 정리하고 로그인 화면으로 안내합니다.
+ * 갱신 토큰은 계정별로 보관하므로 탭마다 다른 계정으로 로그인해도 각 탭은 자기 계정으로만 갱신합니다(sessionTokenModel).
  */
 import axios from 'axios'
+import {
+  ACCOUNT_SWITCHED_REASON,
+  clearSession,
+  readRefreshToken,
+  storeRefreshed,
+  tokenMemberId,
+} from '../features/auth/sessionTokenModel'
 
 const api = axios.create({
   baseURL: '/api',
@@ -34,9 +42,16 @@ function refreshOnce(refreshToken) {
       .post('/api/auth/refresh', { refreshToken })
       .then(({ data }) => {
         // 로그아웃 이후 도착한 갱신 응답으로 세션이 복구되지 않게 합니다.
-        if (localStorage.getItem('refreshToken') !== refreshToken) return null
-        sessionStorage.setItem('accessToken', data.accessToken)
-        localStorage.setItem('refreshToken', data.refreshToken)
+        if (readRefreshToken(sessionStorage, localStorage) !== refreshToken)
+          return null
+        // 받은 계정이 이 탭 계정과 다르면(예전 공용 키의 주인이 다른 계정) 이 탭에 적용하지 않고 다시 로그인하게 합니다.
+        const tabMemberId = tokenMemberId(sessionStorage.getItem('accessToken'))
+        if (!storeRefreshed(tabMemberId, data, sessionStorage, localStorage)) {
+          sessionStorage.removeItem('accessToken')
+          if (window.location.pathname !== '/login')
+            window.location.href = `/login?reason=${ACCOUNT_SWITCHED_REASON}`
+          return null
+        }
         return data.accessToken
       })
       .finally(() => {
@@ -51,7 +66,7 @@ api.interceptors.response.use(
 
   async (error) => {
     const original = error.config
-    const refreshToken = localStorage.getItem('refreshToken')
+    const refreshToken = readRefreshToken(sessionStorage, localStorage)
     if (
       error.response?.status === 401 &&
       refreshToken &&
@@ -74,7 +89,8 @@ api.interceptors.response.use(
         original.headers.Authorization = `Bearer ${accessToken}`
         return api(original)
       } catch {
-        localStorage.removeItem('refreshToken')
+        // 갱신에 실패한 이 탭 계정의 세션만 지웁니다(다른 계정 탭은 그대로 둡니다).
+        clearSession(sessionStorage, localStorage)
       }
     }
     if (error.response?.status === 401 && !original?.skipAuthRefresh) {

@@ -7,6 +7,7 @@ import AccountPasswordPage from '../features/membership/AccountPasswordPage'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import CommonLayout from '../components/layout/CommonLayout'
+import { clearSession } from '../features/auth/sessionTokenModel'
 import {
   WITHDRAW_CONFIRM_TEXT,
   readWithdrawalEligibility,
@@ -100,8 +101,7 @@ export function WithdrawalPage() {
     setError('')
     try {
       await withdrawMember(confirmText.trim())
-      sessionStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      clearSession(sessionStorage, localStorage)
       navigate('/home', { replace: true, state: { withdrawn: true } })
     } catch (failure) {
       setError(

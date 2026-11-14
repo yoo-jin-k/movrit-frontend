@@ -1,5 +1,6 @@
 /** 실제 비밀번호 보유 여부를 확인하고 서버 변경 성공 후 다시 로그인하도록 합니다. */
 import { passwordValidation, passwordError } from './accountPasswordModel'
+import { clearSession } from '../auth/sessionTokenModel'
 
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -62,8 +63,7 @@ export default function AccountPasswordPage() {
         newPassword: form.newPassword,
       })
       setForm({ currentPassword: '', newPassword: '', confirm: '' })
-      sessionStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      clearSession(sessionStorage, localStorage)
       window.dispatchEvent(new Event('movrit:session-updated'))
       navigate('/login', {
         replace: true,

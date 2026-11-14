@@ -13,6 +13,7 @@ import CommonLayout from '../components/layout/CommonLayout'
 import FormAlert from '../components/ui/FormAlert'
 import PasswordField from '../components/ui/PasswordField'
 import { newPasswordError } from '../features/auth/passwordRules'
+import { clearSession } from '../features/auth/sessionTokenModel'
 
 function ResetPasswordPage() {
   const navigate = useNavigate()
@@ -43,8 +44,7 @@ function ResetPasswordPage() {
     try {
       const result = await resetPassword(token, form.newPassword)
       // 다른 로그인 상태가 남지 않도록 저장된 로그인 정보를 지웁니다.
-      sessionStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      clearSession(sessionStorage, localStorage)
       setDone(
         result.message ||
           '비밀번호를 바꿨습니다. 새 비밀번호로 로그인해 주세요.',

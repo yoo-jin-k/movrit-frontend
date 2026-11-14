@@ -183,13 +183,31 @@
   align-items: center;
   gap: 6px;
 }
-.report-button__toggle {
+/* 업체 화면 공통 버튼(44px 테두리 상자)보다 우선하도록 부모 클래스를 붙여 작은 글자 링크 모양을 유지합니다. */
+.report-button .report-button__toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
   border: 0;
+  border-radius: 4px;
   background: none;
   color: #8c8c94;
   font-size: 12px;
+  line-height: 1.4;
   text-decoration: underline;
   cursor: pointer;
+}
+.report-button .report-button__toggle:hover {
+  color: #55555c;
+}
+.report-button .report-form button,
+.report-button .report-form select,
+.report-button .report-form input {
+  min-height: 30px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
 }
 .report-form {
   display: inline-flex;

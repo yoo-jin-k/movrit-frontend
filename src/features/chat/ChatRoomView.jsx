@@ -35,6 +35,8 @@ import {
   isReadByOthers,
   isVideoAttachment,
   mergeMessages,
+  pollAfterId,
+  unseenMessages,
   roomTypeLabel,
   typingLabel,
 } from './chatModel'
@@ -189,7 +191,8 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
   const [jumped, setJumped] = useState(false)
   const [newWhileJumped, setNewWhileJumped] = useState(false)
   const [focusId, setFocusId] = useState(null)
-  const lastId = useRef(0)
+  // 새 메시지 확인에서 겹쳐 받을 위치를 계산하려고 현재 메시지 목록을 함께 둡니다.
+  const messagesRef = useRef([])
   const listRef = useRef(null)
   const fileRef = useRef(null)
   const keepScroll = useRef(false)
@@ -203,7 +206,6 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
     setMessages(data.messages || [])
     setOthersRead(data.othersLastReadId || 0)
     setHasMore(Boolean(data.hasMore))
-    lastId.current = data.messages?.at(-1)?.id || 0
     jumpedRef.current = false
     setJumped(false)
     setNewWhileJumped(false)
@@ -220,7 +222,6 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
   // 방을 바꾸면 처음부터 다시 받습니다.
   useEffect(() => {
     const controller = new AbortController()
-    lastId.current = 0
     readChatMessages(roomId, null, controller.signal)
       .then(applyLatest)
       .catch(() => {
@@ -250,7 +251,11 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
     return () => Object.values(timers).forEach(clearTimeout)
   }, [roomId])
 
-  // 새 메시지 확인: 마지막 메시지 다음만 받습니다. 상대의 읽음 위치도 함께 갱신합니다.
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
+
+  // 새 메시지 확인: 끝에서 몇 개 앞부터 겹쳐 받아 늦게 저장된 메시지도 놓치지 않습니다. 상대의 읽음 위치도 함께 갱신합니다.
   const poll = useCallback(async () => {
     if (document.visibilityState === 'hidden') return
     // 과거 위치를 보고 있을 때는 새 메시지를 받아 오지 않고(읽음 처리도 하지 않음) 버튼에 표시만 합니다.
@@ -259,12 +264,20 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
       return
     }
     try {
-      const data = await readChatMessages(roomId, lastId.current || null)
+      const data = await readChatMessages(
+        roomId,
+        pollAfterId(messagesRef.current),
+      )
+      // 응답을 기다리는 사이 검색 결과 위치로 이동했다면, 과거 화면 뒤에 최신 메시지를 붙이지 않습니다.
+      if (jumpedRef.current) {
+        setNewWhileJumped(true)
+        return
+      }
       setOthersRead(data.othersLastReadId || 0)
-      const incoming = data.messages || []
+      const incoming = unseenMessages(messagesRef.current, data.messages)
+      if (data.messages?.length)
+        setMessages((current) => mergeMessages(current, data.messages))
       if (incoming.length) {
-        setMessages((current) => mergeMessages(current, incoming))
-        lastId.current = Math.max(lastId.current, incoming.at(-1).id)
         // 메시지를 보낸 사람의 '입력 중' 표시는 바로 지웁니다.
         const senders = new Set(
           incoming.filter((m) => !m.mine).map((m) => m.senderName),
@@ -307,8 +320,13 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
           TYPING_SHOW_MS,
         )
       }
-      // 운영자가 신고 처리로 메시지를 가리면 화면의 그 메시지도 바로 안내 문구로 바꿉니다.
-      if (type === 'hidden' && sameRoom)
+      // 운영자가 신고 처리로 메시지를 가리면 화면의 그 메시지도 바로 안내 문구로 바꾸고, 열린 검색 결과에서는 뺍니다.
+      if (type === 'hidden' && sameRoom) {
+        setResults((current) =>
+          current
+            ? current.filter((m) => m.id !== Number(data.messageId))
+            : current,
+        )
         setMessages((current) =>
           current.map((m) =>
             m.id === Number(data.messageId)
@@ -320,6 +338,7 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
               : m,
           ),
         )
+      }
       if (type === 'connected') poll()
     }
     window.addEventListener(CHAT_EVENT, onEvent)
@@ -402,7 +421,7 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
       const page = data.messages || []
       const latestShown = page.at(-1)?.id || 0
       // 결과가 이미 지금 보이는 최신 메시지까지 닿아 있으면 과거 위치 모드로 바꾸지 않습니다.
-      const behind = latestShown < lastId.current
+      const behind = latestShown < (messagesRef.current.at(-1)?.id || 0)
       jumpedRef.current = behind
       setJumped(behind)
       setNewWhileJumped(false)
@@ -453,12 +472,10 @@ export default function ChatRoomView({ roomId, onActivity, onBack }) {
           )
           sent += 1
           setMessages((current) => mergeMessages(current, [message]))
-          lastId.current = Math.max(lastId.current, message.id)
         }
       } else {
         const message = await sendChatMessage(roomId, body)
         setMessages((current) => mergeMessages(current, [message]))
-        lastId.current = Math.max(lastId.current, message.id)
       }
       setText('')
       clearFiles()

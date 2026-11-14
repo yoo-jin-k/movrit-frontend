@@ -43,6 +43,9 @@
 .chat-list li button {
   position: relative;
   display: grid;
+  /* 업체 화면 공통 버튼의 가운데 정렬을 덮어써 목록 내용을 왼쪽에 붙입니다. */
+  justify-content: stretch;
+  align-content: start;
   gap: 2px;
   width: 100%;
   padding: 14px 16px;

@@ -41,9 +41,11 @@ export default function ChatInbox({ allowSupport = true, emptyHint }) {
     const timer = setInterval(() => {
       if (document.visibilityState !== 'hidden') refresh()
     }, LIST_REFRESH_MS)
-    // 새 메시지 이벤트가 오면 목록(안 읽은 수·최근 메시지)을 바로 다시 불러옵니다.
+    // 새 메시지·읽음 이벤트가 오면 목록(안 읽은 수·최근 메시지)을 바로 다시 불러옵니다.
+    // 읽음 이벤트는 같은 계정의 다른 창에서 읽었을 때도 와서, 이 창의 안 읽은 수를 바로 맞춥니다.
     const onEvent = (event) => {
-      if (event.detail?.type === 'message') refresh()
+      const type = event.detail?.type
+      if (type === 'message' || type === 'read') refresh()
     }
     window.addEventListener(CHAT_EVENT, onEvent)
     // 이 화면을 보는 동안 실시간 이벤트 연결을 열어 둡니다(운영자 화면처럼 헤더 배지가 없는 곳 포함).

@@ -76,3 +76,24 @@ export function aiDraftError(failure) {
     return '서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.'
   return 'AI 초안을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'
 }
+
+// 초안 받기가 끝난 뒤 버튼 옆에 보여 줄 완료 안내입니다.
+// 몇 칸을 채웠는지, 이미 내용이 있어 그대로 둔 칸, 남은 횟수(또는 견본 여부)를 한 문장씩 이어 붙입니다.
+export function aiDraftNotice({
+  filled = [],
+  kept = [],
+  live,
+  remainingToday,
+}) {
+  const parts = [
+    filled.length
+      ? `완료: ${filled.length}칸(${filled.join(', ')})에 초안을 넣었습니다. 읽고 캠페인에 맞게 고쳐 주세요.`
+      : '완료: 비어 있는 칸이 없어 초안을 넣지 않았습니다.',
+  ]
+  if (kept.length)
+    parts.push(`이미 쓰신 ${kept.join(', ')} 칸은 그대로 두었습니다.`)
+  if (!live) parts.push('AI 키가 설정되지 않아 견본 초안을 넣었습니다.')
+  else if (Number.isSafeInteger(remainingToday))
+    parts.push(`오늘 ${remainingToday}번 더 만들 수 있습니다.`)
+  return parts.join(' ')
+}

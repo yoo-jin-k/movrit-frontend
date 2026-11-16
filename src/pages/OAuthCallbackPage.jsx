@@ -18,6 +18,8 @@ function OAuthCallbackPage() {
       navigate('/login', { replace: true })
       return
     }
+    // 실시간 채팅 연결·헤더가 새 계정 기준으로 다시 맞추도록 알립니다.
+    window.dispatchEvent(new Event('movrit:session-updated'))
 
     navigate('/mypage', {
       replace: true,

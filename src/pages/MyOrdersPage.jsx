@@ -2,26 +2,24 @@
  * 본인 주문을 표시용 상태로 정규화하여 탭별로 보여줍니다.
  * 서버의 빈 응답과 조회 실패를 예시 주문으로 대체하지 않습니다.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyOrders } from '../api/commerceApi'
 import BuyerLayout, { BuyerCard } from '../components/buyer/BuyerLayout'
+import {
+  adaptOrderSummary,
+  filterOrders,
+  ORDER_FILTERS,
+} from '../features/orders/orderModel'
 
-const labels = {
-  PENDING_PAYMENT: '진행중',
-  PAID: '결제완료',
-  PREPARING: '결제완료',
-  SHIPPED: '배송중',
-  DELIVERED: '완료',
-  CANCELLED: '취소',
-  REFUNDED: '취소',
-}
 export default function MyOrdersPage() {
   const [orders, setOrders] = useState([])
-  const [loading, setLoading] = useState(true),
-    [error, setError] = useState(''),
-    [attempt, setAttempt] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [attempt, setAttempt] = useState(0)
   const [filter, setFilter] = useState('전체')
+
+  // 서버 응답만 목록으로 사용하며, 조회 실패 시 이전 주문을 남기지 않습니다.
   useEffect(() => {
     getMyOrders()
       .then((items) => {
@@ -35,33 +33,19 @@ export default function MyOrdersPage() {
       })
       .finally(() => setLoading(false))
   }, [attempt])
-  const normalized = orders.map((o) => ({
-    id: o.id,
-    number: o.orderNumber || o.number,
-    title: o.preorderTitle || o.title,
-    status: labels[o.status] || o.status,
-    date: o.createdAt?.slice(0, 10) || o.date,
-    amount: o.totalPaymentAmount
-      ? `${Number(o.totalPaymentAmount).toLocaleString()}원`
-      : o.amount,
-  }))
-  const shown = useMemo(
-    () =>
-      filter === '전체'
-        ? normalized
-        : normalized.filter((o) => o.status === filter),
-    [normalized, filter],
-  )
+  // 표시 형식과 필터 규칙은 화면 렌더링과 분리해 같은 입력에 같은 결과를 만듭니다.
+  const shown = filterOrders(orders.map(adaptOrderSummary), filter)
+
   return (
     <BuyerLayout title="주문 내역">
       <div className="buyer-chip-row buyer-order-filters">
-        {['전체', '진행중', '결제완료', '배송중', '완료', '취소'].map((x) => (
+        {ORDER_FILTERS.map((label) => (
           <button
-            className={filter === x ? 'is-active' : ''}
-            onClick={() => setFilter(x)}
-            key={x}
+            className={filter === label ? 'is-active' : ''}
+            onClick={() => setFilter(label)}
+            key={label}
           >
-            {x}
+            {label}
           </button>
         ))}
       </div>
@@ -82,17 +66,17 @@ export default function MyOrdersPage() {
         <p>표시할 주문이 없습니다.</p>
       ) : null}
       <div className="buyer-order-list">
-        {shown.map((o) => (
-          <BuyerCard key={o.id} className="buyer-order-row">
+        {shown.map((order) => (
+          <BuyerCard key={order.id} className="buyer-order-row">
             <div>
-              <h2>{o.title}</h2>
-              <strong>{o.status}</strong>
-              <time>{o.date}</time>
+              <h2>{order.title}</h2>
+              <strong>{order.status}</strong>
+              <time>{order.date}</time>
             </div>
-            <b>{o.amount}</b>
+            <b>{order.amount}</b>
             <Link
               className="buyer-v2-button buyer-v2-button--secondary"
-              to={`/orders/${o.id}`}
+              to={`/orders/${order.id}`}
             >
               상세 보기
             </Link>

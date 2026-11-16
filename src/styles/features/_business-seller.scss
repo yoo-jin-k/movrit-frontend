@@ -1,0 +1,216 @@
+/*
+ * 업체 설정·브랜드 관리·주문 운영 화면과 업체 상단 알림 배지 스타일입니다.
+ * business.css의 색 변수(--business-*)를 그대로 쓰고, 다른 업체 화면 규칙과 겹치지 않게 전용 클래스만 둡니다.
+ */
+
+/* 업체 운영 관리: 링크를 실제 버튼 모양(테두리·배경·hover·focus)으로 보여줍니다. */
+.business-shell .business-link-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+  padding: 0 24px 24px;
+}
+.business-shell .business-link-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 52px;
+  padding: 10px 16px;
+  border: 1px solid #dedde2;
+  border-radius: 10px;
+  background: white;
+  color: var(--business-ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+}
+.business-shell .business-link-button small {
+  display: block;
+  margin-top: 2px;
+  color: var(--business-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.business-shell .business-link-button::after {
+  content: '›';
+  color: var(--business-muted);
+  font-size: 18px;
+}
+.business-shell .business-link-button:hover {
+  border-color: var(--business-purple);
+  background: #f8f5fd;
+}
+.business-shell .business-link-button:focus-visible {
+  outline: 3px solid #9976df;
+  outline-offset: 2px;
+}
+
+/* 브랜드 미등록 안내: 업체 설정·브랜드 화면 상단에 눈에 띄게 둡니다. */
+.business-shell .business-brand-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 20px 24px;
+  border: 1px solid #d9c9f5;
+  border-radius: 14px;
+  background: #f6f1fe;
+}
+.business-shell .business-brand-notice strong {
+  display: block;
+  font-size: 16px;
+}
+.business-shell .business-brand-notice p {
+  margin: 6px 0 0;
+  color: #5d5868;
+  font-size: 13px;
+}
+.business-shell .business-brand-notice .business-primary {
+  background: var(--business-purple);
+  border-color: var(--business-purple);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* 브랜드 관리 화면 */
+.business-shell .brand-form {
+  display: grid;
+  gap: 18px;
+  padding: 0 24px 24px;
+  max-width: 640px;
+}
+.business-shell .brand-field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.business-shell .brand-field input:not([type='file']),
+.business-shell .brand-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #dedde2;
+  border-radius: 9px;
+  text-align: left;
+}
+.business-shell .brand-field small {
+  color: var(--business-muted);
+  font-weight: 400;
+}
+.business-shell .brand-field [role='alert'] {
+  color: #c4320a;
+  font-weight: 400;
+}
+.business-shell .brand-form-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.business-shell .brand-card {
+  padding: 22px 24px;
+  border-top: 1px solid var(--business-line);
+}
+.business-shell .brand-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.business-shell .brand-card-head h3 {
+  margin: 0;
+  font-size: 17px;
+}
+.business-shell .brand-card > p {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 13px;
+}
+.business-shell .brand-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.business-shell .brand-image-slot {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.business-shell .brand-image-frame {
+  display: grid;
+  place-items: center;
+  height: 140px;
+  border: 1px dashed #d6d4dc;
+  border-radius: 10px;
+  background: #fafafb;
+  overflow: hidden;
+  color: var(--business-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.business-shell .brand-image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.business-shell .brand-status {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #eef7f0;
+  color: #1c6b34;
+  font-size: 12px;
+}
+.business-shell .brand-status.is-inactive {
+  background: #f1f1f3;
+  color: #666;
+}
+
+/* 주문·배송·정산 운영 화면 */
+.business-shell .operations-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  border-top: 1px solid var(--business-line);
+  font-size: 13px;
+}
+.business-shell .operations-row p {
+  margin: 4px 0 0;
+  color: #666;
+}
+
+/* 업체 상단 알림 아이콘·'알림·문의' 메뉴의 안 읽은 알림 배지(chat.css 없이도 보이도록 따로 둡니다) */
+.business-shell .business-count-badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #e5484d;
+  color: #fff;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+.business-shell .business-sidebar nav a .business-count-badge {
+  margin-left: auto;
+}
+.business-shell .business-header-notifications {
+  position: relative;
+}
+.business-shell .business-header-notifications .business-count-badge {
+  position: absolute;
+  top: 2px;
+  right: 0;
+}

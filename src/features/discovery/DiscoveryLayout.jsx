@@ -7,7 +7,6 @@ import { useCampaignPreview } from './useCampaignCatalog'
 import { useLocation } from 'react-router-dom'
 import MainHomeHeader from '../../components/buyer/MainHomeHeader'
 import SiteFooter from '../../components/layout/SiteFooter'
-import '../../styles/pages/_main-home.scss'
 
 export default function DiscoveryLayout({ children, notice, onCloseNotice }) {
   const { pathname } = useLocation()

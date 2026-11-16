@@ -12,7 +12,6 @@ import {
   nextGradeText,
 } from './participationModel'
 import { cancelCountText } from './participationChangeModel'
-import './participation.css'
 
 export default function MyActivityCard() {
   const [activity, setActivity] = useState(null)

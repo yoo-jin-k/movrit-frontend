@@ -3,6 +3,7 @@
  * 토큰 저장과 화면 이동은 호출한 페이지가 처리하며, 이 모듈은 요청과 응답 전달을 담당합니다.
  */
 import api from './axios'
+import { readRefreshToken } from '../features/auth/sessionTokenModel'
 
 export const login = async (data) => {
   const response = await api.post('/auth/login', data)
@@ -11,7 +12,7 @@ export const login = async (data) => {
 
 // 갱신 토큰이 있는 경우에만 서버에 로그아웃을 알립니다. 브라우저 저장소 삭제는 호출 화면이 담당합니다.
 export const logout = async () => {
-  const refreshToken = localStorage.getItem('refreshToken')
+  const refreshToken = readRefreshToken(sessionStorage, localStorage)
   if (refreshToken)
     await api.post(
       '/auth/logout',

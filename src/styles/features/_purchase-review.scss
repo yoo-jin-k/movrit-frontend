@@ -1,0 +1,175 @@
+/* 구매평 캠페인: 구매 안내 입력·카드, 구매 인증, 환급 기록 */
+// 하위 요소와 상태를 기능별로 묶고, 기존 선택자와 선언 순서를 유지합니다.
+
+.purchase-info-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid #e3dcf5;
+  border-radius: 12px;
+  background: #fbf9ff;
+
+  & legend {
+    padding: 0 6px;
+    font-weight: 700;
+  }
+
+  & > p,
+  &__wide,
+  &__summary {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  & label {
+    display: grid;
+    gap: 4px;
+    font-size: 14px;
+  }
+
+  & > p {
+    color: #6b6575;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  &__summary {
+    color: #6b38db;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 640px) {
+  .purchase-info-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.purchase-info-card {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #e3dcf5;
+  border-radius: 12px;
+  background: #fbf9ff;
+
+  & h3,
+  & p {
+    margin: 0;
+  }
+
+  &__prices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+  }
+
+  &__prices div {
+    padding: 10px;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+  }
+
+  &__prices dt {
+    color: #8c8c94;
+    font-size: 12px;
+  }
+
+  &__prices dd {
+    margin: 4px 0 0;
+    font-weight: 700;
+  }
+
+  &__prices .is-payback {
+    color: #2f8f5b;
+  }
+
+  &__prices .is-final {
+    background: #6b38db;
+  }
+
+  &__prices .is-final dt,
+  &__prices .is-final dd {
+    color: #fff;
+  }
+
+  &__guide {
+    white-space: pre-line;
+  }
+
+  &__steps {
+    margin: 0;
+    padding-left: 20px;
+    color: #5b5470;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  & small {
+    color: #8c8c94;
+  }
+}
+
+.purchase-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &.is-pending {
+    background: #fff3d6;
+    color: #9a6400;
+  }
+
+  &.is-paid {
+    background: #dff3e7;
+    color: #2f8f5b;
+  }
+}
+
+.purchase-evidence {
+  display: block;
+  max-width: min(280px, 100%);
+  max-height: 320px;
+  margin-top: 8px;
+  border: 1px solid #ebe7ee;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+.purchase-proof__summary,
+.purchase-proof__form,
+.purchase-payback,
+.purchase-payback__confirm {
+  display: grid;
+  gap: 8px;
+}
+
+.purchase-proof__summary p,
+.purchase-payback p {
+  margin: 0;
+}
+
+.purchase-proof__form label,
+.purchase-payback__confirm label {
+  display: grid;
+  gap: 4px;
+}
+
+.purchase-proof {
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.purchase-proof button,
+.purchase-payback button {
+  justify-self: start;
+}

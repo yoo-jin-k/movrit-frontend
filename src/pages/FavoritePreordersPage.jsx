@@ -12,15 +12,17 @@ import BuyerLayout, { BuyerButton } from '../components/buyer/BuyerLayout'
 
 export default function FavoritePreordersPage() {
   const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false),
-    [attempt, setAttempt] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [attempt, setAttempt] = useState(0)
+
+  // 재조회 횟수가 바뀔 때만 서버 목록을 다시 요청합니다.
   useEffect(() => {
     getFavoritePreorders()
-      .then((x) => {
-        if (!Array.isArray(x)) throw new Error('응답 형식 오류')
-        setItems(x)
+      .then((items) => {
+        if (!Array.isArray(items)) throw new Error('응답 형식 오류')
+        setItems(items)
         setError('')
       })
       .catch(() => {
@@ -29,6 +31,8 @@ export default function FavoritePreordersPage() {
       })
       .finally(() => setLoading(false))
   }, [attempt])
+
+  // 서버에서 해제가 성공한 항목만 목록에서 제거합니다. 실패하면 기존 목록을 유지합니다.
   const remove = async (id) => {
     if (busy) return
     setBusy(true)
@@ -43,8 +47,9 @@ export default function FavoritePreordersPage() {
       return
     }
     setBusy(false)
-    setItems((current) => current.filter((x) => x.preorderId !== id))
+    setItems((current) => current.filter((item) => item.preorderId !== id))
   }
+
   return (
     <BuyerLayout title="찜한 프리오더">
       <button
@@ -64,22 +69,22 @@ export default function FavoritePreordersPage() {
         <p>찜한 프리오더가 없습니다.</p>
       ) : null}
       <div className="buyer-favorite-grid">
-        {items.map((x) => (
-          <article key={x.preorderId}>
+        {items.map((item) => (
+          <article key={item.preorderId}>
             <div className="buyer-favorite-card__image" />
-            <h2>{x.title}</h2>
-            <p>{x.brandName || '힙한 프리오더'}</p>
+            <h2>{item.title}</h2>
+            <p>{item.brandName || '힙한 프리오더'}</p>
             <div>
               <Link
                 className="buyer-v2-button buyer-v2-button--secondary"
-                to={`/preorders/${x.preorderId}`}
+                to={`/preorders/${item.preorderId}`}
               >
                 상세 보기
               </Link>
               <BuyerButton
                 disabled={busy || loading}
-                aria-label={`${x.title} 찜 해제`}
-                onClick={() => remove(x.preorderId)}
+                aria-label={`${item.title} 찜 해제`}
+                onClick={() => remove(item.preorderId)}
               >
                 ♥
               </BuyerButton>

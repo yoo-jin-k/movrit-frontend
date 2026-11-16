@@ -24,6 +24,7 @@ import CampaignDetailImages from './CampaignDetailImages'
 import CampaignParticipation from './CampaignParticipation'
 import CampaignSchedule from './CampaignSchedule'
 import ChannelIcon from './ChannelIcon'
+import VisitMap from './VisitMap'
 import DiscoveryLayout from './DiscoveryLayout'
 import FavoriteButton from './FavoriteButton'
 import RecruitmentProgress from './RecruitmentProgress'
@@ -108,6 +109,8 @@ function InfoPanel({ detail, location }) {
               {location.address1}
               {location.address2 && ` ${location.address2}`}
             </p>
+            {/* 네이버 지도 키(VITE_NAVER_MAP_KEY_ID)가 있으면 주소 아래에 지도를 그립니다. 키가 없거나 실패하면 주소만 보입니다. */}
+            <VisitMap key={location.address1} location={location} />
           </InfoRow>
         )}
       </dl>

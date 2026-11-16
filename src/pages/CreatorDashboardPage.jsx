@@ -8,7 +8,6 @@ import {
   getCreatorDashboard,
   updateCreatorCampaignStatus,
 } from '../api/creatorApi'
-import './CreatorPage.css'
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('ko-KR')
 

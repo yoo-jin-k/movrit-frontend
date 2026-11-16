@@ -35,8 +35,14 @@ export default function useChatUnread() {
       ? acquireChatStream()
       : () => {}
     // 새 메시지가 오면 채팅 배지와 알림 배지(새 메시지 알림)를 함께 갱신합니다.
+    // 읽음 이벤트(같은 계정의 다른 창에서 읽은 경우 포함)는 채팅 배지만 다시 셉니다.
     const onEvent = (event) => {
-      if (event.detail?.type !== 'message') return
+      const type = event.detail?.type
+      if (type === 'read') {
+        load()
+        return
+      }
+      if (type !== 'message') return
       load()
       window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED))
     }

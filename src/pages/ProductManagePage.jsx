@@ -4,6 +4,7 @@
  */
 import { useEffect, useState } from 'react'
 import { getMyBrands } from '../api/brandApi'
+import { brandImageSrc } from '../features/business/brandModel'
 import {
   createProduct,
   createVariant,
@@ -34,7 +35,8 @@ const emptyVariant = {
   safetyStock: '0',
 }
 
-const imageUrl = (path) => (path ? `http://localhost:8080${path}` : null)
+// 서버가 준 /uploads/ 상대 주소를 그대로 씁니다(개발 서버는 vite 프록시, 배포는 nginx가 백엔드로 넘김).
+const imageUrl = (path) => brandImageSrc(path)
 
 function ProductManagePage() {
   const [brands, setBrands] = useState([])

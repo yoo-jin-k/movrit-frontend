@@ -1,0 +1,183 @@
+/*
+ * 업체 신청(/seller/apply)과 이용 서비스 선택(/roles) 화면 전용 스타일입니다.
+ * 사용자 화면 공통 스타일(_common.scss)은 건드리지 않고 seller-entry-*, role-entry-* 클래스만 둡니다.
+ */
+.seller-entry-page {
+  padding: 40px 16px 90px;
+}
+.seller-entry-card {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 32px;
+  border: 1px solid #e8e8ed;
+  border-radius: 18px;
+  background: white;
+}
+.seller-entry-card h1 {
+  margin: 0 0 12px;
+  font-size: 26px;
+}
+.seller-entry-card p {
+  color: #6b6b76;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.seller-entry-form {
+  display: grid;
+  gap: 18px;
+}
+.seller-entry-field {
+  display: grid;
+  gap: 6px;
+  color: #33333b;
+  font-size: 13px;
+  font-weight: 700;
+}
+.seller-entry-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #dedde4;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 400;
+}
+.seller-entry-field input:focus-visible {
+  outline: 3px solid #b9a4ec;
+  outline-offset: 1px;
+  border-color: #5b3fd6;
+}
+.seller-entry-field small {
+  color: #85858f;
+  font-weight: 400;
+}
+.seller-entry-form [role='alert'],
+.seller-entry-status[role='alert'] p {
+  color: #c4320a;
+}
+.seller-entry-status {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+.seller-entry-status dl {
+  width: 100%;
+  margin: 0;
+}
+.seller-entry-status dl > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f3;
+  font-size: 14px;
+}
+.seller-entry-status dt {
+  color: #85858f;
+}
+.seller-entry-status dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.seller-entry-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #f1f1f4;
+  color: #4b4b55;
+  font-size: 13px;
+  font-weight: 700;
+}
+.seller-entry-badge.is-approved {
+  background: #eaf7ee;
+  color: #1c6b34;
+}
+.seller-entry-badge.is-pending {
+  background: #fff4dc;
+  color: #8a5a00;
+}
+.seller-entry-badge.is-rejected,
+.seller-entry-badge.is-suspended {
+  background: #fdecec;
+  color: #b4232a;
+}
+.seller-entry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seller-entry-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #dedde4;
+  border-radius: 10px;
+  background: white;
+  color: #22222a;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.seller-entry-button:hover {
+  border-color: #5b3fd6;
+}
+.seller-entry-button.is-primary {
+  border-color: #5b3fd6;
+  background: #5b3fd6;
+  color: white;
+}
+.seller-entry-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.seller-entry-button:focus-visible {
+  outline: 3px solid #b9a4ec;
+  outline-offset: 2px;
+}
+
+/* /roles: 역할별 카드와 버튼 설명 */
+.role-entry-list {
+  margin-top: 26px;
+  display: grid;
+  gap: 16px;
+}
+.role-entry {
+  padding: 20px;
+  border: 1px solid #e8e8ed;
+  border-radius: 12px;
+  display: grid;
+  gap: 10px;
+}
+.role-entry h3 {
+  margin: 0;
+  font-size: 17px;
+}
+.role-entry > p {
+  margin: 0;
+  color: #6b6b76;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.role-entry ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #55555f;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.role-entry-status {
+  color: #33333b;
+  font-size: 13px;
+  font-weight: 700;
+}
+@media (max-width: 520px) {
+  .seller-entry-card {
+    padding: 22px 18px;
+  }
+  .seller-entry-status dl > div {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+}

@@ -9,6 +9,7 @@
  * 캠페인 종류·지역·콘텐츠 채널: 사용자 탐색 메뉴(제품·지역·기자단·구매평, 지역 필터, 미디어 필터)에 쓰입니다.
  * 구매평 종류를 고르면 구매처·상품 주소·판매가·환급액 입력 칸이 함께 나옵니다.
  * 세부 일정·참여 안내(선택): 사용자 캠페인 상세와 '내 캠페인'의 참여 일정·미션 안내에 그대로 표시됩니다.
+ *   방문 안내 칸은 신청서 참여 방식이 방문형일 때(visit)만 보입니다. 숨긴 값은 저장 요청에서 빠집니다.
  * 채널 기본 요건: 콘텐츠 채널(블로그·인스타그램·유튜브·클립)을 고르면 그 채널의 기본 제출 요건을 비어 있는 칸에 자동으로 채웁니다.
  * AI 초안: 기본 정보 아래 'AI로 초안 만들기'로 설명·미션·제출 요구사항·주의사항 초안을 비어 있는 칸에 채웁니다.
  *   업체가 직접 적은 내용은 바꾸지 않고, 채널을 바꾸면 기본 문구를 그대로 둔 칸만 새 채널 문구로 바꿉니다.
@@ -100,6 +101,7 @@ export default function CampaignFields({
   preorders,
   editing = false,
   disabled = false,
+  visit = true,
 }) {
   const change = (name, next) => onChange({ ...value, [name]: next })
   const [defaultsNotice, setDefaultsNotice] = useState('')
@@ -346,18 +348,20 @@ export default function CampaignFields({
             {defaultsNotice && <p role="status">{defaultsNotice}</p>}
           </div>
         )}
-        {GUIDE_INPUTS.map(([field, label, placeholder, max]) => (
-          <label key={field}>
-            {label}
-            <textarea
-              rows={3}
-              maxLength={max}
-              placeholder={placeholder}
-              value={value[field] || ''}
-              onChange={(e) => change(field, e.target.value)}
-            />
-          </label>
-        ))}
+        {GUIDE_INPUTS.filter(([field]) => visit || field !== 'visitGuide').map(
+          ([field, label, placeholder, max]) => (
+            <label key={field}>
+              {label}
+              <textarea
+                rows={3}
+                maxLength={max}
+                placeholder={placeholder}
+                value={value[field] || ''}
+                onChange={(e) => change(field, e.target.value)}
+              />
+            </label>
+          ),
+        )}
       </fieldset>
     </>
   )

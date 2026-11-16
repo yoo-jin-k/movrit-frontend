@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../../api/authApi'
+import { clearSession } from './sessionTokenModel'
 export default function LogoutButton({ className = '' }) {
   const navigate = useNavigate()
   const inFlight = useRef(false)
@@ -17,8 +18,7 @@ export default function LogoutButton({ className = '' }) {
       notice =
         '이 브라우저의 로그인 정보는 삭제했습니다. 서버 로그아웃은 확인하지 못했습니다.'
     } finally {
-      sessionStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      clearSession(sessionStorage, localStorage)
       window.dispatchEvent(new Event('movrit:session-updated'))
       navigate('/login', { replace: true, state: { sessionNotice: notice } })
     }

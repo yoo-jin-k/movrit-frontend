@@ -27,7 +27,6 @@ import {
   MENU_ITEMS,
   PRODUCT_CATEGORIES,
 } from '../../features/discovery/catalog'
-import '../../styles/pages/_main-home.scss'
 
 // 헤더 아이콘 공통 선 스타일입니다.
 const LINE = {

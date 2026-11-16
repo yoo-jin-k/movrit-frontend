@@ -12,7 +12,6 @@ import {
 import PurchaseEvidenceImage from './PurchaseEvidenceImage'
 import { PAYBACK_LABELS, purchaseProofError, won } from './purchaseReviewModel'
 import { workspaceTime } from '../membership/campaignWorkspaceModel'
-import './purchaseReview.css'
 
 const EDITABLE = ['ACTIVE', 'REVISION_REQUESTED']
 

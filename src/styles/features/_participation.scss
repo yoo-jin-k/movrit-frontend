@@ -1,0 +1,594 @@
+/* 참여 운영: 방문 예약 · 활동 등급 · 평가 · 패널티 · 신고 · 일괄 처리 · 신청 수정 */
+.visit-reservation,
+.participant-activity,
+.application-edit {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.visit-reservation h3,
+.participant-activity h3,
+.visit-reservation p,
+.participant-activity p {
+  margin: 0;
+}
+.visit-reservation__form,
+.application-edit__form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+.application-edit__form {
+  grid-template-columns: 1fr;
+}
+.visit-reservation__form label,
+.application-edit__form label,
+.participant-activity label,
+.visit-reservation__reject-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.visit-reservation__wide,
+.visit-reservation__form .visit-reservation__actions {
+  grid-column: 1 / -1;
+}
+.visit-reservation__actions,
+.application-edit__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+}
+.visit-reservation__reject-form {
+  display: flex;
+  flex: 1 1 100%;
+  gap: 8px;
+  align-items: flex-end;
+}
+.visit-reservation__reject-form label {
+  flex: 1;
+}
+.visit-reservation__reject {
+  color: #b2402f;
+}
+.application-edit__message {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f6f4fa;
+  white-space: pre-line;
+}
+@media (max-width: 640px) {
+  .visit-reservation__form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 상태 배지 */
+.participation-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.participation-badge.is-requested,
+.participation-badge.is-open {
+  background: #fff3d6;
+  color: #9a6400;
+}
+.participation-badge.is-confirmed,
+.participation-badge.is-resolved {
+  background: #dff3e7;
+  color: #2f8f5b;
+}
+.participation-badge.is-rejected,
+.participation-badge.is-dismissed {
+  background: #f1eff4;
+  color: #6b6575;
+}
+
+/* 활동 등급 배지 */
+.grade-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.grade-badge.is-sprout {
+  background: #e6f5e9;
+  color: #2f7a43;
+}
+.grade-badge.is-bronze {
+  background: #f6e7da;
+  color: #8a5326;
+}
+.grade-badge.is-silver {
+  background: #eceef2;
+  color: #4d5563;
+}
+.grade-badge.is-gold {
+  background: #fff1c7;
+  color: #8a6400;
+}
+.grade-badge.is-diamond {
+  background: #e3ecff;
+  color: #2b4fb5;
+}
+.participant-activity__warn {
+  color: #b2402f;
+}
+.participant-activity__rating,
+.participant-activity__penalty {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #ebe7ee;
+  border-radius: 10px;
+}
+.participant-activity__rating > button,
+.participant-activity__penalty > button,
+.visit-reservation > button,
+.application-edit > button {
+  justify-self: start;
+}
+.rating-stars {
+  display: flex;
+  gap: 4px;
+}
+.rating-stars button {
+  border: 0;
+  background: none;
+  color: #d8d2e3;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.rating-stars button.is-on {
+  color: #f5b301;
+}
+
+/* 내 활동 등급 카드 */
+.my-activity {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid #ebe7ee;
+  border-radius: 12px;
+  background: #fff;
+}
+.my-activity__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.my-activity__head div {
+  display: grid;
+}
+.my-activity__head small,
+.my-activity__rule {
+  color: #8c8c94;
+}
+.my-activity ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+/* 신고 */
+.report-button {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+/* 업체 화면 공통 버튼(44px 테두리 상자)보다 우선하도록 부모 클래스를 붙여 작은 글자 링크 모양을 유지합니다. */
+.report-button .report-button__toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: #8c8c94;
+  font-size: 12px;
+  line-height: 1.4;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.report-button .report-button__toggle:hover {
+  color: #55555c;
+}
+.report-button .report-form button,
+.report-button .report-form select,
+.report-button .report-form input {
+  min-height: 30px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.report-form {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid #ebe7ee;
+  border-radius: 8px;
+  background: #fff;
+}
+.report-form select,
+.report-form input {
+  min-height: 30px;
+  font-size: 13px;
+}
+.report-form em {
+  color: #b2402f;
+  font-size: 12px;
+  font-style: normal;
+}
+.report-done {
+  color: #8c8c94;
+  font-size: 12px;
+}
+
+/* 업체 참여자 일괄 처리 */
+.bulk-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #efe8fd;
+}
+.bulk-bar strong {
+  margin-right: auto;
+}
+
+/* 운영자 신고 상세 */
+.admin-report-detail {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 8px 12px;
+  margin: 0 0 12px;
+}
+.admin-report-detail dt {
+  color: #8c8c94;
+}
+.admin-report-detail dd {
+  margin: 0;
+}
+.admin-report-snapshot {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f6f4fa;
+  white-space: pre-line;
+  word-break: break-word;
+}
+.admin-report-note {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.admin-report-actions,
+.admin-inline-form {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 참여 조정: 신청 철회 · 참여 취소 · 기간 연장 · 협의 취소 증빙 */
+.participation-change {
+  display: grid;
+  gap: 10px;
+}
+.participation-change h2,
+.participation-change p {
+  margin: 0;
+}
+.participation-change__extended {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #eef7ee;
+  font-size: 14px;
+}
+.participation-change__extended strong {
+  display: block;
+}
+.participation-change__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.participation-change__actions button[aria-pressed='true'] {
+  border-color: #8051d0;
+  color: #5b2fa8;
+}
+/* 되돌리기 어려운 참여 조정(신청 철회·참여 취소)은 위험 색($color-danger #c53b31, 흰 바탕 대비 약 5:1)으로 구분합니다. */
+.participation-change .participation-change__button--danger {
+  border-color: #e6b7b2;
+  color: #c53b31;
+  background: #fff6f5;
+  font-weight: 600;
+}
+.participation-change
+  .participation-change__button--danger:hover:not(:disabled) {
+  border-color: #c53b31;
+  background: #fdecea;
+}
+.participation-change
+  .participation-change__actions
+  .participation-change__button--danger[aria-pressed='true'] {
+  border-color: #c53b31;
+  color: #a8322a;
+  background: #fdecea;
+}
+.participation-change .participation-change__button--danger.is-solid {
+  border-color: #c53b31;
+  color: white;
+  background: #c53b31;
+}
+.participation-change
+  .participation-change__button--danger.is-solid:hover:not(:disabled) {
+  border-color: #a8322a;
+  background: #a8322a;
+}
+.participation-change .participation-change__button--primary {
+  border-color: #17171b;
+  color: white;
+  background: #17171b;
+  font-weight: 600;
+}
+.participation-change__form {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #ece9f0;
+  border-radius: 10px;
+}
+.participation-change__form label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.participation-change__days {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.participation-change__days label {
+  display: inline-flex;
+  align-items: center;
+}
+.participation-change__custom-days {
+  gap: 6px;
+}
+.participation-change__custom-days input {
+  width: 72px;
+  min-height: 36px;
+  padding: 4px 8px;
+}
+.participation-change__days .participation-change__count {
+  flex-basis: 100%;
+}
+.participation-change__help,
+.participation-change__count,
+.my-activity__cancel {
+  color: #6d6873;
+  font-size: 13px;
+}
+.extension-requests ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0 24px 12px;
+  list-style: none;
+}
+.extension-requests li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 0;
+  border-top: 1px solid #ece9f0;
+}
+.extension-requests li p {
+  margin: 4px 0;
+}
+.extension-requests__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.admin-cancel-evidence {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.admin-cancel-evidence img {
+  max-width: min(320px, 100%);
+  border: 1px solid #ece9f0;
+  border-radius: 8px;
+}
+
+/* 내 캠페인 월 달력 */
+.campaign-workspace__views {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.campaign-workspace__views button[aria-selected='true'] {
+  border-color: #8051d0;
+  background: #f7f3fd;
+  color: #5b2fa8;
+  font-weight: 700;
+}
+.my-calendar__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.my-calendar__head h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.my-calendar__grid {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.my-calendar__grid th {
+  padding: 6px 0;
+  font-size: 13px;
+  color: #6d6873;
+}
+.my-calendar__grid td {
+  height: 96px;
+  padding: 4px;
+  vertical-align: top;
+  border: 1px solid #ece9f0;
+}
+.my-calendar__grid td.is-today .my-calendar__date {
+  background: #8051d0;
+  color: white;
+}
+.my-calendar__date {
+  display: inline-block;
+  min-width: 22px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 13px;
+  text-align: center;
+}
+.campaign-workspace .my-calendar__event {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  margin-top: 3px;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #f1ecfa;
+}
+.my-calendar__event.is-selection {
+  background: #fff3d6;
+}
+.my-calendar__event.is-experience {
+  background: #e6f2ff;
+}
+.my-calendar__event.is-submission {
+  background: #fde8e6;
+}
+.my-calendar__event.is-results {
+  background: #eef7ee;
+}
+.my-calendar__list {
+  display: none;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.my-calendar__list button {
+  width: 100%;
+  text-align: left;
+}
+.my-calendar__list span {
+  margin-right: 8px;
+  color: #6d6873;
+}
+@media (max-width: 640px) {
+  .my-calendar__grid td {
+    height: 48px;
+  }
+  .my-calendar__grid .my-calendar__event {
+    display: none;
+  }
+  .my-calendar__grid td:has(.my-calendar__event) .my-calendar__date {
+    outline: 2px solid #8051d0;
+  }
+  .my-calendar__list {
+    display: grid;
+    gap: 6px;
+  }
+}
+
+/* 기간 직접 연장(업체·운영자 참여자 상세) */
+.direct-extension {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+.direct-extension h3,
+.direct-extension p {
+  margin: 0;
+}
+.direct-extension__hint {
+  color: #92400e;
+}
+.direct-extension__form {
+  display: grid;
+  grid-template-columns: minmax(96px, 140px) 1fr;
+  gap: 8px;
+  align-items: end;
+}
+.direct-extension__form label {
+  display: grid;
+  gap: 4px;
+}
+.direct-extension__wide,
+.direct-extension__form [role='alert'],
+.direct-extension__form button {
+  grid-column: 1 / -1;
+}
+.direct-extension__form button {
+  justify-self: start;
+}
+.direct-extension__logs {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+@media (max-width: 560px) {
+  .direct-extension__form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 연장 횟수 기준 안내(5회 이상 주의, 신청 제한 중) */
+.extension-limit {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.extension-limit.is-warn {
+  color: #b45309;
+  font-weight: 600;
+}
+.extension-limit.is-limited {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+}

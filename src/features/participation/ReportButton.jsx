@@ -10,7 +10,6 @@ import {
   REPORT_TARGETS,
   reportError,
 } from './participationModel'
-import './participation.css'
 
 export default function ReportButton({
   targetType,

@@ -43,3 +43,20 @@ export function metricVerificationLabel(status) {
     ] || '확인 필요'
   )
 }
+// 서버 코드(INSTAGRAM·BLOG 등)를 화면 이름으로 바꿉니다. 모르는 코드는 그대로 보여 숨기지 않습니다.
+const CHANNEL_NAMES = {
+  INSTAGRAM: '인스타그램',
+  NAVER_BLOG: '네이버 블로그',
+  BLOG: '블로그',
+  YOUTUBE: '유튜브',
+}
+const METRIC_NAMES = {
+  FOLLOWER_COUNT: '팔로워 수',
+  VISITOR_COUNT: '방문자 수',
+  DAILY_VISITORS: '일평균 방문자 수',
+}
+export function metricTitle(metric) {
+  const channel = CHANNEL_NAMES[metric?.channelType] || metric?.channelType
+  const type = METRIC_NAMES[metric?.metricType] || metric?.metricType
+  return [channel, type].filter(Boolean).join(' · ')
+}

@@ -33,7 +33,10 @@ export function ResourceGate({ state, children }) {
   return children
 }
 
-/** 검색어 입력과 상태 칩 줄입니다. chips는 [값, 이름] 목록이며 첫 칩('' = 전체)이 기본입니다. */
+/**
+ * 검색어 입력과 상태 칩 줄입니다. chips는 [값, 이름] 목록이며 첫 칩('' = 전체)이 기본입니다.
+ * children으로 정렬 선택 같은 추가 조건을 새로고침 버튼 앞에 넣을 수 있습니다.
+ */
 export function SearchFilters({
   search,
   onSearch,
@@ -42,6 +45,8 @@ export function SearchFilters({
   chip,
   onChip,
   onReload,
+  reloading = false,
+  children,
 }) {
   return (
     <div className="admin-filters">
@@ -68,9 +73,11 @@ export function SearchFilters({
           ))}
         </div>
       )}
+      {children}
       {onReload && (
         <button
           className="admin-button admin-button--secondary"
+          disabled={reloading}
           onClick={onReload}
         >
           새로고침

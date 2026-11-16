@@ -5,7 +5,6 @@
  * 모바일 하단 탭 바도 푸터와 함께 렌더링해 사용자 화면 전체에 같은 이동 메뉴를 제공합니다.
  */
 import { Link } from 'react-router-dom'
-import '../../styles/pages/_main-home.scss'
 import MobileTabBar from './MobileTabBar'
 
 export default function SiteFooter() {

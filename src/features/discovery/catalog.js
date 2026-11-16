@@ -16,7 +16,8 @@ export const MENU_ITEMS = [
   ['프리미어', '/category/프리미어'],
   ['구매평', '/special/shoppingreview'],
   ['클립', '/special/clip'],
-  ['저금통', '/offerwall'],
+  // 오퍼월(저금통)은 운영 방향을 정할 때까지 메뉴에서 숨깁니다(App.jsx의 /offerwall 경로도 함께 주석 처리).
+  // ['저금통', '/offerwall'],
   ['커뮤니티', '/community/free'],
 ]
 export const PRODUCT_CATEGORIES = [

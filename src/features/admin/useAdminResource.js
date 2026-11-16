@@ -5,7 +5,7 @@
  * - 403은 권한 안내, 404는 '찾을 수 없음' 안내로 구분합니다.
  */
 import { useEffect, useState } from 'react'
-import api from '../../api/axios'
+import { readAdminResource } from '../../api/adminApi'
 
 export default function useAdminResource(path, initial = null) {
   const [state, setState] = useState({
@@ -17,9 +17,8 @@ export default function useAdminResource(path, initial = null) {
 
   useEffect(() => {
     const controller = new AbortController()
-    api
-      .get(path, { signal: controller.signal, timeout: 15000 })
-      .then(({ data }) => {
+    readAdminResource(path, controller.signal)
+      .then((data) => {
         if (!controller.signal.aborted)
           setState({ loading: false, data, error: '' })
       })

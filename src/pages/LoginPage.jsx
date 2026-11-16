@@ -2,18 +2,31 @@
  * 이메일 로그인과 소셜 로그인 시작을 처리합니다.
  * 이메일 로그인 성공 후 토큰을 저장하고 안전한 내부 복귀 경로를 선택하며 상태 코드별 실패 문구를 표시합니다.
  * 성공 시 브라우저 기본 알림창을 띄우지 않고 바로 이동해 화면 흐름이 끊기지 않도록 합니다.
+ * 이메일·비밀번호가 맞지 않으면(401) 빨간 느낌표 안내를 보여 주고 두 입력칸을 오류로 강조합니다(aria-invalid).
+ * 변경 이력: 오류 문구가 회색 본문 글자와 같아 눈에 띄지 않음 → 빨간 글자·느낌표 아이콘·입력칸 테두리 강조.
  */
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { login, getKakaoLoginUrl, getGoogleLoginUrl } from '../api/authApi'
 import CommonLayout from '../components/layout/CommonLayout'
-import { loginError } from '../features/auth/loginError'
+import FormAlert from '../components/ui/FormAlert'
+import PasswordField from '../components/ui/PasswordField'
+import { isCredentialError, loginError } from '../features/auth/loginError'
+import {
+  ACCOUNT_SWITCHED_NOTICE,
+  ACCOUNT_SWITCHED_REASON,
+  saveLogin,
+} from '../features/auth/sessionTokenModel'
 
 function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   // 서버가 소셜 로그인 실패 시 /login?socialError=KAKAO|GOOGLE|GOOGLE_EMAIL_EXISTS 로 돌려보냅니다. 상세 오류 대신 안내 문구만 보여줍니다.
   const socialError = new URLSearchParams(location.search).get('socialError')
+  // 이 탭의 로그인 정보를 확인할 수 없어(다른 계정 토큰으로 갱신될 뻔한 경우) 로그인 화면으로 온 경우입니다.
+  const accountSwitched =
+    new URLSearchParams(location.search).get('reason') ===
+    ACCOUNT_SWITCHED_REASON
   const [errorMessage, setErrorMessage] = useState(() =>
     socialError === 'KAKAO'
       ? '카카오 로그인을 완료하지 못했습니다. 잠시 후 다시 시도하거나 이메일로 로그인해 주세요.'
@@ -24,6 +37,8 @@ function LoginPage() {
           : '',
   )
   const [busy, setBusy] = useState(false)
+  // 이메일·비밀번호가 맞지 않았을 때만 입력칸을 오류로 표시합니다. 다시 입력하기 시작하면 강조를 지웁니다.
+  const [credentialInvalid, setCredentialInvalid] = useState(false)
   const [form, setForm] = useState({ email: '', password: '' })
 
   const handleKakaoLogin = async () => {
@@ -47,6 +62,10 @@ function LoginPage() {
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
+    if (credentialInvalid) {
+      setCredentialInvalid(false)
+      setErrorMessage('')
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -54,10 +73,18 @@ function LoginPage() {
     if (busy) return
     setBusy(true)
     setErrorMessage('')
+    setCredentialInvalid(false)
     try {
       const result = await login(form)
-      sessionStorage.setItem('accessToken', result.accessToken)
-      localStorage.setItem('refreshToken', result.refreshToken)
+      // 갱신 토큰은 계정별로 보관해 다른 탭의 다른 계정 로그인과 섞이지 않게 합니다.
+      saveLogin(
+        result.accessToken,
+        result.refreshToken,
+        sessionStorage,
+        localStorage,
+      )
+      // 실시간 채팅 연결·헤더가 새 계정 기준으로 다시 맞추도록 알립니다.
+      window.dispatchEvent(new Event('movrit:session-updated'))
       // 로그인 후에는 요청했던 캠페인 상세로 돌아가도록 합니다.
       const destination = location.state?.returnTo
       navigate(
@@ -68,6 +95,7 @@ function LoginPage() {
       )
     } catch (error) {
       setErrorMessage(loginError(error))
+      setCredentialInvalid(isCredentialError(error))
     } finally {
       setBusy(false)
     }
@@ -77,6 +105,7 @@ function LoginPage() {
     <CommonLayout title="로그인" className="common-auth-page" hideTitle>
       <form className="common-card common-auth-card" onSubmit={handleSubmit}>
         <h2>MOVRIT에 로그인</h2>
+        {accountSwitched && <p role="status">{ACCOUNT_SWITCHED_NOTICE}</p>}
         {location.state?.sessionNotice && (
           <p role="status">{location.state.sessionNotice}</p>
         )}
@@ -91,20 +120,21 @@ function LoginPage() {
             required
             autoComplete="email"
             placeholder="name@example.com"
+            aria-invalid={credentialInvalid || undefined}
+            aria-describedby={errorMessage ? 'login-error' : undefined}
           />
         </label>
-        <label className="common-field">
-          비밀번호
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            autoComplete="current-password"
-          />
-        </label>
-        <p role="alert">{errorMessage}</p>
+        <PasswordField
+          label="비밀번호"
+          name="password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          autoComplete="current-password"
+          aria-invalid={credentialInvalid || undefined}
+          aria-describedby={errorMessage ? 'login-error' : undefined}
+        />
+        <FormAlert id="login-error">{errorMessage}</FormAlert>
         <button className="common-button" type="submit" disabled={busy}>
           {busy ? '로그인 중입니다…' : '로그인'}
         </button>

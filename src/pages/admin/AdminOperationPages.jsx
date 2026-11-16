@@ -8,7 +8,7 @@
  * - 설정(/admin/settings): GET /api/admin/settings — 실행 환경 현황(읽기 전용, 비밀값 없음)
  */
 import { useState } from 'react'
-import api from '../../api/axios'
+import { deleteAdminNotice, saveAdminNotice } from '../../api/adminApi'
 import AdminLayout, {
   AdminButton,
   AdminCard,
@@ -97,8 +97,7 @@ export function AdminContentPage() {
     }
     setBusy(true)
     try {
-      if (editing === 'new') await api.post('/admin/notices', form)
-      else await api.put(`/admin/notices/${editing}`, form)
+      await saveAdminNotice(editing === 'new' ? null : editing, form)
       setMessage(
         form.published
           ? '공지를 저장하고 게시했습니다.'
@@ -116,7 +115,7 @@ export function AdminContentPage() {
   const remove = async (notice) => {
     setBusy(true)
     try {
-      await api.delete(`/admin/notices/${notice.id}`)
+      await deleteAdminNotice(notice.id)
       setMessage(`'${notice.title}' 공지를 삭제했습니다.`)
       setDeleting(null)
       state.reload()

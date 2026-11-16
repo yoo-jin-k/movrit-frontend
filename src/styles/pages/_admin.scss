@@ -862,3 +862,231 @@
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+
+// 운영자 버튼의 마우스 올림·키보드 초점·누름·처리 중 상태입니다. 눌렀는지 알 수 있도록 색과 테두리를 바꿉니다.
+.admin-button {
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #f2f6ff;
+    border-color: #c9dbfb;
+  }
+
+  &:active:not(:disabled) {
+    background: #e3edff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #3182f6;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  // 두 갈래 중 지금 고른 처리(예: 선정·미선정)를 표시합니다.
+  &.is-selected {
+    background: #17171b;
+    border-color: #17171b;
+    color: #fff;
+  }
+}
+
+.admin-button--primary:hover:not(:disabled) {
+  background: #1b6ee8;
+  border-color: #1b6ee8;
+}
+
+.admin-button--primary:active:not(:disabled) {
+  background: #1259c4;
+}
+
+.admin-button--danger:hover:not(:disabled) {
+  background: #ffe7e3;
+  border-color: #f7c3bc;
+}
+
+.admin-chips button {
+  cursor: pointer;
+
+  &:hover:not(.is-active) {
+    border-color: #b9b9c3;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #3182f6;
+    outline-offset: 2px;
+  }
+}
+
+.admin-sidebar nav a:focus-visible {
+  outline: 2px solid #3182f6;
+  outline-offset: -2px;
+}
+
+// 왼쪽 메뉴 '업체' 옆 심사 대기 건수 배지입니다.
+.admin-nav-badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e5484d;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .admin-nav-badge {
+    margin-left: 6px;
+  }
+}
+
+// 필터 줄의 정렬 선택입니다.
+.admin-filters .admin-sort {
+  width: auto;
+  flex-shrink: 0;
+}
+
+// 목록 위에 띄우는 모달 창입니다(조건 설정·숨기기·신청 상세).
+.admin-dialog {
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  border: 1px solid #e5e5eb;
+  border-radius: 16px;
+  background: #fff;
+  color: #17171b;
+  box-shadow: 0 20px 60px rgba(23, 23, 27, 0.18);
+  overflow: auto;
+
+  &::backdrop {
+    background: rgba(23, 23, 27, 0.45);
+  }
+
+  h3 {
+    font-size: 13px;
+    margin: 20px 0 8px;
+  }
+
+  .admin-review-form {
+    margin: 14px 0 0;
+  }
+}
+
+.admin-dialog--wide {
+  width: min(820px, calc(100vw - 32px));
+}
+
+.admin-dialog__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #f0f0f5;
+  background: #fff;
+
+  h2 {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+.admin-dialog__body {
+  padding: 18px 22px 24px;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .admin-dialog,
+  .admin-dialog--wide {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+  .admin-dialog__head,
+  .admin-dialog__body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+// 신청 상세 창: 참여자 머리글·처리 결과·지표 목록·확인 단계입니다.
+.admin-applicant-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+
+  > div {
+    display: grid;
+    gap: 4px;
+  }
+
+  strong {
+    font-size: 16px;
+  }
+}
+
+.admin-result {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #eaf8f0;
+  color: #18864b;
+  font-weight: 700;
+}
+
+.admin-prewrap {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.admin-metrics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+
+  small {
+    color: #8c8c94;
+  }
+
+  &.is-compact {
+    gap: 2px;
+    font-size: 11px;
+  }
+}
+
+.admin-decision {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f5;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-confirm {
+  padding: 12px 14px;
+  border: 1px solid #e5e5eb;
+  border-radius: 12px;
+  background: #fafafa;
+
+  p {
+    margin: 0 0 10px;
+  }
+}

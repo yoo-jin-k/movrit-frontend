@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { readShipment } from '../../api/shippingApi'
 import { shortTime } from './shippingModel'
-import './shipping.css'
 
 export default function ShipmentCard({ application, seller = false }) {
   const [shipment, setShipment] = useState(undefined)

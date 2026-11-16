@@ -10,8 +10,12 @@ export const getAllSellers = async () => {
   return response.data
 }
 
-export const getPendingSellers = async () => {
-  const response = await api.get('/admin/sellers/pending')
+// 심사 대기 업체 목록입니다. 왼쪽 메뉴 배지처럼 화면을 떠나면 취소할 수 있도록 signal을 받습니다.
+export const getPendingSellers = async (signal) => {
+  const response = await api.get('/admin/sellers/pending', {
+    signal,
+    timeout: 15000,
+  })
   return response.data
 }
 

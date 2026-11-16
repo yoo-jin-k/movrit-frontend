@@ -20,7 +20,6 @@ import {
   REPORT_TARGETS,
   reportActionsFor,
 } from '../features/participation/participationModel'
-import '../features/participation/participation.css'
 
 const reasonLabel = (code) =>
   REPORT_REASONS.find(([value]) => value === code)?.[1] || code

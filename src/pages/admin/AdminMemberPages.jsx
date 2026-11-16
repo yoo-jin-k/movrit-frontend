@@ -9,7 +9,7 @@
  */
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import api from '../../api/axios'
+import { changeMemberStatus } from '../../api/adminApi'
 import AdminLayout, {
   AdminButton,
   AdminCard,
@@ -130,9 +130,7 @@ export function AdminMemberDetailPage() {
     setBusy(true)
     setMessage('')
     try {
-      await api.patch(`/members/admin/${member.id}/status`, undefined, {
-        params: { status: suspended ? 'ACTIVE' : 'SUSPENDED' },
-      })
+      await changeMemberStatus(member.id, suspended ? 'ACTIVE' : 'SUSPENDED')
       setMessage(suspended ? '정지를 해제했습니다.' : '계정을 정지했습니다.')
       setConfirm(false)
       state.reload()

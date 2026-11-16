@@ -29,6 +29,24 @@ export function mergeMessages(current, incoming) {
   return [...byId.values()].sort((a, b) => a.id - b.id)
 }
 
+// 새 메시지 확인을 시작할 번호입니다. 마지막 메시지가 아니라 끝에서 overlap개 앞부터 겹쳐 받습니다.
+// 두 사람이 거의 동시에 보내면 번호가 작은 메시지가 늦게 저장될 수 있어, 마지막 번호 다음만 받으면 그 메시지를 영영 놓치기 때문입니다.
+// 겹쳐 받은 메시지는 mergeMessages가 번호로 합칩니다. 메시지가 overlap개 이하면 처음부터(null) 받습니다.
+export function pollAfterId(messages, overlap = 5) {
+  const ids = (messages || [])
+    .map((m) => Number(m?.id))
+    .filter((id) => Number.isFinite(id) && id > 0)
+    .sort((a, b) => a - b)
+  if (ids.length <= overlap) return null
+  return ids[ids.length - 1 - overlap]
+}
+
+// 받은 메시지 중 화면에 아직 없던 것만 고릅니다(겹쳐 받은 메시지로 새 메시지 알림이 반복되지 않게).
+export function unseenMessages(current, incoming) {
+  const known = new Set((current || []).map((m) => m?.id))
+  return (incoming || []).filter((m) => m?.id != null && !known.has(m.id))
+}
+
 // 목록·말풍선에 쓰는 시각 표시입니다. 오늘이면 시:분, 아니면 월/일 시:분입니다.
 // 서버 시각(오프셋 없음)은 서울 시간이고, 화면도 기기 시간대와 관계없이 서울 기준으로 보여 줍니다.
 const SEOUL_TIME = new Intl.DateTimeFormat('ko-KR', {

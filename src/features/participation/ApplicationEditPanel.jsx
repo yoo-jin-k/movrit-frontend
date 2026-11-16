@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react'
 import { readCampaignForm } from '../../api/campaignReadApi'
 import { reviseApplication } from '../../api/participationApi'
 import { formatContactPhone } from '../membership/phoneVerificationModel'
-import './participation.css'
 
 const CONTACT_FIELDS = [
   ['recipientName', '수령인'],

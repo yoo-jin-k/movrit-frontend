@@ -2,8 +2,11 @@
  * 운영 화면의 메뉴·제목·카드·상태·버튼 표현을 공통으로 제공합니다.
  * 이 레이아웃 자체는 권한 조회를 수행하지 않으며 사이드바의 사용자명은 현재 고정 표시값입니다.
  * 메뉴의 모든 화면은 실제 서버 데이터를 씁니다.
+ * '업체' 메뉴 옆에는 심사 대기 업체 수를 배지로 보여줍니다(GET /api/admin/sellers/pending, 0건이면 숨김).
  */
 import { NavLink } from 'react-router-dom'
+import usePendingSellerCount from '../../features/admin/usePendingSellerCount'
+import { pendingBadgeText } from '../../features/admin/adminSellerListModel'
 
 const menu = [
   ['대시보드', '/admin/dashboard'],
@@ -34,6 +37,7 @@ export default function AdminLayout({
   eyebrow = 'MOVRIT 운영 관리',
   actions,
 }) {
+  const pendingSellers = pendingBadgeText(usePendingSellerCount())
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
@@ -42,15 +46,24 @@ export default function AdminLayout({
           <span>ADMIN CONSOLE</span>
         </div>
         <nav aria-label="관리자 메뉴">
-          {menu.map(([label, to]) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) => (isActive ? 'is-active' : '')}
-            >
-              {label}
-            </NavLink>
-          ))}
+          {menu.map(([label, to]) => {
+            const badge = to === '/admin/sellers' ? pendingSellers : ''
+            return (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) => (isActive ? 'is-active' : '')}
+              >
+                {label}
+                {badge && (
+                  <span className="admin-nav-badge">
+                    <span aria-hidden="true">{badge}</span>
+                    <span className="sr-only">{`, 심사 대기 ${badge}건`}</span>
+                  </span>
+                )}
+              </NavLink>
+            )
+          })}
         </nav>
         <span className="admin-sidebar__user">운영자 계정</span>
       </aside>

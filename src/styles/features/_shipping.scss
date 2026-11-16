@@ -1,13 +1,17 @@
 /* 배송 관리: 참여자 배송 카드, 업체 배송 관리 표 */
+// 하위 요소와 상태를 기능별로 묶고, 기존 선택자와 선언 순서를 유지합니다.
+
 .shipment-card {
   display: grid;
   gap: 6px;
   margin: 12px 0;
+
+  & h3,
+  & p {
+    margin: 0;
+  }
 }
-.shipment-card h3,
-.shipment-card p {
-  margin: 0;
-}
+
 .shipment-badge {
   display: inline-block;
   padding: 2px 8px;
@@ -17,6 +21,7 @@
   font-size: 12px;
   font-weight: 700;
 }
+
 .shipment-copy {
   padding: 2px 8px;
   border: 1px solid #ddd5f0;
@@ -24,18 +29,24 @@
   background: #fff;
   font-size: 12px;
 }
-.shipping-table input,
-.shipping-table select {
-  min-width: 120px;
-  min-height: 34px;
+
+.shipping-table {
+  & input,
+  & select {
+    min-width: 120px;
+    min-height: 34px;
+  }
+
+  & .is-error input {
+    border-color: #c9302c;
+  }
+
+  & small {
+    display: block;
+    color: #8c8c94;
+  }
 }
-.shipping-table .is-error input {
-  border-color: #c9302c;
-}
-.shipping-table small {
-  display: block;
-  color: #8c8c94;
-}
+
 .shipping-stage {
   display: inline-block;
   padding: 2px 8px;
@@ -43,19 +54,23 @@
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
+
+  &.is-ready {
+    background: #fff3d6;
+    color: #9a6400;
+  }
+
+  &.is-shipped {
+    background: #e3ecff;
+    color: #2b4fb5;
+  }
+
+  &.is-received {
+    background: #dff3e7;
+    color: #2f8f5b;
+  }
 }
-.shipping-stage.is-ready {
-  background: #fff3d6;
-  color: #9a6400;
-}
-.shipping-stage.is-shipped {
-  background: #e3ecff;
-  color: #2b4fb5;
-}
-.shipping-stage.is-received {
-  background: #dff3e7;
-  color: #2f8f5b;
-}
+
 .shipping-actions {
   display: flex;
   flex-wrap: wrap;

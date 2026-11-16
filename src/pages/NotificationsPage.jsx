@@ -17,6 +17,16 @@ import {
   notificationPath,
 } from '../features/business/notificationModel'
 import { workspaceTime } from '../features/membership/campaignWorkspaceModel'
+
+// 필터의 순서와 서버 대상 유형을 함께 관리합니다.
+const NOTIFICATION_FILTERS = [
+  ['', '전체'],
+  ['unread', '읽지 않음'],
+  ['campaign', '캠페인'],
+  ['PREORDER', '프리오더'],
+  ['INQUIRY', '문의'],
+]
+
 export default function NotificationsPage() {
   const [state, setState] = useState({
     loading: true,
@@ -24,15 +34,18 @@ export default function NotificationsPage() {
     count: null,
     error: '',
   })
-  const [attempt, setAttempt] = useState(0),
-    [filter, setFilter] = useState(''),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState('')
+  const [attempt, setAttempt] = useState(0)
+  const [filter, setFilter] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  // 상태 갱신 전에 연속 클릭해도 읽음 처리 요청이 중복되지 않도록 막습니다.
   const inFlight = useRef(false)
   const reload = () => {
     setState((old) => ({ ...old, loading: true }))
     setAttempt((v) => v + 1)
   }
+
+  // 목록과 미확인 개수를 함께 갱신하고, 화면을 떠난 뒤 도착한 응답은 무시합니다.
   useEffect(() => {
     let active = true
     Promise.all([getNotifications(), getUnreadNotificationCount()])
@@ -55,6 +68,7 @@ export default function NotificationsPage() {
       active = false
     }
   }, [attempt])
+
   const read = async (id) => {
     if (inFlight.current) return
     inFlight.current = true
@@ -73,7 +87,9 @@ export default function NotificationsPage() {
       setBusy(false)
     }
   }
+
   const shown = filterNotifications(state.items, filter)
+
   return (
     <CommonLayout title="알림센터">
       <div className="notification-toolbar">
@@ -100,13 +116,7 @@ export default function NotificationsPage() {
         </div>
       </div>
       <div className="notification-filters" role="group" aria-label="알림 종류">
-        {[
-          ['', '전체'],
-          ['unread', '읽지 않음'],
-          ['campaign', '캠페인'],
-          ['PREORDER', '프리오더'],
-          ['INQUIRY', '문의'],
-        ].map(([value, label]) => (
+        {NOTIFICATION_FILTERS.map(([value, label]) => (
           <button
             key={value}
             type="button"
